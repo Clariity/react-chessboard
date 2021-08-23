@@ -1,0 +1,45 @@
+{
+  "name": "react-chessboard",
+  "version": "1.0.0",
+  "repository": "https://github.com/Clariity/react-chessboard",
+  "license": "MIT",
+  "description": "A modern chessboard for React. Inspired and adapted from the unmaintained Chessboard.jsx",
+  "main": "dist/chessboard.min.js",
+  "types": "chessboard.d.ts",
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "lint": "eslint src"
+  },
+  "dependencies": {
+    "react": "^17.0.2",
+    "react-dnd": "^14.0.3",
+    "react-dnd-html5-backend": "^14.0.1",
+    "react-dnd-multi-backend": "^6.0.2",
+    "react-dnd-touch-backend": "^14.1.0",
+    "react-dom": "^17.0.2",
+    "react-scripts": "^4.0.3"
+  },
+  "devDependencies": {
+    "chess.js": "^0.12.0",
+    "eslint": "^7.32.0",
+    "eslint-config-standard": "^16.0.3",
+    "eslint-plugin-import": "^2.24.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^5.1.0",
+    "eslint-plugin-react": "^7.24.0",
+    "prop-types": "^15.7.2"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
