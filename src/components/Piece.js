@@ -6,6 +6,7 @@ import { useChessboard } from '../context/chessboard-context';
 export default function Piece({ square, piece, getSquareCoordinates, getSingleSquareCoordinates }) {
   const {
     animationDuration,
+    arePiecesDraggable,
     boardWidth,
     isDraggablePiece,
     onPieceClick,
@@ -19,14 +20,19 @@ export default function Piece({ square, piece, getSquareCoordinates, getSingleSq
   const [pieceStyle, setPieceStyle] = useState({
     opacity: 1,
     zIndex: 5,
-    cursor: isDraggablePiece({ piece, sourceSquare: square }) ? '-webkit-grab' : 'not-allowed'
+    cursor: arePiecesDraggable
+      ? isDraggablePiece({ piece, sourceSquare: square })
+        ? '-webkit-grab'
+        : 'not-allowed'
+      : 'default'
   });
 
-  const [{ isDragging }, drag] = useDrag(
+  const [{ canDrag, isDragging }, drag] = useDrag(
     () => ({
       type: 'piece',
       item: { piece, square },
       collect: (monitor) => ({
+        canDrag: isDraggablePiece({ piece, sourceSquare: square }),
         isDragging: !!monitor.isDragging()
       })
     }),
@@ -50,11 +56,13 @@ export default function Piece({ square, piece, getSquareCoordinates, getSingleSq
     // we can perform animation if our square was in removed, AND the matching piece is in added
     if (waitingForAnimation && removedPiece && newSquare) {
       const { sourceSq, targetSq } = getSquareCoordinates(square, newSquare[0]);
-      setPieceStyle({
-        ...pieceStyle,
-        transform: `translate(${targetSq.x - sourceSq.x}px, ${targetSq.y - sourceSq.y}px)`,
-        transition: `transform ${animationDuration}ms`
-      });
+      if (sourceSq && targetSq) {
+        setPieceStyle({
+          ...pieceStyle,
+          transform: `translate(${targetSq.x - sourceSq.x}px, ${targetSq.y - sourceSq.y}px)`,
+          transition: `transform ${animationDuration}ms`
+        });
+      }
     }
   }, [positionDifferences]);
 
@@ -71,7 +79,11 @@ export default function Piece({ square, piece, getSquareCoordinates, getSingleSq
   }, [currentPosition]);
 
   return (
-    <div ref={drag} onClick={() => onPieceClick(piece)} style={pieceStyle}>
+    <div
+      ref={arePiecesDraggable ? (canDrag ? drag : null) : null}
+      onClick={() => onPieceClick(piece)}
+      style={pieceStyle}
+    >
       {typeof chessPieces[piece] === 'function' ? (
         chessPieces[piece]({
           squareWidth: boardWidth / 8,

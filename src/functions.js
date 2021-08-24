@@ -26,14 +26,12 @@ export function convertPositionToObject(position) {
 
 export function fenToObj(fen) {
   if (!validFen(fen)) return false;
-  // cut off any move, castling, etc info from the end
-  // we're only interested in position information
+  // cut off any move, castling, etc info from the end. we're only interested in position information
   fen = fen.replace(/ .+$/, '');
-
   const rows = fen.split('/');
   const position = {};
-
   let currentRow = 8;
+
   for (let i = 0; i < 8; i++) {
     const row = rows[i].split('');
     let colIdx = 0;
@@ -51,10 +49,8 @@ export function fenToObj(fen) {
         colIdx = colIdx + 1;
       }
     }
-
     currentRow = currentRow - 1;
   }
-
   return position;
 }
 
@@ -71,25 +67,19 @@ function expandFenEmptySquares(fen) {
 
 export function validFen(fen) {
   if (!isString(fen)) return false;
-
-  // cut off any move, castling, etc info from the end
-  // we're only interested in position information
+  // cut off any move, castling, etc info from the end. we're only interested in position information
   fen = fen.replace(/ .+$/, '');
-
   // expand the empty square numbers to just 1s
   fen = expandFenEmptySquares(fen);
-
   // FEN should be 8 sections separated by slashes
   const chunks = fen.split('/');
   if (chunks.length !== 8) return false;
-
   // check each section
   for (let i = 0; i < 8; i++) {
     if (chunks[i].length !== 8 || chunks[i].search(/[^kqrnbpKQRNBP1]/) !== -1) {
       return false;
     }
   }
-
   return true;
 }
 
@@ -99,7 +89,6 @@ function fenToPieceCode(piece) {
   if (piece.toLowerCase() === piece) {
     return 'b' + piece.toUpperCase();
   }
-
   // white piece
   return 'w' + piece.toUpperCase();
 }
@@ -153,10 +142,9 @@ function pieceCodeToFen(piece) {
 // returns false if the obj is not a valid position object
 export function objToFen(obj) {
   if (!validPositionObject(obj)) return false;
-
   let fen = '';
-
   let currentRow = 8;
+
   for (let i = 0; i < 8; i++) {
     for (let j = 0; j < 8; j++) {
       const square = COLUMNS[j] + currentRow;
@@ -173,12 +161,9 @@ export function objToFen(obj) {
     if (i !== 7) {
       fen = fen + '/';
     }
-
     currentRow = currentRow - 1;
   }
-
   // squeeze the empty numbers together
   fen = squeezeFenEmptySquares(fen);
-
   return fen;
 }

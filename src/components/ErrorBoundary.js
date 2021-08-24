@@ -4,13 +4,17 @@ export default function ErrorBoundary({ children }) {
   try {
     return children;
   } catch (error) {
-    return (
-      <div style={container}>
-        <div style={whiteKingStyle}>{errorImage.whiteKing}</div>
-        <h1>Something went wrong</h1>
-      </div>
-    );
+    return <WhiteKing showError={true} />;
   }
+}
+
+export function WhiteKing({ showError = false }) {
+  return (
+    <div style={container}>
+      <div style={whiteKingStyle}>{errorImage.whiteKing}</div>
+      {showError && <h1>Something went wrong</h1>}
+    </div>
+  );
 }
 
 const container = {

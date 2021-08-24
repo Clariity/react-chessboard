@@ -36,9 +36,6 @@ export const chessboardPropTypes = {
   // behavior of pieces when dropped off the board. 'snapback' brings the piece back to it's original square, 'trash' deletes the piece from the board
   dropOffBoardAction: PropTypes.oneOf(['snapback', 'trash']),
 
-  // necessary if more than one board is mounted, drag and drop will not work as expected if not provided.
-  id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-
   // function called when a piece drag is initiated. Returns if piece is draggable ({ piece: string, sourceSquare: string }) => bool
   isDraggablePiece: PropTypes.func,
 
@@ -70,10 +67,10 @@ export const chessboardPropTypes = {
   position: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
 
   // show file character and rank numbers (a..h, 1..8)
-  showBoardNotation: PropTypes.bool,
+  showBoardNotation: PropTypes.bool
 
   // show spare pieces above and below board.
-  showSparePieces: PropTypes.bool
+  // showSparePieces: PropTypes.bool
 };
 
 export const chessboardDefaultProps = {
@@ -88,7 +85,6 @@ export const chessboardDefaultProps = {
   customPieces: {},
   customSquareStyles: {},
   dropOffBoardAction: 'snapback',
-  id: '0',
   isDraggablePiece: () => true,
   getPositionObject: () => {},
   onDragOverSquare: () => {},
@@ -99,6 +95,6 @@ export const chessboardDefaultProps = {
   onSquareClick: () => {},
   onSquareRightClick: () => {},
   position: 'start',
-  showBoardNotation: true,
-  showSparePieces: false
+  showBoardNotation: true
+  // showSparePieces: false
 };

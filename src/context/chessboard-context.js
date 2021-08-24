@@ -6,11 +6,7 @@ import { convertPositionToObject, getPositionDifferences } from '../functions';
 // add arrows - https://stackoverflow.com/questions/25527902/drawing-arrows-on-a-chess-board-in-javascript
 // prevent scroll on drag
 // add other things from chessground
-// need to redraw board if styles or pieces change (currently have to completely re-render on my side)
 // change board orientation to 'w' or 'b'? like used in chess.js?
-
-// https://commons.wikimedia.org/wiki/Category:SVG_chess_pieces
-// try changing pieces to these?
 
 const ChessboardContext = React.createContext();
 
@@ -26,7 +22,6 @@ export function ChessboardProvider({
   customPieces,
   customSquareStyles,
   dropOffBoardAction,
-  id,
   isDraggablePiece,
   getPositionObject,
   onDragOverSquare,
@@ -44,9 +39,6 @@ export function ChessboardProvider({
   // position stored and displayed on board
   const [currentPosition, setCurrentPosition] = useState(convertPositionToObject(position));
   const [positionDifferences, setPositionDifferences] = useState({});
-
-  // position after piece dropped
-  // const [onDropPosition, setOnDropPosition] = useState();
 
   // chess pieces
   const [chessPieces, setChessPieces] = useState({ ...defaultPieces, ...customPieces });
@@ -98,9 +90,6 @@ export function ChessboardProvider({
         setPreviousTimeout(newTimeout);
       }
     }
-    // get board position for user
-    // commenting out as user doesn't need this? they know the position as they just updated it
-    // getPositionObject(newPosition);
 
     // reset manual drop, ready for next move to be made by user or computer
     setManualDrop(false);
@@ -146,7 +135,6 @@ export function ChessboardProvider({
         customLightSquareStyle,
         customSquareStyles,
         dropOffBoardAction,
-        id,
         isDraggablePiece,
         getPositionObject,
         onDragOverSquare,

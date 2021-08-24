@@ -1,45 +1,53 @@
 {
   "name": "react-chessboard",
-  "version": "1.0.0",
+  "version": "0.0.2",
   "repository": "https://github.com/Clariity/react-chessboard",
+  "author": "Ryan Gregory <ryangregory.dev@outlook.com>",
   "license": "MIT",
   "description": "A modern chessboard for React. Inspired and adapted from the unmaintained Chessboard.jsx",
-  "main": "dist/chessboard.min.js",
-  "types": "chessboard.d.ts",
+  "keywords": [
+    "react",
+    "react.js",
+    "chess",
+    "chess.js",
+    "chessboard",
+    "chess board",
+    "react-chessboard",
+    "chessboard component"
+  ],
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "lint": "eslint src"
+    "build": "rollup -c",
+    "start": "rollup -c -w"
   },
   "dependencies": {
-    "react": "^17.0.2",
+    "prop-types": "^15.7.2",
     "react-dnd": "^14.0.3",
     "react-dnd-html5-backend": "^14.0.1",
     "react-dnd-multi-backend": "^6.0.2",
-    "react-dnd-touch-backend": "^14.1.0",
-    "react-dom": "^17.0.2",
-    "react-scripts": "^4.0.3"
+    "react-dnd-touch-backend": "^14.1.0"
+  },
+  "peerDependencies": {
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
   },
   "devDependencies": {
-    "chess.js": "^0.12.0",
+    "@babel/core": "^7.15.0",
+    "@babel/preset-react": "^7.14.5",
+    "@babel/runtime": "^7.15.3",
     "eslint": "^7.32.0",
     "eslint-config-standard": "^16.0.3",
     "eslint-plugin-import": "^2.24.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^5.1.0",
     "eslint-plugin-react": "^7.24.0",
-    "prop-types": "^15.7.2"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "@rollup/plugin-babel": "^5.3.0",
+    "@rollup/plugin-commonjs": "^20.0.0",
+    "@rollup/plugin-node-resolve": "^13.0.4",
+    "rollup": "^2.56.3"
   }
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useDrop } from 'react-dnd';
 
 import { useChessboard } from '../context/chessboard-context';
@@ -7,6 +7,8 @@ export default function Square({ square, squareColor, setSquares, children }) {
   const squareRef = useRef();
   const {
     boardWidth,
+    boardOrientation,
+    customBoardStyle,
     customDarkSquareStyle,
     customDropSquareStyle,
     customLightSquareStyle,
@@ -39,14 +41,13 @@ export default function Square({ square, squareColor, setSquares, children }) {
   const defaultSquareStyle = {
     ...size(boardWidth),
     ...center,
+    ...borderRadius(customBoardStyle, square, boardOrientation),
     ...(squareColor === 'black' ? customDarkSquareStyle : customLightSquareStyle),
     ...(isOver && customDropSquareStyle)
   };
 
   return (
     <div
-      data-testid={`${squareColor}-square`}
-      data-squareid={square}
       ref={drop}
       style={defaultSquareStyle}
       onMouseOver={() => onMouseOverSquare(square)}
@@ -83,3 +84,30 @@ const size = (width) => ({
   width: width / 8,
   height: width / 8
 });
+
+const borderRadius = (customBoardStyle, square, boardOrientation) => {
+  if (!customBoardStyle.borderRadius) return {};
+
+  if (square === 'a1') {
+    return boardOrientation === 'white'
+      ? { borderBottomLeftRadius: customBoardStyle.borderRadius }
+      : { borderTopRightRadius: customBoardStyle.borderRadius };
+  }
+  if (square === 'a8') {
+    return boardOrientation === 'white'
+      ? { borderTopLeftRadius: customBoardStyle.borderRadius }
+      : { borderBottomRightRadius: customBoardStyle.borderRadius };
+  }
+  if (square === 'h1') {
+    return boardOrientation === 'white'
+      ? { borderBottomRightRadius: customBoardStyle.borderRadius }
+      : { borderTopLeftRadius: customBoardStyle.borderRadius };
+  }
+  if (square === 'h8') {
+    return boardOrientation === 'white'
+      ? { borderTopRightRadius: customBoardStyle.borderRadius }
+      : { borderBottomLeftRadius: customBoardStyle.borderRadius };
+  }
+
+  return {};
+};

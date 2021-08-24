@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { usePreview } from 'react-dnd-multi-backend';
 
 import Piece from './Piece';
@@ -6,8 +6,9 @@ import Square from './Square';
 import Notation from './Notation';
 import Squares from './Squares';
 import { useChessboard } from '../context/chessboard-context';
+import { WhiteKing } from './ErrorBoundary';
 
-function Board() {
+export default function Board() {
   const [squares, setSquares] = useState({});
 
   const { boardWidth, chessPieces, showBoardNotation, currentPosition, screenSize } = useChessboard();
@@ -71,8 +72,6 @@ function Board() {
       </Squares>
     </>
   ) : (
-    <h1>hello</h1>
+    <WhiteKing />
   );
 }
-
-export default Board;

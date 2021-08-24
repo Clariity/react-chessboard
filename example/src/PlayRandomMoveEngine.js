@@ -1,14 +1,12 @@
-import React, { useState, useEffect } from 'react'; // eslint-disable-line no-unused-vars
+import { useState } from 'react';
 import Chess from 'chess.js';
 
-import Chessboard from '../Chessboard';
+// import Chessboard from '../react-chessboard/src';
+import Chessboard from 'react-chessboard';
 
-export default function PlayRandomMoveEngine({ boardSize }) {
+export default function PlayRandomMoveEngine() {
   const [game, setGame] = useState(new Chess());
-
-  // useEffect(() => {
-  //   console.log(game.ascii());
-  // }, [game]);
+  const [customDarkSquareStyle, setCustomDarkSquareStyle] = useState({ backgroundColor: '#B58863' });
 
   function safeGameMutate(modify) {
     setGame((g) => {
@@ -28,7 +26,6 @@ export default function PlayRandomMoveEngine({ boardSize }) {
     safeGameMutate((game) => {
       game.move(possibleMoves[randomIndex]);
     });
-    // setFen(game.fen());
   }
 
   function onDrop(sourceSquare, targetSquare) {
@@ -44,7 +41,6 @@ export default function PlayRandomMoveEngine({ boardSize }) {
     // illegal move
     if (move === null) return;
 
-    // setFen(game.fen());
     setTimeout(makeRandomMove, 200);
   }
 
@@ -55,7 +51,6 @@ export default function PlayRandomMoveEngine({ boardSize }) {
           safeGameMutate((game) => {
             game.reset();
           });
-          // setFen(game.fen());
         }}
       >
         reset
@@ -65,20 +60,24 @@ export default function PlayRandomMoveEngine({ boardSize }) {
           safeGameMutate((game) => {
             game.undo();
           });
-          // game.undo();
-          // setFen(game.fen());
         }}
       >
         undo
       </button>
+      <button
+        onClick={() => {
+          setCustomDarkSquareStyle({ backgroundColor: '#E58863' });
+        }}
+      >
+        change colour
+      </button>
       <Chessboard
         animationDuration={200}
-        boardWidth={boardSize}
-        id="humanVsRandom"
+        customDarkSquareStyle={customDarkSquareStyle}
         position={game.fen()}
         onPieceDrop={onDrop}
-        boardStyle={{
-          borderRadius: '5px',
+        customBoardStyle={{
+          borderRadius: '10px',
           boxShadow: '0 5px 15px rgba(0, 0, 0, 0.5)'
         }}
       />
