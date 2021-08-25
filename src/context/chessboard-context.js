@@ -54,7 +54,7 @@ export function ChessboardProvider({
   const [previousTimeout, setPreviousTimeout] = useState();
 
   // screen size
-  const [screenSize, setScreenSize] = useState(undefined);
+  const [screenSize, setScreenSize] = useState();
 
   // if currently waiting for an animation to finish
   const [waitingForAnimation, setWaitingForAnimation] = useState(false);
