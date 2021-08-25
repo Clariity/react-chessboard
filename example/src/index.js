@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 
+import BasicBoard from './boards/BasicBoard';
 import ClickToMove from './boards/ClickToMove';
 import PlayVsPlay from './boards/PlayVsPlay';
 import PlayVsRandom from './boards/PlayVsRandom';
@@ -27,6 +28,14 @@ function App() {
 
   function getSelectedBoard() {
     switch (selectedBoard) {
+      case 'BasicBoard':
+        return (
+          <>
+            <h2>Basic Board</h2>
+            <BasicBoard boardWidth={chessboardSize} />
+            <br />
+          </>
+        );
       case 'PlayVsRandom':
         return (
           <>
@@ -82,6 +91,15 @@ function App() {
     <div className="container">
       <h1>react-chessboard examples</h1>
       <div className="button-container">
+        <button
+          className={`rc-button ${selectedBoard === 'BasicBoard' ? 'selected' : ''}`}
+          onClick={() => {
+            setSelectedBoard(null);
+            setTimeout(() => setSelectedBoard('BasicBoard'), 100);
+          }}
+        >
+          BasicBoard
+        </button>
         <button
           className={`rc-button ${selectedBoard === 'PlayVsRandom' ? 'selected' : ''}`}
           onClick={() => {

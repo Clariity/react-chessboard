@@ -9763,6 +9763,7 @@ function Square({
   const {
     boardWidth,
     boardOrientation,
+    currentPosition,
     customBoardStyle,
     customDarkSquareStyle,
     customDropSquareStyle,
@@ -9784,7 +9785,7 @@ function Square({
     collect: monitor => ({
       isOver: !!monitor.isOver()
     })
-  }), [square, waitingForAnimation]);
+  }), [square, currentPosition, waitingForAnimation]);
   useEffect(() => {
     const {
       x,
@@ -9808,9 +9809,7 @@ function Square({
     style: defaultSquareStyle,
     onMouseOver: () => onMouseOverSquare(square),
     onMouseOut: () => onMouseOutSquare(square),
-    onDragEnter: () => onDragOverSquare(square) // onMouseDown={() => console.log(square)}
-    // onMouseUp={() => console.log(square)}
-    ,
+    onDragEnter: () => onDragOverSquare(square),
     onClick: () => onSquareClick(square),
     onContextMenu: e => {
       e.preventDefault();
@@ -10219,4 +10218,3 @@ Chessboard.propTypes = chessboardPropTypes;
 Chessboard.defaultProps = chessboardDefaultProps;
 
 export { Chessboard as default };
-//# sourceMappingURL=index.esm.js.map

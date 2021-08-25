@@ -8,6 +8,7 @@ export default function Square({ square, squareColor, setSquares, children }) {
   const {
     boardWidth,
     boardOrientation,
+    currentPosition,
     customBoardStyle,
     customDarkSquareStyle,
     customDropSquareStyle,
@@ -30,7 +31,7 @@ export default function Square({ square, squareColor, setSquares, children }) {
         isOver: !!monitor.isOver()
       })
     }),
-    [square, waitingForAnimation]
+    [square, currentPosition, waitingForAnimation]
   );
 
   useEffect(() => {

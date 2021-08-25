@@ -60,6 +60,20 @@ npm i react-chessboard
 
 ## Usage
 
+### Bare Minimum
+
+```jsx
+import Chessboard from 'react-chessboard';
+
+export default function App() {
+  return (
+    <div>
+      <Chessboard id="BasicBoard" />
+    </div>
+  );
+}
+```
+
 ### Basic Example
 
 ```jsx
