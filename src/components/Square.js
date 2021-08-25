@@ -53,8 +53,6 @@ export default function Square({ square, squareColor, setSquares, children }) {
       onMouseOver={() => onMouseOverSquare(square)}
       onMouseOut={() => onMouseOutSquare(square)}
       onDragEnter={() => onDragOverSquare(square)}
-      // onMouseDown={() => console.log(square)}
-      // onMouseUp={() => console.log(square)}
       onClick={() => onSquareClick(square)}
       onContextMenu={(e) => {
         e.preventDefault();

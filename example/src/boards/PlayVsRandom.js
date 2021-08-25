@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import Chess from 'chess.js';
 
-// import Chessboard from '../react-chessboard/src';
 import Chessboard from 'react-chessboard';
 
 export default function PlayVsRandom({ boardWidth }) {
