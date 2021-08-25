@@ -3,7 +3,7 @@ import Chess from 'chess.js';
 
 import Chessboard from 'react-chessboard';
 
-export default function RandomVsRandomGame() {
+export default function RandomVsRandom({ boardWidth }) {
   const [game, setGame] = useState(new Chess());
 
   function safeGameMutate(modify) {
@@ -31,19 +31,33 @@ export default function RandomVsRandomGame() {
       game.move(possibleMoves[randomIndex]);
     });
 
-    setTimeout(makeRandomMove, 500);
+    setTimeout(makeRandomMove, 300);
   }
 
   return (
     <div>
       <Chessboard
+        id="RandomVsRandom"
+        arePiecesDraggable={false}
+        boardWidth={boardWidth}
         position={game.fen()}
-        animationDuration={300}
+        animationDuration={200}
         customBoardStyle={{
-          borderRadius: '5px',
+          borderRadius: '4px',
           boxShadow: '0 5px 15px rgba(0, 0, 0, 0.5)'
         }}
       />
+      <button
+        className="rc-button"
+        onClick={() => {
+          safeGameMutate((game) => {
+            game.reset();
+          });
+          setTimeout(makeRandomMove, 1000);
+        }}
+      >
+        reset
+      </button>
     </div>
   );
 }

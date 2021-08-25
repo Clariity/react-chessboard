@@ -4,9 +4,8 @@ import Chess from 'chess.js';
 // import Chessboard from '../react-chessboard/src';
 import Chessboard from 'react-chessboard';
 
-export default function PlayRandomMoveEngine() {
+export default function PlayVsRandom({ boardWidth }) {
   const [game, setGame] = useState(new Chess());
-  const [customDarkSquareStyle, setCustomDarkSquareStyle] = useState({ backgroundColor: '#B58863' });
 
   function safeGameMutate(modify) {
     setGame((g) => {
@@ -46,7 +45,19 @@ export default function PlayRandomMoveEngine() {
 
   return (
     <div>
+      <Chessboard
+        id="PlayVsRandom"
+        animationDuration={200}
+        boardWidth={boardWidth}
+        position={game.fen()}
+        onPieceDrop={onDrop}
+        customBoardStyle={{
+          borderRadius: '4px',
+          boxShadow: '0 5px 15px rgba(0, 0, 0, 0.5)'
+        }}
+      />
       <button
+        className="rc-button"
         onClick={() => {
           safeGameMutate((game) => {
             game.reset();
@@ -56,6 +67,7 @@ export default function PlayRandomMoveEngine() {
         reset
       </button>
       <button
+        className="rc-button"
         onClick={() => {
           safeGameMutate((game) => {
             game.undo();
@@ -64,23 +76,6 @@ export default function PlayRandomMoveEngine() {
       >
         undo
       </button>
-      <button
-        onClick={() => {
-          setCustomDarkSquareStyle({ backgroundColor: '#E58863' });
-        }}
-      >
-        change colour
-      </button>
-      <Chessboard
-        animationDuration={200}
-        customDarkSquareStyle={customDarkSquareStyle}
-        position={game.fen()}
-        onPieceDrop={onDrop}
-        customBoardStyle={{
-          borderRadius: '10px',
-          boxShadow: '0 5px 15px rgba(0, 0, 0, 0.5)'
-        }}
-      />
     </div>
   );
 }

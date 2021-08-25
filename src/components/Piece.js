@@ -8,6 +8,7 @@ export default function Piece({ square, piece, getSquareCoordinates, getSingleSq
     animationDuration,
     arePiecesDraggable,
     boardWidth,
+    id,
     isDraggablePiece,
     onPieceClick,
     chessPieces,
@@ -20,6 +21,7 @@ export default function Piece({ square, piece, getSquareCoordinates, getSingleSq
   const [pieceStyle, setPieceStyle] = useState({
     opacity: 1,
     zIndex: 5,
+    touchAction: 'none',
     cursor: arePiecesDraggable
       ? isDraggablePiece({ piece, sourceSquare: square })
         ? '-webkit-grab'
@@ -30,7 +32,7 @@ export default function Piece({ square, piece, getSquareCoordinates, getSingleSq
   const [{ canDrag, isDragging }, drag] = useDrag(
     () => ({
       type: 'piece',
-      item: { piece, square },
+      item: { piece, square, id },
       collect: (monitor) => ({
         canDrag: isDraggablePiece({ piece, sourceSquare: square }),
         isDragging: !!monitor.isDragging()
@@ -52,7 +54,10 @@ export default function Piece({ square, piece, getSquareCoordinates, getSingleSq
     // if waiting for animation, then animation has started and we can perform animation
     // we need to head towards where we need to go, we are the source, we are heading towards the target
     const removedPiece = positionDifferences.removed?.[square];
-    const newSquare = Object.entries(positionDifferences.added).find(([_, v]) => v === removedPiece);
+    // check if piece matches or if removed piece was a pawn and new square is on 1st or 8th rank (promotion)
+    const newSquare = Object.entries(positionDifferences.added).find(
+      ([s, p]) => p === removedPiece || (removedPiece?.[1] === 'P' && (s[1] === '1' || s[1] === '8'))
+    );
     // we can perform animation if our square was in removed, AND the matching piece is in added
     if (waitingForAnimation && removedPiece && newSquare) {
       const { sourceSq, targetSq } = getSquareCoordinates(square, newSquare[0]);

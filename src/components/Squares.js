@@ -2,12 +2,12 @@ import { COLUMNS } from '../consts';
 import { useChessboard } from '../context/chessboard-context';
 
 export default function Squares({ children }) {
-  const { boardOrientation, boardWidth, customBoardStyle } = useChessboard();
+  const { boardOrientation, boardWidth, customBoardStyle, id } = useChessboard();
 
   let squareColor = 'white';
 
   return (
-    <div style={{ ...boardStyles(boardWidth), ...customBoardStyle }}>
+    <div data-boardid={id} style={{ ...boardStyles(boardWidth), ...customBoardStyle }}>
       {[...Array(8)].map((_, r) => {
         return (
           <div key={r.toString()} style={rowStyles(boardWidth)}>

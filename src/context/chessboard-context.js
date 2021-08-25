@@ -8,6 +8,10 @@ import { convertPositionToObject, getPositionDifferences } from '../functions';
 // add other things from chessground
 // change board orientation to 'w' or 'b'? like used in chess.js?
 
+// npm adduser
+// npm login
+// npm publish
+
 const ChessboardContext = React.createContext();
 
 export function ChessboardProvider({
@@ -22,6 +26,7 @@ export function ChessboardProvider({
   customPieces,
   customSquareStyles,
   dropOffBoardAction,
+  id,
   isDraggablePiece,
   getPositionObject,
   onDragOverSquare,
@@ -135,6 +140,7 @@ export function ChessboardProvider({
         customLightSquareStyle,
         customSquareStyles,
         dropOffBoardAction,
+        id,
         isDraggablePiece,
         getPositionObject,
         onDragOverSquare,

@@ -11,7 +11,7 @@ import { WhiteKing } from './ErrorBoundary';
 export default function Board() {
   const [squares, setSquares] = useState({});
 
-  const { boardWidth, chessPieces, showBoardNotation, currentPosition, screenSize } = useChessboard();
+  const { boardWidth, chessPieces, id, showBoardNotation, currentPosition, screenSize } = useChessboard();
 
   function getSingleSquareCoordinates(square) {
     return { sourceSq: squares[square] };
@@ -26,7 +26,7 @@ export default function Board() {
 
   const HookPreview = () => {
     const { display, item, style } = usePreview();
-    if (!display) {
+    if (!display || item.id !== id) {
       return null;
     }
     return (

@@ -2,6 +2,7 @@ import { DndProvider } from 'react-dnd-multi-backend';
 import HTML5toTouch from 'react-dnd-multi-backend/dist/esm/HTML5toTouch';
 
 import Board from './components/Board';
+// import CustomDragLayer from './components/CustomDragLayer';
 import ErrorBoundary from './components/ErrorBoundary';
 // import SparePieces from './components/SparePieces';
 
@@ -11,8 +12,9 @@ import { ChessboardProvider } from './context/chessboard-context';
 function Chessboard(props) {
   return (
     <ErrorBoundary>
-      <DndProvider options={HTML5toTouch}>
+      <DndProvider options={{ backends: [{ ...HTML5toTouch.backends[0], preview: true }, HTML5toTouch.backends[1]] }}>
         <ChessboardProvider {...props}>
+          {/* <CustomDragLayer /> */}
           <div>
             {/* {props.showSparePieces && <SparePieces.Top />} */}
             <Board />

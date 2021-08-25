@@ -36,6 +36,9 @@ export const chessboardPropTypes = {
   // behavior of pieces when dropped off the board. 'snapback' brings the piece back to it's original square, 'trash' deletes the piece from the board
   dropOffBoardAction: PropTypes.oneOf(['snapback', 'trash']),
 
+  // board identifier, necessary if more than one board is mounted for drag and drop.
+  id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+
   // function called when a piece drag is initiated. Returns if piece is draggable ({ piece: string, sourceSquare: string }) => bool
   isDraggablePiece: PropTypes.func,
 
@@ -85,6 +88,7 @@ export const chessboardDefaultProps = {
   customPieces: {},
   customSquareStyles: {},
   dropOffBoardAction: 'snapback',
+  id: 0,
   isDraggablePiece: () => true,
   getPositionObject: () => {},
   onDragOverSquare: () => {},
