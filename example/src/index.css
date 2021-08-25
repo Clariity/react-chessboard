@@ -14,6 +14,11 @@ body {
   padding: 30px;
 }
 
+.button-container {
+  display: block;
+  text-align: center;
+}
+
 .rc-button {
   cursor: pointer;
   padding: 10px;
@@ -22,7 +27,8 @@ body {
   background-color: #f0d9b5;
   border: none;
 }
-.rc-button:hover {
+.rc-button:hover,
+.selected {
   background-color: #b58863;
 }
 

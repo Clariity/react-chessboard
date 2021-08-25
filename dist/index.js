@@ -29,7 +29,7 @@ var MouseTransition = createTransition('mousedown', function (event) {
 
 function _createForOfIteratorHelper(o) {
   if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) {
-    if (Array.isArray(o) || (o = _unsupportedIterableToArray$a(o))) {
+    if (Array.isArray(o) || (o = _unsupportedIterableToArray$8(o))) {
       var i = 0;
 
       var F = function F() {};
@@ -82,16 +82,16 @@ function _createForOfIteratorHelper(o) {
   };
 }
 
-function _unsupportedIterableToArray$a(o, minLen) {
+function _unsupportedIterableToArray$8(o, minLen) {
   if (!o) return;
-  if (typeof o === "string") return _arrayLikeToArray$a(o, minLen);
+  if (typeof o === "string") return _arrayLikeToArray$8(o, minLen);
   var n = Object.prototype.toString.call(o).slice(8, -1);
   if (n === "Object" && o.constructor) n = o.constructor.name;
   if (n === "Map" || n === "Set") return Array.from(o);
-  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$a(o, minLen);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$8(o, minLen);
 }
 
-function _arrayLikeToArray$a(arr, len) {
+function _arrayLikeToArray$8(arr, len) {
   if (len == null || len > arr.length) len = arr.length;
 
   for (var i = 0, arr2 = new Array(len); i < len; i++) {
@@ -101,7 +101,7 @@ function _arrayLikeToArray$a(arr, len) {
   return arr2;
 }
 
-function _classCallCheck$h(instance, Constructor) {
+function _classCallCheck$i(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
   }
@@ -110,7 +110,7 @@ function _classCallCheck$h(instance, Constructor) {
 var PreviewList = function PreviewList() {
   var _this = this;
 
-  _classCallCheck$h(this, PreviewList);
+  _classCallCheck$i(this, PreviewList);
 
   this.register = function (preview) {
     _this.previews.push(preview);
@@ -144,20 +144,20 @@ var PreviewList = function PreviewList() {
 };
 
 function _toConsumableArray$1(arr) {
-  return _arrayWithoutHoles$1(arr) || _iterableToArray$1(arr) || _unsupportedIterableToArray$9(arr) || _nonIterableSpread$1();
+  return _arrayWithoutHoles$1(arr) || _iterableToArray$1(arr) || _unsupportedIterableToArray$7(arr) || _nonIterableSpread$1();
 }
 
 function _nonIterableSpread$1() {
   throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
 
-function _unsupportedIterableToArray$9(o, minLen) {
+function _unsupportedIterableToArray$7(o, minLen) {
   if (!o) return;
-  if (typeof o === "string") return _arrayLikeToArray$9(o, minLen);
+  if (typeof o === "string") return _arrayLikeToArray$7(o, minLen);
   var n = Object.prototype.toString.call(o).slice(8, -1);
   if (n === "Object" && o.constructor) n = o.constructor.name;
   if (n === "Map" || n === "Set") return Array.from(o);
-  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$9(o, minLen);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$7(o, minLen);
 }
 
 function _iterableToArray$1(iter) {
@@ -165,10 +165,10 @@ function _iterableToArray$1(iter) {
 }
 
 function _arrayWithoutHoles$1(arr) {
-  if (Array.isArray(arr)) return _arrayLikeToArray$9(arr);
+  if (Array.isArray(arr)) return _arrayLikeToArray$7(arr);
 }
 
-function _arrayLikeToArray$9(arr, len) {
+function _arrayLikeToArray$7(arr, len) {
   if (len == null || len > arr.length) len = arr.length;
 
   for (var i = 0, arr2 = new Array(len); i < len; i++) {
@@ -178,7 +178,7 @@ function _arrayLikeToArray$9(arr, len) {
   return arr2;
 }
 
-function _classCallCheck$g(instance, Constructor) {
+function _classCallCheck$h(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
   }
@@ -187,7 +187,7 @@ function _classCallCheck$g(instance, Constructor) {
 var _default = function _default(manager, context, sourceOptions) {
   var _this = this;
 
-  _classCallCheck$g(this, _default);
+  _classCallCheck$h(this, _default);
 
   this.setup = function () {
     if (typeof window === 'undefined') {
@@ -371,7 +371,7 @@ var MultiBackend = (function (manager, context, options) {
 
 var propTypes = {exports: {}};
 
-var reactIs = {exports: {}};
+var reactIs$1 = {exports: {}};
 
 var reactIs_production_min = {};
 
@@ -705,9 +705,9 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 if (process.env.NODE_ENV === 'production') {
-  reactIs.exports = reactIs_production_min;
+  reactIs$1.exports = reactIs_production_min;
 } else {
-  reactIs.exports = reactIs_development;
+  reactIs$1.exports = reactIs_development;
 }
 
 /*
@@ -717,7 +717,7 @@ object-assign
 */
 /* eslint-disable no-unused-vars */
 
-var getOwnPropertySymbols = Object.getOwnPropertySymbols;
+var getOwnPropertySymbols$1 = Object.getOwnPropertySymbols;
 var hasOwnProperty = Object.prototype.hasOwnProperty;
 var propIsEnumerable = Object.prototype.propertyIsEnumerable;
 
@@ -791,8 +791,8 @@ var objectAssign = shouldUseNative() ? Object.assign : function (target, source)
       }
     }
 
-    if (getOwnPropertySymbols) {
-      symbols = getOwnPropertySymbols(from);
+    if (getOwnPropertySymbols$1) {
+      symbols = getOwnPropertySymbols$1(from);
 
       for (var i = 0; i < symbols.length; i++) {
         if (propIsEnumerable.call(from, symbols[i])) {
@@ -917,7 +917,7 @@ var checkPropTypes_1 = checkPropTypes$1;
  * LICENSE file in the root directory of this source tree.
  */
 
-var ReactIs$1 = reactIs.exports;
+var ReactIs$1 = reactIs$1.exports;
 
 var assign = objectAssign;
 
@@ -1620,7 +1620,7 @@ var factoryWithThrowingShims = function () {
  */
 
 if (process.env.NODE_ENV !== 'production') {
-  var ReactIs = reactIs.exports; // By explicitly using `prop-types` you are opting into new development behavior.
+  var ReactIs = reactIs$1.exports; // By explicitly using `prop-types` you are opting into new development behavior.
   // http://fb.me/prop-types-in-prod
 
 
@@ -1706,20 +1706,20 @@ function setClientOffset(clientOffset, sourceClientOffset) {
   };
 }
 
-function _typeof$3(obj) {
+function _typeof$5(obj) {
   "@babel/helpers - typeof";
 
   if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
-    _typeof$3 = function _typeof(obj) {
+    _typeof$5 = function _typeof(obj) {
       return typeof obj;
     };
   } else {
-    _typeof$3 = function _typeof(obj) {
+    _typeof$5 = function _typeof(obj) {
       return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
     };
   }
 
-  return _typeof$3(obj);
+  return _typeof$5(obj);
 } // cheap lodash replacements
 
 /**
@@ -1750,7 +1750,7 @@ function without$1(items, item) {
  */
 
 function isObject(input) {
-  return _typeof$3(input) === 'object';
+  return _typeof$5(input) === 'object';
 }
 /**
  * repalcement for _.xor
@@ -1986,7 +1986,7 @@ function _objectSpread$4(target) {
 
     if (i % 2) {
       ownKeys$4(Object(source), true).forEach(function (key) {
-        _defineProperty$h(target, key, source[key]);
+        _defineProperty$i(target, key, source[key]);
       });
     } else if (Object.getOwnPropertyDescriptors) {
       Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
@@ -2000,7 +2000,7 @@ function _objectSpread$4(target) {
   return target;
 }
 
-function _defineProperty$h(obj, key, value) {
+function _defineProperty$i(obj, key, value) {
   if (key in obj) {
     Object.defineProperty(obj, key, {
       value: value,
@@ -2095,13 +2095,13 @@ function createDragDropActions(manager) {
   };
 }
 
-function _classCallCheck$f(instance, Constructor) {
+function _classCallCheck$g(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
   }
 }
 
-function _defineProperties$f(target, props) {
+function _defineProperties$g(target, props) {
   for (var i = 0; i < props.length; i++) {
     var descriptor = props[i];
     descriptor.enumerable = descriptor.enumerable || false;
@@ -2111,16 +2111,16 @@ function _defineProperties$f(target, props) {
   }
 }
 
-function _createClass$f(Constructor, protoProps, staticProps) {
-  if (protoProps) _defineProperties$f(Constructor.prototype, protoProps);
-  if (staticProps) _defineProperties$f(Constructor, staticProps);
+function _createClass$g(Constructor, protoProps, staticProps) {
+  if (protoProps) _defineProperties$g(Constructor.prototype, protoProps);
+  if (staticProps) _defineProperties$g(Constructor, staticProps);
   return Constructor;
 }
 var DragDropManagerImpl = /*#__PURE__*/function () {
   function DragDropManagerImpl(store, monitor) {
     var _this = this;
 
-    _classCallCheck$f(this, DragDropManagerImpl);
+    _classCallCheck$g(this, DragDropManagerImpl);
 
     this.isSetUp = false;
 
@@ -2145,7 +2145,7 @@ var DragDropManagerImpl = /*#__PURE__*/function () {
     store.subscribe(this.handleRefCountChange);
   }
 
-  _createClass$f(DragDropManagerImpl, [{
+  _createClass$g(DragDropManagerImpl, [{
     key: "receiveBackend",
     value: function receiveBackend(backend) {
       this.backend = backend;
@@ -2243,7 +2243,7 @@ var ActionTypes = {
  * @returns {boolean} True if the argument appears to be a plain object.
  */
 
-function isPlainObject(obj) {
+function isPlainObject$1(obj) {
   if (typeof obj !== 'object' || obj === null) return false;
   var proto = obj;
 
@@ -2476,7 +2476,7 @@ function createStore(reducer, preloadedState, enhancer) {
 
 
   function dispatch(action) {
-    if (!isPlainObject(action)) {
+    if (!isPlainObject$1(action)) {
       throw new Error(process.env.NODE_ENV === "production" ? formatProdErrorMessage(7) : "Actions must be plain objects. Instead, the actual type was: '" + kindOf(action) + "'. You may need to add middleware to your store setup to handle dispatching other values, such as 'redux-thunk' to handle dispatching functions. See https://redux.js.org/tutorials/fundamentals/part-4-store#middleware and https://redux.js.org/tutorials/fundamentals/part-6-async-logic#using-the-redux-thunk-middleware for examples.");
     }
 
@@ -2682,7 +2682,7 @@ function _objectSpread$3(target) {
 
     if (i % 2) {
       ownKeys$3(Object(source), true).forEach(function (key) {
-        _defineProperty$g(target, key, source[key]);
+        _defineProperty$h(target, key, source[key]);
       });
     } else if (Object.getOwnPropertyDescriptors) {
       Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
@@ -2696,7 +2696,7 @@ function _objectSpread$3(target) {
   return target;
 }
 
-function _defineProperty$g(obj, key, value) {
+function _defineProperty$h(obj, key, value) {
   if (key in obj) {
     Object.defineProperty(obj, key, {
       value: value,
@@ -2804,7 +2804,7 @@ function _objectSpread$2(target) {
 
     if (i % 2) {
       ownKeys$2(Object(source), true).forEach(function (key) {
-        _defineProperty$f(target, key, source[key]);
+        _defineProperty$g(target, key, source[key]);
       });
     } else if (Object.getOwnPropertyDescriptors) {
       Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
@@ -2818,7 +2818,7 @@ function _objectSpread$2(target) {
   return target;
 }
 
-function _defineProperty$f(obj, key, value) {
+function _defineProperty$g(obj, key, value) {
   if (key in obj) {
     Object.defineProperty(obj, key, {
       value: value,
@@ -3018,7 +3018,7 @@ function _objectSpread$1(target) {
 
     if (i % 2) {
       ownKeys$1(Object(source), true).forEach(function (key) {
-        _defineProperty$e(target, key, source[key]);
+        _defineProperty$f(target, key, source[key]);
       });
     } else if (Object.getOwnPropertyDescriptors) {
       Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
@@ -3032,7 +3032,7 @@ function _objectSpread$1(target) {
   return target;
 }
 
-function _defineProperty$e(obj, key, value) {
+function _defineProperty$f(obj, key, value) {
   if (key in obj) {
     Object.defineProperty(obj, key, {
       value: value,
@@ -3123,13 +3123,13 @@ function getDifferenceFromInitialOffset(state) {
   return subtract(clientOffset, initialClientOffset);
 }
 
-function _classCallCheck$e(instance, Constructor) {
+function _classCallCheck$f(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
   }
 }
 
-function _defineProperties$e(target, props) {
+function _defineProperties$f(target, props) {
   for (var i = 0; i < props.length; i++) {
     var descriptor = props[i];
     descriptor.enumerable = descriptor.enumerable || false;
@@ -3139,20 +3139,20 @@ function _defineProperties$e(target, props) {
   }
 }
 
-function _createClass$e(Constructor, protoProps, staticProps) {
-  if (protoProps) _defineProperties$e(Constructor.prototype, protoProps);
-  if (staticProps) _defineProperties$e(Constructor, staticProps);
+function _createClass$f(Constructor, protoProps, staticProps) {
+  if (protoProps) _defineProperties$f(Constructor.prototype, protoProps);
+  if (staticProps) _defineProperties$f(Constructor, staticProps);
   return Constructor;
 }
 var DragDropMonitorImpl = /*#__PURE__*/function () {
   function DragDropMonitorImpl(store, registry) {
-    _classCallCheck$e(this, DragDropMonitorImpl);
+    _classCallCheck$f(this, DragDropMonitorImpl);
 
     this.store = store;
     this.registry = registry;
   }
 
-  _createClass$e(DragDropMonitorImpl, [{
+  _createClass$f(DragDropMonitorImpl, [{
     key: "subscribeToStateChange",
     value: function subscribeToStateChange(listener) {
       var _this = this;
@@ -3376,20 +3376,20 @@ function getNextUniqueId() {
   return nextUniqueId++;
 }
 
-function _typeof$2(obj) {
+function _typeof$4(obj) {
   "@babel/helpers - typeof";
 
   if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
-    _typeof$2 = function _typeof(obj) {
+    _typeof$4 = function _typeof(obj) {
       return typeof obj;
     };
   } else {
-    _typeof$2 = function _typeof(obj) {
+    _typeof$4 = function _typeof(obj) {
       return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
     };
   }
 
-  return _typeof$2(obj);
+  return _typeof$4(obj);
 }
 function validateSourceContract(source) {
   invariant(typeof source.canDrag === 'function', 'Expected canDrag to be a function.');
@@ -3409,7 +3409,7 @@ function validateType(type, allowArray) {
     return;
   }
 
-  invariant(typeof type === 'string' || _typeof$2(type) === 'symbol', allowArray ? 'Type can only be a string, a symbol, or an array of either.' : 'Type can only be a string or a symbol.');
+  invariant(typeof type === 'string' || _typeof$4(type) === 'symbol', allowArray ? 'Type can only be a string, a symbol, or an array of either.' : 'Type can only be a string or a symbol.');
 }
 
 // Use the fastest means possible to execute a task in its own turn, with
@@ -3682,13 +3682,13 @@ function () {
   return RawTask;
 }();
 
-function _classCallCheck$d(instance, Constructor) {
+function _classCallCheck$e(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
   }
 }
 
-function _defineProperties$d(target, props) {
+function _defineProperties$e(target, props) {
   for (var i = 0; i < props.length; i++) {
     var descriptor = props[i];
     descriptor.enumerable = descriptor.enumerable || false;
@@ -3698,30 +3698,30 @@ function _defineProperties$d(target, props) {
   }
 }
 
-function _createClass$d(Constructor, protoProps, staticProps) {
-  if (protoProps) _defineProperties$d(Constructor.prototype, protoProps);
-  if (staticProps) _defineProperties$d(Constructor, staticProps);
+function _createClass$e(Constructor, protoProps, staticProps) {
+  if (protoProps) _defineProperties$e(Constructor.prototype, protoProps);
+  if (staticProps) _defineProperties$e(Constructor, staticProps);
   return Constructor;
 }
 
-function _slicedToArray$7(arr, i) {
-  return _arrayWithHoles$7(arr) || _iterableToArrayLimit$7(arr, i) || _unsupportedIterableToArray$8(arr, i) || _nonIterableRest$7();
+function _slicedToArray$5(arr, i) {
+  return _arrayWithHoles$5(arr) || _iterableToArrayLimit$5(arr, i) || _unsupportedIterableToArray$6(arr, i) || _nonIterableRest$5();
 }
 
-function _nonIterableRest$7() {
+function _nonIterableRest$5() {
   throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
 
-function _unsupportedIterableToArray$8(o, minLen) {
+function _unsupportedIterableToArray$6(o, minLen) {
   if (!o) return;
-  if (typeof o === "string") return _arrayLikeToArray$8(o, minLen);
+  if (typeof o === "string") return _arrayLikeToArray$6(o, minLen);
   var n = Object.prototype.toString.call(o).slice(8, -1);
   if (n === "Object" && o.constructor) n = o.constructor.name;
   if (n === "Map" || n === "Set") return Array.from(o);
-  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$8(o, minLen);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$6(o, minLen);
 }
 
-function _arrayLikeToArray$8(arr, len) {
+function _arrayLikeToArray$6(arr, len) {
   if (len == null || len > arr.length) len = arr.length;
 
   for (var i = 0, arr2 = new Array(len); i < len; i++) {
@@ -3731,7 +3731,7 @@ function _arrayLikeToArray$8(arr, len) {
   return arr2;
 }
 
-function _iterableToArrayLimit$7(arr, i) {
+function _iterableToArrayLimit$5(arr, i) {
   if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return;
   var _arr = [];
   var _n = true;
@@ -3758,7 +3758,7 @@ function _iterableToArrayLimit$7(arr, i) {
   return _arr;
 }
 
-function _arrayWithHoles$7(arr) {
+function _arrayWithHoles$5(arr) {
   if (Array.isArray(arr)) return arr;
 }
 
@@ -3797,7 +3797,7 @@ function mapContainsValue(map, searchValue) {
   do {
     var _entries$next = entries.next(),
         done = _entries$next.done,
-        _entries$next$value = _slicedToArray$7(_entries$next.value, 2),
+        _entries$next$value = _slicedToArray$5(_entries$next.value, 2),
         value = _entries$next$value[1];
 
     if (value === searchValue) {
@@ -3812,7 +3812,7 @@ function mapContainsValue(map, searchValue) {
 
 var HandlerRegistryImpl = /*#__PURE__*/function () {
   function HandlerRegistryImpl(store) {
-    _classCallCheck$d(this, HandlerRegistryImpl);
+    _classCallCheck$e(this, HandlerRegistryImpl);
 
     this.types = new Map();
     this.dragSources = new Map();
@@ -3822,7 +3822,7 @@ var HandlerRegistryImpl = /*#__PURE__*/function () {
     this.store = store;
   }
 
-  _createClass$d(HandlerRegistryImpl, [{
+  _createClass$e(HandlerRegistryImpl, [{
     key: "addSource",
     value: function addSource$1(type, source) {
       validateType(type);
@@ -3963,24 +3963,24 @@ function makeStoreInstance(debugMode) {
 
 var _excluded = ["children"];
 
-function _slicedToArray$6(arr, i) {
-  return _arrayWithHoles$6(arr) || _iterableToArrayLimit$6(arr, i) || _unsupportedIterableToArray$7(arr, i) || _nonIterableRest$6();
+function _slicedToArray$4(arr, i) {
+  return _arrayWithHoles$4(arr) || _iterableToArrayLimit$4(arr, i) || _unsupportedIterableToArray$5(arr, i) || _nonIterableRest$4();
 }
 
-function _nonIterableRest$6() {
+function _nonIterableRest$4() {
   throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
 
-function _unsupportedIterableToArray$7(o, minLen) {
+function _unsupportedIterableToArray$5(o, minLen) {
   if (!o) return;
-  if (typeof o === "string") return _arrayLikeToArray$7(o, minLen);
+  if (typeof o === "string") return _arrayLikeToArray$5(o, minLen);
   var n = Object.prototype.toString.call(o).slice(8, -1);
   if (n === "Object" && o.constructor) n = o.constructor.name;
   if (n === "Map" || n === "Set") return Array.from(o);
-  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$7(o, minLen);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$5(o, minLen);
 }
 
-function _arrayLikeToArray$7(arr, len) {
+function _arrayLikeToArray$5(arr, len) {
   if (len == null || len > arr.length) len = arr.length;
 
   for (var i = 0, arr2 = new Array(len); i < len; i++) {
@@ -3990,7 +3990,7 @@ function _arrayLikeToArray$7(arr, len) {
   return arr2;
 }
 
-function _iterableToArrayLimit$6(arr, i) {
+function _iterableToArrayLimit$4(arr, i) {
   var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"];
 
   if (_i == null) return;
@@ -4020,7 +4020,7 @@ function _iterableToArrayLimit$6(arr, i) {
   return _arr;
 }
 
-function _arrayWithHoles$6(arr) {
+function _arrayWithHoles$4(arr) {
   if (Array.isArray(arr)) return arr;
 }
 
@@ -4070,7 +4070,7 @@ var DndProvider$1 = /*#__PURE__*/React.memo(function DndProvider(_ref) {
       props = _objectWithoutProperties(_ref, _excluded);
 
   var _getDndContextValue = getDndContextValue(props),
-      _getDndContextValue2 = _slicedToArray$6(_getDndContextValue, 2),
+      _getDndContextValue2 = _slicedToArray$4(_getDndContextValue, 2),
       manager = _getDndContextValue2[0],
       isGlobalInstance = _getDndContextValue2[1]; // memoized from props
 
@@ -4131,13 +4131,13 @@ function getGlobalContext() {
   return typeof global !== 'undefined' ? global : window;
 }
 
-function _classCallCheck$c(instance, Constructor) {
+function _classCallCheck$d(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
   }
 }
 
-function _defineProperties$c(target, props) {
+function _defineProperties$d(target, props) {
   for (var i = 0; i < props.length; i++) {
     var descriptor = props[i];
     descriptor.enumerable = descriptor.enumerable || false;
@@ -4147,13 +4147,13 @@ function _defineProperties$c(target, props) {
   }
 }
 
-function _createClass$c(Constructor, protoProps, staticProps) {
-  if (protoProps) _defineProperties$c(Constructor.prototype, protoProps);
-  if (staticProps) _defineProperties$c(Constructor, staticProps);
+function _createClass$d(Constructor, protoProps, staticProps) {
+  if (protoProps) _defineProperties$d(Constructor.prototype, protoProps);
+  if (staticProps) _defineProperties$d(Constructor, staticProps);
   return Constructor;
 }
 
-function _defineProperty$d(obj, key, value) {
+function _defineProperty$e(obj, key, value) {
   if (key in obj) {
     Object.defineProperty(obj, key, {
       value: value,
@@ -4171,16 +4171,16 @@ var isCallingCanDrag = false;
 var isCallingIsDragging = false;
 var DragSourceMonitorImpl = /*#__PURE__*/function () {
   function DragSourceMonitorImpl(manager) {
-    _classCallCheck$c(this, DragSourceMonitorImpl);
+    _classCallCheck$d(this, DragSourceMonitorImpl);
 
-    _defineProperty$d(this, "internalMonitor", void 0);
+    _defineProperty$e(this, "internalMonitor", void 0);
 
-    _defineProperty$d(this, "sourceId", null);
+    _defineProperty$e(this, "sourceId", null);
 
     this.internalMonitor = manager.getMonitor();
   }
 
-  _createClass$c(DragSourceMonitorImpl, [{
+  _createClass$d(DragSourceMonitorImpl, [{
     key: "receiveHandlerId",
     value: function receiveHandlerId(sourceId) {
       this.sourceId = sourceId;
@@ -4313,13 +4313,13 @@ var DragSourceMonitorImpl = /*#__PURE__*/function () {
   return DragSourceMonitorImpl;
 }();
 
-function _classCallCheck$b(instance, Constructor) {
+function _classCallCheck$c(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
   }
 }
 
-function _defineProperties$b(target, props) {
+function _defineProperties$c(target, props) {
   for (var i = 0; i < props.length; i++) {
     var descriptor = props[i];
     descriptor.enumerable = descriptor.enumerable || false;
@@ -4329,13 +4329,13 @@ function _defineProperties$b(target, props) {
   }
 }
 
-function _createClass$b(Constructor, protoProps, staticProps) {
-  if (protoProps) _defineProperties$b(Constructor.prototype, protoProps);
-  if (staticProps) _defineProperties$b(Constructor, staticProps);
+function _createClass$c(Constructor, protoProps, staticProps) {
+  if (protoProps) _defineProperties$c(Constructor.prototype, protoProps);
+  if (staticProps) _defineProperties$c(Constructor, staticProps);
   return Constructor;
 }
 
-function _defineProperty$c(obj, key, value) {
+function _defineProperty$d(obj, key, value) {
   if (key in obj) {
     Object.defineProperty(obj, key, {
       value: value,
@@ -4352,16 +4352,16 @@ function _defineProperty$c(obj, key, value) {
 var isCallingCanDrop = false;
 var DropTargetMonitorImpl = /*#__PURE__*/function () {
   function DropTargetMonitorImpl(manager) {
-    _classCallCheck$b(this, DropTargetMonitorImpl);
+    _classCallCheck$c(this, DropTargetMonitorImpl);
 
-    _defineProperty$c(this, "internalMonitor", void 0);
+    _defineProperty$d(this, "internalMonitor", void 0);
 
-    _defineProperty$c(this, "targetId", null);
+    _defineProperty$d(this, "targetId", null);
 
     this.internalMonitor = manager.getMonitor();
   }
 
-  _createClass$b(DropTargetMonitorImpl, [{
+  _createClass$c(DropTargetMonitorImpl, [{
     key: "receiveHandlerId",
     value: function receiveHandlerId(targetId) {
       this.targetId = targetId;
@@ -4536,25 +4536,25 @@ function cloneWithRef(element, newRef) {
   }
 }
 
-function _typeof$1(obj) {
+function _typeof$3(obj) {
   "@babel/helpers - typeof";
 
   if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
-    _typeof$1 = function _typeof(obj) {
+    _typeof$3 = function _typeof(obj) {
       return typeof obj;
     };
   } else {
-    _typeof$1 = function _typeof(obj) {
+    _typeof$3 = function _typeof(obj) {
       return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
     };
   }
 
-  return _typeof$1(obj);
+  return _typeof$3(obj);
 }
 
 function isRef(obj) {
   return (// eslint-disable-next-line no-prototype-builtins
-    obj !== null && _typeof$1(obj) === 'object' && Object.prototype.hasOwnProperty.call(obj, 'current')
+    obj !== null && _typeof$3(obj) === 'object' && Object.prototype.hasOwnProperty.call(obj, 'current')
   );
 }
 
@@ -4601,13 +4601,13 @@ function shallowEqual(objA, objB, compare, compareContext) {
   return true;
 }
 
-function _classCallCheck$a(instance, Constructor) {
+function _classCallCheck$b(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
   }
 }
 
-function _defineProperties$a(target, props) {
+function _defineProperties$b(target, props) {
   for (var i = 0; i < props.length; i++) {
     var descriptor = props[i];
     descriptor.enumerable = descriptor.enumerable || false;
@@ -4617,13 +4617,13 @@ function _defineProperties$a(target, props) {
   }
 }
 
-function _createClass$a(Constructor, protoProps, staticProps) {
-  if (protoProps) _defineProperties$a(Constructor.prototype, protoProps);
-  if (staticProps) _defineProperties$a(Constructor, staticProps);
+function _createClass$b(Constructor, protoProps, staticProps) {
+  if (protoProps) _defineProperties$b(Constructor.prototype, protoProps);
+  if (staticProps) _defineProperties$b(Constructor, staticProps);
   return Constructor;
 }
 
-function _defineProperty$b(obj, key, value) {
+function _defineProperty$c(obj, key, value) {
   if (key in obj) {
     Object.defineProperty(obj, key, {
       value: value,
@@ -4643,9 +4643,9 @@ var SourceConnector = /*#__PURE__*/function () {
   function SourceConnector(backend) {
     var _this = this;
 
-    _classCallCheck$a(this, SourceConnector);
+    _classCallCheck$b(this, SourceConnector);
 
-    _defineProperty$b(this, "hooks", wrapConnectorHooks({
+    _defineProperty$c(this, "hooks", wrapConnectorHooks({
       dragSource: function dragSource(node, options) {
         _this.clearDragSource();
 
@@ -4674,40 +4674,40 @@ var SourceConnector = /*#__PURE__*/function () {
       }
     }));
 
-    _defineProperty$b(this, "handlerId", null);
+    _defineProperty$c(this, "handlerId", null);
 
-    _defineProperty$b(this, "dragSourceRef", null);
+    _defineProperty$c(this, "dragSourceRef", null);
 
-    _defineProperty$b(this, "dragSourceNode", void 0);
+    _defineProperty$c(this, "dragSourceNode", void 0);
 
-    _defineProperty$b(this, "dragSourceOptionsInternal", null);
+    _defineProperty$c(this, "dragSourceOptionsInternal", null);
 
-    _defineProperty$b(this, "dragSourceUnsubscribe", void 0);
+    _defineProperty$c(this, "dragSourceUnsubscribe", void 0);
 
-    _defineProperty$b(this, "dragPreviewRef", null);
+    _defineProperty$c(this, "dragPreviewRef", null);
 
-    _defineProperty$b(this, "dragPreviewNode", void 0);
+    _defineProperty$c(this, "dragPreviewNode", void 0);
 
-    _defineProperty$b(this, "dragPreviewOptionsInternal", null);
+    _defineProperty$c(this, "dragPreviewOptionsInternal", null);
 
-    _defineProperty$b(this, "dragPreviewUnsubscribe", void 0);
+    _defineProperty$c(this, "dragPreviewUnsubscribe", void 0);
 
-    _defineProperty$b(this, "lastConnectedHandlerId", null);
+    _defineProperty$c(this, "lastConnectedHandlerId", null);
 
-    _defineProperty$b(this, "lastConnectedDragSource", null);
+    _defineProperty$c(this, "lastConnectedDragSource", null);
 
-    _defineProperty$b(this, "lastConnectedDragSourceOptions", null);
+    _defineProperty$c(this, "lastConnectedDragSourceOptions", null);
 
-    _defineProperty$b(this, "lastConnectedDragPreview", null);
+    _defineProperty$c(this, "lastConnectedDragPreview", null);
 
-    _defineProperty$b(this, "lastConnectedDragPreviewOptions", null);
+    _defineProperty$c(this, "lastConnectedDragPreviewOptions", null);
 
-    _defineProperty$b(this, "backend", void 0);
+    _defineProperty$c(this, "backend", void 0);
 
     this.backend = backend;
   }
 
-  _createClass$a(SourceConnector, [{
+  _createClass$b(SourceConnector, [{
     key: "receiveHandlerId",
     value: function receiveHandlerId(newHandlerId) {
       if (this.handlerId === newHandlerId) {
@@ -4868,13 +4868,13 @@ var SourceConnector = /*#__PURE__*/function () {
   return SourceConnector;
 }();
 
-function _classCallCheck$9(instance, Constructor) {
+function _classCallCheck$a(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
   }
 }
 
-function _defineProperties$9(target, props) {
+function _defineProperties$a(target, props) {
   for (var i = 0; i < props.length; i++) {
     var descriptor = props[i];
     descriptor.enumerable = descriptor.enumerable || false;
@@ -4884,13 +4884,13 @@ function _defineProperties$9(target, props) {
   }
 }
 
-function _createClass$9(Constructor, protoProps, staticProps) {
-  if (protoProps) _defineProperties$9(Constructor.prototype, protoProps);
-  if (staticProps) _defineProperties$9(Constructor, staticProps);
+function _createClass$a(Constructor, protoProps, staticProps) {
+  if (protoProps) _defineProperties$a(Constructor.prototype, protoProps);
+  if (staticProps) _defineProperties$a(Constructor, staticProps);
   return Constructor;
 }
 
-function _defineProperty$a(obj, key, value) {
+function _defineProperty$b(obj, key, value) {
   if (key in obj) {
     Object.defineProperty(obj, key, {
       value: value,
@@ -4909,9 +4909,9 @@ var TargetConnector = /*#__PURE__*/function () {
   function TargetConnector(backend) {
     var _this = this;
 
-    _classCallCheck$9(this, TargetConnector);
+    _classCallCheck$a(this, TargetConnector);
 
-    _defineProperty$a(this, "hooks", wrapConnectorHooks({
+    _defineProperty$b(this, "hooks", wrapConnectorHooks({
       dropTarget: function dropTarget(node, options) {
         _this.clearDropTarget();
 
@@ -4927,28 +4927,28 @@ var TargetConnector = /*#__PURE__*/function () {
       }
     }));
 
-    _defineProperty$a(this, "handlerId", null);
+    _defineProperty$b(this, "handlerId", null);
 
-    _defineProperty$a(this, "dropTargetRef", null);
+    _defineProperty$b(this, "dropTargetRef", null);
 
-    _defineProperty$a(this, "dropTargetNode", void 0);
+    _defineProperty$b(this, "dropTargetNode", void 0);
 
-    _defineProperty$a(this, "dropTargetOptionsInternal", null);
+    _defineProperty$b(this, "dropTargetOptionsInternal", null);
 
-    _defineProperty$a(this, "unsubscribeDropTarget", void 0);
+    _defineProperty$b(this, "unsubscribeDropTarget", void 0);
 
-    _defineProperty$a(this, "lastConnectedHandlerId", null);
+    _defineProperty$b(this, "lastConnectedHandlerId", null);
 
-    _defineProperty$a(this, "lastConnectedDropTarget", null);
+    _defineProperty$b(this, "lastConnectedDropTarget", null);
 
-    _defineProperty$a(this, "lastConnectedDropTargetOptions", null);
+    _defineProperty$b(this, "lastConnectedDropTargetOptions", null);
 
-    _defineProperty$a(this, "backend", void 0);
+    _defineProperty$b(this, "backend", void 0);
 
     this.backend = backend;
   }
 
-  _createClass$9(TargetConnector, [{
+  _createClass$a(TargetConnector, [{
     key: "connectTarget",
     get: function get() {
       return this.dropTarget;
@@ -5051,6 +5051,459 @@ function registerSource(type, source, manager) {
   return [sourceId, function () {
     return registry.removeSource(sourceId);
   }];
+}
+
+function _typeof$2(obj) {
+  "@babel/helpers - typeof";
+
+  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
+    _typeof$2 = function _typeof(obj) {
+      return typeof obj;
+    };
+  } else {
+    _typeof$2 = function _typeof(obj) {
+      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+    };
+  }
+
+  return _typeof$2(obj);
+}
+function isClassComponent(Component) {
+  return Component && Component.prototype && typeof Component.prototype.render === 'function';
+}
+function isRefForwardingComponent(C) {
+  var _item$$$typeof;
+
+  var item = C;
+  return (item === null || item === void 0 ? void 0 : (_item$$$typeof = item.$$typeof) === null || _item$$$typeof === void 0 ? void 0 : _item$$$typeof.toString()) === 'Symbol(react.forward_ref)';
+}
+function isRefable(C) {
+  return isClassComponent(C) || isRefForwardingComponent(C);
+}
+function checkDecoratorArguments(functionName, signature) {
+  if (process.env.NODE_ENV !== 'production') {
+    for (var i = 0; i < (arguments.length <= 2 ? 0 : arguments.length - 2); i++) {
+      var arg = i + 2 < 2 || arguments.length <= i + 2 ? undefined : arguments[i + 2];
+
+      if (arg && arg.prototype && arg.prototype.render) {
+        // eslint-disable-next-line no-console
+        console.error('You seem to be applying the arguments in the wrong order. ' + "It should be ".concat(functionName, "(").concat(signature, ")(Component), not the other way around. ") + 'Read more: http://react-dnd.github.io/react-dnd/docs/troubleshooting#you-seem-to-be-applying-the-arguments-in-the-wrong-order');
+        return;
+      }
+    }
+  }
+}
+
+function isObjectLike(input) {
+  return _typeof$2(input) === 'object' && input !== null;
+}
+
+function isPlainObject(input) {
+  if (!isObjectLike(input)) {
+    return false;
+  }
+
+  if (Object.getPrototypeOf(input) === null) {
+    return true;
+  }
+
+  var proto = input;
+
+  while (Object.getPrototypeOf(proto) !== null) {
+    proto = Object.getPrototypeOf(proto);
+  }
+
+  return Object.getPrototypeOf(input) === proto;
+}
+
+var reactIs = reactIs$1.exports;
+/**
+ * Copyright 2015, Yahoo! Inc.
+ * Copyrights licensed under the New BSD License. See the accompanying LICENSE file for terms.
+ */
+
+
+var REACT_STATICS = {
+  childContextTypes: true,
+  contextType: true,
+  contextTypes: true,
+  defaultProps: true,
+  displayName: true,
+  getDefaultProps: true,
+  getDerivedStateFromError: true,
+  getDerivedStateFromProps: true,
+  mixins: true,
+  propTypes: true,
+  type: true
+};
+var KNOWN_STATICS = {
+  name: true,
+  length: true,
+  prototype: true,
+  caller: true,
+  callee: true,
+  arguments: true,
+  arity: true
+};
+var FORWARD_REF_STATICS = {
+  '$$typeof': true,
+  render: true,
+  defaultProps: true,
+  displayName: true,
+  propTypes: true
+};
+var MEMO_STATICS = {
+  '$$typeof': true,
+  compare: true,
+  defaultProps: true,
+  displayName: true,
+  propTypes: true,
+  type: true
+};
+var TYPE_STATICS = {};
+TYPE_STATICS[reactIs.ForwardRef] = FORWARD_REF_STATICS;
+TYPE_STATICS[reactIs.Memo] = MEMO_STATICS;
+
+function getStatics(component) {
+  // React v16.11 and below
+  if (reactIs.isMemo(component)) {
+    return MEMO_STATICS;
+  } // React v16.12 and above
+
+
+  return TYPE_STATICS[component['$$typeof']] || REACT_STATICS;
+}
+
+var defineProperty = Object.defineProperty;
+var getOwnPropertyNames = Object.getOwnPropertyNames;
+var getOwnPropertySymbols = Object.getOwnPropertySymbols;
+var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
+var getPrototypeOf = Object.getPrototypeOf;
+var objectPrototype = Object.prototype;
+
+function hoistNonReactStatics(targetComponent, sourceComponent, blacklist) {
+  if (typeof sourceComponent !== 'string') {
+    // don't hoist over string (html) components
+    if (objectPrototype) {
+      var inheritedComponent = getPrototypeOf(sourceComponent);
+
+      if (inheritedComponent && inheritedComponent !== objectPrototype) {
+        hoistNonReactStatics(targetComponent, inheritedComponent, blacklist);
+      }
+    }
+
+    var keys = getOwnPropertyNames(sourceComponent);
+
+    if (getOwnPropertySymbols) {
+      keys = keys.concat(getOwnPropertySymbols(sourceComponent));
+    }
+
+    var targetStatics = getStatics(targetComponent);
+    var sourceStatics = getStatics(sourceComponent);
+
+    for (var i = 0; i < keys.length; ++i) {
+      var key = keys[i];
+
+      if (!KNOWN_STATICS[key] && !(blacklist && blacklist[key]) && !(sourceStatics && sourceStatics[key]) && !(targetStatics && targetStatics[key])) {
+        var descriptor = getOwnPropertyDescriptor(sourceComponent, key);
+
+        try {
+          // Avoid failures from read-only properties
+          defineProperty(targetComponent, key, descriptor);
+        } catch (e) {}
+      }
+    }
+  }
+
+  return targetComponent;
+}
+
+var hoistNonReactStatics_cjs = hoistNonReactStatics;
+
+var hoistStatics = hoistNonReactStatics_cjs;
+
+function _typeof$1(obj) {
+  "@babel/helpers - typeof";
+
+  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
+    _typeof$1 = function _typeof(obj) {
+      return typeof obj;
+    };
+  } else {
+    _typeof$1 = function _typeof(obj) {
+      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+    };
+  }
+
+  return _typeof$1(obj);
+}
+
+function _classCallCheck$9(instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+}
+
+function _defineProperties$9(target, props) {
+  for (var i = 0; i < props.length; i++) {
+    var descriptor = props[i];
+    descriptor.enumerable = descriptor.enumerable || false;
+    descriptor.configurable = true;
+    if ("value" in descriptor) descriptor.writable = true;
+    Object.defineProperty(target, descriptor.key, descriptor);
+  }
+}
+
+function _createClass$9(Constructor, protoProps, staticProps) {
+  if (protoProps) _defineProperties$9(Constructor.prototype, protoProps);
+  if (staticProps) _defineProperties$9(Constructor, staticProps);
+  return Constructor;
+}
+
+function _inherits(subClass, superClass) {
+  if (typeof superClass !== "function" && superClass !== null) {
+    throw new TypeError("Super expression must either be null or a function");
+  }
+
+  subClass.prototype = Object.create(superClass && superClass.prototype, {
+    constructor: {
+      value: subClass,
+      writable: true,
+      configurable: true
+    }
+  });
+  if (superClass) _setPrototypeOf(subClass, superClass);
+}
+
+function _setPrototypeOf(o, p) {
+  _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
+    o.__proto__ = p;
+    return o;
+  };
+
+  return _setPrototypeOf(o, p);
+}
+
+function _createSuper(Derived) {
+  var hasNativeReflectConstruct = _isNativeReflectConstruct();
+
+  return function _createSuperInternal() {
+    var Super = _getPrototypeOf(Derived),
+        result;
+
+    if (hasNativeReflectConstruct) {
+      var NewTarget = _getPrototypeOf(this).constructor;
+
+      result = Reflect.construct(Super, arguments, NewTarget);
+    } else {
+      result = Super.apply(this, arguments);
+    }
+
+    return _possibleConstructorReturn(this, result);
+  };
+}
+
+function _possibleConstructorReturn(self, call) {
+  if (call && (_typeof$1(call) === "object" || typeof call === "function")) {
+    return call;
+  } else if (call !== void 0) {
+    throw new TypeError("Derived constructors may only return object or undefined");
+  }
+
+  return _assertThisInitialized(self);
+}
+
+function _assertThisInitialized(self) {
+  if (self === void 0) {
+    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+  }
+
+  return self;
+}
+
+function _isNativeReflectConstruct() {
+  if (typeof Reflect === "undefined" || !Reflect.construct) return false;
+  if (Reflect.construct.sham) return false;
+  if (typeof Proxy === "function") return true;
+
+  try {
+    Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {}));
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+function _getPrototypeOf(o) {
+  _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
+    return o.__proto__ || Object.getPrototypeOf(o);
+  };
+  return _getPrototypeOf(o);
+}
+
+function _defineProperty$a(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+/**
+ * @param collect The props collector function
+ * @param options The DnD options
+ */
+
+function DragLayer(collect) {
+  var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  checkDecoratorArguments('DragLayer', 'collect[, options]', collect, options);
+  invariant(typeof collect === 'function', 'Expected "collect" provided as the first argument to DragLayer to be a function that collects props to inject into the component. ', 'Instead, received %s. Read more: http://react-dnd.github.io/react-dnd/docs/api/drag-layer', collect);
+  invariant(isPlainObject(options), 'Expected "options" provided as the second argument to DragLayer to be a plain object when specified. ' + 'Instead, received %s. Read more: http://react-dnd.github.io/react-dnd/docs/api/drag-layer', options);
+  return function decorateLayer(DecoratedComponent) {
+    var Decorated = DecoratedComponent;
+    var _options$arePropsEqua = options.arePropsEqual,
+        arePropsEqual = _options$arePropsEqua === void 0 ? shallowEqual : _options$arePropsEqua;
+    var displayName = Decorated.displayName || Decorated.name || 'Component';
+
+    var DragLayerContainer = /*#__PURE__*/function (_Component) {
+      _inherits(DragLayerContainer, _Component);
+
+      var _super = _createSuper(DragLayerContainer);
+
+      function DragLayerContainer() {
+        var _this;
+
+        _classCallCheck$9(this, DragLayerContainer);
+
+        for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+          args[_key] = arguments[_key];
+        }
+
+        _this = _super.call.apply(_super, [this].concat(args));
+
+        _defineProperty$a(_assertThisInitialized(_this), "manager", void 0);
+
+        _defineProperty$a(_assertThisInitialized(_this), "isCurrentlyMounted", false);
+
+        _defineProperty$a(_assertThisInitialized(_this), "unsubscribeFromOffsetChange", void 0);
+
+        _defineProperty$a(_assertThisInitialized(_this), "unsubscribeFromStateChange", void 0);
+
+        _defineProperty$a(_assertThisInitialized(_this), "ref", /*#__PURE__*/React.createRef());
+
+        _defineProperty$a(_assertThisInitialized(_this), "handleChange", function () {
+          if (!_this.isCurrentlyMounted) {
+            return;
+          }
+
+          var nextState = _this.getCurrentState();
+
+          if (!shallowEqual(nextState, _this.state)) {
+            _this.setState(nextState);
+          }
+        });
+
+        return _this;
+      }
+
+      _createClass$9(DragLayerContainer, [{
+        key: "getDecoratedComponentInstance",
+        value: function getDecoratedComponentInstance() {
+          invariant(this.ref.current, 'In order to access an instance of the decorated component, it must either be a class component or use React.forwardRef()');
+          return this.ref.current;
+        }
+      }, {
+        key: "shouldComponentUpdate",
+        value: function shouldComponentUpdate(nextProps, nextState) {
+          return !arePropsEqual(nextProps, this.props) || !shallowEqual(nextState, this.state);
+        }
+      }, {
+        key: "componentDidMount",
+        value: function componentDidMount() {
+          this.isCurrentlyMounted = true;
+          this.handleChange();
+        }
+      }, {
+        key: "componentWillUnmount",
+        value: function componentWillUnmount() {
+          this.isCurrentlyMounted = false;
+
+          if (this.unsubscribeFromOffsetChange) {
+            this.unsubscribeFromOffsetChange();
+            this.unsubscribeFromOffsetChange = undefined;
+          }
+
+          if (this.unsubscribeFromStateChange) {
+            this.unsubscribeFromStateChange();
+            this.unsubscribeFromStateChange = undefined;
+          }
+        }
+      }, {
+        key: "render",
+        value: function render() {
+          var _this2 = this;
+
+          return jsxRuntime.jsx(DndContext.Consumer, {
+            children: function children(_ref) {
+              var dragDropManager = _ref.dragDropManager;
+
+              if (dragDropManager === undefined) {
+                return null;
+              }
+
+              _this2.receiveDragDropManager(dragDropManager); // Let componentDidMount fire to initialize the collected state
+
+
+              if (!_this2.isCurrentlyMounted) {
+                return null;
+              }
+
+              return jsxRuntime.jsx(Decorated, Object.assign({}, _this2.props, _this2.state, {
+                ref: isRefable(Decorated) ? _this2.ref : null
+              }), void 0);
+            }
+          }, void 0);
+        }
+      }, {
+        key: "receiveDragDropManager",
+        value: function receiveDragDropManager(dragDropManager) {
+          if (this.manager !== undefined) {
+            return;
+          }
+
+          this.manager = dragDropManager;
+          invariant(_typeof$1(dragDropManager) === 'object', 'Could not find the drag and drop manager in the context of %s. ' + 'Make sure to render a DndProvider component in your top-level component. ' + 'Read more: http://react-dnd.github.io/react-dnd/docs/troubleshooting#could-not-find-the-drag-and-drop-manager-in-the-context', displayName, displayName);
+          var monitor = this.manager.getMonitor();
+          this.unsubscribeFromOffsetChange = monitor.subscribeToOffsetChange(this.handleChange);
+          this.unsubscribeFromStateChange = monitor.subscribeToStateChange(this.handleChange);
+        }
+      }, {
+        key: "getCurrentState",
+        value: function getCurrentState() {
+          if (!this.manager) {
+            return {};
+          }
+
+          var monitor = this.manager.getMonitor();
+          return collect(monitor, this.props);
+        }
+      }]);
+
+      return DragLayerContainer;
+    }(React.Component);
+
+    _defineProperty$a(DragLayerContainer, "displayName", "DragLayer(".concat(displayName, ")"));
+
+    _defineProperty$a(DragLayerContainer, "DecoratedComponent", DecoratedComponent);
+
+    return hoistStatics(DragLayerContainer, DecoratedComponent);
+  };
 }
 
 var useIsomorphicLayoutEffect = typeof window !== 'undefined' ? React.useLayoutEffect : React.useEffect;
@@ -5213,24 +5666,24 @@ function useDragType(spec) {
   }, [spec]);
 }
 
-function _slicedToArray$5(arr, i) {
-  return _arrayWithHoles$5(arr) || _iterableToArrayLimit$5(arr, i) || _unsupportedIterableToArray$6(arr, i) || _nonIterableRest$5();
+function _slicedToArray$3(arr, i) {
+  return _arrayWithHoles$3(arr) || _iterableToArrayLimit$3(arr, i) || _unsupportedIterableToArray$4(arr, i) || _nonIterableRest$3();
 }
 
-function _nonIterableRest$5() {
+function _nonIterableRest$3() {
   throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
 
-function _unsupportedIterableToArray$6(o, minLen) {
+function _unsupportedIterableToArray$4(o, minLen) {
   if (!o) return;
-  if (typeof o === "string") return _arrayLikeToArray$6(o, minLen);
+  if (typeof o === "string") return _arrayLikeToArray$4(o, minLen);
   var n = Object.prototype.toString.call(o).slice(8, -1);
   if (n === "Object" && o.constructor) n = o.constructor.name;
   if (n === "Map" || n === "Set") return Array.from(o);
-  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$6(o, minLen);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$4(o, minLen);
 }
 
-function _arrayLikeToArray$6(arr, len) {
+function _arrayLikeToArray$4(arr, len) {
   if (len == null || len > arr.length) len = arr.length;
 
   for (var i = 0, arr2 = new Array(len); i < len; i++) {
@@ -5240,7 +5693,7 @@ function _arrayLikeToArray$6(arr, len) {
   return arr2;
 }
 
-function _iterableToArrayLimit$5(arr, i) {
+function _iterableToArrayLimit$3(arr, i) {
   var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"];
 
   if (_i == null) return;
@@ -5270,7 +5723,7 @@ function _iterableToArrayLimit$5(arr, i) {
   return _arr;
 }
 
-function _arrayWithHoles$5(arr) {
+function _arrayWithHoles$3(arr) {
   if (Array.isArray(arr)) return arr;
 }
 function useRegisteredDragSource(spec, monitor, connector) {
@@ -5280,7 +5733,7 @@ function useRegisteredDragSource(spec, monitor, connector) {
   useIsomorphicLayoutEffect(function registerDragSource() {
     if (itemType != null) {
       var _registerSource = registerSource(itemType, handler, manager),
-          _registerSource2 = _slicedToArray$5(_registerSource, 2),
+          _registerSource2 = _slicedToArray$3(_registerSource, 2),
           handlerId = _registerSource2[0],
           unregister = _registerSource2[1];
 
@@ -5292,20 +5745,20 @@ function useRegisteredDragSource(spec, monitor, connector) {
 }
 
 function _toConsumableArray(arr) {
-  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray$5(arr) || _nonIterableSpread();
+  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray$3(arr) || _nonIterableSpread();
 }
 
 function _nonIterableSpread() {
   throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
 
-function _unsupportedIterableToArray$5(o, minLen) {
+function _unsupportedIterableToArray$3(o, minLen) {
   if (!o) return;
-  if (typeof o === "string") return _arrayLikeToArray$5(o, minLen);
+  if (typeof o === "string") return _arrayLikeToArray$3(o, minLen);
   var n = Object.prototype.toString.call(o).slice(8, -1);
   if (n === "Object" && o.constructor) n = o.constructor.name;
   if (n === "Map" || n === "Set") return Array.from(o);
-  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$5(o, minLen);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$3(o, minLen);
 }
 
 function _iterableToArray(iter) {
@@ -5313,10 +5766,10 @@ function _iterableToArray(iter) {
 }
 
 function _arrayWithoutHoles(arr) {
-  if (Array.isArray(arr)) return _arrayLikeToArray$5(arr);
+  if (Array.isArray(arr)) return _arrayLikeToArray$3(arr);
 }
 
-function _arrayLikeToArray$5(arr, len) {
+function _arrayLikeToArray$3(arr, len) {
   if (len == null || len > arr.length) len = arr.length;
 
   for (var i = 0, arr2 = new Array(len); i < len; i++) {
@@ -5403,24 +5856,24 @@ var fastDeepEqual = function equal(a, b) {
   return a !== a && b !== b;
 };
 
-function _slicedToArray$4(arr, i) {
-  return _arrayWithHoles$4(arr) || _iterableToArrayLimit$4(arr, i) || _unsupportedIterableToArray$4(arr, i) || _nonIterableRest$4();
+function _slicedToArray$2(arr, i) {
+  return _arrayWithHoles$2(arr) || _iterableToArrayLimit$2(arr, i) || _unsupportedIterableToArray$2(arr, i) || _nonIterableRest$2();
 }
 
-function _nonIterableRest$4() {
+function _nonIterableRest$2() {
   throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
 
-function _unsupportedIterableToArray$4(o, minLen) {
+function _unsupportedIterableToArray$2(o, minLen) {
   if (!o) return;
-  if (typeof o === "string") return _arrayLikeToArray$4(o, minLen);
+  if (typeof o === "string") return _arrayLikeToArray$2(o, minLen);
   var n = Object.prototype.toString.call(o).slice(8, -1);
   if (n === "Object" && o.constructor) n = o.constructor.name;
   if (n === "Map" || n === "Set") return Array.from(o);
-  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$4(o, minLen);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$2(o, minLen);
 }
 
-function _arrayLikeToArray$4(arr, len) {
+function _arrayLikeToArray$2(arr, len) {
   if (len == null || len > arr.length) len = arr.length;
 
   for (var i = 0, arr2 = new Array(len); i < len; i++) {
@@ -5430,7 +5883,7 @@ function _arrayLikeToArray$4(arr, len) {
   return arr2;
 }
 
-function _iterableToArrayLimit$4(arr, i) {
+function _iterableToArrayLimit$2(arr, i) {
   var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"];
 
   if (_i == null) return;
@@ -5460,7 +5913,7 @@ function _iterableToArrayLimit$4(arr, i) {
   return _arr;
 }
 
-function _arrayWithHoles$4(arr) {
+function _arrayWithHoles$2(arr) {
   if (Array.isArray(arr)) return arr;
 }
 /**
@@ -5474,7 +5927,7 @@ function useCollector(monitor, collect, onUpdate) {
   var _useState = React.useState(function () {
     return collect(monitor);
   }),
-      _useState2 = _slicedToArray$4(_useState, 2),
+      _useState2 = _slicedToArray$2(_useState, 2),
       collected = _useState2[0],
       setCollected = _useState2[1];
 
@@ -5497,24 +5950,24 @@ function useCollector(monitor, collect, onUpdate) {
   return [collected, updateCollected];
 }
 
-function _slicedToArray$3(arr, i) {
-  return _arrayWithHoles$3(arr) || _iterableToArrayLimit$3(arr, i) || _unsupportedIterableToArray$3(arr, i) || _nonIterableRest$3();
+function _slicedToArray$1(arr, i) {
+  return _arrayWithHoles$1(arr) || _iterableToArrayLimit$1(arr, i) || _unsupportedIterableToArray$1(arr, i) || _nonIterableRest$1();
 }
 
-function _nonIterableRest$3() {
+function _nonIterableRest$1() {
   throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
 
-function _unsupportedIterableToArray$3(o, minLen) {
+function _unsupportedIterableToArray$1(o, minLen) {
   if (!o) return;
-  if (typeof o === "string") return _arrayLikeToArray$3(o, minLen);
+  if (typeof o === "string") return _arrayLikeToArray$1(o, minLen);
   var n = Object.prototype.toString.call(o).slice(8, -1);
   if (n === "Object" && o.constructor) n = o.constructor.name;
   if (n === "Map" || n === "Set") return Array.from(o);
-  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$3(o, minLen);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$1(o, minLen);
 }
 
-function _arrayLikeToArray$3(arr, len) {
+function _arrayLikeToArray$1(arr, len) {
   if (len == null || len > arr.length) len = arr.length;
 
   for (var i = 0, arr2 = new Array(len); i < len; i++) {
@@ -5524,7 +5977,7 @@ function _arrayLikeToArray$3(arr, len) {
   return arr2;
 }
 
-function _iterableToArrayLimit$3(arr, i) {
+function _iterableToArrayLimit$1(arr, i) {
   var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"];
 
   if (_i == null) return;
@@ -5554,12 +6007,12 @@ function _iterableToArrayLimit$3(arr, i) {
   return _arr;
 }
 
-function _arrayWithHoles$3(arr) {
+function _arrayWithHoles$1(arr) {
   if (Array.isArray(arr)) return arr;
 }
 function useMonitorOutput(monitor, collect, onCollect) {
   var _useCollector = useCollector(monitor, collect, onCollect),
-      _useCollector2 = _slicedToArray$3(_useCollector, 2),
+      _useCollector2 = _slicedToArray$1(_useCollector, 2),
       collected = _useCollector2[0],
       updateCollected = _useCollector2[1];
 
@@ -5716,24 +6169,24 @@ function useDropTarget(spec, monitor) {
   return dropTarget;
 }
 
-function _slicedToArray$2(arr, i) {
-  return _arrayWithHoles$2(arr) || _iterableToArrayLimit$2(arr, i) || _unsupportedIterableToArray$2(arr, i) || _nonIterableRest$2();
+function _slicedToArray(arr, i) {
+  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
 }
 
-function _nonIterableRest$2() {
+function _nonIterableRest() {
   throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
 
-function _unsupportedIterableToArray$2(o, minLen) {
+function _unsupportedIterableToArray(o, minLen) {
   if (!o) return;
-  if (typeof o === "string") return _arrayLikeToArray$2(o, minLen);
+  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
   var n = Object.prototype.toString.call(o).slice(8, -1);
   if (n === "Object" && o.constructor) n = o.constructor.name;
   if (n === "Map" || n === "Set") return Array.from(o);
-  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$2(o, minLen);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
 }
 
-function _arrayLikeToArray$2(arr, len) {
+function _arrayLikeToArray(arr, len) {
   if (len == null || len > arr.length) len = arr.length;
 
   for (var i = 0, arr2 = new Array(len); i < len; i++) {
@@ -5743,7 +6196,7 @@ function _arrayLikeToArray$2(arr, len) {
   return arr2;
 }
 
-function _iterableToArrayLimit$2(arr, i) {
+function _iterableToArrayLimit(arr, i) {
   var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"];
 
   if (_i == null) return;
@@ -5773,7 +6226,7 @@ function _iterableToArrayLimit$2(arr, i) {
   return _arr;
 }
 
-function _arrayWithHoles$2(arr) {
+function _arrayWithHoles(arr) {
   if (Array.isArray(arr)) return arr;
 }
 function useRegisteredDropTarget(spec, monitor, connector) {
@@ -5782,7 +6235,7 @@ function useRegisteredDropTarget(spec, monitor, connector) {
   var accept = useAccept(spec);
   useIsomorphicLayoutEffect(function registerDropTarget() {
     var _registerTarget = registerTarget(accept, dropTarget, manager),
-        _registerTarget2 = _slicedToArray$2(_registerTarget, 2),
+        _registerTarget2 = _slicedToArray(_registerTarget, 2),
         handlerId = _registerTarget2[0],
         unregister = _registerTarget2[1];
 
@@ -5836,89 +6289,6 @@ function useDrop(specArg, deps) {
   return [useCollectedProps(spec.collect, monitor, connector), useConnectDropTarget(connector)];
 }
 
-function _slicedToArray$1(arr, i) {
-  return _arrayWithHoles$1(arr) || _iterableToArrayLimit$1(arr, i) || _unsupportedIterableToArray$1(arr, i) || _nonIterableRest$1();
-}
-
-function _nonIterableRest$1() {
-  throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
-}
-
-function _unsupportedIterableToArray$1(o, minLen) {
-  if (!o) return;
-  if (typeof o === "string") return _arrayLikeToArray$1(o, minLen);
-  var n = Object.prototype.toString.call(o).slice(8, -1);
-  if (n === "Object" && o.constructor) n = o.constructor.name;
-  if (n === "Map" || n === "Set") return Array.from(o);
-  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$1(o, minLen);
-}
-
-function _arrayLikeToArray$1(arr, len) {
-  if (len == null || len > arr.length) len = arr.length;
-
-  for (var i = 0, arr2 = new Array(len); i < len; i++) {
-    arr2[i] = arr[i];
-  }
-
-  return arr2;
-}
-
-function _iterableToArrayLimit$1(arr, i) {
-  var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"];
-
-  if (_i == null) return;
-  var _arr = [];
-  var _n = true;
-  var _d = false;
-
-  var _s, _e;
-
-  try {
-    for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) {
-      _arr.push(_s.value);
-
-      if (i && _arr.length === i) break;
-    }
-  } catch (err) {
-    _d = true;
-    _e = err;
-  } finally {
-    try {
-      if (!_n && _i["return"] != null) _i["return"]();
-    } finally {
-      if (_d) throw _e;
-    }
-  }
-
-  return _arr;
-}
-
-function _arrayWithHoles$1(arr) {
-  if (Array.isArray(arr)) return arr;
-}
-/**
- * useDragLayer Hook
- * @param collector The property collector
- */
-
-function useDragLayer(collect) {
-  var dragDropManager = useDragDropManager();
-  var monitor = dragDropManager.getMonitor();
-
-  var _useCollector = useCollector(monitor, collect),
-      _useCollector2 = _slicedToArray$1(_useCollector, 2),
-      collected = _useCollector2[0],
-      updateCollected = _useCollector2[1];
-
-  React.useEffect(function () {
-    return monitor.subscribeToOffsetChange(updateCollected);
-  });
-  React.useEffect(function () {
-    return monitor.subscribeToStateChange(updateCollected);
-  });
-  return collected;
-}
-
 function _extends() {
   _extends = Object.assign || function (target) {
     for (var i = 1; i < arguments.length; i++) {
@@ -5954,140 +6324,10 @@ DndProvider.propTypes = {
   debugMode: PropTypes.bool
 };
 
-var getStyle = function getStyle(currentOffset) {
-  var transform = "translate(".concat(currentOffset.x, "px, ").concat(currentOffset.y, "px)");
-  return {
-    pointerEvents: 'none',
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    transform: transform,
-    WebkitTransform: transform
-  };
-};
-
-var usePreview$1 = function usePreview() {
-  var collectedProps = useDragLayer(function (monitor) {
-    return {
-      currentOffset: monitor.getSourceClientOffset(),
-      isDragging: monitor.isDragging(),
-      itemType: monitor.getItemType(),
-      item: monitor.getItem()
-    };
-  });
-
-  if (!collectedProps.isDragging || collectedProps.currentOffset === null) {
-    return {
-      display: false
-    };
-  }
-
-  return {
-    display: true,
-    itemType: collectedProps.itemType,
-    item: collectedProps.item,
-    style: getStyle(collectedProps.currentOffset)
-  };
-};
-
 ({
   generator: PropTypes.func,
   children: PropTypes.oneOfType([PropTypes.node, PropTypes.func])
 });
-
-function _slicedToArray(arr, i) {
-  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
-}
-
-function _nonIterableRest() {
-  throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
-}
-
-function _unsupportedIterableToArray(o, minLen) {
-  if (!o) return;
-  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
-  var n = Object.prototype.toString.call(o).slice(8, -1);
-  if (n === "Object" && o.constructor) n = o.constructor.name;
-  if (n === "Map" || n === "Set") return Array.from(o);
-  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
-}
-
-function _arrayLikeToArray(arr, len) {
-  if (len == null || len > arr.length) len = arr.length;
-
-  for (var i = 0, arr2 = new Array(len); i < len; i++) {
-    arr2[i] = arr[i];
-  }
-
-  return arr2;
-}
-
-function _iterableToArrayLimit(arr, i) {
-  if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return;
-  var _arr = [];
-  var _n = true;
-  var _d = false;
-  var _e = undefined;
-
-  try {
-    for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
-      _arr.push(_s.value);
-
-      if (i && _arr.length === i) break;
-    }
-  } catch (err) {
-    _d = true;
-    _e = err;
-  } finally {
-    try {
-      if (!_n && _i["return"] != null) _i["return"]();
-    } finally {
-      if (_d) throw _e;
-    }
-  }
-
-  return _arr;
-}
-
-function _arrayWithHoles(arr) {
-  if (Array.isArray(arr)) return arr;
-}
-
-var useObservePreviews = function useObservePreviews() {
-  var _useState = React.useState(false),
-      _useState2 = _slicedToArray(_useState, 2),
-      enabled = _useState2[0],
-      setEnabled = _useState2[1];
-
-  var dndContext = React.useContext(DndContext);
-  React.useEffect(function () {
-    var backend = dndContext.dragDropManager.getBackend();
-    var observer = {
-      backendChanged: function backendChanged(cbackend) {
-        setEnabled(cbackend.previewEnabled());
-      }
-    };
-    setEnabled(backend.previewEnabled());
-    backend.previews.register(observer);
-    return function () {
-      backend.previews.unregister(observer);
-    };
-  }, [dndContext, setEnabled]);
-  return enabled;
-};
-
-var usePreview = function usePreview() {
-  var enabled = useObservePreviews();
-  var result = usePreview$1();
-
-  if (!enabled) {
-    return {
-      display: false
-    };
-  }
-
-  return result;
-};
 
 // cheap lodash replacements
 function memoize(fn) {
@@ -7526,6 +7766,16 @@ var HTML5BackendImpl = /*#__PURE__*/function () {
 
   return HTML5BackendImpl;
 }();
+
+var emptyImage;
+function getEmptyImage() {
+  if (!emptyImage) {
+    emptyImage = new Image();
+    emptyImage.src = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
+  }
+
+  return emptyImage;
+}
 
 var HTML5Backend = function createBackend(manager, context, options) {
   return new HTML5BackendImpl(manager, context, options);
@@ -9328,6 +9578,9 @@ function ChessboardProvider({
 
 
     setManualDrop(false);
+    return () => {
+      clearTimeout(previousTimeout);
+    };
   }, [position]); // handle drop position change
 
   function handleSetPosition(sourceSq, targetSq, piece) {
@@ -9423,7 +9676,7 @@ function Piece({
   const [{
     canDrag,
     isDragging
-  }, drag] = useDrag(() => ({
+  }, drag, dragPreview] = useDrag(() => ({
     type: 'piece',
     item: {
       piece,
@@ -9437,17 +9690,23 @@ function Piece({
       }),
       isDragging: !!monitor.isDragging()
     })
-  }), [piece, square, currentPosition]); // hide piece on drag
+  }), [piece, square, currentPosition, id]); // hide the default preview
+
+  React.useEffect(() => {
+    dragPreview(getEmptyImage(), {
+      captureDraggingState: true
+    });
+  }, []); // hide piece on drag
 
   React.useEffect(() => {
     setPieceStyle({ ...pieceStyle,
       opacity: isDragging ? 0 : 1
     });
-  }, [isDragging]);
+  }, [isDragging]); // new move has come in
+  // if waiting for animation, then animation has started and we can perform animation
+  // we need to head towards where we need to go, we are the source, we are heading towards the target
+
   React.useEffect(() => {
-    // new move has come in
-    // if waiting for animation, then animation has started and we can perform animation
-    // we need to head towards where we need to go, we are the source, we are heading towards the target
     const removedPiece = positionDifferences.removed?.[square]; // check if piece matches or if removed piece was a pawn and new square is on 1st or 8th rank (promotion)
 
     const newSquare = Object.entries(positionDifferences.added).find(([s, p]) => p === removedPiece || removedPiece?.[1] === 'P' && (s[1] === '1' || s[1] === '8')); // we can perform animation if our square was in removed, AND the matching piece is in added
@@ -9840,8 +10099,6 @@ function Board() {
   const [squares, setSquares] = React.useState({});
   const {
     boardWidth,
-    chessPieces,
-    id,
     showBoardNotation,
     currentPosition,
     screenSize
@@ -9860,37 +10117,8 @@ function Board() {
     };
   }
 
-  const HookPreview = () => {
-    const {
-      display,
-      item,
-      style
-    } = usePreview();
-
-    if (!display || item.id !== id) {
-      return null;
-    }
-
-    return /*#__PURE__*/jsxRuntime.jsx("div", {
-      style: { ...style,
-        touchAction: 'none'
-      },
-      children: typeof chessPieces[item.piece] === 'function' ? chessPieces[item.piece]({
-        squareWidth: boardWidth / 8,
-        isDragging: true
-      }) : /*#__PURE__*/jsxRuntime.jsx("svg", {
-        viewBox: '1 1 43 43',
-        width: boardWidth / 8,
-        height: boardWidth / 8,
-        children: /*#__PURE__*/jsxRuntime.jsx("g", {
-          children: chessPieces[item.piece]
-        })
-      })
-    });
-  };
-
-  return screenSize && boardWidth ? /*#__PURE__*/jsxRuntime.jsxs(jsxRuntime.Fragment, {
-    children: [/*#__PURE__*/jsxRuntime.jsx(HookPreview, {}), /*#__PURE__*/jsxRuntime.jsx(Squares, {
+  return screenSize && boardWidth ? /*#__PURE__*/jsxRuntime.jsx(jsxRuntime.Fragment, {
+    children: /*#__PURE__*/jsxRuntime.jsx(Squares, {
       children: ({
         square,
         squareColor,
@@ -9912,22 +10140,82 @@ function Board() {
           })]
         }, `${col}${row}`);
       }
-    })]
+    })
   }) : /*#__PURE__*/jsxRuntime.jsx(WhiteKing, {});
 }
+
+function CustomDragLayer(props) {
+  const {
+    boardWidth,
+    chessPieces,
+    id
+  } = useChessboard();
+  const {
+    isDragging,
+    item,
+    currentOffset
+  } = props;
+  const layerStyles = {
+    position: 'fixed',
+    pointerEvents: 'none',
+    zIndex: 10,
+    left: 0,
+    top: 0
+  };
+
+  const getItemStyle = currentOffset => {
+    if (!currentOffset) return {
+      display: 'none'
+    };
+    const {
+      x,
+      y
+    } = currentOffset;
+    const transform = `translate(${x}px, ${y}px)`;
+    return {
+      transform,
+      WebkitTransform: transform,
+      touchAction: 'none'
+    };
+  };
+
+  return isDragging && item.id === id ? /*#__PURE__*/jsxRuntime.jsx("div", {
+    style: layerStyles,
+    children: /*#__PURE__*/jsxRuntime.jsx("div", {
+      style: getItemStyle(currentOffset),
+      children: typeof chessPieces[item.piece] === 'function' ? chessPieces[item.piece]({
+        squareWidth: boardWidth / 8,
+        isDragging: true
+      }) : /*#__PURE__*/jsxRuntime.jsx("svg", {
+        viewBox: '1 1 43 43',
+        width: boardWidth / 8,
+        height: boardWidth / 8,
+        children: /*#__PURE__*/jsxRuntime.jsx("g", {
+          children: chessPieces[item.piece]
+        })
+      })
+    })
+  }) : null;
+}
+
+function collect(monitor) {
+  return {
+    item: monitor.getItem(),
+    currentOffset: monitor.getSourceClientOffset(),
+    isDragging: monitor.isDragging()
+  };
+}
+
+var CustomDragLayer$1 = DragLayer(collect)(CustomDragLayer);
 
 function Chessboard(props) {
   return /*#__PURE__*/jsxRuntime.jsx(ErrorBoundary, {
     children: /*#__PURE__*/jsxRuntime.jsx(DndProvider, {
-      options: {
-        backends: [{ ...HTML5toTouch.backends[0],
-          preview: true
-        }, HTML5toTouch.backends[1]]
-      },
-      children: /*#__PURE__*/jsxRuntime.jsx(ChessboardProvider, { ...props,
-        children: /*#__PURE__*/jsxRuntime.jsx("div", {
+      options: HTML5toTouch,
+      children: /*#__PURE__*/jsxRuntime.jsxs(ChessboardProvider, { ...props,
+        children: [/*#__PURE__*/jsxRuntime.jsx(CustomDragLayer$1, {}), /*#__PURE__*/jsxRuntime.jsx("div", {
           children: /*#__PURE__*/jsxRuntime.jsx(Board, {})
-        })
+        })]
       })
     })
   });

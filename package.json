@@ -13,7 +13,11 @@
     "chessboard",
     "chess board",
     "react-chessboard",
-    "chessboard component"
+    "react chessboard",
+    "react chess board",
+    "react-dnd",
+    "chessboard component",
+    "drag and drop"
   ],
   "main": "dist/index.js",
   "module": "dist/index.esm.js",

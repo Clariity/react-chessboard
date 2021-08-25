@@ -4,7 +4,6 @@ import { defaultPieces } from '../media/pieces';
 import { convertPositionToObject, getPositionDifferences } from '../functions';
 
 // add arrows - https://stackoverflow.com/questions/25527902/drawing-arrows-on-a-chess-board-in-javascript
-// prevent scroll on drag
 // add other things from chessground
 // change board orientation to 'w' or 'b'? like used in chess.js?
 
@@ -98,6 +97,10 @@ export function ChessboardProvider({
 
     // reset manual drop, ready for next move to be made by user or computer
     setManualDrop(false);
+
+    return () => {
+      clearTimeout(previousTimeout);
+    };
   }, [position]);
 
   // handle drop position change

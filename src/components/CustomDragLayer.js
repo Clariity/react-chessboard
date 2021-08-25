@@ -1,59 +1,56 @@
-import { useDragLayer } from 'react-dnd';
+import { DragLayer } from 'react-dnd';
 
 import { useChessboard } from '../context/chessboard-context';
 
-// Terribly inefficient, will just deal with half opaque pieces
-
-export default function CustomDragLayer() {
+function CustomDragLayer(props) {
   const { boardWidth, chessPieces, id } = useChessboard();
-
-  const { isDragging, item, currentOffset } = useDragLayer((monitor) => ({
-    item: monitor.getItem(),
-    currentOffset: monitor.getSourceClientOffset(),
-    isDragging: monitor.isDragging()
-  }));
+  const { isDragging, item, currentOffset } = props;
 
   const layerStyles = {
     position: 'fixed',
     pointerEvents: 'none',
-    zIndex: 100,
+    zIndex: 10,
     left: 0,
-    top: 0,
-    width: '100%',
-    height: '100%'
+    top: 0
   };
 
-  function getItemStyles() {
+  const getItemStyle = (currentOffset) => {
     if (!currentOffset) return { display: 'none' };
 
     const { x, y } = currentOffset;
     const transform = `translate(${x}px, ${y}px)`;
+
     return {
       transform,
-      WebkitTransform: transform
+      WebkitTransform: transform,
+      touchAction: 'none'
     };
-  }
+  };
 
   return isDragging && item.id === id ? (
     <div style={layerStyles}>
-      <div style={getItemStyles()}>
-        <div
-          style={{
-            touchAction: 'none'
-          }}
-        >
-          {typeof chessPieces[item.piece] === 'function' ? (
-            chessPieces[item.piece]({
-              squareWidth: boardWidth / 8,
-              isDragging: true
-            })
-          ) : (
-            <svg viewBox={'1 1 43 43'} width={boardWidth / 8} height={boardWidth / 8}>
-              <g>{chessPieces[item.piece]}</g>
-            </svg>
-          )}
-        </div>
+      <div style={getItemStyle(currentOffset)}>
+        {typeof chessPieces[item.piece] === 'function' ? (
+          chessPieces[item.piece]({
+            squareWidth: boardWidth / 8,
+            isDragging: true
+          })
+        ) : (
+          <svg viewBox={'1 1 43 43'} width={boardWidth / 8} height={boardWidth / 8}>
+            <g>{chessPieces[item.piece]}</g>
+          </svg>
+        )}
       </div>
     </div>
   ) : null;
 }
+
+function collect(monitor) {
+  return {
+    item: monitor.getItem(),
+    currentOffset: monitor.getSourceClientOffset(),
+    isDragging: monitor.isDragging()
+  };
+}
+
+export default DragLayer(collect)(CustomDragLayer);

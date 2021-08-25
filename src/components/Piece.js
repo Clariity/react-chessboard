@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useDrag } from 'react-dnd';
+import { getEmptyImage } from 'react-dnd-html5-backend';
 
 import { useChessboard } from '../context/chessboard-context';
 
@@ -29,7 +30,7 @@ export default function Piece({ square, piece, getSquareCoordinates, getSingleSq
       : 'default'
   });
 
-  const [{ canDrag, isDragging }, drag] = useDrag(
+  const [{ canDrag, isDragging }, drag, dragPreview] = useDrag(
     () => ({
       type: 'piece',
       item: { piece, square, id },
@@ -38,8 +39,13 @@ export default function Piece({ square, piece, getSquareCoordinates, getSingleSq
         isDragging: !!monitor.isDragging()
       })
     }),
-    [piece, square, currentPosition]
+    [piece, square, currentPosition, id]
   );
+
+  // hide the default preview
+  useEffect(() => {
+    dragPreview(getEmptyImage(), { captureDraggingState: true });
+  }, []);
 
   // hide piece on drag
   useEffect(() => {
@@ -49,10 +55,10 @@ export default function Piece({ square, piece, getSquareCoordinates, getSingleSq
     });
   }, [isDragging]);
 
+  // new move has come in
+  // if waiting for animation, then animation has started and we can perform animation
+  // we need to head towards where we need to go, we are the source, we are heading towards the target
   useEffect(() => {
-    // new move has come in
-    // if waiting for animation, then animation has started and we can perform animation
-    // we need to head towards where we need to go, we are the source, we are heading towards the target
     const removedPiece = positionDifferences.removed?.[square];
     // check if piece matches or if removed piece was a pawn and new square is on 1st or 8th rank (promotion)
     const newSquare = Object.entries(positionDifferences.added).find(

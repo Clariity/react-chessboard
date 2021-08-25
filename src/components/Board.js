@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { usePreview } from 'react-dnd-multi-backend';
 
 import Piece from './Piece';
 import Square from './Square';
@@ -11,7 +10,7 @@ import { WhiteKing } from './ErrorBoundary';
 export default function Board() {
   const [squares, setSquares] = useState({});
 
-  const { boardWidth, chessPieces, id, showBoardNotation, currentPosition, screenSize } = useChessboard();
+  const { boardWidth, showBoardNotation, currentPosition, screenSize } = useChessboard();
 
   function getSingleSquareCoordinates(square) {
     return { sourceSq: squares[square] };
@@ -24,35 +23,8 @@ export default function Board() {
     };
   }
 
-  const HookPreview = () => {
-    const { display, item, style } = usePreview();
-    if (!display || item.id !== id) {
-      return null;
-    }
-    return (
-      <div
-        style={{
-          ...style,
-          touchAction: 'none'
-        }}
-      >
-        {typeof chessPieces[item.piece] === 'function' ? (
-          chessPieces[item.piece]({
-            squareWidth: boardWidth / 8,
-            isDragging: true
-          })
-        ) : (
-          <svg viewBox={'1 1 43 43'} width={boardWidth / 8} height={boardWidth / 8}>
-            <g>{chessPieces[item.piece]}</g>
-          </svg>
-        )}
-      </div>
-    );
-  };
-
   return screenSize && boardWidth ? (
     <>
-      <HookPreview />
       <Squares>
         {({ square, squareColor, col, row }) => {
           return (
