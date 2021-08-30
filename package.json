@@ -4,7 +4,7 @@
   "repository": "https://github.com/Clariity/react-chessboard",
   "author": "Ryan Gregory <ryangregory.dev@outlook.com>",
   "license": "MIT",
-  "description": "A modern chessboard for React. Inspired and adapted from the unmaintained Chessboard.jsx",
+  "description": "The React Chessboard Library used at ChessOpenings.co.uk. Inspired and adapted from the unmaintained Chessboard.jsx.",
   "keywords": [
     "react",
     "react.js",

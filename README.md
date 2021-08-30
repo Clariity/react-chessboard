@@ -120,7 +120,7 @@ export default function PlayRandomMoveEngine() {
 
 ### Advanced Examples
 
-For more advanced examples, please see example boards show in [`example/src/boards`](https://github.com/Clariity/react-chessboard/tree/main/example/src/boards).
+For more advanced examples, please see example boards shown in [`example/src/boards`](https://github.com/Clariity/react-chessboard/tree/main/example/src/boards).
 
 ### Props
 

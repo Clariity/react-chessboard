@@ -5,6 +5,7 @@ import BasicBoard from './boards/BasicBoard';
 import ClickToMove from './boards/ClickToMove';
 import PlayVsPlay from './boards/PlayVsPlay';
 import PlayVsRandom from './boards/PlayVsRandom';
+import PremoveVsRandom from './boards/PremoveVsRandom';
 import RandomVsRandom from './boards/RandomVsRandom';
 import SquareStyles from './boards/SquareStyles';
 import StyledBoard from './boards/StyledBoard';
@@ -65,6 +66,14 @@ function App() {
           <>
             <h2>Play vs Play</h2>
             <PlayVsPlay boardWidth={chessboardSize} />
+            <br />
+          </>
+        );
+      case 'PremoveVsRandom':
+        return (
+          <>
+            <h2>Premove vs Random</h2>
+            <PremoveVsRandom boardWidth={chessboardSize} />
             <br />
           </>
         );
@@ -135,6 +144,15 @@ function App() {
           }}
         >
           Play Vs Play
+        </button>
+        <button
+          className={`rc-button ${selectedBoard === 'PremoveVsRandom' ? 'selected' : ''}`}
+          onClick={() => {
+            setSelectedBoard(null);
+            setTimeout(() => setSelectedBoard('PremoveVsRandom'), 100);
+          }}
+        >
+          Premove Vs Random
         </button>
         <button
           className={`rc-button ${selectedBoard === 'SquareStyles' ? 'selected' : ''}`}

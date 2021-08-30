@@ -95,7 +95,7 @@ export const chessboardDefaultProps = {
   onMouseOutSquare: () => {},
   onMouseOverSquare: () => {},
   onPieceClick: () => {},
-  onPieceDrop: () => {},
+  onPieceDrop: () => true,
   onSquareClick: () => {},
   onSquareRightClick: () => {},
   position: 'start',
