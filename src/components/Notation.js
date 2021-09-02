@@ -1,7 +1,7 @@
 import { COLUMNS } from '../consts';
 import { useChessboard } from '../context/chessboard-context';
 
-export default function Notation({ row, col }) {
+export function Notation({ row, col }) {
   const { boardOrientation, boardWidth, customDarkSquareStyle, customLightSquareStyle } = useChessboard();
 
   const whiteColor = customLightSquareStyle.backgroundColor;

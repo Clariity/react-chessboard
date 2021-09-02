@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default {
+export const errorImage = {
   whiteKing: (
     <svg
       xmlns="http://www.w3.org/2000/svg"

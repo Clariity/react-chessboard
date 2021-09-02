@@ -2,7 +2,7 @@ import { DragLayer } from 'react-dnd';
 
 import { useChessboard } from '../context/chessboard-context';
 
-function CustomDragLayer(props) {
+function CDragLayer(props) {
   const { boardWidth, chessPieces, id } = useChessboard();
   const { isDragging, item, currentOffset } = props;
 
@@ -53,4 +53,4 @@ function collect(monitor) {
   };
 }
 
-export default DragLayer(collect)(CustomDragLayer);
+export const CustomDragLayer = DragLayer(collect)(CDragLayer);

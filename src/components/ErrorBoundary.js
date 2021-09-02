@@ -1,6 +1,6 @@
-import errorImage from '../media/error';
+import { errorImage } from '../media/error';
 
-export default function ErrorBoundary({ children }) {
+export function ErrorBoundary({ children }) {
   try {
     return children;
   } catch (error) {

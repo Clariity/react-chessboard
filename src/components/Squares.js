@@ -1,7 +1,7 @@
 import { COLUMNS } from '../consts';
 import { useChessboard } from '../context/chessboard-context';
 
-export default function Squares({ children }) {
+export function Squares({ children }) {
   const { boardOrientation, boardWidth, customBoardStyle, id } = useChessboard();
 
   let squareColor = 'white';
@@ -14,7 +14,7 @@ export default function Squares({ children }) {
             {[...Array(8)].map((_, c) => {
               // a1, a2 ...
               const square = boardOrientation === 'black' ? COLUMNS[7 - c] + (r + 1) : COLUMNS[c] + (8 - r);
-              squareColor = c % 2 === 0 ? (r % 2 === 0 ? 'white' : 'black') : r % 2 === 0 ? 'black' : 'white';
+              squareColor = c % 2 === r % 2 ? 'white' : 'black';
               return children({ square, squareColor, col: c, row: r });
             })}
           </div>

@@ -1,9 +1,9 @@
 import React from 'react';
 
-import Piece from './Piece';
+import { Piece } from './Piece';
 import { useChessboard } from '../context/chessboard-context';
 
-export default function SparePieces({ placement }) {
+export function SparePieces({ placement }) {
   const { boardOrientation, boardWidth } = useChessboard();
 
   const spares =

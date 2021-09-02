@@ -1,16 +1,16 @@
 import { useState } from 'react';
 
-import Piece from './Piece';
-import Square from './Square';
-import Notation from './Notation';
-import Squares from './Squares';
+import { Notation } from './Notation';
+import { Piece } from './Piece';
+import { Square } from './Square';
+import { Squares } from './Squares';
 import { useChessboard } from '../context/chessboard-context';
 import { WhiteKing } from './ErrorBoundary';
 
-export default function Board() {
+export function Board() {
   const [squares, setSquares] = useState({});
 
-  const { boardWidth, showBoardNotation, currentPosition, screenSize } = useChessboard();
+  const { boardWidth, showBoardNotation, currentPosition, screenSize, premoves } = useChessboard();
 
   function getSingleSquareCoordinates(square) {
     return { sourceSq: squares[square] };
@@ -27,12 +27,29 @@ export default function Board() {
     <>
       <Squares>
         {({ square, squareColor, col, row }) => {
+          const squareHasPremove = premoves.find((p) => p.sourceSq === square || p.targetSq === square);
+          const squareHasPremoveTarget = premoves.find((p) => p.targetSq === square);
           return (
-            <Square key={`${col}${row}`} square={square} squareColor={squareColor} setSquares={setSquares}>
+            <Square
+              key={`${col}${row}`}
+              square={square}
+              squareColor={squareColor}
+              setSquares={setSquares}
+              squareHasPremove={squareHasPremove}
+            >
               {currentPosition[square] && (
                 <Piece
                   square={square}
                   piece={currentPosition[square]}
+                  getSquareCoordinates={getSquareCoordinates}
+                  getSingleSquareCoordinates={getSingleSquareCoordinates}
+                />
+              )}
+              {squareHasPremoveTarget && (
+                <Piece
+                  isPremovedPiece={true}
+                  square={square}
+                  piece={squareHasPremoveTarget.piece}
                   getSquareCoordinates={getSquareCoordinates}
                   getSingleSquareCoordinates={getSingleSquareCoordinates}
                 />

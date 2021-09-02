@@ -1,19 +1,20 @@
+import { forwardRef } from 'react';
 import { DndProvider } from 'react-dnd-multi-backend';
 import HTML5toTouch from 'react-dnd-multi-backend/dist/esm/HTML5toTouch';
 
-import Board from './components/Board';
-import CustomDragLayer from './components/CustomDragLayer';
-import ErrorBoundary from './components/ErrorBoundary';
+import { Board } from './components/Board';
+import { CustomDragLayer } from './components/CustomDragLayer';
+import { ErrorBoundary } from './components/ErrorBoundary';
 // import SparePieces from './components/SparePieces';
 
 import { chessboardDefaultProps, chessboardPropTypes } from './consts';
 import { ChessboardProvider } from './context/chessboard-context';
 
-function Chessboard(props) {
+export const Chessboard = forwardRef((props, ref) => {
   return (
     <ErrorBoundary>
       <DndProvider options={HTML5toTouch}>
-        <ChessboardProvider {...props}>
+        <ChessboardProvider ref={ref} {...props}>
           <CustomDragLayer />
           <div>
             {/* {props.showSparePieces && <SparePieces.Top />} */}
@@ -24,9 +25,7 @@ function Chessboard(props) {
       </DndProvider>
     </ErrorBoundary>
   );
-}
+});
 
 Chessboard.propTypes = chessboardPropTypes;
 Chessboard.defaultProps = chessboardDefaultProps;
-
-export default Chessboard;

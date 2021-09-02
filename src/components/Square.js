@@ -3,18 +3,23 @@ import { useDrop } from 'react-dnd';
 
 import { useChessboard } from '../context/chessboard-context';
 
-export default function Square({ square, squareColor, setSquares, children }) {
+export function Square({ square, squareColor, setSquares, squareHasPremove, children }) {
   const squareRef = useRef();
   const {
     boardWidth,
     boardOrientation,
+    clearPremoves,
+    clearPremovesOnRightClick,
     currentPosition,
     customBoardStyle,
     customDarkSquareStyle,
     customDropSquareStyle,
     customLightSquareStyle,
+    customPremoveDarkSquareStyle,
+    customPremoveLightSquareStyle,
     customSquareStyles,
     handleSetPosition,
+    lastPieceColour,
     onDragOverSquare,
     onMouseOutSquare,
     onMouseOverSquare,
@@ -31,7 +36,7 @@ export default function Square({ square, squareColor, setSquares, children }) {
         isOver: !!monitor.isOver()
       })
     }),
-    [square, currentPosition, waitingForAnimation]
+    [square, currentPosition, waitingForAnimation, lastPieceColour]
   );
 
   useEffect(() => {
@@ -40,10 +45,9 @@ export default function Square({ square, squareColor, setSquares, children }) {
   }, [boardWidth]);
 
   const defaultSquareStyle = {
-    ...size(boardWidth),
-    ...center,
     ...borderRadius(customBoardStyle, square, boardOrientation),
     ...(squareColor === 'black' ? customDarkSquareStyle : customLightSquareStyle),
+    ...(squareHasPremove && (squareColor === 'black' ? customPremoveDarkSquareStyle : customPremoveLightSquareStyle)),
     ...(isOver && customDropSquareStyle)
   };
 
@@ -57,6 +61,7 @@ export default function Square({ square, squareColor, setSquares, children }) {
       onClick={() => onSquareClick(square)}
       onContextMenu={(e) => {
         e.preventDefault();
+        clearPremovesOnRightClick && clearPremoves();
         onSquareRightClick(square);
       }}
     >

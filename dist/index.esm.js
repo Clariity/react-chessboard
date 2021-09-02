@@ -1,4 +1,4 @@
-import React, { createContext, memo, useEffect, isValidElement, cloneElement, createRef, Component, useLayoutEffect, useMemo, useContext, useState, useCallback, useRef } from 'react';
+import React, { createContext, memo, useEffect, isValidElement, cloneElement, createRef, Component, useLayoutEffect, useMemo, useContext, useState, useCallback, useRef, forwardRef, useImperativeHandle } from 'react';
 import { jsx, jsxs, Fragment } from 'react/jsx-runtime';
 import 'react-dom';
 
@@ -8669,6 +8669,109 @@ var HTML5toTouch = {
   }]
 };
 
+const COLUMNS = 'abcdefgh'.split('');
+const chessboardPropTypes = {
+  // time in milliseconds for piece to slide to target square. Only used when the position is programmatically changed
+  animationDuration: PropTypes.number,
+  // if pieces are draggable
+  arePiecesDraggable: PropTypes.bool,
+  // if premoves are allowed
+  arePremovesAllowed: PropTypes.bool,
+  // Orientation of the board
+  boardOrientation: PropTypes.oneOf(['white', 'black']),
+  // width of board in pixels. for responsive width show useChessBoardSize/useScreenSize example
+  boardWidth: PropTypes.number,
+  // if premoves should be cleared on right click
+  clearPremovesOnRightClick: PropTypes.bool,
+  // board style object e.g. { borderRadius: '5px', boxShadow: `0 5px 15px rgba(0, 0, 0, 0.5)`}
+  customBoardStyle: PropTypes.object,
+  // dark square style object e.g. { backgroundColor: '#B58863' }
+  customDarkSquareStyle: PropTypes.object,
+  // current drop square style object e.g. { backgroundColor: 'sienna' }
+  customDropSquareStyle: PropTypes.object,
+  // light square style object e.g. { backgroundColor: '#F0D9B5' }
+  customLightSquareStyle: PropTypes.object,
+  // pieces object where each piece returns JSX to render. { wK: ({ isDragging: boolean, squareWidth: pixels, droppedPiece: piece string, targetSquare: square string, sourceSquare: square string }) => jsx }
+  customPieces: PropTypes.object,
+  // premove highlight dark square style object e.g. { backgroundColor: '#F0D9B5' }
+  customPremoveDarkSquareStyle: PropTypes.object,
+  // premove highlight light square style object e.g. { backgroundColor: '#F0D9B5' }
+  customPremoveLightSquareStyle: PropTypes.object,
+  // custom squares style object. e.g. {'e4': {backgroundColor: 'orange'}, ...}
+  customSquareStyles: PropTypes.object,
+  // behavior of pieces when dropped off the board. 'snapback' brings the piece back to it's original square, 'trash' deletes the piece from the board
+  dropOffBoardAction: PropTypes.oneOf(['snapback', 'trash']),
+  // if expecting pieces that move to alternate from white to black
+  expectingAlternateMoves: PropTypes.bool,
+  // board identifier, necessary if more than one board is mounted for drag and drop.
+  id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  // function called when a piece drag is initiated. Returns if piece is draggable ({ piece: string, sourceSquare: string }) => bool
+  isDraggablePiece: PropTypes.func,
+  // user function that receives current position object when position changes. (currentPosition: object) => void
+  getPositionObject: PropTypes.func,
+  // user function that is run when piece is dragged over a square (square: string) => void
+  onDragOverSquare: PropTypes.func,
+  // user function that is run when mouse leaves a square (square: string) => void
+  onMouseOutSquare: PropTypes.func,
+  // user function that is run when mouse is over a square (square: string) => void
+  onMouseOverSquare: PropTypes.func,
+  // user function that is run when piece is clicked (piece: string) => void
+  onPieceClick: PropTypes.func,
+  // user function that is run when piece is dropped on a square ({ sourceSquare: string, targetSquare: string, piece: string }) => void
+  onPieceDrop: PropTypes.func,
+  // user function that is run when a square is clicked (square: string) => void
+  onSquareClick: PropTypes.func,
+  // user function that is run when a square is right clicked (square: string) => void
+  onSquareRightClick: PropTypes.func,
+  // FEN string or a position object ({ e5: 'wK', e4: 'wP', e7: 'bK' })
+  position: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
+  // show file character and rank numbers (a..h, 1..8)
+  showBoardNotation: PropTypes.bool // show spare pieces above and below board.
+  // showSparePieces: PropTypes.bool
+
+};
+const chessboardDefaultProps = {
+  animationDuration: 300,
+  arePiecesDraggable: true,
+  arePremovesAllowed: false,
+  boardOrientation: 'white',
+  boardWidth: 560,
+  clearPremovesOnRightClick: true,
+  customBoardStyle: {},
+  customDarkSquareStyle: {
+    backgroundColor: '#B58863'
+  },
+  customDropSquareStyle: {
+    boxShadow: 'inset 0 0 1px 6px rgba(255,255,255,0.75)'
+  },
+  customLightSquareStyle: {
+    backgroundColor: '#F0D9B5'
+  },
+  customPieces: {},
+  customPremoveDarkSquareStyle: {
+    backgroundColor: '#a42323'
+  },
+  customPremoveLightSquareStyle: {
+    backgroundColor: '#bd2828'
+  },
+  customSquareStyles: {},
+  dropOffBoardAction: 'snapback',
+  expectingAlternateMoves: true,
+  id: 0,
+  isDraggablePiece: () => true,
+  getPositionObject: () => {},
+  onDragOverSquare: () => {},
+  onMouseOutSquare: () => {},
+  onMouseOverSquare: () => {},
+  onPieceClick: () => {},
+  onPieceDrop: () => true,
+  onSquareClick: () => {},
+  onSquareRightClick: () => {},
+  position: 'start',
+  showBoardNotation: true // showSparePieces: false
+
+};
+
 const defaultPieces = {
   wP: /*#__PURE__*/jsx("svg", {
     xmlns: "http://www.w3.org/2000/svg",
@@ -9294,90 +9397,50 @@ const defaultPieces = {
   })
 };
 
-const COLUMNS = 'abcdefgh'.split('');
-const chessboardPropTypes = {
-  // time in milliseconds for piece to slide to target square. Only used when the position is programmatically changed
-  animationDuration: PropTypes.number,
-  // if pieces are draggable
-  arePiecesDraggable: PropTypes.bool,
-  // Orientation of the board
-  boardOrientation: PropTypes.oneOf(['white', 'black']),
-  // width of board in pixels. for responsive width show useChessBoardSize/useScreenSize example
-  boardWidth: PropTypes.number,
-  // board style object e.g. { borderRadius: '5px', boxShadow: `0 5px 15px rgba(0, 0, 0, 0.5)`}
-  customBoardStyle: PropTypes.object,
-  // dark square style object e.g. { backgroundColor: '#B58863' }
-  customDarkSquareStyle: PropTypes.object,
-  // current drop square style object e.g. { backgroundColor: 'sienna' }
-  customDropSquareStyle: PropTypes.object,
-  // light square style object e.g. { backgroundColor: '#F0D9B5' }
-  customLightSquareStyle: PropTypes.object,
-  // pieces object where each piece returns JSX to render. { wK: ({ isDragging: boolean, squareWidth: pixels, droppedPiece: piece string, targetSquare: square string, sourceSquare: square string }) => jsx }
-  customPieces: PropTypes.object,
-  // custom squares style object. e.g. {'e4': {backgroundColor: 'orange'}, ...}
-  customSquareStyles: PropTypes.object,
-  // behavior of pieces when dropped off the board. 'snapback' brings the piece back to it's original square, 'trash' deletes the piece from the board
-  dropOffBoardAction: PropTypes.oneOf(['snapback', 'trash']),
-  // board identifier, necessary if more than one board is mounted for drag and drop.
-  id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  // function called when a piece drag is initiated. Returns if piece is draggable ({ piece: string, sourceSquare: string }) => bool
-  isDraggablePiece: PropTypes.func,
-  // user function that receives current position object when position changes. (currentPosition: object) => void
-  getPositionObject: PropTypes.func,
-  // user function that is run when piece is dragged over a square (square: string) => void
-  onDragOverSquare: PropTypes.func,
-  // user function that is run when mouse leaves a square (square: string) => void
-  onMouseOutSquare: PropTypes.func,
-  // user function that is run when mouse is over a square (square: string) => void
-  onMouseOverSquare: PropTypes.func,
-  // user function that is run when piece is clicked (piece: string) => void
-  onPieceClick: PropTypes.func,
-  // user function that is run when piece is dropped on a square ({ sourceSquare: string, targetSquare: string, piece: string }) => void
-  onPieceDrop: PropTypes.func,
-  // user function that is run when a square is clicked (square: string) => void
-  onSquareClick: PropTypes.func,
-  // user function that is run when a square is right clicked (square: string) => void
-  onSquareRightClick: PropTypes.func,
-  // FEN string or a position object ({ e5: 'wK', e4: 'wP', e7: 'bK' })
-  position: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
-  // show file character and rank numbers (a..h, 1..8)
-  showBoardNotation: PropTypes.bool // show spare pieces above and below board.
-  // showSparePieces: PropTypes.bool
-
+const startPositionObject = {
+  a8: 'bR',
+  b8: 'bN',
+  c8: 'bB',
+  d8: 'bQ',
+  e8: 'bK',
+  f8: 'bB',
+  g8: 'bN',
+  h8: 'bR',
+  a7: 'bP',
+  b7: 'bP',
+  c7: 'bP',
+  d7: 'bP',
+  e7: 'bP',
+  f7: 'bP',
+  g7: 'bP',
+  h7: 'bP',
+  a2: 'wP',
+  b2: 'wP',
+  c2: 'wP',
+  d2: 'wP',
+  e2: 'wP',
+  f2: 'wP',
+  g2: 'wP',
+  h2: 'wP',
+  a1: 'wR',
+  b1: 'wN',
+  c1: 'wB',
+  d1: 'wQ',
+  e1: 'wK',
+  f1: 'wB',
+  g1: 'wN',
+  h1: 'wR'
 };
-const chessboardDefaultProps = {
-  animationDuration: 300,
-  arePiecesDraggable: true,
-  boardOrientation: 'white',
-  boardWidth: 560,
-  customBoardStyle: {},
-  customDarkSquareStyle: {
-    backgroundColor: '#B58863'
-  },
-  customDropSquareStyle: {
-    boxShadow: 'inset 0 0 1px 6px rgba(255,255,255,0.75)'
-  },
-  customLightSquareStyle: {
-    backgroundColor: '#F0D9B5'
-  },
-  customPieces: {},
-  customSquareStyles: {},
-  dropOffBoardAction: 'snapback',
-  id: 0,
-  isDraggablePiece: () => true,
-  getPositionObject: () => {},
-  onDragOverSquare: () => {},
-  onMouseOutSquare: () => {},
-  onMouseOverSquare: () => {},
-  onPieceClick: () => {},
-  onPieceDrop: () => true,
-  onSquareClick: () => {},
-  onSquareRightClick: () => {},
-  position: 'start',
-  showBoardNotation: true // showSparePieces: false
-
+const isDifferentFromStart = newPosition => {
+  let isDifferent = false;
+  Object.keys(startPositionObject).forEach(square => {
+    if (newPosition[square] !== startPositionObject[square]) isDifferent = true;
+  });
+  Object.keys(newPosition).forEach(square => {
+    if (startPositionObject[square] !== newPosition[square]) isDifferent = true;
+  });
+  return isDifferent;
 };
-
 const getPositionDifferences = (currentPosition, newPosition) => {
   const difference = {
     removed: {},
@@ -9491,18 +9554,24 @@ function validPositionObject(pos) {
 }
 
 const ChessboardContext = /*#__PURE__*/React.createContext();
-function ChessboardProvider({
+const useChessboard = () => useContext(ChessboardContext);
+const ChessboardProvider = /*#__PURE__*/forwardRef(({
   animationDuration,
   arePiecesDraggable,
+  arePremovesAllowed,
   boardOrientation,
   boardWidth,
+  clearPremovesOnRightClick,
   customBoardStyle,
   customDarkSquareStyle,
   customDropSquareStyle,
   customLightSquareStyle,
   customPieces,
+  customPremoveDarkSquareStyle,
+  customPremoveLightSquareStyle,
   customSquareStyles,
   dropOffBoardAction,
+  expectingAlternateMoves,
   id,
   isDraggablePiece,
   getPositionObject,
@@ -9517,13 +9586,17 @@ function ChessboardProvider({
   showBoardNotation,
   showSparePieces,
   children
-}) {
+}, ref) => {
   // position stored and displayed on board
-  const [currentPosition, setCurrentPosition] = useState(convertPositionToObject(position));
-  const [positionDifferences, setPositionDifferences] = useState({}); // premove logic
+  const [currentPosition, setCurrentPosition] = useState(convertPositionToObject(position)); // calculated differences between current and incoming positions
 
-  const [lastPieceColour, setLastPieceColour] = useState(undefined);
-  const premovesRef = useRef([]); // chess pieces
+  const [positionDifferences, setPositionDifferences] = useState({}); // colour of last piece moves to determine if premoving
+
+  const [lastPieceColour, setLastPieceColour] = useState(undefined); // current premoves
+
+  const [premoves, setPremoves] = useState([]); // ref used to access current value during timeouts (closures)
+
+  const premovesRef = useRef(premoves); // chess pieces/styling
 
   const [chessPieces, setChessPieces] = useState({ ...defaultPieces,
     ...customPieces
@@ -9535,7 +9608,14 @@ function ChessboardProvider({
 
   const [screenSize, setScreenSize] = useState(undefined); // if currently waiting for an animation to finish
 
-  const [waitingForAnimation, setWaitingForAnimation] = useState(false); // init screen size listener
+  const [waitingForAnimation, setWaitingForAnimation] = useState(false); // open clearPremoves() to allow user to call on undo/reset/whenever
+
+  useImperativeHandle(ref, () => ({
+    clearPremoves() {
+      clearPremoves();
+    }
+
+  })); // init screen size listener to update screen size on any window size changes
 
   useEffect(() => {
     function handleResize() {
@@ -9554,33 +9634,45 @@ function ChessboardProvider({
     const newPosition = convertPositionToObject(position);
     const differences = getPositionDifferences(currentPosition, newPosition);
     const newPieceColour = Object.keys(differences.added)?.length <= 2 ? Object.entries(differences.added)?.[0]?.[1][0] : undefined; // external move has come in before animation is over
+    // cancel animation and immediately update position
 
     if (waitingForAnimation) {
       setCurrentPosition(newPosition);
       setWaitingForAnimation(false);
-      if (previousTimeout) clearTimeout(previousTimeout);
+
+      if (previousTimeout) {
+        clearTimeout(previousTimeout);
+      }
     } else {
+      // move was made using drag and drop
       if (manualDrop) {
         setCurrentPosition(newPosition);
         setWaitingForAnimation(false);
       } else {
-        // if more than 2 added, then multiple pieces have moved so we don't care about last piece colour for animation
-        setLastPieceColour(newPieceColour);
-        setPositionDifferences(differences);
+        // move was made by external position change
+        // if position === start then don't override newPieceColour
+        // needs isDifferentFromStart in scenario where premoves have been cleared upon board reset but first move is made by computer, the last move colour would need to be updated
+        if (isDifferentFromStart(newPosition) && lastPieceColour !== undefined) {
+          setLastPieceColour(newPieceColour);
+        }
+
+        setPositionDifferences(differences); // animate external move
+
         setWaitingForAnimation(true);
         const newTimeout = setTimeout(() => {
           setCurrentPosition(newPosition);
           setWaitingForAnimation(false);
-          attemptPremove(newPieceColour);
+          arePremovesAllowed && attemptPremove(newPieceColour);
         }, animationDuration);
         setPreviousTimeout(newTimeout);
       }
-    } // reset manual drop, ready for next move to be made by user or computer
+    } // reset manual drop, ready for next move to be made by user or external
 
 
     setManualDrop(false); // inform latest position information
 
-    getPositionObject(newPosition);
+    getPositionObject(newPosition); // clear timeout on unmount
+
     return () => {
       clearTimeout(previousTimeout);
     };
@@ -9588,28 +9680,31 @@ function ChessboardProvider({
 
   function handleSetPosition(sourceSq, targetSq, piece) {
     // if dropped back down, don't do anything
-    if (sourceSq === targetSq) return; // w0, premove w1, b0, premove w2, w1 (no animation as manual drop set)
-    // need to keep track of length of premoves here
-    // store and place phantom pieces on drop so they can be moved again for premoves ( this will get hard af )
-    // if second move is made for same colour, or there are still premoves queued, then this move needs to be added to premove queue instead of played
+    // if premoves not allowed and expecting alternate moves and same piece colour moved, don't do anything
+    if (sourceSq === targetSq || !arePremovesAllowed && expectingAlternateMoves && lastPieceColour === piece[0]) {
+      return;
+    } // if second move is made for same colour, or there are still premoves queued, then this move needs to be added to premove queue instead of played
+    // premoves length check is added in because white could make 3 premoves, and then black responds to the first move (changing the last piece colour) and then white pre-moves again
 
-    if (lastPieceColour === piece[0] || premovesRef.current.length > 0) {
-      const oldPremoves = premovesRef.current;
+
+    if (arePremovesAllowed && (lastPieceColour === piece[0] || premovesRef.current.length > 0)) {
+      const oldPremoves = [...premovesRef.current];
       oldPremoves.push({
         sourceSq,
         targetSq,
         piece
       });
       premovesRef.current = oldPremoves;
+      setPremoves([...oldPremoves]);
       return;
-    } // If transitioning, don't allow new drop
+    } // if transitioning, don't allow new drop
 
 
     if (waitingForAnimation) return;
     const newOnDropPosition = { ...currentPosition
     };
     setManualDrop(true);
-    setLastPieceColour(piece[0]);
+    setLastPieceColour(piece[0]); // if onPieceDrop function provided, execute it, position must be updated externally and captured by useEffect above for this move to show on board
 
     if (onPieceDrop.length) {
       const isValidMove = onPieceDrop(sourceSq, targetSq, piece);
@@ -9628,42 +9723,55 @@ function ChessboardProvider({
 
       newOnDropPosition[targetSq] = piece;
       setCurrentPosition(newOnDropPosition);
-    }
+    } // inform latest position information
+
 
     getPositionObject(newOnDropPosition);
   }
 
   function attemptPremove(newPieceColour) {
-    if (premovesRef.current.length === 0) return;
-    const premove = premovesRef.current[0]; // if premove is a differing colour to last move made
+    if (premovesRef.current.length === 0) return; // get current value of premove as this is called in a timeout so value may have changed since timeout was set
+
+    const premove = premovesRef.current[0]; // if premove is a differing colour to last move made, then this move can be made
 
     if (premove.piece[0] !== undefined && premove.piece[0] !== newPieceColour && onPieceDrop.length) {
       setLastPieceColour(premove.piece[0]);
-      const isValidMove = onPieceDrop(premove.sourceSq, premove.targetSq, premove.piece);
+      setManualDrop(true); // pre-move doesn't need animation
+
+      const isValidMove = onPieceDrop(premove.sourceSq, premove.targetSq, premove.piece); // premove was successful and can be removed from queue
 
       if (isValidMove) {
-        const oldPremoves = premovesRef.current;
+        const oldPremoves = [...premovesRef.current];
         oldPremoves.shift();
         premovesRef.current = oldPremoves;
-      } else clearPremoves();
-    } // need to clear premove on undo, and on reset
-
+        setPremoves([...oldPremoves]);
+      } else {
+        // premove wasn't successful, clear premove queue
+        clearPremoves();
+      }
+    }
   }
 
   function clearPremoves() {
+    setLastPieceColour(undefined);
     premovesRef.current = [];
+    setPremoves([]);
   }
 
   return /*#__PURE__*/jsx(ChessboardContext.Provider, {
     value: {
       animationDuration,
       arePiecesDraggable,
+      arePremovesAllowed,
       boardOrientation,
       boardWidth,
+      clearPremovesOnRightClick,
       customBoardStyle,
       customDarkSquareStyle,
       customDropSquareStyle,
       customLightSquareStyle,
+      customPremoveDarkSquareStyle,
+      customPremoveLightSquareStyle,
       customSquareStyles,
       dropOffBoardAction,
       id,
@@ -9679,10 +9787,13 @@ function ChessboardProvider({
       showBoardNotation,
       showSparePieces,
       chessPieces,
+      clearPremoves,
       currentPosition,
       handleSetPosition,
+      lastPieceColour,
       manualDrop,
       positionDifferences,
+      premoves,
       screenSize,
       setChessPieces,
       setCurrentPosition,
@@ -9691,242 +9802,7 @@ function ChessboardProvider({
     },
     children: children
   });
-}
-const useChessboard = () => useContext(ChessboardContext);
-
-function Piece({
-  square,
-  piece,
-  getSquareCoordinates,
-  getSingleSquareCoordinates
-}) {
-  const {
-    animationDuration,
-    arePiecesDraggable,
-    boardWidth,
-    id,
-    isDraggablePiece,
-    onPieceClick,
-    chessPieces,
-    dropTarget,
-    positionDifferences,
-    waitingForAnimation,
-    currentPosition
-  } = useChessboard();
-  const [pieceStyle, setPieceStyle] = useState({
-    opacity: 1,
-    zIndex: 5,
-    touchAction: 'none',
-    cursor: arePiecesDraggable ? isDraggablePiece({
-      piece,
-      sourceSquare: square
-    }) ? '-webkit-grab' : 'not-allowed' : 'default'
-  });
-  const [{
-    canDrag,
-    isDragging
-  }, drag, dragPreview] = useDrag(() => ({
-    type: 'piece',
-    item: {
-      piece,
-      square,
-      id
-    },
-    collect: monitor => ({
-      canDrag: isDraggablePiece({
-        piece,
-        sourceSquare: square
-      }),
-      isDragging: !!monitor.isDragging()
-    })
-  }), [piece, square, currentPosition, id]); // hide the default preview
-
-  useEffect(() => {
-    dragPreview(getEmptyImage(), {
-      captureDraggingState: true
-    });
-  }, []); // hide piece on drag
-
-  useEffect(() => {
-    setPieceStyle({ ...pieceStyle,
-      opacity: isDragging ? 0 : 1
-    });
-  }, [isDragging]); // new move has come in
-  // if waiting for animation, then animation has started and we can perform animation
-  // we need to head towards where we need to go, we are the source, we are heading towards the target
-
-  useEffect(() => {
-    const removedPiece = positionDifferences.removed?.[square]; // check if piece matches or if removed piece was a pawn and new square is on 1st or 8th rank (promotion)
-
-    const newSquare = Object.entries(positionDifferences.added).find(([s, p]) => p === removedPiece || removedPiece?.[1] === 'P' && (s[1] === '1' || s[1] === '8')); // we can perform animation if our square was in removed, AND the matching piece is in added
-
-    if (waitingForAnimation && removedPiece && newSquare) {
-      const {
-        sourceSq,
-        targetSq
-      } = getSquareCoordinates(square, newSquare[0]);
-
-      if (sourceSq && targetSq) {
-        setPieceStyle({ ...pieceStyle,
-          transform: `translate(${targetSq.x - sourceSq.x}px, ${targetSq.y - sourceSq.y}px)`,
-          transition: `transform ${animationDuration}ms`
-        });
-      }
-    }
-  }, [positionDifferences]); // translate to their own positions (repaint on undo)
-
-  useEffect(() => {
-    const {
-      sourceSq
-    } = getSingleSquareCoordinates(square);
-
-    if (sourceSq) {
-      setPieceStyle({ ...pieceStyle,
-        transform: `translate(${0}px, ${0}px)`,
-        transition: `transform ${0}ms`
-      });
-    }
-  }, [currentPosition]);
-  return /*#__PURE__*/jsx("div", {
-    ref: arePiecesDraggable ? canDrag ? drag : null : null,
-    onClick: () => onPieceClick(piece),
-    style: pieceStyle,
-    children: typeof chessPieces[piece] === 'function' ? chessPieces[piece]({
-      squareWidth: boardWidth / 8,
-      isDragging,
-      droppedPiece: dropTarget?.piece,
-      targetSquare: dropTarget?.target,
-      sourceSquare: dropTarget?.source
-    }) : /*#__PURE__*/jsx("svg", {
-      viewBox: '1 1 43 43',
-      width: boardWidth / 8,
-      height: boardWidth / 8,
-      children: /*#__PURE__*/jsx("g", {
-        children: chessPieces[piece]
-      })
-    })
-  });
-}
-
-function Square({
-  square,
-  squareColor,
-  setSquares,
-  children
-}) {
-  const squareRef = useRef();
-  const {
-    boardWidth,
-    boardOrientation,
-    currentPosition,
-    customBoardStyle,
-    customDarkSquareStyle,
-    customDropSquareStyle,
-    customLightSquareStyle,
-    customSquareStyles,
-    handleSetPosition,
-    onDragOverSquare,
-    onMouseOutSquare,
-    onMouseOverSquare,
-    onSquareClick,
-    onSquareRightClick,
-    waitingForAnimation
-  } = useChessboard();
-  const [{
-    isOver
-  }, drop] = useDrop(() => ({
-    accept: 'piece',
-    drop: item => handleSetPosition(item.square, square, item.piece),
-    collect: monitor => ({
-      isOver: !!monitor.isOver()
-    })
-  }), [square, currentPosition, waitingForAnimation]);
-  useEffect(() => {
-    const {
-      x,
-      y
-    } = squareRef.current.getBoundingClientRect();
-    setSquares(oldSquares => ({ ...oldSquares,
-      [square]: {
-        x,
-        y
-      }
-    }));
-  }, [boardWidth]);
-  const defaultSquareStyle = { ...size(boardWidth),
-    ...center,
-    ...borderRadius(customBoardStyle, square, boardOrientation),
-    ...(squareColor === 'black' ? customDarkSquareStyle : customLightSquareStyle),
-    ...(isOver && customDropSquareStyle)
-  };
-  return /*#__PURE__*/jsx("div", {
-    ref: drop,
-    style: defaultSquareStyle,
-    onMouseOver: () => onMouseOverSquare(square),
-    onMouseOut: () => onMouseOutSquare(square),
-    onDragEnter: () => onDragOverSquare(square),
-    onClick: () => onSquareClick(square),
-    onContextMenu: e => {
-      e.preventDefault();
-      onSquareRightClick(square);
-    },
-    children: /*#__PURE__*/jsx("div", {
-      ref: squareRef,
-      style: { ...size(boardWidth),
-        ...center,
-        ...customSquareStyles?.[square]
-      },
-      children: children
-    })
-  });
-}
-const center = {
-  display: 'flex',
-  justifyContent: 'center'
-};
-
-const size = width => ({
-  width: width / 8,
-  height: width / 8
 });
-
-const borderRadius = (customBoardStyle, square, boardOrientation) => {
-  if (!customBoardStyle.borderRadius) return {};
-
-  if (square === 'a1') {
-    return boardOrientation === 'white' ? {
-      borderBottomLeftRadius: customBoardStyle.borderRadius
-    } : {
-      borderTopRightRadius: customBoardStyle.borderRadius
-    };
-  }
-
-  if (square === 'a8') {
-    return boardOrientation === 'white' ? {
-      borderTopLeftRadius: customBoardStyle.borderRadius
-    } : {
-      borderBottomRightRadius: customBoardStyle.borderRadius
-    };
-  }
-
-  if (square === 'h1') {
-    return boardOrientation === 'white' ? {
-      borderBottomRightRadius: customBoardStyle.borderRadius
-    } : {
-      borderTopLeftRadius: customBoardStyle.borderRadius
-    };
-  }
-
-  if (square === 'h8') {
-    return boardOrientation === 'white' ? {
-      borderTopRightRadius: customBoardStyle.borderRadius
-    } : {
-      borderBottomLeftRadius: customBoardStyle.borderRadius
-    };
-  }
-
-  return {};
-};
 
 function Notation({
   row,
@@ -10033,6 +9909,273 @@ const notationStyle = {
   position: 'absolute'
 };
 
+function Piece({
+  square,
+  piece,
+  getSquareCoordinates,
+  getSingleSquareCoordinates,
+  isPremovedPiece = false
+}) {
+  const {
+    animationDuration,
+    arePiecesDraggable,
+    arePremovesAllowed,
+    boardWidth,
+    id,
+    isDraggablePiece,
+    onPieceClick,
+    premoves,
+    chessPieces,
+    dropTarget,
+    positionDifferences,
+    waitingForAnimation,
+    currentPosition
+  } = useChessboard();
+  const [pieceStyle, setPieceStyle] = useState({
+    opacity: 1,
+    zIndex: 5,
+    touchAction: 'none',
+    cursor: arePiecesDraggable && isDraggablePiece({
+      piece,
+      sourceSquare: square
+    }) ? '-webkit-grab' : 'default'
+  });
+  const [{
+    canDrag,
+    isDragging
+  }, drag, dragPreview] = useDrag(() => ({
+    type: 'piece',
+    item: {
+      piece,
+      square,
+      id
+    },
+    collect: monitor => ({
+      canDrag: isDraggablePiece({
+        piece,
+        sourceSquare: square
+      }),
+      isDragging: !!monitor.isDragging()
+    })
+  }), [piece, square, currentPosition, id]); // hide the default preview
+
+  useEffect(() => {
+    dragPreview(getEmptyImage(), {
+      captureDraggingState: true
+    });
+  }, []); // hide piece on drag
+
+  useEffect(() => {
+    setPieceStyle(oldPieceStyle => ({ ...oldPieceStyle,
+      opacity: isDragging ? 0 : 1
+    }));
+  }, [isDragging]); // hide piece on matching premoves
+
+  useEffect(() => {
+    // if premoves aren't allowed, don't waste time on calculations
+    if (!arePremovesAllowed) return;
+    let hidePiece = false; // side effect: if piece moves into pre-moved square, its hidden
+    // if there are any premove targets on this square, hide the piece underneath
+
+    if (!isPremovedPiece && premoves.find(p => p.targetSq === square)) hidePiece = true; // if sourceSq === sq and piece matches then this piece has been pre-moved elsewhere?
+
+    if (premoves.find(p => p.sourceSq === square && p.piece === piece)) hidePiece = true; // TODO: If a premoved piece returns to a premoved square, it will hide (e1, e2, e1)
+
+    setPieceStyle(oldPieceStyle => ({ ...oldPieceStyle,
+      display: hidePiece ? 'none' : 'unset'
+    }));
+  }, [currentPosition, premoves]); // new move has come in
+  // if waiting for animation, then animation has started and we can perform animation
+  // we need to head towards where we need to go, we are the source, we are heading towards the target
+
+  useEffect(() => {
+    const removedPiece = positionDifferences.removed?.[square]; // check if piece matches or if removed piece was a pawn and new square is on 1st or 8th rank (promotion)
+
+    const newSquare = Object.entries(positionDifferences.added).find(([s, p]) => p === removedPiece || removedPiece?.[1] === 'P' && (s[1] === '1' || s[1] === '8')); // we can perform animation if our square was in removed, AND the matching piece is in added AND this isn't a premoved piece
+
+    if (waitingForAnimation && removedPiece && newSquare && !isPremovedPiece) {
+      const {
+        sourceSq,
+        targetSq
+      } = getSquareCoordinates(square, newSquare[0]);
+
+      if (sourceSq && targetSq) {
+        setPieceStyle(oldPieceStyle => ({ ...oldPieceStyle,
+          transform: `translate(${targetSq.x - sourceSq.x}px, ${targetSq.y - sourceSq.y}px)`,
+          transition: `transform ${animationDuration}ms`
+        }));
+      }
+    }
+  }, [positionDifferences]); // translate to their own positions (repaint on undo)
+
+  useEffect(() => {
+    const {
+      sourceSq
+    } = getSingleSquareCoordinates(square);
+
+    if (sourceSq) {
+      setPieceStyle(oldPieceStyle => ({ ...oldPieceStyle,
+        transform: `translate(${0}px, ${0}px)`,
+        transition: `transform ${0}ms`
+      }));
+    }
+  }, [currentPosition]); // update is piece draggable
+
+  useEffect(() => {
+    setPieceStyle(oldPieceStyle => ({ ...oldPieceStyle,
+      cursor: arePiecesDraggable && isDraggablePiece({
+        piece,
+        sourceSquare: square
+      }) ? '-webkit-grab' : 'default'
+    }));
+  }, [square, currentPosition]);
+  return /*#__PURE__*/jsx("div", {
+    ref: arePiecesDraggable ? canDrag ? drag : null : null,
+    onClick: () => onPieceClick(piece),
+    style: pieceStyle,
+    children: typeof chessPieces[piece] === 'function' ? chessPieces[piece]({
+      squareWidth: boardWidth / 8,
+      isDragging,
+      droppedPiece: dropTarget?.piece,
+      targetSquare: dropTarget?.target,
+      sourceSquare: dropTarget?.source
+    }) : /*#__PURE__*/jsx("svg", {
+      viewBox: '1 1 43 43',
+      width: boardWidth / 8,
+      height: boardWidth / 8,
+      children: /*#__PURE__*/jsx("g", {
+        children: chessPieces[piece]
+      })
+    })
+  });
+}
+
+function Square({
+  square,
+  squareColor,
+  setSquares,
+  squareHasPremove,
+  children
+}) {
+  const squareRef = useRef();
+  const {
+    boardWidth,
+    boardOrientation,
+    clearPremoves,
+    clearPremovesOnRightClick,
+    currentPosition,
+    customBoardStyle,
+    customDarkSquareStyle,
+    customDropSquareStyle,
+    customLightSquareStyle,
+    customPremoveDarkSquareStyle,
+    customPremoveLightSquareStyle,
+    customSquareStyles,
+    handleSetPosition,
+    lastPieceColour,
+    onDragOverSquare,
+    onMouseOutSquare,
+    onMouseOverSquare,
+    onSquareClick,
+    onSquareRightClick,
+    waitingForAnimation
+  } = useChessboard();
+  const [{
+    isOver
+  }, drop] = useDrop(() => ({
+    accept: 'piece',
+    drop: item => handleSetPosition(item.square, square, item.piece),
+    collect: monitor => ({
+      isOver: !!monitor.isOver()
+    })
+  }), [square, currentPosition, waitingForAnimation, lastPieceColour]);
+  useEffect(() => {
+    const {
+      x,
+      y
+    } = squareRef.current.getBoundingClientRect();
+    setSquares(oldSquares => ({ ...oldSquares,
+      [square]: {
+        x,
+        y
+      }
+    }));
+  }, [boardWidth]);
+  const defaultSquareStyle = { ...borderRadius(customBoardStyle, square, boardOrientation),
+    ...(squareColor === 'black' ? customDarkSquareStyle : customLightSquareStyle),
+    ...(squareHasPremove && (squareColor === 'black' ? customPremoveDarkSquareStyle : customPremoveLightSquareStyle)),
+    ...(isOver && customDropSquareStyle)
+  };
+  return /*#__PURE__*/jsx("div", {
+    ref: drop,
+    style: defaultSquareStyle,
+    onMouseOver: () => onMouseOverSquare(square),
+    onMouseOut: () => onMouseOutSquare(square),
+    onDragEnter: () => onDragOverSquare(square),
+    onClick: () => onSquareClick(square),
+    onContextMenu: e => {
+      e.preventDefault();
+      clearPremovesOnRightClick && clearPremoves();
+      onSquareRightClick(square);
+    },
+    children: /*#__PURE__*/jsx("div", {
+      ref: squareRef,
+      style: { ...size(boardWidth),
+        ...center,
+        ...customSquareStyles?.[square]
+      },
+      children: children
+    })
+  });
+}
+const center = {
+  display: 'flex',
+  justifyContent: 'center'
+};
+
+const size = width => ({
+  width: width / 8,
+  height: width / 8
+});
+
+const borderRadius = (customBoardStyle, square, boardOrientation) => {
+  if (!customBoardStyle.borderRadius) return {};
+
+  if (square === 'a1') {
+    return boardOrientation === 'white' ? {
+      borderBottomLeftRadius: customBoardStyle.borderRadius
+    } : {
+      borderTopRightRadius: customBoardStyle.borderRadius
+    };
+  }
+
+  if (square === 'a8') {
+    return boardOrientation === 'white' ? {
+      borderTopLeftRadius: customBoardStyle.borderRadius
+    } : {
+      borderBottomRightRadius: customBoardStyle.borderRadius
+    };
+  }
+
+  if (square === 'h1') {
+    return boardOrientation === 'white' ? {
+      borderBottomRightRadius: customBoardStyle.borderRadius
+    } : {
+      borderTopLeftRadius: customBoardStyle.borderRadius
+    };
+  }
+
+  if (square === 'h8') {
+    return boardOrientation === 'white' ? {
+      borderTopRightRadius: customBoardStyle.borderRadius
+    } : {
+      borderBottomLeftRadius: customBoardStyle.borderRadius
+    };
+  }
+
+  return {};
+};
+
 function Squares({
   children
 }) {
@@ -10054,7 +10197,7 @@ function Squares({
         children: [...Array(8)].map((_, c) => {
           // a1, a2 ...
           const square = boardOrientation === 'black' ? COLUMNS[7 - c] + (r + 1) : COLUMNS[c] + (8 - r);
-          squareColor = c % 2 === 0 ? r % 2 === 0 ? 'white' : 'black' : r % 2 === 0 ? 'black' : 'white';
+          squareColor = c % 2 === r % 2 ? 'white' : 'black';
           return children({
             square,
             squareColor,
@@ -10079,7 +10222,7 @@ const rowStyles = width => ({
   width
 });
 
-var errorImage = {
+const errorImage = {
   whiteKing: /*#__PURE__*/jsx("svg", {
     xmlns: "http://www.w3.org/2000/svg",
     version: "1.1",
@@ -10149,7 +10292,8 @@ function Board() {
     boardWidth,
     showBoardNotation,
     currentPosition,
-    screenSize
+    screenSize,
+    premoves
   } = useChessboard();
 
   function getSingleSquareCoordinates(square) {
@@ -10173,13 +10317,22 @@ function Board() {
         col,
         row
       }) => {
+        const squareHasPremove = premoves.find(p => p.sourceSq === square || p.targetSq === square);
+        const squareHasPremoveTarget = premoves.find(p => p.targetSq === square);
         return /*#__PURE__*/jsxs(Square, {
           square: square,
           squareColor: squareColor,
           setSquares: setSquares,
+          squareHasPremove: squareHasPremove,
           children: [currentPosition[square] && /*#__PURE__*/jsx(Piece, {
             square: square,
             piece: currentPosition[square],
+            getSquareCoordinates: getSquareCoordinates,
+            getSingleSquareCoordinates: getSingleSquareCoordinates
+          }), squareHasPremoveTarget && /*#__PURE__*/jsx(Piece, {
+            isPremovedPiece: true,
+            square: square,
+            piece: squareHasPremoveTarget.piece,
             getSquareCoordinates: getSquareCoordinates,
             getSingleSquareCoordinates: getSingleSquareCoordinates
           }), showBoardNotation && /*#__PURE__*/jsx(Notation, {
@@ -10192,7 +10345,7 @@ function Board() {
   }) : /*#__PURE__*/jsx(WhiteKing, {});
 }
 
-function CustomDragLayer(props) {
+function CDragLayer(props) {
   const {
     boardWidth,
     chessPieces,
@@ -10254,22 +10407,23 @@ function collect(monitor) {
   };
 }
 
-var CustomDragLayer$1 = DragLayer(collect)(CustomDragLayer);
+const CustomDragLayer = DragLayer(collect)(CDragLayer);
 
-function Chessboard(props) {
+const Chessboard = /*#__PURE__*/forwardRef((props, ref) => {
   return /*#__PURE__*/jsx(ErrorBoundary, {
     children: /*#__PURE__*/jsx(DndProvider, {
       options: HTML5toTouch,
-      children: /*#__PURE__*/jsxs(ChessboardProvider, { ...props,
-        children: [/*#__PURE__*/jsx(CustomDragLayer$1, {}), /*#__PURE__*/jsx("div", {
+      children: /*#__PURE__*/jsxs(ChessboardProvider, {
+        ref: ref,
+        ...props,
+        children: [/*#__PURE__*/jsx(CustomDragLayer, {}), /*#__PURE__*/jsx("div", {
           children: /*#__PURE__*/jsx(Board, {})
         })]
       })
     })
   });
-}
-
+});
 Chessboard.propTypes = chessboardPropTypes;
 Chessboard.defaultProps = chessboardDefaultProps;
 
-export { Chessboard as default };
+export { Chessboard };

@@ -4,14 +4,16 @@ import { getEmptyImage } from 'react-dnd-html5-backend';
 
 import { useChessboard } from '../context/chessboard-context';
 
-export default function Piece({ square, piece, getSquareCoordinates, getSingleSquareCoordinates }) {
+export function Piece({ square, piece, getSquareCoordinates, getSingleSquareCoordinates, isPremovedPiece = false }) {
   const {
     animationDuration,
     arePiecesDraggable,
+    arePremovesAllowed,
     boardWidth,
     id,
     isDraggablePiece,
     onPieceClick,
+    premoves,
     chessPieces,
     dropTarget,
     positionDifferences,
@@ -23,11 +25,7 @@ export default function Piece({ square, piece, getSquareCoordinates, getSingleSq
     opacity: 1,
     zIndex: 5,
     touchAction: 'none',
-    cursor: arePiecesDraggable
-      ? isDraggablePiece({ piece, sourceSquare: square })
-        ? '-webkit-grab'
-        : 'not-allowed'
-      : 'default'
+    cursor: arePiecesDraggable && isDraggablePiece({ piece, sourceSquare: square }) ? '-webkit-grab' : 'default'
   });
 
   const [{ canDrag, isDragging }, drag, dragPreview] = useDrag(
@@ -49,11 +47,33 @@ export default function Piece({ square, piece, getSquareCoordinates, getSingleSq
 
   // hide piece on drag
   useEffect(() => {
-    setPieceStyle({
-      ...pieceStyle,
+    setPieceStyle((oldPieceStyle) => ({
+      ...oldPieceStyle,
       opacity: isDragging ? 0 : 1
-    });
+    }));
   }, [isDragging]);
+
+  // hide piece on matching premoves
+  useEffect(() => {
+    // if premoves aren't allowed, don't waste time on calculations
+    if (!arePremovesAllowed) return;
+
+    let hidePiece = false;
+    // side effect: if piece moves into pre-moved square, its hidden
+
+    // if there are any premove targets on this square, hide the piece underneath
+    if (!isPremovedPiece && premoves.find((p) => p.targetSq === square)) hidePiece = true;
+
+    // if sourceSq === sq and piece matches then this piece has been pre-moved elsewhere?
+    if (premoves.find((p) => p.sourceSq === square && p.piece === piece)) hidePiece = true;
+
+    // TODO: If a premoved piece returns to a premoved square, it will hide (e1, e2, e1)
+
+    setPieceStyle((oldPieceStyle) => ({
+      ...oldPieceStyle,
+      display: hidePiece ? 'none' : 'unset'
+    }));
+  }, [currentPosition, premoves]);
 
   // new move has come in
   // if waiting for animation, then animation has started and we can perform animation
@@ -64,15 +84,15 @@ export default function Piece({ square, piece, getSquareCoordinates, getSingleSq
     const newSquare = Object.entries(positionDifferences.added).find(
       ([s, p]) => p === removedPiece || (removedPiece?.[1] === 'P' && (s[1] === '1' || s[1] === '8'))
     );
-    // we can perform animation if our square was in removed, AND the matching piece is in added
-    if (waitingForAnimation && removedPiece && newSquare) {
+    // we can perform animation if our square was in removed, AND the matching piece is in added AND this isn't a premoved piece
+    if (waitingForAnimation && removedPiece && newSquare && !isPremovedPiece) {
       const { sourceSq, targetSq } = getSquareCoordinates(square, newSquare[0]);
       if (sourceSq && targetSq) {
-        setPieceStyle({
-          ...pieceStyle,
+        setPieceStyle((oldPieceStyle) => ({
+          ...oldPieceStyle,
           transform: `translate(${targetSq.x - sourceSq.x}px, ${targetSq.y - sourceSq.y}px)`,
           transition: `transform ${animationDuration}ms`
-        });
+        }));
       }
     }
   }, [positionDifferences]);
@@ -81,13 +101,21 @@ export default function Piece({ square, piece, getSquareCoordinates, getSingleSq
   useEffect(() => {
     const { sourceSq } = getSingleSquareCoordinates(square);
     if (sourceSq) {
-      setPieceStyle({
-        ...pieceStyle,
+      setPieceStyle((oldPieceStyle) => ({
+        ...oldPieceStyle,
         transform: `translate(${0}px, ${0}px)`,
         transition: `transform ${0}ms`
-      });
+      }));
     }
   }, [currentPosition]);
+
+  // update is piece draggable
+  useEffect(() => {
+    setPieceStyle((oldPieceStyle) => ({
+      ...oldPieceStyle,
+      cursor: arePiecesDraggable && isDraggablePiece({ piece, sourceSquare: square }) ? '-webkit-grab' : 'default'
+    }));
+  }, [square, currentPosition]);
 
   return (
     <div
