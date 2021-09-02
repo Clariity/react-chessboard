@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import Chess from 'chess.js';
 
-import Chessboard from 'react-chessboard';
+import { Chessboard } from 'react-chessboard';
 
 export default function RandomVsRandom({ boardWidth }) {
   const [game, setGame] = useState(new Chess());

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Chess from 'chess.js';
 
-import Chessboard from 'react-chessboard';
+import { Chessboard } from 'react-chessboard';
 
 export default function ClickToMove({ boardWidth }) {
   const [game, setGame] = useState(new Chess());

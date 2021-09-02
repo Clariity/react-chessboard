@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import Chess from 'chess.js';
 
-import Chessboard from 'react-chessboard';
+import { Chessboard } from 'react-chessboard';
 
 export default function PremoveVsRandom({ boardWidth }) {
   const [game, setGame] = useState(new Chess());
+  const [currentTimeout, setCurrentTimeout] = useState(undefined);
+  const chessboardRef = useRef();
 
   function safeGameMutate(modify) {
     setGame((g) => {
@@ -39,7 +41,9 @@ export default function PremoveVsRandom({ boardWidth }) {
     // illegal move
     if (move === null) return false;
 
-    setTimeout(makeRandomMove, 2000);
+    // store timeout so it can be cleared on undo/reset so computer doesn't execute move
+    const newTimeout = setTimeout(makeRandomMove, 2000);
+    setCurrentTimeout(newTimeout);
     return true;
   }
 
@@ -48,13 +52,16 @@ export default function PremoveVsRandom({ boardWidth }) {
       <Chessboard
         id="PlayVsRandom"
         animationDuration={200}
+        arePremovesAllowed={true}
         boardWidth={boardWidth}
         position={game.fen()}
+        isDraggablePiece={({ piece }) => piece[0] === 'w'}
         onPieceDrop={onDrop}
         customBoardStyle={{
           borderRadius: '4px',
           boxShadow: '0 5px 15px rgba(0, 0, 0, 0.5)'
         }}
+        ref={chessboardRef}
       />
       <button
         className="rc-button"
@@ -62,6 +69,10 @@ export default function PremoveVsRandom({ boardWidth }) {
           safeGameMutate((game) => {
             game.reset();
           });
+          // clear premove queue
+          chessboardRef.current.clearPremoves();
+          // stop any current timeouts
+          clearTimeout(currentTimeout);
         }}
       >
         reset
@@ -69,9 +80,15 @@ export default function PremoveVsRandom({ boardWidth }) {
       <button
         className="rc-button"
         onClick={() => {
+          // undo twice to undo computer move too
           safeGameMutate((game) => {
             game.undo();
+            game.undo();
           });
+          // clear premove queue
+          chessboardRef.current.clearPremoves();
+          // stop any current timeouts
+          clearTimeout(currentTimeout);
         }}
       >
         undo

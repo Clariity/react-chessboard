@@ -104,16 +104,16 @@ function App() {
           className={`rc-button ${selectedBoard === 'BasicBoard' ? 'selected' : ''}`}
           onClick={() => {
             setSelectedBoard(null);
-            setTimeout(() => setSelectedBoard('BasicBoard'), 100);
+            setTimeout(() => setSelectedBoard('BasicBoard'), 10);
           }}
         >
-          BasicBoard
+          Basic Board
         </button>
         <button
           className={`rc-button ${selectedBoard === 'PlayVsRandom' ? 'selected' : ''}`}
           onClick={() => {
             setSelectedBoard(null);
-            setTimeout(() => setSelectedBoard('PlayVsRandom'), 100);
+            setTimeout(() => setSelectedBoard('PlayVsRandom'), 10);
           }}
         >
           Play Vs Random
@@ -122,7 +122,7 @@ function App() {
           className={`rc-button ${selectedBoard === 'ClickToMove' ? 'selected' : ''}`}
           onClick={() => {
             setSelectedBoard(null);
-            setTimeout(() => setSelectedBoard('ClickToMove'), 100);
+            setTimeout(() => setSelectedBoard('ClickToMove'), 10);
           }}
         >
           Click to Move
@@ -131,7 +131,7 @@ function App() {
           className={`rc-button ${selectedBoard === 'RandomVsRandom' ? 'selected' : ''}`}
           onClick={() => {
             setSelectedBoard(null);
-            setTimeout(() => setSelectedBoard('RandomVsRandom'), 100);
+            setTimeout(() => setSelectedBoard('RandomVsRandom'), 10);
           }}
         >
           Random Vs Random
@@ -140,7 +140,7 @@ function App() {
           className={`rc-button ${selectedBoard === 'PlayVsPlay' ? 'selected' : ''}`}
           onClick={() => {
             setSelectedBoard(null);
-            setTimeout(() => setSelectedBoard('PlayVsPlay'), 100);
+            setTimeout(() => setSelectedBoard('PlayVsPlay'), 10);
           }}
         >
           Play Vs Play
@@ -149,7 +149,7 @@ function App() {
           className={`rc-button ${selectedBoard === 'PremoveVsRandom' ? 'selected' : ''}`}
           onClick={() => {
             setSelectedBoard(null);
-            setTimeout(() => setSelectedBoard('PremoveVsRandom'), 100);
+            setTimeout(() => setSelectedBoard('PremoveVsRandom'), 10);
           }}
         >
           Premove Vs Random
@@ -158,7 +158,7 @@ function App() {
           className={`rc-button ${selectedBoard === 'SquareStyles' ? 'selected' : ''}`}
           onClick={() => {
             setSelectedBoard(null);
-            setTimeout(() => setSelectedBoard('SquareStyles'), 100);
+            setTimeout(() => setSelectedBoard('SquareStyles'), 10);
           }}
         >
           Styled Squares
@@ -167,7 +167,7 @@ function App() {
           className={`rc-button ${selectedBoard === 'StyledBoard' ? 'selected' : ''}`}
           onClick={() => {
             setSelectedBoard(null);
-            setTimeout(() => setSelectedBoard('StyledBoard'), 100);
+            setTimeout(() => setSelectedBoard('StyledBoard'), 10);
           }}
         >
           Styled Board
