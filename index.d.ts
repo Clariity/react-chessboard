@@ -1,4 +1,7 @@
+import { Square } from 'chess.js';
 import { CSSProperties, ReactElement } from 'react';
+
+type Pieces = 'wP' | 'wB' | 'wN' | 'wR' | 'wQ' | 'wK' | 'bP' | 'bB' | 'bN' | 'bR' | 'bQ' | 'bK';
 
 interface CustomPieceFnArgs {
   isDragging: boolean;
@@ -7,24 +10,20 @@ interface CustomPieceFnArgs {
   targetSquare: string;
   sourceSquare: string;
 }
+
 type CustomPieceFn = (args: CustomPieceFnArgs) => ReactElement;
 
-interface CustomPieces {
-  wP?: CustomPieceFn;
-  wB?: CustomPieceFn;
-  wN?: CustomPieceFn;
-  wR?: CustomPieceFn;
-  wQ?: CustomPieceFn;
-  wK?: CustomPieceFn;
-  bP?: CustomPieceFn;
-  bB?: CustomPieceFn;
-  bN?: CustomPieceFn;
-  bR?: CustomPieceFn;
-  bQ?: CustomPieceFn;
-  bK?: CustomPieceFn;
-}
+type CustomPieces = {
+  [key in Pieces]?: CustomPieceFn;
+};
 
-type Pieces = 'wP' | 'wB' | 'wN' | 'wR' | 'wQ' | 'wK' | 'bP' | 'bB' | 'bN' | 'bR' | 'bQ' | 'bK';
+type CustomSquareStyles = {
+  [key in Square]?: CSSProperties;
+};
+
+type CurrentPosition = {
+  [key in Square]: Pieces;
+};
 
 interface ChessBoardProps {
   /**
@@ -82,7 +81,7 @@ interface ChessBoardProps {
   /**
    * Custom styles for all squares.
    */
-  customSquareStyles?: CSSProperties;
+  customSquareStyles?: CustomSquareStyles;
   /**
    * Whether the board should expect alternate coloured moves or allow for any piece to be moved at any time.
    */
@@ -94,23 +93,23 @@ interface ChessBoardProps {
   /**
    * Function called when a piece drag is attempted. Returns if piece is draggable.
    */
-  isDraggablePiece?: (args: { piece: Pieces; sourceSquare: string }) => boolean;
+  isDraggablePiece?: (args: { piece: Pieces; sourceSquare: Square }) => boolean;
   /**
    * User function that receives current position object when position changes.
    */
-  getPositionObject?: (currentPosition: { [name: string]: Pieces }) => any;
+  getPositionObject?: (currentPosition: CurrentPosition) => any;
   /**
    * User function that is run when piece is dragged over a square.
    */
-  onDragOverSquare?: (square: string) => any;
+  onDragOverSquare?: (square: Square) => any;
   /**
    * User function that is run when mouse leaves a square.
    */
-  onMouseOutSquare?: (square: string) => any;
+  onMouseOutSquare?: (square: Square) => any;
   /**
    * User function that is run when mouse is over a square.
    */
-  onMouseOverSquare?: (square: string) => any;
+  onMouseOverSquare?: (square: Square) => any;
   /**
    * User function that is run when piece is clicked.
    */
@@ -118,15 +117,15 @@ interface ChessBoardProps {
   /**
    * User function that is run when piece is dropped on a square. Must return whether the move was successful or not.
    */
-  onPieceDrop?: (sourceSquare: string, targetSquare: string, piece: Pieces) => boolean;
+  onPieceDrop?: (sourceSquare: Square, targetSquare: Square, piece: Pieces) => boolean;
   /**
    * User function that is run when a square is clicked.
    */
-  onSquareClick?: (square: string) => any;
+  onSquareClick?: (square: Square) => any;
   /**
    * User function that is run when a square is right clicked.
    */
-  onSquareRightClick?: (square: string) => any;
+  onSquareRightClick?: (square: Square) => any;
   /**
    * FEN string or position object notating where the chess pieces are on the board. Start position can also be notated with the string: 'start'.
    */
