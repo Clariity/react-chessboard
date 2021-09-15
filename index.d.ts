@@ -6,9 +6,9 @@ type Pieces = 'wP' | 'wB' | 'wN' | 'wR' | 'wQ' | 'wK' | 'bP' | 'bB' | 'bN' | 'bR
 interface CustomPieceFnArgs {
   isDragging: boolean;
   squareWidth: number;
-  droppedPiece: string;
-  targetSquare: string;
-  sourceSquare: string;
+  droppedPiece: Pieces;
+  targetSquare: Square;
+  sourceSquare: Square;
 }
 
 type CustomPieceFn = (args: CustomPieceFnArgs) => ReactElement;
