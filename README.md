@@ -44,11 +44,13 @@ npm i react-chessboard
 - Customisable Pieces
 - Customisable Square Styles
 - Drag and Drop
+- Mobile Compatibility
 - Moving Piece Animations
 - Optional Square Coordinates Notation
 - Position Control
 - Premoves
 - Responsive Board Width
+- Typescript Support
 
 ### Planned
 
@@ -58,7 +60,7 @@ npm i react-chessboard
 
 ### Notes
 
-- Between version 0.0.3 and 0.0.4, onPieceDrop was changed to require a return value of `true` or `false` depending on whether the move was successful or not.
+- Between version 0.0.3 and 0.0.4, onPieceDrop was changed to allow you to return a value of `true` or `false` depending on whether the move was successful or not.
 - If more than one board is rendered and draggable on a low end device, performance will struggle due to performance issues with react-dnd.
 - In the rare case that react-chessboard component is hot swapped out for another in its place, this will cause an issue with the CustomDragLayer. To prevent this, the react-chessboard component needs to be completely unmounted before being replaced. An example of how this can be achieved is shown in [`example/src/index.js`](https://github.com/Clariity/react-chessboard/blob/main/example/src/index.js).
 
@@ -114,8 +116,9 @@ export default function PlayRandomMoveEngine() {
         promotion: 'q' // always promote to a queen for example simplicity
       });
     });
-    if (move === null) return; // illegal move
+    if (move === null) return false; // illegal move
     setTimeout(makeRandomMove, 200);
+    return true;
   }
 
   return <Chessboard position={game.fen()} onPieceDrop={onDrop} />;

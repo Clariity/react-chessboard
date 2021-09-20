@@ -7,6 +7,9 @@ import { convertPositionToObject, getPositionDifferences, isDifferentFromStart }
 // add other things from chessground
 // change board orientation to 'w' or 'b'? like used in chess.js?
 
+// keep onSquareClick, but add onPieceClick to send both square and piece
+// this is because in the current ClickToMove example, if blacks turn to move, you can click on a White piece and then on a black piece thats out of reach, and it will try to make the move and then reset firstClick
+
 export const ChessboardContext = React.createContext();
 
 export const useChessboard = () => useContext(ChessboardContext);
