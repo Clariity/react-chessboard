@@ -8757,10 +8757,10 @@ const chessboardDefaultProps = {
   },
   customPieces: {},
   customPremoveDarkSquareStyle: {
-    backgroundColor: '#a42323'
+    backgroundColor: '#A42323'
   },
   customPremoveLightSquareStyle: {
-    backgroundColor: '#bd2828'
+    backgroundColor: '#BD2828'
   },
   customSquareStyles: {},
   dropOffBoardAction: 'snapback',
