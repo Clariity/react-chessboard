@@ -29,6 +29,10 @@ interface ChessBoardProps {
    */
   animationDuration?: number;
   /**
+   * Whether or not arrows can be drawn with right click and dragging.
+   */
+  areArrowsAllowed?: boolean;
+  /**
    * Whether or not all pieces are draggable.
    */
   arePiecesDraggable?: boolean;
@@ -48,6 +52,10 @@ interface ChessBoardProps {
    * If premoves are allowed, whether or not to clear the premove queue on right click.
    */
   clearPremovesOnRightClick?: boolean;
+  /**
+   * String with rgb or hex value to colour drawn arrows.
+   */
+  customArrowColor: string;
   /**
    * Custom board style object e.g. { borderRadius: '5px', boxShadow: '0 5px 15px rgba(0, 0, 0, 0.5 '}.
    */

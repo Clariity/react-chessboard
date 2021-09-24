@@ -6,6 +6,9 @@ export const chessboardPropTypes = {
   // time in milliseconds for piece to slide to target square. Only used when the position is programmatically changed
   animationDuration: PropTypes.number,
 
+  // whether or not arrows can be drawn with right click and dragging
+  areArrowsAllowed: PropTypes.bool,
+
   // if pieces are draggable
   arePiecesDraggable: PropTypes.bool,
 
@@ -20,6 +23,9 @@ export const chessboardPropTypes = {
 
   // if premoves should be cleared on right click
   clearPremovesOnRightClick: PropTypes.bool,
+
+  // string with rgb or hex value to colour drawn arrows
+  customArrowColor: PropTypes.string,
 
   // board style object e.g. { borderRadius: '5px', boxShadow: `0 5px 15px rgba(0, 0, 0, 0.5)`}
   customBoardStyle: PropTypes.object,
@@ -93,11 +99,13 @@ export const chessboardPropTypes = {
 
 export const chessboardDefaultProps = {
   animationDuration: 300,
+  areArrowsAllowed: true,
   arePiecesDraggable: true,
   arePremovesAllowed: false,
   boardOrientation: 'white',
   boardWidth: 560,
   clearPremovesOnRightClick: true,
+  customArrowColor: 'rgb(255,170,0)',
   customBoardStyle: {},
   customDarkSquareStyle: { backgroundColor: '#B58863' },
   customDropSquareStyle: { boxShadow: 'inset 0 0 1px 6px rgba(255,255,255,0.75)' },

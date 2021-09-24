@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useDrop } from 'react-dnd';
 
+import { getRelativeCoords } from '../functions';
 import { useChessboard } from '../context/chessboard-context';
 
 export function Square({ square, squareColor, setSquares, squareHasPremove, children }) {
@@ -8,8 +9,7 @@ export function Square({ square, squareColor, setSquares, squareHasPremove, chil
   const {
     boardWidth,
     boardOrientation,
-    clearPremoves,
-    clearPremovesOnRightClick,
+    clearArrows,
     currentPosition,
     customBoardStyle,
     customDarkSquareStyle,
@@ -23,8 +23,9 @@ export function Square({ square, squareColor, setSquares, squareHasPremove, chil
     onDragOverSquare,
     onMouseOutSquare,
     onMouseOverSquare,
+    onRightClickDown,
+    onRightClickUp,
     onSquareClick,
-    onSquareRightClick,
     waitingForAnimation
   } = useChessboard();
 
@@ -57,12 +58,21 @@ export function Square({ square, squareColor, setSquares, squareHasPremove, chil
       style={defaultSquareStyle}
       onMouseOver={() => onMouseOverSquare(square)}
       onMouseOut={() => onMouseOutSquare(square)}
+      onMouseDown={(e) => {
+        const { x, y } = getRelativeCoords(boardOrientation, boardWidth, square);
+        if (e.button === 2) onRightClickDown({ x, y, square });
+      }}
+      onMouseUp={(e) => {
+        const { x, y } = getRelativeCoords(boardOrientation, boardWidth, square);
+        if (e.button === 2) onRightClickUp({ x, y, square });
+      }}
       onDragEnter={() => onDragOverSquare(square)}
-      onClick={() => onSquareClick(square)}
+      onClick={() => {
+        onSquareClick(square);
+        clearArrows();
+      }}
       onContextMenu={(e) => {
         e.preventDefault();
-        clearPremovesOnRightClick && clearPremoves();
-        onSquareRightClick(square);
       }}
     >
       <div

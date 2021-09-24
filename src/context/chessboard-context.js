@@ -18,11 +18,13 @@ export const ChessboardProvider = forwardRef(
   (
     {
       animationDuration,
+      areArrowsAllowed,
       arePiecesDraggable,
       arePremovesAllowed,
       boardOrientation,
       boardWidth,
       clearPremovesOnRightClick,
+      customArrowColor,
       customBoardStyle,
       customDarkSquareStyle,
       customDropSquareStyle,
@@ -63,6 +65,11 @@ export const ChessboardProvider = forwardRef(
     // ref used to access current value during timeouts (closures)
     const premovesRef = useRef(premoves);
 
+    // current right mouse down square
+    const [currentRightClickDown, setCurrentRightClickDown] = useState();
+    // current arrows
+    const [arrows, setArrows] = useState([]);
+
     // chess pieces/styling
     const [chessPieces, setChessPieces] = useState({ ...defaultPieces, ...customPieces });
 
@@ -89,6 +96,8 @@ export const ChessboardProvider = forwardRef(
     useEffect(() => {
       function handleResize() {
         setScreenSize({ width: window.innerWidth, height: window.innerHeight });
+        setArrows([]); // change to recalculate arrows instead
+        setCurrentRightClickDown(null);
       }
 
       window.addEventListener('resize', handleResize);
@@ -141,6 +150,8 @@ export const ChessboardProvider = forwardRef(
       setManualDrop(false);
       // inform latest position information
       getPositionObject(newPosition);
+      // clear arrows
+      clearArrows();
 
       // clear timeout on unmount
       return () => {
@@ -155,6 +166,8 @@ export const ChessboardProvider = forwardRef(
       if (sourceSq === targetSq || (!arePremovesAllowed && expectingAlternateMoves && lastPieceColour === piece[0])) {
         return;
       }
+
+      clearArrows();
 
       // if second move is made for same colour, or there are still premoves queued, then this move needs to be added to premove queue instead of played
       // premoves length check is added in because white could make 3 premoves, and then black responds to the first move (changing the last piece colour) and then white pre-moves again
@@ -229,6 +242,46 @@ export const ChessboardProvider = forwardRef(
       setPremoves([]);
     }
 
+    function onRightClickDown(coords) {
+      setCurrentRightClickDown(coords);
+    }
+
+    function onRightClickUp(coords) {
+      if (!areArrowsAllowed) return;
+      if (currentRightClickDown) {
+        // same square, don't draw an arrow, but do clear premoves and run onSquareRightClick
+        if (currentRightClickDown.square === coords.square) {
+          setCurrentRightClickDown(null);
+          clearPremovesOnRightClick && clearPremoves();
+          onSquareRightClick(coords.square);
+          return;
+        }
+
+        // if arrow already exists then it needs to be removed
+        for (const i in arrows) {
+          if (arrows[i][0].square === currentRightClickDown.square && arrows[i][1].square === coords.square) {
+            setArrows((oldArrows) => {
+              const newArrows = [...oldArrows];
+              newArrows.splice(i, 1);
+              return newArrows;
+            });
+            return;
+          }
+        }
+
+        // different square, draw an arrow
+        setArrows((oldArrows) => [...oldArrows, [currentRightClickDown, coords]]);
+      } else setCurrentRightClickDown(null);
+    }
+
+    function clearCurrentRightClickDown() {
+      setCurrentRightClickDown(null);
+    }
+
+    function clearArrows() {
+      setArrows([]);
+    }
+
     return (
       <ChessboardContext.Provider
         value={{
@@ -237,7 +290,7 @@ export const ChessboardProvider = forwardRef(
           arePremovesAllowed,
           boardOrientation,
           boardWidth,
-          clearPremovesOnRightClick,
+          customArrowColor,
           customBoardStyle,
           customDarkSquareStyle,
           customDropSquareStyle,
@@ -259,12 +312,17 @@ export const ChessboardProvider = forwardRef(
           showBoardNotation,
           showSparePieces,
 
+          arrows,
           chessPieces,
+          clearArrows,
+          clearCurrentRightClickDown,
           clearPremoves,
           currentPosition,
           handleSetPosition,
           lastPieceColour,
           manualDrop,
+          onRightClickDown,
+          onRightClickUp,
           positionDifferences,
           premoves,
           screenSize,

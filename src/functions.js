@@ -35,6 +35,42 @@ const startPositionObject = {
   h1: 'wR'
 };
 
+const whiteColumnValues = {
+  a: 0,
+  b: 1,
+  c: 2,
+  d: 3,
+  e: 4,
+  f: 5,
+  g: 6,
+  h: 7
+};
+
+const blackColumnValues = {
+  a: 7,
+  b: 6,
+  c: 5,
+  d: 4,
+  e: 3,
+  f: 2,
+  g: 1,
+  h: 0
+};
+
+const whiteRows = [7, 6, 5, 4, 3, 2, 1, 0];
+
+const blackRows = [0, 1, 2, 3, 4, 5, 6, 7];
+
+export const getRelativeCoords = (boardOrientation, boardWidth, square) => {
+  const squareWidth = boardWidth / 8;
+  const columns = boardOrientation === 'white' ? whiteColumnValues : blackColumnValues;
+  const rows = boardOrientation === 'white' ? whiteRows : blackRows;
+
+  const x = columns[square[0]] * squareWidth + squareWidth / 2;
+  const y = rows[square[1] - 1] * squareWidth + squareWidth / 2;
+  return { x, y };
+};
+
 export const isDifferentFromStart = (newPosition) => {
   let isDifferent = false;
   Object.keys(startPositionObject).forEach((square) => {

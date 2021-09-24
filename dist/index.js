@@ -8681,6 +8681,8 @@ const COLUMNS = 'abcdefgh'.split('');
 const chessboardPropTypes = {
   // time in milliseconds for piece to slide to target square. Only used when the position is programmatically changed
   animationDuration: PropTypes.number,
+  // whether or not arrows can be drawn with right click and dragging
+  areArrowsAllowed: PropTypes.bool,
   // if pieces are draggable
   arePiecesDraggable: PropTypes.bool,
   // if premoves are allowed
@@ -8691,6 +8693,8 @@ const chessboardPropTypes = {
   boardWidth: PropTypes.number,
   // if premoves should be cleared on right click
   clearPremovesOnRightClick: PropTypes.bool,
+  // string with rgb or hex value to colour drawn arrows
+  customArrowColor: PropTypes.string,
   // board style object e.g. { borderRadius: '5px', boxShadow: `0 5px 15px rgba(0, 0, 0, 0.5)`}
   customBoardStyle: PropTypes.object,
   // dark square style object e.g. { backgroundColor: '#B58863' }
@@ -8740,11 +8744,13 @@ const chessboardPropTypes = {
 };
 const chessboardDefaultProps = {
   animationDuration: 300,
+  areArrowsAllowed: true,
   arePiecesDraggable: true,
   arePremovesAllowed: false,
   boardOrientation: 'white',
   boardWidth: 560,
   clearPremovesOnRightClick: true,
+  customArrowColor: 'rgb(255,170,0)',
   customBoardStyle: {},
   customDarkSquareStyle: {
     backgroundColor: '#B58863'
@@ -9439,6 +9445,39 @@ const startPositionObject = {
   g1: 'wN',
   h1: 'wR'
 };
+const whiteColumnValues = {
+  a: 0,
+  b: 1,
+  c: 2,
+  d: 3,
+  e: 4,
+  f: 5,
+  g: 6,
+  h: 7
+};
+const blackColumnValues = {
+  a: 7,
+  b: 6,
+  c: 5,
+  d: 4,
+  e: 3,
+  f: 2,
+  g: 1,
+  h: 0
+};
+const whiteRows = [7, 6, 5, 4, 3, 2, 1, 0];
+const blackRows = [0, 1, 2, 3, 4, 5, 6, 7];
+const getRelativeCoords = (boardOrientation, boardWidth, square) => {
+  const squareWidth = boardWidth / 8;
+  const columns = boardOrientation === 'white' ? whiteColumnValues : blackColumnValues;
+  const rows = boardOrientation === 'white' ? whiteRows : blackRows;
+  const x = columns[square[0]] * squareWidth + squareWidth / 2;
+  const y = rows[square[1] - 1] * squareWidth + squareWidth / 2;
+  return {
+    x,
+    y
+  };
+};
 const isDifferentFromStart = newPosition => {
   let isDifferent = false;
   Object.keys(startPositionObject).forEach(square => {
@@ -9565,11 +9604,13 @@ const ChessboardContext = /*#__PURE__*/React__default['default'].createContext()
 const useChessboard = () => React.useContext(ChessboardContext);
 const ChessboardProvider = /*#__PURE__*/React.forwardRef(({
   animationDuration,
+  areArrowsAllowed,
   arePiecesDraggable,
   arePremovesAllowed,
   boardOrientation,
   boardWidth,
   clearPremovesOnRightClick,
+  customArrowColor,
   customBoardStyle,
   customDarkSquareStyle,
   customDropSquareStyle,
@@ -9604,7 +9645,11 @@ const ChessboardProvider = /*#__PURE__*/React.forwardRef(({
 
   const [premoves, setPremoves] = React.useState([]); // ref used to access current value during timeouts (closures)
 
-  const premovesRef = React.useRef(premoves); // chess pieces/styling
+  const premovesRef = React.useRef(premoves); // current right mouse down square
+
+  const [currentRightClickDown, setCurrentRightClickDown] = React.useState(); // current arrows
+
+  const [arrows, setArrows] = React.useState([]); // chess pieces/styling
 
   const [chessPieces, setChessPieces] = React.useState({ ...defaultPieces,
     ...customPieces
@@ -9631,6 +9676,9 @@ const ChessboardProvider = /*#__PURE__*/React.forwardRef(({
         width: window.innerWidth,
         height: window.innerHeight
       });
+      setArrows([]); // change to recalculate arrows instead
+
+      setCurrentRightClickDown(null);
     }
 
     window.addEventListener('resize', handleResize);
@@ -9679,7 +9727,9 @@ const ChessboardProvider = /*#__PURE__*/React.forwardRef(({
 
     setManualDrop(false); // inform latest position information
 
-    getPositionObject(newPosition); // clear timeout on unmount
+    getPositionObject(newPosition); // clear arrows
+
+    clearArrows(); // clear timeout on unmount
 
     return () => {
       clearTimeout(previousTimeout);
@@ -9691,9 +9741,10 @@ const ChessboardProvider = /*#__PURE__*/React.forwardRef(({
     // if premoves not allowed and expecting alternate moves and same piece colour moved, don't do anything
     if (sourceSq === targetSq || !arePremovesAllowed && expectingAlternateMoves && lastPieceColour === piece[0]) {
       return;
-    } // if second move is made for same colour, or there are still premoves queued, then this move needs to be added to premove queue instead of played
-    // premoves length check is added in because white could make 3 premoves, and then black responds to the first move (changing the last piece colour) and then white pre-moves again
+    }
 
+    clearArrows(); // if second move is made for same colour, or there are still premoves queued, then this move needs to be added to premove queue instead of played
+    // premoves length check is added in because white could make 3 premoves, and then black responds to the first move (changing the last piece colour) and then white pre-moves again
 
     if (arePremovesAllowed && (lastPieceColour === piece[0] || premovesRef.current.length > 0)) {
       const oldPremoves = [...premovesRef.current];
@@ -9766,6 +9817,47 @@ const ChessboardProvider = /*#__PURE__*/React.forwardRef(({
     setPremoves([]);
   }
 
+  function onRightClickDown(coords) {
+    setCurrentRightClickDown(coords);
+  }
+
+  function onRightClickUp(coords) {
+    if (!areArrowsAllowed) return;
+
+    if (currentRightClickDown) {
+      // same square, don't draw an arrow, but do clear premoves and run onSquareRightClick
+      if (currentRightClickDown.square === coords.square) {
+        setCurrentRightClickDown(null);
+        clearPremovesOnRightClick && clearPremoves();
+        onSquareRightClick(coords.square);
+        return;
+      } // if arrow already exists then it needs to be removed
+
+
+      for (const i in arrows) {
+        if (arrows[i][0].square === currentRightClickDown.square && arrows[i][1].square === coords.square) {
+          setArrows(oldArrows => {
+            const newArrows = [...oldArrows];
+            newArrows.splice(i, 1);
+            return newArrows;
+          });
+          return;
+        }
+      } // different square, draw an arrow
+
+
+      setArrows(oldArrows => [...oldArrows, [currentRightClickDown, coords]]);
+    } else setCurrentRightClickDown(null);
+  }
+
+  function clearCurrentRightClickDown() {
+    setCurrentRightClickDown(null);
+  }
+
+  function clearArrows() {
+    setArrows([]);
+  }
+
   return /*#__PURE__*/jsxRuntime.jsx(ChessboardContext.Provider, {
     value: {
       animationDuration,
@@ -9773,7 +9865,7 @@ const ChessboardProvider = /*#__PURE__*/React.forwardRef(({
       arePremovesAllowed,
       boardOrientation,
       boardWidth,
-      clearPremovesOnRightClick,
+      customArrowColor,
       customBoardStyle,
       customDarkSquareStyle,
       customDropSquareStyle,
@@ -9794,12 +9886,17 @@ const ChessboardProvider = /*#__PURE__*/React.forwardRef(({
       onSquareRightClick,
       showBoardNotation,
       showSparePieces,
+      arrows,
       chessPieces,
+      clearArrows,
+      clearCurrentRightClickDown,
       clearPremoves,
       currentPosition,
       handleSetPosition,
       lastPieceColour,
       manualDrop,
+      onRightClickDown,
+      onRightClickUp,
       positionDifferences,
       premoves,
       screenSize,
@@ -10069,8 +10166,7 @@ function Square({
   const {
     boardWidth,
     boardOrientation,
-    clearPremoves,
-    clearPremovesOnRightClick,
+    clearArrows,
     currentPosition,
     customBoardStyle,
     customDarkSquareStyle,
@@ -10084,8 +10180,9 @@ function Square({
     onDragOverSquare,
     onMouseOutSquare,
     onMouseOverSquare,
+    onRightClickDown,
+    onRightClickUp,
     onSquareClick,
-    onSquareRightClick,
     waitingForAnimation
   } = useChessboard();
   const [{
@@ -10119,12 +10216,35 @@ function Square({
     style: defaultSquareStyle,
     onMouseOver: () => onMouseOverSquare(square),
     onMouseOut: () => onMouseOutSquare(square),
+    onMouseDown: e => {
+      const {
+        x,
+        y
+      } = getRelativeCoords(boardOrientation, boardWidth, square);
+      if (e.button === 2) onRightClickDown({
+        x,
+        y,
+        square
+      });
+    },
+    onMouseUp: e => {
+      const {
+        x,
+        y
+      } = getRelativeCoords(boardOrientation, boardWidth, square);
+      if (e.button === 2) onRightClickUp({
+        x,
+        y,
+        square
+      });
+    },
     onDragEnter: () => onDragOverSquare(square),
-    onClick: () => onSquareClick(square),
+    onClick: () => {
+      onSquareClick(square);
+      clearArrows();
+    },
     onContextMenu: e => {
       e.preventDefault();
-      clearPremovesOnRightClick && clearPremoves();
-      onSquareRightClick(square);
     },
     children: /*#__PURE__*/jsxRuntime.jsx("div", {
       ref: squareRef,
@@ -10294,14 +10414,30 @@ const whiteKingStyle = {
 };
 
 function Board() {
+  const boardRef = React.useRef();
   const [squares, setSquares] = React.useState({});
   const {
+    arrows,
     boardWidth,
+    clearCurrentRightClickDown,
+    customArrowColor,
     showBoardNotation,
     currentPosition,
     screenSize,
     premoves
   } = useChessboard();
+  React.useEffect(() => {
+    function handleClickOutside(event) {
+      if (boardRef.current && !boardRef.current.contains(event.target)) {
+        clearCurrentRightClickDown();
+      }
+    }
+
+    document.addEventListener('mouseup', handleClickOutside);
+    return () => {
+      document.removeEventListener('mouseup', handleClickOutside);
+    };
+  }, []);
 
   function getSingleSquareCoordinates(square) {
     return {
@@ -10316,8 +10452,12 @@ function Board() {
     };
   }
 
-  return screenSize && boardWidth ? /*#__PURE__*/jsxRuntime.jsx(jsxRuntime.Fragment, {
-    children: /*#__PURE__*/jsxRuntime.jsx(Squares, {
+  return screenSize && boardWidth ? /*#__PURE__*/jsxRuntime.jsxs("div", {
+    ref: boardRef,
+    style: {
+      position: 'relative'
+    },
+    children: [/*#__PURE__*/jsxRuntime.jsx(Squares, {
       children: ({
         square,
         squareColor,
@@ -10348,7 +10488,45 @@ function Board() {
           })]
         }, `${col}${row}`);
       }
-    })
+    }), /*#__PURE__*/jsxRuntime.jsx("svg", {
+      width: boardWidth,
+      height: boardWidth,
+      style: {
+        position: 'absolute',
+        top: '0',
+        left: '0',
+        pointerEvents: 'none',
+        zIndex: '10'
+      },
+      children: arrows.map((arrow, i) => /*#__PURE__*/jsxRuntime.jsxs(jsxRuntime.Fragment, {
+        children: [/*#__PURE__*/jsxRuntime.jsx("defs", {
+          children: /*#__PURE__*/jsxRuntime.jsx("marker", {
+            id: "arrowhead",
+            markerWidth: "2",
+            markerHeight: "2.5",
+            refX: "1.25",
+            refY: "1.25",
+            orient: "auto",
+            children: /*#__PURE__*/jsxRuntime.jsx("polygon", {
+              points: "0 0, 2 1.25, 0 2.5",
+              style: {
+                fill: customArrowColor
+              }
+            })
+          })
+        }), /*#__PURE__*/jsxRuntime.jsx("line", {
+          x1: arrow[0].x,
+          y1: arrow[0].y,
+          x2: arrow[1].x,
+          y2: arrow[1].y,
+          style: {
+            stroke: customArrowColor,
+            strokeWidth: boardWidth / 36
+          },
+          markerEnd: "url(#arrowhead)"
+        }, i)]
+      }))
+    })]
   }) : /*#__PURE__*/jsxRuntime.jsx(WhiteKing, {});
 }
 
