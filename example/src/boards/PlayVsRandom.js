@@ -5,6 +5,7 @@ import { Chessboard } from 'react-chessboard';
 
 export default function PlayVsRandom({ boardWidth }) {
   const [game, setGame] = useState(new Chess());
+  const [arrows, setArrows] = useState([]);
 
   function safeGameMutate(modify) {
     setGame((g) => {
@@ -48,6 +49,7 @@ export default function PlayVsRandom({ boardWidth }) {
         id="PlayVsRandom"
         animationDuration={200}
         boardWidth={boardWidth}
+        customArrows={arrows}
         position={game.fen()}
         onPieceDrop={onDrop}
         customBoardStyle={{
@@ -74,6 +76,17 @@ export default function PlayVsRandom({ boardWidth }) {
         }}
       >
         undo
+      </button>
+      <button
+        className="rc-button"
+        onClick={() => {
+          setArrows([
+            ['a3', 'a5'],
+            ['g1', 'f3']
+          ]);
+        }}
+      >
+        Set Custom Arrows
       </button>
     </div>
   );
