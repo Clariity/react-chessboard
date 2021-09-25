@@ -24,6 +24,9 @@ export const chessboardPropTypes = {
   // if premoves should be cleared on right click
   clearPremovesOnRightClick: PropTypes.bool,
 
+  // array of custom arrows to draw on the board. Each arrow within the array must be an array of length 2 with strings denoting the from and to square to draw the arrow e.g. [ ['a3', 'a5'], ['g1', 'f3'] ].
+  customArrows: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string)),
+
   // string with rgb or hex value to colour drawn arrows
   customArrowColor: PropTypes.string,
 
@@ -105,6 +108,7 @@ export const chessboardDefaultProps = {
   boardOrientation: 'white',
   boardWidth: 560,
   clearPremovesOnRightClick: true,
+  customArrows: [],
   customArrowColor: 'rgb(255,170,0)',
   customBoardStyle: {},
   customDarkSquareStyle: { backgroundColor: '#B58863' },

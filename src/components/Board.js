@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 
+import { getRelativeCoords } from '../functions';
 import { Notation } from './Notation';
 import { Piece } from './Piece';
 import { Square } from './Square';
@@ -13,6 +14,7 @@ export function Board() {
 
   const {
     arrows,
+    boardOrientation,
     boardWidth,
     clearCurrentRightClickDown,
     customArrowColor,
@@ -87,24 +89,29 @@ export function Board() {
         height={boardWidth}
         style={{ position: 'absolute', top: '0', left: '0', pointerEvents: 'none', zIndex: '10' }}
       >
-        {arrows.map((arrow, i) => (
-          <>
-            <defs>
-              <marker id="arrowhead" markerWidth="2" markerHeight="2.5" refX="1.25" refY="1.25" orient="auto">
-                <polygon points="0 0, 2 1.25, 0 2.5" style={{ fill: customArrowColor }} />
-              </marker>
-            </defs>
-            <line
-              x1={arrow[0].x}
-              y1={arrow[0].y}
-              x2={arrow[1].x}
-              y2={arrow[1].y}
-              key={i}
-              style={{ stroke: customArrowColor, strokeWidth: boardWidth / 36 }}
-              markerEnd="url(#arrowhead)"
-            />
-          </>
-        ))}
+        {arrows.map((arrow, i) => {
+          const from = getRelativeCoords(boardOrientation, boardWidth, arrow[0]);
+          const to = getRelativeCoords(boardOrientation, boardWidth, arrow[1]);
+
+          return (
+            <>
+              <defs>
+                <marker id="arrowhead" markerWidth="2" markerHeight="2.5" refX="1.25" refY="1.25" orient="auto">
+                  <polygon points="0 0, 2 1.25, 0 2.5" style={{ fill: customArrowColor }} />
+                </marker>
+              </defs>
+              <line
+                x1={from.x}
+                y1={from.y}
+                x2={to.x}
+                y2={to.y}
+                key={i}
+                style={{ stroke: customArrowColor, strokeWidth: boardWidth / 36 }}
+                markerEnd="url(#arrowhead)"
+              />
+            </>
+          );
+        })}
       </svg>
     </div>
   ) : (

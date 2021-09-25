@@ -8693,6 +8693,8 @@ const chessboardPropTypes = {
   boardWidth: PropTypes.number,
   // if premoves should be cleared on right click
   clearPremovesOnRightClick: PropTypes.bool,
+  // array of custom arrows to draw on the board. Each arrow within the array must be an array of length 2 with strings denoting the from and to square to draw the arrow e.g. [ ['a3', 'a5'], ['g1', 'f3'] ].
+  customArrows: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string)),
   // string with rgb or hex value to colour drawn arrows
   customArrowColor: PropTypes.string,
   // board style object e.g. { borderRadius: '5px', boxShadow: `0 5px 15px rgba(0, 0, 0, 0.5)`}
@@ -8750,6 +8752,7 @@ const chessboardDefaultProps = {
   boardOrientation: 'white',
   boardWidth: 560,
   clearPremovesOnRightClick: true,
+  customArrows: [],
   customArrowColor: 'rgb(255,170,0)',
   customBoardStyle: {},
   customDarkSquareStyle: {
@@ -8785,6 +8788,195 @@ const chessboardDefaultProps = {
   showBoardNotation: true // showSparePieces: false
 
 };
+
+const startPositionObject = {
+  a8: 'bR',
+  b8: 'bN',
+  c8: 'bB',
+  d8: 'bQ',
+  e8: 'bK',
+  f8: 'bB',
+  g8: 'bN',
+  h8: 'bR',
+  a7: 'bP',
+  b7: 'bP',
+  c7: 'bP',
+  d7: 'bP',
+  e7: 'bP',
+  f7: 'bP',
+  g7: 'bP',
+  h7: 'bP',
+  a2: 'wP',
+  b2: 'wP',
+  c2: 'wP',
+  d2: 'wP',
+  e2: 'wP',
+  f2: 'wP',
+  g2: 'wP',
+  h2: 'wP',
+  a1: 'wR',
+  b1: 'wN',
+  c1: 'wB',
+  d1: 'wQ',
+  e1: 'wK',
+  f1: 'wB',
+  g1: 'wN',
+  h1: 'wR'
+};
+const whiteColumnValues = {
+  a: 0,
+  b: 1,
+  c: 2,
+  d: 3,
+  e: 4,
+  f: 5,
+  g: 6,
+  h: 7
+};
+const blackColumnValues = {
+  a: 7,
+  b: 6,
+  c: 5,
+  d: 4,
+  e: 3,
+  f: 2,
+  g: 1,
+  h: 0
+};
+const whiteRows = [7, 6, 5, 4, 3, 2, 1, 0];
+const blackRows = [0, 1, 2, 3, 4, 5, 6, 7];
+const getRelativeCoords = (boardOrientation, boardWidth, square) => {
+  const squareWidth = boardWidth / 8;
+  const columns = boardOrientation === 'white' ? whiteColumnValues : blackColumnValues;
+  const rows = boardOrientation === 'white' ? whiteRows : blackRows;
+  const x = columns[square[0]] * squareWidth + squareWidth / 2;
+  const y = rows[square[1] - 1] * squareWidth + squareWidth / 2;
+  return {
+    x,
+    y
+  };
+};
+const isDifferentFromStart = newPosition => {
+  let isDifferent = false;
+  Object.keys(startPositionObject).forEach(square => {
+    if (newPosition[square] !== startPositionObject[square]) isDifferent = true;
+  });
+  Object.keys(newPosition).forEach(square => {
+    if (startPositionObject[square] !== newPosition[square]) isDifferent = true;
+  });
+  return isDifferent;
+};
+const getPositionDifferences = (currentPosition, newPosition) => {
+  const difference = {
+    removed: {},
+    added: {}
+  }; // removed from current
+
+  Object.keys(currentPosition).forEach(square => {
+    if (newPosition[square] !== currentPosition[square]) difference.removed[square] = currentPosition[square];
+  }); // added from new
+
+  Object.keys(newPosition).forEach(square => {
+    if (currentPosition[square] !== newPosition[square]) difference.added[square] = newPosition[square];
+  });
+  return difference;
+};
+
+function isString(s) {
+  return typeof s === 'string';
+}
+
+function convertPositionToObject(position) {
+  if (position === 'start') return fenToObj('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR');
+  if (validFen(position)) return fenToObj(position);
+  if (validPositionObject(position)) return position;
+  return {};
+}
+function fenToObj(fen) {
+  if (!validFen(fen)) return false; // cut off any move, castling, etc info from the end. we're only interested in position information
+
+  fen = fen.replace(/ .+$/, '');
+  const rows = fen.split('/');
+  const position = {};
+  let currentRow = 8;
+
+  for (let i = 0; i < 8; i++) {
+    const row = rows[i].split('');
+    let colIdx = 0; // loop through each character in the FEN section
+
+    for (let j = 0; j < row.length; j++) {
+      // number / empty squares
+      if (row[j].search(/[1-8]/) !== -1) {
+        const numEmptySquares = parseInt(row[j], 10);
+        colIdx = colIdx + numEmptySquares;
+      } else {
+        // piece
+        const square = COLUMNS[colIdx] + currentRow;
+        position[square] = fenToPieceCode(row[j]);
+        colIdx = colIdx + 1;
+      }
+    }
+
+    currentRow = currentRow - 1;
+  }
+
+  return position;
+}
+
+function expandFenEmptySquares(fen) {
+  return fen.replace(/8/g, '11111111').replace(/7/g, '1111111').replace(/6/g, '111111').replace(/5/g, '11111').replace(/4/g, '1111').replace(/3/g, '111').replace(/2/g, '11');
+}
+
+function validFen(fen) {
+  if (!isString(fen)) return false; // cut off any move, castling, etc info from the end. we're only interested in position information
+
+  fen = fen.replace(/ .+$/, ''); // expand the empty square numbers to just 1s
+
+  fen = expandFenEmptySquares(fen); // FEN should be 8 sections separated by slashes
+
+  const chunks = fen.split('/');
+  if (chunks.length !== 8) return false; // check each section
+
+  for (let i = 0; i < 8; i++) {
+    if (chunks[i].length !== 8 || chunks[i].search(/[^kqrnbpKQRNBP1]/) !== -1) {
+      return false;
+    }
+  }
+
+  return true;
+} // convert FEN piece code to bP, wK, etc
+
+function fenToPieceCode(piece) {
+  // black piece
+  if (piece.toLowerCase() === piece) {
+    return 'b' + piece.toUpperCase();
+  } // white piece
+
+
+  return 'w' + piece.toUpperCase();
+}
+
+function validSquare(square) {
+  return isString(square) && square.search(/^[a-h][1-8]$/) !== -1;
+}
+
+function validPieceCode(code) {
+  return isString(code) && code.search(/^[bw][KQRNBP]$/) !== -1;
+}
+
+function validPositionObject(pos) {
+  if (pos === null || typeof pos !== 'object') return false;
+
+  for (const i in pos) {
+    if (!pos[i]) continue;
+
+    if (!validSquare(i) || !validPieceCode(pos[i])) {
+      return false;
+    }
+  }
+
+  return true;
+}
 
 const defaultPieces = {
   wP: /*#__PURE__*/jsxRuntime.jsx("svg", {
@@ -9411,195 +9603,6 @@ const defaultPieces = {
   })
 };
 
-const startPositionObject = {
-  a8: 'bR',
-  b8: 'bN',
-  c8: 'bB',
-  d8: 'bQ',
-  e8: 'bK',
-  f8: 'bB',
-  g8: 'bN',
-  h8: 'bR',
-  a7: 'bP',
-  b7: 'bP',
-  c7: 'bP',
-  d7: 'bP',
-  e7: 'bP',
-  f7: 'bP',
-  g7: 'bP',
-  h7: 'bP',
-  a2: 'wP',
-  b2: 'wP',
-  c2: 'wP',
-  d2: 'wP',
-  e2: 'wP',
-  f2: 'wP',
-  g2: 'wP',
-  h2: 'wP',
-  a1: 'wR',
-  b1: 'wN',
-  c1: 'wB',
-  d1: 'wQ',
-  e1: 'wK',
-  f1: 'wB',
-  g1: 'wN',
-  h1: 'wR'
-};
-const whiteColumnValues = {
-  a: 0,
-  b: 1,
-  c: 2,
-  d: 3,
-  e: 4,
-  f: 5,
-  g: 6,
-  h: 7
-};
-const blackColumnValues = {
-  a: 7,
-  b: 6,
-  c: 5,
-  d: 4,
-  e: 3,
-  f: 2,
-  g: 1,
-  h: 0
-};
-const whiteRows = [7, 6, 5, 4, 3, 2, 1, 0];
-const blackRows = [0, 1, 2, 3, 4, 5, 6, 7];
-const getRelativeCoords = (boardOrientation, boardWidth, square) => {
-  const squareWidth = boardWidth / 8;
-  const columns = boardOrientation === 'white' ? whiteColumnValues : blackColumnValues;
-  const rows = boardOrientation === 'white' ? whiteRows : blackRows;
-  const x = columns[square[0]] * squareWidth + squareWidth / 2;
-  const y = rows[square[1] - 1] * squareWidth + squareWidth / 2;
-  return {
-    x,
-    y
-  };
-};
-const isDifferentFromStart = newPosition => {
-  let isDifferent = false;
-  Object.keys(startPositionObject).forEach(square => {
-    if (newPosition[square] !== startPositionObject[square]) isDifferent = true;
-  });
-  Object.keys(newPosition).forEach(square => {
-    if (startPositionObject[square] !== newPosition[square]) isDifferent = true;
-  });
-  return isDifferent;
-};
-const getPositionDifferences = (currentPosition, newPosition) => {
-  const difference = {
-    removed: {},
-    added: {}
-  }; // removed from current
-
-  Object.keys(currentPosition).forEach(square => {
-    if (newPosition[square] !== currentPosition[square]) difference.removed[square] = currentPosition[square];
-  }); // added from new
-
-  Object.keys(newPosition).forEach(square => {
-    if (currentPosition[square] !== newPosition[square]) difference.added[square] = newPosition[square];
-  });
-  return difference;
-};
-
-function isString(s) {
-  return typeof s === 'string';
-}
-
-function convertPositionToObject(position) {
-  if (position === 'start') return fenToObj('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR');
-  if (validFen(position)) return fenToObj(position);
-  if (validPositionObject(position)) return position;
-  return {};
-}
-function fenToObj(fen) {
-  if (!validFen(fen)) return false; // cut off any move, castling, etc info from the end. we're only interested in position information
-
-  fen = fen.replace(/ .+$/, '');
-  const rows = fen.split('/');
-  const position = {};
-  let currentRow = 8;
-
-  for (let i = 0; i < 8; i++) {
-    const row = rows[i].split('');
-    let colIdx = 0; // loop through each character in the FEN section
-
-    for (let j = 0; j < row.length; j++) {
-      // number / empty squares
-      if (row[j].search(/[1-8]/) !== -1) {
-        const numEmptySquares = parseInt(row[j], 10);
-        colIdx = colIdx + numEmptySquares;
-      } else {
-        // piece
-        const square = COLUMNS[colIdx] + currentRow;
-        position[square] = fenToPieceCode(row[j]);
-        colIdx = colIdx + 1;
-      }
-    }
-
-    currentRow = currentRow - 1;
-  }
-
-  return position;
-}
-
-function expandFenEmptySquares(fen) {
-  return fen.replace(/8/g, '11111111').replace(/7/g, '1111111').replace(/6/g, '111111').replace(/5/g, '11111').replace(/4/g, '1111').replace(/3/g, '111').replace(/2/g, '11');
-}
-
-function validFen(fen) {
-  if (!isString(fen)) return false; // cut off any move, castling, etc info from the end. we're only interested in position information
-
-  fen = fen.replace(/ .+$/, ''); // expand the empty square numbers to just 1s
-
-  fen = expandFenEmptySquares(fen); // FEN should be 8 sections separated by slashes
-
-  const chunks = fen.split('/');
-  if (chunks.length !== 8) return false; // check each section
-
-  for (let i = 0; i < 8; i++) {
-    if (chunks[i].length !== 8 || chunks[i].search(/[^kqrnbpKQRNBP1]/) !== -1) {
-      return false;
-    }
-  }
-
-  return true;
-} // convert FEN piece code to bP, wK, etc
-
-function fenToPieceCode(piece) {
-  // black piece
-  if (piece.toLowerCase() === piece) {
-    return 'b' + piece.toUpperCase();
-  } // white piece
-
-
-  return 'w' + piece.toUpperCase();
-}
-
-function validSquare(square) {
-  return isString(square) && square.search(/^[a-h][1-8]$/) !== -1;
-}
-
-function validPieceCode(code) {
-  return isString(code) && code.search(/^[bw][KQRNBP]$/) !== -1;
-}
-
-function validPositionObject(pos) {
-  if (pos === null || typeof pos !== 'object') return false;
-
-  for (const i in pos) {
-    if (!pos[i]) continue;
-
-    if (!validSquare(i) || !validPieceCode(pos[i])) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
 const ChessboardContext = /*#__PURE__*/React__default['default'].createContext();
 const useChessboard = () => React.useContext(ChessboardContext);
 const ChessboardProvider = /*#__PURE__*/React.forwardRef(({
@@ -9610,6 +9613,7 @@ const ChessboardProvider = /*#__PURE__*/React.forwardRef(({
   boardOrientation,
   boardWidth,
   clearPremovesOnRightClick,
+  customArrows,
   customArrowColor,
   customBoardStyle,
   customDarkSquareStyle,
@@ -9684,7 +9688,11 @@ const ChessboardProvider = /*#__PURE__*/React.forwardRef(({
     window.addEventListener('resize', handleResize);
     handleResize();
     return () => window.removeEventListener('resize', handleResize);
-  }, []); // handle external position change
+  }, []); // handle external arrows change
+
+  React.useEffect(() => {
+    setArrows(customArrows);
+  }, [customArrows]); // handle external position change
 
   React.useEffect(() => {
     const newPosition = convertPositionToObject(position);
@@ -9817,25 +9825,25 @@ const ChessboardProvider = /*#__PURE__*/React.forwardRef(({
     setPremoves([]);
   }
 
-  function onRightClickDown(coords) {
-    setCurrentRightClickDown(coords);
+  function onRightClickDown(square) {
+    setCurrentRightClickDown(square);
   }
 
-  function onRightClickUp(coords) {
+  function onRightClickUp(square) {
     if (!areArrowsAllowed) return;
 
     if (currentRightClickDown) {
       // same square, don't draw an arrow, but do clear premoves and run onSquareRightClick
-      if (currentRightClickDown.square === coords.square) {
+      if (currentRightClickDown === square) {
         setCurrentRightClickDown(null);
         clearPremovesOnRightClick && clearPremoves();
-        onSquareRightClick(coords.square);
+        onSquareRightClick(square);
         return;
       } // if arrow already exists then it needs to be removed
 
 
       for (const i in arrows) {
-        if (arrows[i][0].square === currentRightClickDown.square && arrows[i][1].square === coords.square) {
+        if (arrows[i][0] === currentRightClickDown && arrows[i][1] === square) {
           setArrows(oldArrows => {
             const newArrows = [...oldArrows];
             newArrows.splice(i, 1);
@@ -9846,7 +9854,7 @@ const ChessboardProvider = /*#__PURE__*/React.forwardRef(({
       } // different square, draw an arrow
 
 
-      setArrows(oldArrows => [...oldArrows, [currentRightClickDown, coords]]);
+      setArrows(oldArrows => [...oldArrows, [currentRightClickDown, square]]);
     } else setCurrentRightClickDown(null);
   }
 
@@ -10217,26 +10225,10 @@ function Square({
     onMouseOver: () => onMouseOverSquare(square),
     onMouseOut: () => onMouseOutSquare(square),
     onMouseDown: e => {
-      const {
-        x,
-        y
-      } = getRelativeCoords(boardOrientation, boardWidth, square);
-      if (e.button === 2) onRightClickDown({
-        x,
-        y,
-        square
-      });
+      if (e.button === 2) onRightClickDown(square);
     },
     onMouseUp: e => {
-      const {
-        x,
-        y
-      } = getRelativeCoords(boardOrientation, boardWidth, square);
-      if (e.button === 2) onRightClickUp({
-        x,
-        y,
-        square
-      });
+      if (e.button === 2) onRightClickUp(square);
     },
     onDragEnter: () => onDragOverSquare(square),
     onClick: () => {
@@ -10418,6 +10410,7 @@ function Board() {
   const [squares, setSquares] = React.useState({});
   const {
     arrows,
+    boardOrientation,
     boardWidth,
     clearCurrentRightClickDown,
     customArrowColor,
@@ -10498,34 +10491,38 @@ function Board() {
         pointerEvents: 'none',
         zIndex: '10'
       },
-      children: arrows.map((arrow, i) => /*#__PURE__*/jsxRuntime.jsxs(jsxRuntime.Fragment, {
-        children: [/*#__PURE__*/jsxRuntime.jsx("defs", {
-          children: /*#__PURE__*/jsxRuntime.jsx("marker", {
-            id: "arrowhead",
-            markerWidth: "2",
-            markerHeight: "2.5",
-            refX: "1.25",
-            refY: "1.25",
-            orient: "auto",
-            children: /*#__PURE__*/jsxRuntime.jsx("polygon", {
-              points: "0 0, 2 1.25, 0 2.5",
-              style: {
-                fill: customArrowColor
-              }
+      children: arrows.map((arrow, i) => {
+        const from = getRelativeCoords(boardOrientation, boardWidth, arrow[0]);
+        const to = getRelativeCoords(boardOrientation, boardWidth, arrow[1]);
+        return /*#__PURE__*/jsxRuntime.jsxs(jsxRuntime.Fragment, {
+          children: [/*#__PURE__*/jsxRuntime.jsx("defs", {
+            children: /*#__PURE__*/jsxRuntime.jsx("marker", {
+              id: "arrowhead",
+              markerWidth: "2",
+              markerHeight: "2.5",
+              refX: "1.25",
+              refY: "1.25",
+              orient: "auto",
+              children: /*#__PURE__*/jsxRuntime.jsx("polygon", {
+                points: "0 0, 2 1.25, 0 2.5",
+                style: {
+                  fill: customArrowColor
+                }
+              })
             })
-          })
-        }), /*#__PURE__*/jsxRuntime.jsx("line", {
-          x1: arrow[0].x,
-          y1: arrow[0].y,
-          x2: arrow[1].x,
-          y2: arrow[1].y,
-          style: {
-            stroke: customArrowColor,
-            strokeWidth: boardWidth / 36
-          },
-          markerEnd: "url(#arrowhead)"
-        }, i)]
-      }))
+          }), /*#__PURE__*/jsxRuntime.jsx("line", {
+            x1: from.x,
+            y1: from.y,
+            x2: to.x,
+            y2: to.y,
+            style: {
+              stroke: customArrowColor,
+              strokeWidth: boardWidth / 36
+            },
+            markerEnd: "url(#arrowhead)"
+          }, i)]
+        });
+      })
     })]
   }) : /*#__PURE__*/jsxRuntime.jsx(WhiteKing, {});
 }

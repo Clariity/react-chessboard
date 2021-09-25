@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useDrop } from 'react-dnd';
 
-import { getRelativeCoords } from '../functions';
 import { useChessboard } from '../context/chessboard-context';
 
 export function Square({ square, squareColor, setSquares, squareHasPremove, children }) {
@@ -59,12 +58,10 @@ export function Square({ square, squareColor, setSquares, squareHasPremove, chil
       onMouseOver={() => onMouseOverSquare(square)}
       onMouseOut={() => onMouseOutSquare(square)}
       onMouseDown={(e) => {
-        const { x, y } = getRelativeCoords(boardOrientation, boardWidth, square);
-        if (e.button === 2) onRightClickDown({ x, y, square });
+        if (e.button === 2) onRightClickDown(square);
       }}
       onMouseUp={(e) => {
-        const { x, y } = getRelativeCoords(boardOrientation, boardWidth, square);
-        if (e.button === 2) onRightClickUp({ x, y, square });
+        if (e.button === 2) onRightClickUp(square);
       }}
       onDragEnter={() => onDragOverSquare(square)}
       onClick={() => {

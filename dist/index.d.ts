@@ -96,7 +96,7 @@ interface ChessBoardProps {
    */
   animationDuration?: number;
   /**
-   * Whether or not arrows can be drawn with right click and dragging
+   * Whether or not arrows can be drawn with right click and dragging.
    */
   areArrowsAllowed?: boolean;
   /**
@@ -120,9 +120,13 @@ interface ChessBoardProps {
    */
   clearPremovesOnRightClick?: boolean;
   /**
-   * String with rgb or hex value to colour drawn arrows
+   * Array of custom arrows to draw on the board. Each arrow within the array must be an array of length 2 with strings denoting the from and to square to draw the arrow e.g. [ ['a3', 'a5'], ['g1', 'f3'] ].
    */
-  customArrowColor: string;
+  customArrows?: string[][];
+  /**
+   * String with rgb or hex value to colour drawn arrows.
+   */
+  customArrowColor?: string;
   /**
    * Custom board style object e.g. { borderRadius: '5px', boxShadow: '0 5px 15px rgba(0, 0, 0, 0.5 '}.
    */
