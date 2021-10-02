@@ -37,17 +37,6 @@ export function Board() {
     };
   }, []);
 
-  function getSingleSquareCoordinates(square) {
-    return { sourceSq: squares[square] };
-  }
-
-  function getSquareCoordinates(sourceSquare, targetSquare) {
-    return {
-      sourceSq: squares[sourceSquare],
-      targetSq: squares[targetSquare]
-    };
-  }
-
   return screenSize && boardWidth ? (
     <div ref={boardRef} style={{ position: 'relative' }}>
       <Squares>
@@ -62,22 +51,9 @@ export function Board() {
               setSquares={setSquares}
               squareHasPremove={squareHasPremove}
             >
-              {currentPosition[square] && (
-                <Piece
-                  square={square}
-                  piece={currentPosition[square]}
-                  getSquareCoordinates={getSquareCoordinates}
-                  getSingleSquareCoordinates={getSingleSquareCoordinates}
-                />
-              )}
+              {currentPosition[square] && <Piece piece={currentPosition[square]} square={square} squares={squares} />}
               {squareHasPremoveTarget && (
-                <Piece
-                  isPremovedPiece={true}
-                  square={square}
-                  piece={squareHasPremoveTarget.piece}
-                  getSquareCoordinates={getSquareCoordinates}
-                  getSingleSquareCoordinates={getSingleSquareCoordinates}
-                />
+                <Piece isPremovedPiece={true} piece={squareHasPremoveTarget.piece} square={square} squares={squares} />
               )}
               {showBoardNotation && <Notation row={row} col={col} />}
             </Square>

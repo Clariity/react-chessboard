@@ -6,6 +6,7 @@ import { Chessboard } from 'react-chessboard';
 export default function PlayVsRandom({ boardWidth }) {
   const [game, setGame] = useState(new Chess());
   const [arrows, setArrows] = useState([]);
+  const [boardOrientation, setBoardOrientation] = useState('white');
 
   function safeGameMutate(modify) {
     setGame((g) => {
@@ -48,6 +49,7 @@ export default function PlayVsRandom({ boardWidth }) {
       <Chessboard
         id="PlayVsRandom"
         animationDuration={200}
+        boardOrientation={boardOrientation}
         boardWidth={boardWidth}
         customArrows={arrows}
         position={game.fen()}
@@ -66,6 +68,14 @@ export default function PlayVsRandom({ boardWidth }) {
         }}
       >
         reset
+      </button>
+      <button
+        className="rc-button"
+        onClick={() => {
+          setBoardOrientation((currentOrientation) => (currentOrientation === 'white' ? 'black' : 'white'));
+        }}
+      >
+        flip board
       </button>
       <button
         className="rc-button"

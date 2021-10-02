@@ -10029,10 +10029,9 @@ const notationStyle = {
 };
 
 function Piece({
-  square,
   piece,
-  getSquareCoordinates,
-  getSingleSquareCoordinates,
+  square,
+  squares,
   isPremovedPiece = false
 }) {
   const {
@@ -10148,6 +10147,20 @@ function Piece({
       }) ? '-webkit-grab' : 'default'
     }));
   }, [square, currentPosition]);
+
+  function getSingleSquareCoordinates(square) {
+    return {
+      sourceSq: squares[square]
+    };
+  }
+
+  function getSquareCoordinates(sourceSquare, targetSquare) {
+    return {
+      sourceSq: squares[sourceSquare],
+      targetSq: squares[targetSquare]
+    };
+  }
+
   return /*#__PURE__*/jsxRuntime.jsx("div", {
     ref: arePiecesDraggable ? canDrag ? drag : null : null,
     onClick: () => onPieceClick(piece),
@@ -10220,7 +10233,7 @@ function Square({
         y
       }
     }));
-  }, [boardWidth]);
+  }, [boardWidth, boardOrientation]);
   const defaultSquareStyle = { ...borderRadius(customBoardStyle, square, boardOrientation),
     ...(squareColor === 'black' ? customDarkSquareStyle : customLightSquareStyle),
     ...(squareHasPremove && (squareColor === 'black' ? customPremoveDarkSquareStyle : customPremoveLightSquareStyle)),
@@ -10438,20 +10451,6 @@ function Board() {
       document.removeEventListener('mouseup', handleClickOutside);
     };
   }, []);
-
-  function getSingleSquareCoordinates(square) {
-    return {
-      sourceSq: squares[square]
-    };
-  }
-
-  function getSquareCoordinates(sourceSquare, targetSquare) {
-    return {
-      sourceSq: squares[sourceSquare],
-      targetSq: squares[targetSquare]
-    };
-  }
-
   return screenSize && boardWidth ? /*#__PURE__*/jsxRuntime.jsxs("div", {
     ref: boardRef,
     style: {
@@ -10472,16 +10471,14 @@ function Board() {
           setSquares: setSquares,
           squareHasPremove: squareHasPremove,
           children: [currentPosition[square] && /*#__PURE__*/jsxRuntime.jsx(Piece, {
-            square: square,
             piece: currentPosition[square],
-            getSquareCoordinates: getSquareCoordinates,
-            getSingleSquareCoordinates: getSingleSquareCoordinates
+            square: square,
+            squares: squares
           }), squareHasPremoveTarget && /*#__PURE__*/jsxRuntime.jsx(Piece, {
             isPremovedPiece: true,
-            square: square,
             piece: squareHasPremoveTarget.piece,
-            getSquareCoordinates: getSquareCoordinates,
-            getSingleSquareCoordinates: getSingleSquareCoordinates
+            square: square,
+            squares: squares
           }), showBoardNotation && /*#__PURE__*/jsxRuntime.jsx(Notation, {
             row: row,
             col: col

@@ -4,7 +4,7 @@ import { getEmptyImage } from 'react-dnd-html5-backend';
 
 import { useChessboard } from '../context/chessboard-context';
 
-export function Piece({ square, piece, getSquareCoordinates, getSingleSquareCoordinates, isPremovedPiece = false }) {
+export function Piece({ piece, square, squares, isPremovedPiece = false }) {
   const {
     animationDuration,
     arePiecesDraggable,
@@ -116,6 +116,17 @@ export function Piece({ square, piece, getSquareCoordinates, getSingleSquareCoor
       cursor: arePiecesDraggable && isDraggablePiece({ piece, sourceSquare: square }) ? '-webkit-grab' : 'default'
     }));
   }, [square, currentPosition]);
+
+  function getSingleSquareCoordinates(square) {
+    return { sourceSq: squares[square] };
+  }
+
+  function getSquareCoordinates(sourceSquare, targetSquare) {
+    return {
+      sourceSq: squares[sourceSquare],
+      targetSq: squares[targetSquare]
+    };
+  }
 
   return (
     <div
