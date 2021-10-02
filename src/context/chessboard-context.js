@@ -111,6 +111,11 @@ export const ChessboardProvider = forwardRef(
       setArrows(customArrows);
     }, [customArrows]);
 
+    // handle custom pieces change
+    useEffect(() => {
+      setChessPieces({ ...defaultPieces, ...customPieces });
+    }, [customPieces]);
+
     // handle external position change
     useEffect(() => {
       const newPosition = convertPositionToObject(position);

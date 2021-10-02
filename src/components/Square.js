@@ -22,6 +22,7 @@ export function Square({ square, squareColor, setSquares, squareHasPremove, chil
     onDragOverSquare,
     onMouseOutSquare,
     onMouseOverSquare,
+    onPieceDrop,
     onRightClickDown,
     onRightClickUp,
     onSquareClick,
@@ -36,7 +37,7 @@ export function Square({ square, squareColor, setSquares, squareHasPremove, chil
         isOver: !!monitor.isOver()
       })
     }),
-    [square, currentPosition, waitingForAnimation, lastPieceColour]
+    [square, currentPosition, onPieceDrop, waitingForAnimation, lastPieceColour]
   );
 
   useEffect(() => {

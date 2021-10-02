@@ -9684,7 +9684,13 @@ const ChessboardProvider = /*#__PURE__*/forwardRef(({
 
   useEffect(() => {
     setArrows(customArrows);
-  }, [customArrows]); // handle external position change
+  }, [customArrows]); // handle custom pieces change
+
+  useEffect(() => {
+    setChessPieces({ ...defaultPieces,
+      ...customPieces
+    });
+  }, [customPieces]); // handle external position change
 
   useEffect(() => {
     const newPosition = convertPositionToObject(position);
@@ -10180,6 +10186,7 @@ function Square({
     onDragOverSquare,
     onMouseOutSquare,
     onMouseOverSquare,
+    onPieceDrop,
     onRightClickDown,
     onRightClickUp,
     onSquareClick,
@@ -10193,7 +10200,7 @@ function Square({
     collect: monitor => ({
       isOver: !!monitor.isOver()
     })
-  }), [square, currentPosition, waitingForAnimation, lastPieceColour]);
+  }), [square, currentPosition, onPieceDrop, waitingForAnimation, lastPieceColour]);
   useEffect(() => {
     const {
       x,
