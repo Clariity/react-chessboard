@@ -43,7 +43,7 @@ export function Square({ square, squareColor, setSquares, squareHasPremove, chil
   useEffect(() => {
     const { x, y } = squareRef.current.getBoundingClientRect();
     setSquares((oldSquares) => ({ ...oldSquares, [square]: { x, y } }));
-  }, [boardWidth]);
+  }, [boardWidth, boardOrientation]);
 
   const defaultSquareStyle = {
     ...borderRadius(customBoardStyle, square, boardOrientation),
