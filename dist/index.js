@@ -9643,7 +9643,7 @@ const ChessboardProvider = /*#__PURE__*/React.forwardRef(({
   // position stored and displayed on board
   const [currentPosition, setCurrentPosition] = React.useState(convertPositionToObject(position)); // calculated differences between current and incoming positions
 
-  const [positionDifferences, setPositionDifferences] = React.useState({}); // colour of last piece moves to determine if premoving
+  const [positionDifferences, setPositionDifferences] = React.useState({}); // colour of last piece moved to determine if premoving
 
   const [lastPieceColour, setLastPieceColour] = React.useState(undefined); // current premoves
 
@@ -9760,7 +9760,7 @@ const ChessboardProvider = /*#__PURE__*/React.forwardRef(({
     clearArrows(); // if second move is made for same colour, or there are still premoves queued, then this move needs to be added to premove queue instead of played
     // premoves length check is added in because white could make 3 premoves, and then black responds to the first move (changing the last piece colour) and then white pre-moves again
 
-    if (arePremovesAllowed && (lastPieceColour === piece[0] || premovesRef.current.length > 0)) {
+    if (arePremovesAllowed && waitingForAnimation || arePremovesAllowed && (lastPieceColour === piece[0] || premovesRef.current.length > 0)) {
       const oldPremoves = [...premovesRef.current];
       oldPremoves.push({
         sourceSq,
@@ -9773,7 +9773,7 @@ const ChessboardProvider = /*#__PURE__*/React.forwardRef(({
     } // if transitioning, don't allow new drop
 
 
-    if (waitingForAnimation) return;
+    if (!arePremovesAllowed && waitingForAnimation) return;
     const newOnDropPosition = { ...currentPosition
     };
     setManualDrop(true);

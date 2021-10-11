@@ -39,15 +39,17 @@ export default function PlayVsRandom({ boardWidth }) {
     });
 
     // illegal move
-    if (move === null) return;
+    if (move === null) return false;
 
     setTimeout(makeRandomMove, 200);
+    return true;
   }
 
   return (
     <div>
       <Chessboard
         id="PlayVsRandom"
+        arePremovesAllowed={true}
         animationDuration={200}
         boardOrientation={boardOrientation}
         boardWidth={boardWidth}
