@@ -9709,6 +9709,7 @@ const ChessboardProvider = /*#__PURE__*/React.forwardRef(({
     if (waitingForAnimation) {
       setCurrentPosition(newPosition);
       setWaitingForAnimation(false);
+      arePremovesAllowed && attemptPremove(newPieceColour);
 
       if (previousTimeout) {
         clearTimeout(previousTimeout);
@@ -9718,12 +9719,16 @@ const ChessboardProvider = /*#__PURE__*/React.forwardRef(({
       if (manualDrop) {
         setCurrentPosition(newPosition);
         setWaitingForAnimation(false);
+        arePremovesAllowed && attemptPremove(newPieceColour);
       } else {
         // move was made by external position change
         // if position === start then don't override newPieceColour
         // needs isDifferentFromStart in scenario where premoves have been cleared upon board reset but first move is made by computer, the last move colour would need to be updated
         if (isDifferentFromStart(newPosition) && lastPieceColour !== undefined) {
           setLastPieceColour(newPieceColour);
+        } else {
+          // position === start, likely a board reset
+          setLastPieceColour(undefined);
         }
 
         setPositionDifferences(differences); // animate external move
@@ -9757,10 +9762,13 @@ const ChessboardProvider = /*#__PURE__*/React.forwardRef(({
       return;
     }
 
-    clearArrows(); // if second move is made for same colour, or there are still premoves queued, then this move needs to be added to premove queue instead of played
+    clearArrows(); // ISSUE: if 2 players are dropping, then premoves queue is just being added to
+    // lastPieceColour === piece[0] || premovesRef.current.length > 0 (FOR THAT COLOUR --> need to check premove queue for color length))
+    // if second move is made for same colour, or there are still premoves queued, then this move needs to be added to premove queue instead of played
     // premoves length check is added in because white could make 3 premoves, and then black responds to the first move (changing the last piece colour) and then white pre-moves again
 
-    if (arePremovesAllowed && waitingForAnimation || arePremovesAllowed && (lastPieceColour === piece[0] || premovesRef.current.length > 0)) {
+    if (arePremovesAllowed && waitingForAnimation || arePremovesAllowed && (lastPieceColour === piece[0] || premovesRef.current.filter(p => p.piece[0] === piece[0]).length > 0)) {
+      console.log(arePremovesAllowed, lastPieceColour === piece[0], premovesRef.current);
       const oldPremoves = [...premovesRef.current];
       oldPremoves.push({
         sourceSq,

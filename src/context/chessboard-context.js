@@ -128,6 +128,7 @@ export const ChessboardProvider = forwardRef(
       if (waitingForAnimation) {
         setCurrentPosition(newPosition);
         setWaitingForAnimation(false);
+        arePremovesAllowed && attemptPremove(newPieceColour);
         if (previousTimeout) {
           clearTimeout(previousTimeout);
         }
@@ -136,6 +137,7 @@ export const ChessboardProvider = forwardRef(
         if (manualDrop) {
           setCurrentPosition(newPosition);
           setWaitingForAnimation(false);
+          arePremovesAllowed && attemptPremove(newPieceColour);
         } else {
           // move was made by external position change
 
@@ -143,6 +145,9 @@ export const ChessboardProvider = forwardRef(
           // needs isDifferentFromStart in scenario where premoves have been cleared upon board reset but first move is made by computer, the last move colour would need to be updated
           if (isDifferentFromStart(newPosition) && lastPieceColour !== undefined) {
             setLastPieceColour(newPieceColour);
+          } else {
+            // position === start, likely a board reset
+            setLastPieceColour(undefined);
           }
           setPositionDifferences(differences);
 
@@ -181,10 +186,11 @@ export const ChessboardProvider = forwardRef(
       clearArrows();
 
       // if second move is made for same colour, or there are still premoves queued, then this move needs to be added to premove queue instead of played
-      // premoves length check is added in because white could make 3 premoves, and then black responds to the first move (changing the last piece colour) and then white pre-moves again
+      // premoves length check for colour is added in because white could make 3 premoves, and then black responds to the first move (changing the last piece colour) and then white pre-moves again
       if (
         (arePremovesAllowed && waitingForAnimation) ||
-        (arePremovesAllowed && (lastPieceColour === piece[0] || premovesRef.current.length > 0))
+        (arePremovesAllowed &&
+          (lastPieceColour === piece[0] || premovesRef.current.filter((p) => p.piece[0] === piece[0]).length > 0))
       ) {
         const oldPremoves = [...premovesRef.current];
         oldPremoves.push({ sourceSq, targetSq, piece });

@@ -22,6 +22,7 @@ export default function PlayVsPlay({ boardWidth }) {
         promotion: 'q' // always promote to a queen for example simplicity
       });
     });
+    return true;
   }
 
   return (
@@ -29,6 +30,7 @@ export default function PlayVsPlay({ boardWidth }) {
       <Chessboard
         id="PlayVsPlay"
         animationDuration={200}
+        arePremovesAllowed={true}
         boardWidth={boardWidth}
         position={game.fen()}
         onPieceDrop={onDrop}
