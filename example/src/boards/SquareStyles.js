@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import Chess from 'chess.js';
 
 import { Chessboard } from 'react-chessboard';
 
 export default function SquareStyles({ boardWidth }) {
+  const chessboardRef = useRef();
   const [game, setGame] = useState(new Chess());
 
   const [rightClickedSquares, setRightClickedSquares] = useState({});
@@ -19,20 +20,20 @@ export default function SquareStyles({ boardWidth }) {
   }
 
   function onDrop(sourceSquare, targetSquare) {
-    let move = null;
-    safeGameMutate((game) => {
-      move = game.move({
-        from: sourceSquare,
-        to: targetSquare,
-        promotion: 'q' // always promote to a queen for example simplicity
-      });
+    const gameCopy = { ...game };
+    const move = gameCopy.move({
+      from: sourceSquare,
+      to: targetSquare,
+      promotion: 'q' // always promote to a queen for example simplicity
     });
+    setGame(gameCopy);
     // illegal move
-    if (move === null) return;
+    if (move === null) return false;
     setMoveSquares({
       [sourceSquare]: { backgroundColor: 'rgba(255, 255, 0, 0.4)' },
       [targetSquare]: { backgroundColor: 'rgba(255, 255, 0, 0.4)' }
     });
+    return true;
   }
 
   function onMouseOverSquare(square) {
@@ -89,6 +90,7 @@ export default function SquareStyles({ boardWidth }) {
     <div>
       <Chessboard
         id="SquareStyles"
+        arePremovesAllowed={true}
         animationDuration={200}
         boardWidth={boardWidth}
         position={game.fen()}
@@ -106,6 +108,7 @@ export default function SquareStyles({ boardWidth }) {
           ...optionSquares,
           ...rightClickedSquares
         }}
+        ref={chessboardRef}
       />
       <button
         className="rc-button"
@@ -113,6 +116,7 @@ export default function SquareStyles({ boardWidth }) {
           safeGameMutate((game) => {
             game.reset();
           });
+          chessboardRef.current.clearPremoves();
           setMoveSquares({});
           setRightClickedSquares({});
         }}
@@ -125,6 +129,7 @@ export default function SquareStyles({ boardWidth }) {
           safeGameMutate((game) => {
             game.undo();
           });
+          chessboardRef.current.clearPremoves();
           setMoveSquares({});
         }}
       >

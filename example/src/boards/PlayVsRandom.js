@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import Chess from 'chess.js';
 
 import { Chessboard } from 'react-chessboard';
 
 export default function PlayVsRandom({ boardWidth }) {
+  const chessboardRef = useRef();
   const [game, setGame] = useState(new Chess());
   const [arrows, setArrows] = useState([]);
   const [boardOrientation, setBoardOrientation] = useState('white');
@@ -29,14 +30,13 @@ export default function PlayVsRandom({ boardWidth }) {
   }
 
   function onDrop(sourceSquare, targetSquare) {
-    let move = null;
-    safeGameMutate((game) => {
-      move = game.move({
-        from: sourceSquare,
-        to: targetSquare,
-        promotion: 'q' // always promote to a queen for example simplicity
-      });
+    const gameCopy = { ...game };
+    const move = gameCopy.move({
+      from: sourceSquare,
+      to: targetSquare,
+      promotion: 'q' // always promote to a queen for example simplicity
     });
+    setGame(gameCopy);
 
     // illegal move
     if (move === null) return false;
@@ -60,6 +60,7 @@ export default function PlayVsRandom({ boardWidth }) {
           borderRadius: '4px',
           boxShadow: '0 5px 15px rgba(0, 0, 0, 0.5)'
         }}
+        ref={chessboardRef}
       />
       <button
         className="rc-button"
@@ -67,6 +68,7 @@ export default function PlayVsRandom({ boardWidth }) {
           safeGameMutate((game) => {
             game.reset();
           });
+          chessboardRef.current.clearPremoves();
         }}
       >
         reset
@@ -85,6 +87,7 @@ export default function PlayVsRandom({ boardWidth }) {
           safeGameMutate((game) => {
             game.undo();
           });
+          chessboardRef.current.clearPremoves();
         }}
       >
         undo

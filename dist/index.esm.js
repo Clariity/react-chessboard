@@ -9754,13 +9754,10 @@ const ChessboardProvider = /*#__PURE__*/forwardRef(({
       return;
     }
 
-    clearArrows(); // ISSUE: if 2 players are dropping, then premoves queue is just being added to
-    // lastPieceColour === piece[0] || premovesRef.current.length > 0 (FOR THAT COLOUR --> need to check premove queue for color length))
-    // if second move is made for same colour, or there are still premoves queued, then this move needs to be added to premove queue instead of played
-    // premoves length check is added in because white could make 3 premoves, and then black responds to the first move (changing the last piece colour) and then white pre-moves again
+    clearArrows(); // if second move is made for same colour, or there are still premoves queued, then this move needs to be added to premove queue instead of played
+    // premoves length check for colour is added in because white could make 3 premoves, and then black responds to the first move (changing the last piece colour) and then white pre-moves again
 
     if (arePremovesAllowed && waitingForAnimation || arePremovesAllowed && (lastPieceColour === piece[0] || premovesRef.current.filter(p => p.piece[0] === piece[0]).length > 0)) {
-      console.log(arePremovesAllowed, lastPieceColour === piece[0], premovesRef.current);
       const oldPremoves = [...premovesRef.current];
       oldPremoves.push({
         sourceSq,
@@ -9811,7 +9808,8 @@ const ChessboardProvider = /*#__PURE__*/forwardRef(({
       setLastPieceColour(premove.piece[0]);
       setManualDrop(true); // pre-move doesn't need animation
 
-      const isValidMove = onPieceDrop(premove.sourceSq, premove.targetSq, premove.piece); // premove was successful and can be removed from queue
+      const isValidMove = onPieceDrop(premove.sourceSq, premove.targetSq, premove.piece);
+      console.log('isValidMove', isValidMove); // premove was successful and can be removed from queue
 
       if (isValidMove) {
         const oldPremoves = [...premovesRef.current];
@@ -9819,7 +9817,8 @@ const ChessboardProvider = /*#__PURE__*/forwardRef(({
         premovesRef.current = oldPremoves;
         setPremoves([...oldPremoves]);
       } else {
-        // premove wasn't successful, clear premove queue
+        console.log('clearing premoves'); // premove wasn't successful, clear premove queue
+
         clearPremoves();
       }
     }
@@ -10146,7 +10145,7 @@ function Piece({
         sourceSquare: square
       }) ? '-webkit-grab' : 'default'
     }));
-  }, [square, currentPosition]);
+  }, [square, currentPosition, arePiecesDraggable]);
 
   function getSingleSquareCoordinates(square) {
     return {
@@ -10262,7 +10261,7 @@ function Square({
       ref: squareRef,
       style: { ...size(boardWidth),
         ...center,
-        ...customSquareStyles?.[square]
+        ...(!squareHasPremove && customSquareStyles?.[square])
       },
       children: children
     })

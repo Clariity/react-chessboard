@@ -78,7 +78,7 @@ export function Square({ square, squareColor, setSquares, squareHasPremove, chil
         style={{
           ...size(boardWidth),
           ...center,
-          ...customSquareStyles?.[square]
+          ...(!squareHasPremove && customSquareStyles?.[square])
         }}
       >
         {children}

@@ -29,14 +29,13 @@ export default function PremoveVsRandom({ boardWidth }) {
   }
 
   function onDrop(sourceSquare, targetSquare) {
-    let move = null;
-    safeGameMutate((game) => {
-      move = game.move({
-        from: sourceSquare,
-        to: targetSquare,
-        promotion: 'q' // always promote to a queen for example simplicity
-      });
+    const gameCopy = { ...game };
+    const move = gameCopy.move({
+      from: sourceSquare,
+      to: targetSquare,
+      promotion: 'q' // always promote to a queen for example simplicity
     });
+    setGame(gameCopy);
 
     // illegal move
     if (move === null) return false;

@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import Chess from 'chess.js';
 
 import { Chessboard } from 'react-chessboard';
 
 export default function StyledBoard({ boardWidth }) {
+  const chessboardRef = useRef();
   const [game, setGame] = useState(new Chess());
 
   function safeGameMutate(modify) {
@@ -15,13 +16,14 @@ export default function StyledBoard({ boardWidth }) {
   }
 
   function onDrop(sourceSquare, targetSquare) {
-    safeGameMutate((game) => {
-      game.move({
-        from: sourceSquare,
-        to: targetSquare,
-        promotion: 'q' // always promote to a queen for example simplicity
-      });
+    const gameCopy = { ...game };
+    const move = gameCopy.move({
+      from: sourceSquare,
+      to: targetSquare,
+      promotion: 'q' // always promote to a queen for example simplicity
     });
+    setGame(gameCopy);
+    return move;
   }
 
   const pieces = ['wP', 'wN', 'wB', 'wR', 'wQ', 'wK', 'bP', 'bN', 'bB', 'bR', 'bQ', 'bK'];
@@ -52,6 +54,7 @@ export default function StyledBoard({ boardWidth }) {
         customDarkSquareStyle={{ backgroundColor: '#779952' }}
         customLightSquareStyle={{ backgroundColor: '#edeed1' }}
         customPieces={customPieces()}
+        ref={chessboardRef}
       />
       <button
         className="rc-button"
@@ -59,6 +62,7 @@ export default function StyledBoard({ boardWidth }) {
           safeGameMutate((game) => {
             game.reset();
           });
+          chessboardRef.current.clearPremoves();
         }}
       >
         reset
@@ -69,6 +73,7 @@ export default function StyledBoard({ boardWidth }) {
           safeGameMutate((game) => {
             game.undo();
           });
+          chessboardRef.current.clearPremoves();
         }}
       >
         undo
