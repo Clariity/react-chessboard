@@ -30,7 +30,6 @@ export default function PlayVsPlay({ boardWidth }) {
       <Chessboard
         id="PlayVsPlay"
         animationDuration={200}
-        arePremovesAllowed={true}
         boardWidth={boardWidth}
         position={game.fen()}
         onPieceDrop={onDrop}

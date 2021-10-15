@@ -115,7 +115,7 @@ export function Piece({ piece, square, squares, isPremovedPiece = false }) {
       ...oldPieceStyle,
       cursor: arePiecesDraggable && isDraggablePiece({ piece, sourceSquare: square }) ? '-webkit-grab' : 'default'
     }));
-  }, [square, currentPosition]);
+  }, [square, currentPosition, arePiecesDraggable]);
 
   function getSingleSquareCoordinates(square) {
     return { sourceSq: squares[square] };
