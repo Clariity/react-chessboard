@@ -9816,8 +9816,7 @@ const ChessboardProvider = /*#__PURE__*/React.forwardRef(({
       setLastPieceColour(premove.piece[0]);
       setManualDrop(true); // pre-move doesn't need animation
 
-      const isValidMove = onPieceDrop(premove.sourceSq, premove.targetSq, premove.piece);
-      console.log('isValidMove', isValidMove); // premove was successful and can be removed from queue
+      const isValidMove = onPieceDrop(premove.sourceSq, premove.targetSq, premove.piece); // premove was successful and can be removed from queue
 
       if (isValidMove) {
         const oldPremoves = [...premovesRef.current];
@@ -9825,8 +9824,7 @@ const ChessboardProvider = /*#__PURE__*/React.forwardRef(({
         premovesRef.current = oldPremoves;
         setPremoves([...oldPremoves]);
       } else {
-        console.log('clearing premoves'); // premove wasn't successful, clear premove queue
-
+        // premove wasn't successful, clear premove queue
         clearPremoves();
       }
     }

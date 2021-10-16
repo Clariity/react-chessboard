@@ -47,6 +47,18 @@ export default function ClickToMove({ boardWidth }) {
     setOptionSquares(newSquares);
   }
 
+  function makeRandomMove() {
+    const possibleMoves = game.moves();
+
+    // exit if the game is over
+    if (game.game_over() || game.in_draw() || possibleMoves.length === 0) return;
+
+    const randomIndex = Math.floor(Math.random() * possibleMoves.length);
+    safeGameMutate((game) => {
+      game.move(possibleMoves[randomIndex]);
+    });
+  }
+
   function onSquareClick(square) {
     setRightClickedSquares({});
 
@@ -76,7 +88,7 @@ export default function ClickToMove({ boardWidth }) {
       return;
     }
 
-    // if valid, check if allowed in opening and make it or clear options
+    setTimeout(makeRandomMove, 300);
     setMoveFrom('');
     setOptionSquares({});
   }
