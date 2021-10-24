@@ -9693,9 +9693,11 @@ const ChessboardProvider = /*#__PURE__*/forwardRef(({
   }, [customPieces]); // handle external position change
 
   useEffect(() => {
+    var _Object$keys, _Object$entries, _Object$entries$;
+
     const newPosition = convertPositionToObject(position);
     const differences = getPositionDifferences(currentPosition, newPosition);
-    const newPieceColour = Object.keys(differences.added)?.length <= 2 ? Object.entries(differences.added)?.[0]?.[1][0] : undefined; // external move has come in before animation is over
+    const newPieceColour = ((_Object$keys = Object.keys(differences.added)) === null || _Object$keys === void 0 ? void 0 : _Object$keys.length) <= 2 ? (_Object$entries = Object.entries(differences.added)) === null || _Object$entries === void 0 ? void 0 : (_Object$entries$ = _Object$entries[0]) === null || _Object$entries$ === void 0 ? void 0 : _Object$entries$[1][0] : undefined; // external move has come in before animation is over
     // cancel animation and immediately update position
 
     if (waitingForAnimation) {
@@ -10104,9 +10106,11 @@ function Piece({
   // we need to head towards where we need to go, we are the source, we are heading towards the target
 
   useEffect(() => {
-    const removedPiece = positionDifferences.removed?.[square]; // check if piece matches or if removed piece was a pawn and new square is on 1st or 8th rank (promotion)
+    var _positionDifferences$;
 
-    const newSquare = Object.entries(positionDifferences.added).find(([s, p]) => p === removedPiece || removedPiece?.[1] === 'P' && (s[1] === '1' || s[1] === '8')); // we can perform animation if our square was in removed, AND the matching piece is in added AND this isn't a premoved piece
+    const removedPiece = (_positionDifferences$ = positionDifferences.removed) === null || _positionDifferences$ === void 0 ? void 0 : _positionDifferences$[square]; // check if piece matches or if removed piece was a pawn and new square is on 1st or 8th rank (promotion)
+
+    const newSquare = Object.entries(positionDifferences.added).find(([s, p]) => p === removedPiece || (removedPiece === null || removedPiece === void 0 ? void 0 : removedPiece[1]) === 'P' && (s[1] === '1' || s[1] === '8')); // we can perform animation if our square was in removed, AND the matching piece is in added AND this isn't a premoved piece
 
     if (waitingForAnimation && removedPiece && newSquare && !isPremovedPiece) {
       const {
@@ -10165,9 +10169,9 @@ function Piece({
     children: typeof chessPieces[piece] === 'function' ? chessPieces[piece]({
       squareWidth: boardWidth / 8,
       isDragging,
-      droppedPiece: dropTarget?.piece,
-      targetSquare: dropTarget?.target,
-      sourceSquare: dropTarget?.source
+      droppedPiece: dropTarget === null || dropTarget === void 0 ? void 0 : dropTarget.piece,
+      targetSquare: dropTarget === null || dropTarget === void 0 ? void 0 : dropTarget.target,
+      sourceSquare: dropTarget === null || dropTarget === void 0 ? void 0 : dropTarget.source
     }) : /*#__PURE__*/jsx("svg", {
       viewBox: '1 1 43 43',
       width: boardWidth / 8,
@@ -10259,7 +10263,7 @@ function Square({
       ref: squareRef,
       style: { ...size(boardWidth),
         ...center,
-        ...(!squareHasPremove && customSquareStyles?.[square])
+        ...(!squareHasPremove && (customSquareStyles === null || customSquareStyles === void 0 ? void 0 : customSquareStyles[square]))
       },
       children: children
     })
