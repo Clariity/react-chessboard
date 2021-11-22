@@ -62,7 +62,6 @@ export default function StyledBoard({ boardWidth }) {
           safeGameMutate((game) => {
             game.reset();
           });
-          chessboardRef.current.clearPremoves();
         }}
       >
         reset
@@ -73,7 +72,6 @@ export default function StyledBoard({ boardWidth }) {
           safeGameMutate((game) => {
             game.undo();
           });
-          chessboardRef.current.clearPremoves();
         }}
       >
         undo

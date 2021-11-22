@@ -57,9 +57,6 @@ export const chessboardPropTypes = {
   // behavior of pieces when dropped off the board. 'snapback' brings the piece back to it's original square, 'trash' deletes the piece from the board
   dropOffBoardAction: PropTypes.oneOf(['snapback', 'trash']),
 
-  // if expecting pieces that move to alternate from white to black
-  expectingAlternateMoves: PropTypes.bool,
-
   // board identifier, necessary if more than one board is mounted for drag and drop.
   id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 
@@ -119,7 +116,6 @@ export const chessboardDefaultProps = {
   customPremoveLightSquareStyle: { backgroundColor: '#BD2828' },
   customSquareStyles: {},
   dropOffBoardAction: 'snapback',
-  expectingAlternateMoves: true,
   id: 0,
   isDraggablePiece: () => true,
   getPositionObject: () => {},

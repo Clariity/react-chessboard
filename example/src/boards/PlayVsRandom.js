@@ -8,6 +8,7 @@ export default function PlayVsRandom({ boardWidth }) {
   const [game, setGame] = useState(new Chess());
   const [arrows, setArrows] = useState([]);
   const [boardOrientation, setBoardOrientation] = useState('white');
+  const [currentTimeout, setCurrentTimeout] = useState(undefined);
 
   function safeGameMutate(modify) {
     setGame((g) => {
@@ -41,7 +42,9 @@ export default function PlayVsRandom({ boardWidth }) {
     // illegal move
     if (move === null) return false;
 
-    setTimeout(makeRandomMove, 200);
+    // store timeout so it can be cleared on undo/reset so computer doesn't execute move
+    const newTimeout = setTimeout(makeRandomMove, 200);
+    setCurrentTimeout(newTimeout);
     return true;
   }
 
@@ -49,7 +52,6 @@ export default function PlayVsRandom({ boardWidth }) {
     <div>
       <Chessboard
         id="PlayVsRandom"
-        arePremovesAllowed={true}
         animationDuration={200}
         boardOrientation={boardOrientation}
         boardWidth={boardWidth}
@@ -68,7 +70,8 @@ export default function PlayVsRandom({ boardWidth }) {
           safeGameMutate((game) => {
             game.reset();
           });
-          chessboardRef.current.clearPremoves();
+          // stop any current timeouts
+          clearTimeout(currentTimeout);
         }}
       >
         reset
@@ -87,7 +90,8 @@ export default function PlayVsRandom({ boardWidth }) {
           safeGameMutate((game) => {
             game.undo();
           });
-          chessboardRef.current.clearPremoves();
+          // stop any current timeouts
+          clearTimeout(currentTimeout);
         }}
       >
         undo

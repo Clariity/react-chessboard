@@ -93,10 +93,6 @@ interface ChessBoardProps {
    */
   customSquareStyles?: CustomSquareStyles;
   /**
-   * Whether the board should expect alternate coloured moves or allow for any piece to be moved at any time.
-   */
-  expectingAlternateMoves?: boolean;
-  /**
    * Board identifier, necessary if more than one board is mounted for drag and drop.
    */
   id?: number;
@@ -143,7 +139,7 @@ interface ChessBoardProps {
   /**
    * RefObject that is sent as forwardRef to chessboard
    */
-  ref?: RefObject;
+  ref?: RefObject<HTMLDivElement>;
   /**
    * Whether or not to show the file and rank co-ordinates (a..h, 1..8).
    */

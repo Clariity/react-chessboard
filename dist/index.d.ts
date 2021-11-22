@@ -160,10 +160,6 @@ interface ChessBoardProps {
    */
   customSquareStyles?: CustomSquareStyles;
   /**
-   * Whether the board should expect alternate coloured moves or allow for any piece to be moved at any time.
-   */
-  expectingAlternateMoves?: boolean;
-  /**
    * Board identifier, necessary if more than one board is mounted for drag and drop.
    */
   id?: number;

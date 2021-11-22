@@ -37,7 +37,6 @@ export const ChessboardProvider = forwardRef(
       customPremoveLightSquareStyle,
       customSquareStyles,
       dropOffBoardAction,
-      expectingAlternateMoves,
       id,
       isDraggablePiece,
       getPositionObject,
@@ -180,8 +179,7 @@ export const ChessboardProvider = forwardRef(
     // handle drop position change
     function handleSetPosition(sourceSq, targetSq, piece) {
       // if dropped back down, don't do anything
-      // if premoves not allowed and expecting alternate moves and same piece colour moved, don't do anything
-      if (sourceSq === targetSq || (!arePremovesAllowed && expectingAlternateMoves && lastPieceColour === piece[0])) {
+      if (sourceSq === targetSq) {
         return;
       }
 

@@ -8707,8 +8707,6 @@ const chessboardPropTypes = {
   customSquareStyles: PropTypes.object,
   // behavior of pieces when dropped off the board. 'snapback' brings the piece back to it's original square, 'trash' deletes the piece from the board
   dropOffBoardAction: PropTypes.oneOf(['snapback', 'trash']),
-  // if expecting pieces that move to alternate from white to black
-  expectingAlternateMoves: PropTypes.bool,
   // board identifier, necessary if more than one board is mounted for drag and drop.
   id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   // function called when a piece drag is initiated. Returns if piece is draggable ({ piece: string, sourceSquare: string }) => bool
@@ -8765,7 +8763,6 @@ const chessboardDefaultProps = {
   },
   customSquareStyles: {},
   dropOffBoardAction: 'snapback',
-  expectingAlternateMoves: true,
   id: 0,
   isDraggablePiece: () => true,
   getPositionObject: () => {},
@@ -9616,7 +9613,6 @@ const ChessboardProvider = /*#__PURE__*/forwardRef(({
   customPremoveLightSquareStyle,
   customSquareStyles,
   dropOffBoardAction,
-  expectingAlternateMoves,
   id,
   isDraggablePiece,
   getPositionObject,
@@ -9751,8 +9747,7 @@ const ChessboardProvider = /*#__PURE__*/forwardRef(({
 
   function handleSetPosition(sourceSq, targetSq, piece) {
     // if dropped back down, don't do anything
-    // if premoves not allowed and expecting alternate moves and same piece colour moved, don't do anything
-    if (sourceSq === targetSq || !arePremovesAllowed && expectingAlternateMoves && lastPieceColour === piece[0]) {
+    if (sourceSq === targetSq) {
       return;
     }
 
