@@ -1,4 +1,4 @@
-import { ReactElement, CSSProperties } from 'react';
+import { ReactElement, CSSProperties, RefObject } from 'react';
 
 type Square =
   | 'a8'
@@ -207,6 +207,10 @@ interface ChessBoardProps {
    * FEN string or position object notating where the chess pieces are on the board. Start position can also be notated with the string: 'start'.
    */
   position?: string;
+  /**
+   * RefObject that is sent as forwardRef to chessboard
+   */
+  ref?: RefObject;
   /**
    * Whether or not to show the file and rank co-ordinates (a..h, 1..8).
    */
