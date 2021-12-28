@@ -206,7 +206,7 @@ interface ChessBoardProps {
   /**
    * RefObject that is sent as forwardRef to chessboard
    */
-  ref?: RefObject;
+  ref?: RefObject<HTMLDivElement>;
   /**
    * Whether or not to show the file and rank co-ordinates (a..h, 1..8).
    */
