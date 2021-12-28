@@ -10238,6 +10238,8 @@ function Square({
   return /*#__PURE__*/jsx("div", {
     ref: drop,
     style: defaultSquareStyle,
+    "data-square-color": squareColor,
+    "data-square": square,
     onMouseOver: () => onMouseOverSquare(square),
     onMouseOut: () => onMouseOutSquare(square),
     onMouseDown: e => {
