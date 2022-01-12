@@ -12,6 +12,8 @@ import { convertPositionToObject, getPositionDifferences, isDifferentFromStart }
 
 // Animation on premove? - only set manual drop to false in useEffect if not attempting successful premove
 
+// try DisplayBoard again
+
 export const ChessboardContext = React.createContext();
 
 export const useChessboard = () => useContext(ChessboardContext);
@@ -81,9 +83,6 @@ export const ChessboardProvider = forwardRef(
     // the most recent timeout whilst waiting for animation to complete
     const [previousTimeout, setPreviousTimeout] = useState(undefined);
 
-    // screen size
-    const [screenSize, setScreenSize] = useState(undefined);
-
     // if currently waiting for an animation to finish
     const [waitingForAnimation, setWaitingForAnimation] = useState(false);
 
@@ -93,19 +92,6 @@ export const ChessboardProvider = forwardRef(
         clearPremoves();
       }
     }));
-
-    // init screen size listener to update screen size on any window size changes
-    useEffect(() => {
-      function handleResize() {
-        setScreenSize({ width: window.innerWidth, height: window.innerHeight });
-        setArrows([]); // change to recalculate arrows instead
-        setCurrentRightClickDown(null);
-      }
-
-      window.addEventListener('resize', handleResize);
-      handleResize();
-      return () => window.removeEventListener('resize', handleResize);
-    }, []);
 
     // handle external arrows change
     useEffect(() => {
@@ -345,7 +331,6 @@ export const ChessboardProvider = forwardRef(
           onRightClickUp,
           positionDifferences,
           premoves,
-          screenSize,
           setChessPieces,
           setCurrentPosition,
           setManualDrop,

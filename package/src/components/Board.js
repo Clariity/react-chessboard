@@ -20,7 +20,6 @@ export function Board() {
     customArrowColor,
     showBoardNotation,
     currentPosition,
-    screenSize,
     premoves
   } = useChessboard();
 
@@ -37,7 +36,7 @@ export function Board() {
     };
   }, []);
 
-  return screenSize && boardWidth ? (
+  return boardWidth ? (
     <div ref={boardRef} style={{ position: 'relative' }}>
       <Squares>
         {({ square, squareColor, col, row }) => {

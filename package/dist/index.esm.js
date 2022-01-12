@@ -9649,9 +9649,7 @@ const ChessboardProvider = /*#__PURE__*/forwardRef(({
 
   const [manualDrop, setManualDrop] = useState(false); // the most recent timeout whilst waiting for animation to complete
 
-  const [previousTimeout, setPreviousTimeout] = useState(undefined); // screen size
-
-  const [screenSize, setScreenSize] = useState(undefined); // if currently waiting for an animation to finish
+  const [previousTimeout, setPreviousTimeout] = useState(undefined); // if currently waiting for an animation to finish
 
   const [waitingForAnimation, setWaitingForAnimation] = useState(false); // open clearPremoves() to allow user to call on undo/reset/whenever
 
@@ -9660,23 +9658,7 @@ const ChessboardProvider = /*#__PURE__*/forwardRef(({
       clearPremoves();
     }
 
-  })); // init screen size listener to update screen size on any window size changes
-
-  useEffect(() => {
-    function handleResize() {
-      setScreenSize({
-        width: window.innerWidth,
-        height: window.innerHeight
-      });
-      setArrows([]); // change to recalculate arrows instead
-
-      setCurrentRightClickDown(null);
-    }
-
-    window.addEventListener('resize', handleResize);
-    handleResize();
-    return () => window.removeEventListener('resize', handleResize);
-  }, []); // handle external arrows change
+  })); // handle external arrows change
 
   useEffect(() => {
     setArrows(customArrows);
@@ -9907,7 +9889,6 @@ const ChessboardProvider = /*#__PURE__*/forwardRef(({
       onRightClickUp,
       positionDifferences,
       premoves,
-      screenSize,
       setChessPieces,
       setCurrentPosition,
       setManualDrop,
@@ -10103,7 +10084,9 @@ function Piece({
   useEffect(() => {
     var _positionDifferences$;
 
-    const removedPiece = (_positionDifferences$ = positionDifferences.removed) === null || _positionDifferences$ === void 0 ? void 0 : _positionDifferences$[square]; // check if piece matches or if removed piece was a pawn and new square is on 1st or 8th rank (promotion)
+    const removedPiece = (_positionDifferences$ = positionDifferences.removed) === null || _positionDifferences$ === void 0 ? void 0 : _positionDifferences$[square]; // return as null and not loaded yet
+
+    if (!positionDifferences.added) return; // check if piece matches or if removed piece was a pawn and new square is on 1st or 8th rank (promotion)
 
     const newSquare = Object.entries(positionDifferences.added).find(([s, p]) => p === removedPiece || (removedPiece === null || removedPiece === void 0 ? void 0 : removedPiece[1]) === 'P' && (s[1] === '1' || s[1] === '8')); // we can perform animation if our square was in removed, AND the matching piece is in added AND this isn't a premoved piece
 
@@ -10434,7 +10417,6 @@ function Board() {
     customArrowColor,
     showBoardNotation,
     currentPosition,
-    screenSize,
     premoves
   } = useChessboard();
   useEffect(() => {
@@ -10449,7 +10431,7 @@ function Board() {
       document.removeEventListener('mouseup', handleClickOutside);
     };
   }, []);
-  return screenSize && boardWidth ? /*#__PURE__*/jsxs("div", {
+  return boardWidth ? /*#__PURE__*/jsxs("div", {
     ref: boardRef,
     style: {
       position: 'relative'

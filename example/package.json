@@ -4,13 +4,13 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "rebuild": "cd .. && npm run build && cd example && npm start",
+    "rebuild": "cd ../package && npm run build && cd ../example && npm start",
     "lint": "eslint src"
   },
   "dependencies": {
     "chess.js": "^0.12.0",
     "react": "^17.0.2",
-    "react-chessboard": "file:../",
+    "react-chessboard": "file:../package",
     "react-dom": "^17.0.2",
     "react-scripts": "^4.0.3"
   },

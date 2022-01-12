@@ -69,7 +69,7 @@ npm i react-chessboard
 ### Bare Minimum
 
 ```jsx
-import { Chessboard } from 'react-chessboard';
+import { Chessboard } from "react-chessboard";
 
 export default function App() {
   return (
@@ -83,9 +83,9 @@ export default function App() {
 ### Basic Example
 
 ```jsx
-import { useState } from 'react';
-import Chess from 'chess.js';
-import { Chessboard } from 'react-chessboard';
+import { useState } from "react";
+import Chess from "chess.js";
+import { Chessboard } from "react-chessboard";
 
 export default function PlayRandomMoveEngine() {
   const [game, setGame] = useState(new Chess());
@@ -100,7 +100,8 @@ export default function PlayRandomMoveEngine() {
 
   function makeRandomMove() {
     const possibleMoves = game.moves();
-    if (game.game_over() || game.in_draw() || possibleMoves.length === 0) return; // exit if the game is over
+    if (game.game_over() || game.in_draw() || possibleMoves.length === 0)
+      return; // exit if the game is over
     const randomIndex = Math.floor(Math.random() * possibleMoves.length);
     safeGameMutate((game) => {
       game.move(possibleMoves[randomIndex]);
@@ -113,7 +114,7 @@ export default function PlayRandomMoveEngine() {
       move = game.move({
         from: sourceSquare,
         to: targetSquare,
-        promotion: 'q' // always promote to a queen for example simplicity
+        promotion: "q", // always promote to a queen for example simplicity
       });
     });
     if (move === null) return false; // illegal move
@@ -174,9 +175,9 @@ For more advanced code usage examples, please see example boards shown in [`exam
 4. Set upstream remote
    `git remote add upstream https://github.com/Clariity/react-chessboard.git`
 5. Make your changes
-6. Test your changes using the examples folder
+6. Test your changes using the example folder
    `npm run build`
-   `cd examples`
+   `cd example`
    `npm start`
 7. Push your changes
    `git add .`

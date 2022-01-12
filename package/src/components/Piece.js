@@ -80,6 +80,8 @@ export function Piece({ piece, square, squares, isPremovedPiece = false }) {
   // we need to head towards where we need to go, we are the source, we are heading towards the target
   useEffect(() => {
     const removedPiece = positionDifferences.removed?.[square];
+    // return as null and not loaded yet
+    if (!positionDifferences.added) return;
     // check if piece matches or if removed piece was a pawn and new square is on 1st or 8th rank (promotion)
     const newSquare = Object.entries(positionDifferences.added).find(
       ([s, p]) => p === removedPiece || (removedPiece?.[1] === 'P' && (s[1] === '1' || s[1] === '8'))
