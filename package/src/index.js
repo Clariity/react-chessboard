@@ -1,6 +1,6 @@
 import { forwardRef } from 'react';
 import { DndProvider } from 'react-dnd-multi-backend';
-import HTML5toTouch from 'react-dnd-multi-backend/dist/esm/HTML5toTouch';
+import { HTML5toTouch } from 'rdndmb-html5-to-touch' 
 
 import { Board } from './components/Board';
 import { CustomDragLayer } from './components/CustomDragLayer';

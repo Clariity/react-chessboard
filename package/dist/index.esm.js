@@ -1,29 +1,12 @@
-import React, { createContext, memo, useEffect, isValidElement, cloneElement, createRef, Component, useLayoutEffect, useMemo, useContext, useState, useCallback, useRef, forwardRef, useImperativeHandle } from 'react';
-import { jsx, jsxs, Fragment } from 'react/jsx-runtime';
+import React, { createContext, memo, useEffect, useState, useContext, forwardRef, useRef, useImperativeHandle, isValidElement, cloneElement, createRef, Component, useLayoutEffect, useMemo, useCallback } from 'react';
 import 'react-dom';
 
-var createTransition = (function (event, check) {
-  return {
-    _isMBTransition: true,
-    event: event,
-    check: check
-  };
-});
+function _createForOfIteratorHelper(o, allowArrayLike) {
+  var it;
 
-var TouchTransition = createTransition('touchstart', function (event) {
-  return event.touches != null; // eslint-disable-line no-eq-null, eqeqeq
-});
-var MouseTransition = createTransition('mousedown', function (event) {
-  if (event.type) {
-    return event.type.indexOf('touch') === -1 && event.type.indexOf('mouse') !== -1;
-  }
-
-  return false;
-});
-
-function _createForOfIteratorHelper(o) {
   if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) {
-    if (Array.isArray(o) || (o = _unsupportedIterableToArray$8(o))) {
+    if (Array.isArray(o) || (it = _unsupportedIterableToArray$9(o)) || allowArrayLike && o && typeof o.length === "number") {
+      if (it) o = it;
       var i = 0;
 
       var F = function F() {};
@@ -49,8 +32,7 @@ function _createForOfIteratorHelper(o) {
     throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }
 
-  var it,
-      normalCompletion = true,
+  var normalCompletion = true,
       didErr = false,
       err;
   return {
@@ -76,16 +58,16 @@ function _createForOfIteratorHelper(o) {
   };
 }
 
-function _unsupportedIterableToArray$8(o, minLen) {
+function _unsupportedIterableToArray$9(o, minLen) {
   if (!o) return;
-  if (typeof o === "string") return _arrayLikeToArray$8(o, minLen);
+  if (typeof o === "string") return _arrayLikeToArray$9(o, minLen);
   var n = Object.prototype.toString.call(o).slice(8, -1);
   if (n === "Object" && o.constructor) n = o.constructor.name;
   if (n === "Map" || n === "Set") return Array.from(o);
-  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$8(o, minLen);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$9(o, minLen);
 }
 
-function _arrayLikeToArray$8(arr, len) {
+function _arrayLikeToArray$9(arr, len) {
   if (len == null || len > arr.length) len = arr.length;
 
   for (var i = 0, arr2 = new Array(len); i < len; i++) {
@@ -101,25 +83,91 @@ function _classCallCheck$i(instance, Constructor) {
   }
 }
 
-var PreviewList = function PreviewList() {
+function _defineProperty$f(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+function _classPrivateFieldGet$1(receiver, privateMap) {
+  var descriptor = _classExtractFieldDescriptor$1(receiver, privateMap, "get");
+
+  return _classApplyDescriptorGet$1(receiver, descriptor);
+}
+
+function _classApplyDescriptorGet$1(receiver, descriptor) {
+  if (descriptor.get) {
+    return descriptor.get.call(receiver);
+  }
+
+  return descriptor.value;
+}
+
+function _classPrivateFieldSet$1(receiver, privateMap, value) {
+  var descriptor = _classExtractFieldDescriptor$1(receiver, privateMap, "set");
+
+  _classApplyDescriptorSet$1(receiver, descriptor, value);
+
+  return value;
+}
+
+function _classExtractFieldDescriptor$1(receiver, privateMap, action) {
+  if (!privateMap.has(receiver)) {
+    throw new TypeError("attempted to " + action + " private field on non-instance");
+  }
+
+  return privateMap.get(receiver);
+}
+
+function _classApplyDescriptorSet$1(receiver, descriptor, value) {
+  if (descriptor.set) {
+    descriptor.set.call(receiver, value);
+  } else {
+    if (!descriptor.writable) {
+      throw new TypeError("attempted to set read only private field");
+    }
+
+    descriptor.value = value;
+  }
+}
+
+var _previews$1 = new WeakMap();
+
+var PreviewListImpl =
+/*private*/
+function PreviewListImpl() {
   var _this = this;
 
-  _classCallCheck$i(this, PreviewList);
+  _classCallCheck$i(this, PreviewListImpl);
 
-  this.register = function (preview) {
-    _this.previews.push(preview);
-  };
+  _previews$1.set(this, {
+    writable: true,
+    value: void 0
+  });
 
-  this.unregister = function (preview) {
+  _defineProperty$f(this, "register", function (preview) {
+    _classPrivateFieldGet$1(_this, _previews$1).push(preview);
+  });
+
+  _defineProperty$f(this, "unregister", function (preview) {
     var index;
 
-    while ((index = _this.previews.indexOf(preview)) !== -1) {
-      _this.previews.splice(index, 1);
+    while ((index = _classPrivateFieldGet$1(_this, _previews$1).indexOf(preview)) !== -1) {
+      _classPrivateFieldGet$1(_this, _previews$1).splice(index, 1);
     }
-  };
+  });
 
-  this.backendChanged = function (backend) {
-    var _iterator = _createForOfIteratorHelper(_this.previews),
+  _defineProperty$f(this, "backendChanged", function (backend) {
+    var _iterator = _createForOfIteratorHelper(_classPrivateFieldGet$1(_this, _previews$1)),
         _step;
 
     try {
@@ -132,26 +180,26 @@ var PreviewList = function PreviewList() {
     } finally {
       _iterator.f();
     }
-  };
+  });
 
-  this.previews = [];
+  _classPrivateFieldSet$1(this, _previews$1, []);
 };
 
 function _toConsumableArray$1(arr) {
-  return _arrayWithoutHoles$1(arr) || _iterableToArray$1(arr) || _unsupportedIterableToArray$7(arr) || _nonIterableSpread$1();
+  return _arrayWithoutHoles$1(arr) || _iterableToArray$1(arr) || _unsupportedIterableToArray$8(arr) || _nonIterableSpread$1();
 }
 
 function _nonIterableSpread$1() {
   throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
 
-function _unsupportedIterableToArray$7(o, minLen) {
+function _unsupportedIterableToArray$8(o, minLen) {
   if (!o) return;
-  if (typeof o === "string") return _arrayLikeToArray$7(o, minLen);
+  if (typeof o === "string") return _arrayLikeToArray$8(o, minLen);
   var n = Object.prototype.toString.call(o).slice(8, -1);
   if (n === "Object" && o.constructor) n = o.constructor.name;
   if (n === "Map" || n === "Set") return Array.from(o);
-  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$7(o, minLen);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$8(o, minLen);
 }
 
 function _iterableToArray$1(iter) {
@@ -159,10 +207,10 @@ function _iterableToArray$1(iter) {
 }
 
 function _arrayWithoutHoles$1(arr) {
-  if (Array.isArray(arr)) return _arrayLikeToArray$7(arr);
+  if (Array.isArray(arr)) return _arrayLikeToArray$8(arr);
 }
 
-function _arrayLikeToArray$7(arr, len) {
+function _arrayLikeToArray$8(arr, len) {
   if (len == null || len > arr.length) len = arr.length;
 
   for (var i = 0, arr2 = new Array(len); i < len; i++) {
@@ -178,531 +226,377 @@ function _classCallCheck$h(instance, Constructor) {
   }
 }
 
-var _default = function _default(manager, context, sourceOptions) {
+function _defineProperty$e(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+function _classPrivateFieldGet(receiver, privateMap) {
+  var descriptor = _classExtractFieldDescriptor(receiver, privateMap, "get");
+
+  return _classApplyDescriptorGet(receiver, descriptor);
+}
+
+function _classApplyDescriptorGet(receiver, descriptor) {
+  if (descriptor.get) {
+    return descriptor.get.call(receiver);
+  }
+
+  return descriptor.value;
+}
+
+function _classPrivateFieldSet(receiver, privateMap, value) {
+  var descriptor = _classExtractFieldDescriptor(receiver, privateMap, "set");
+
+  _classApplyDescriptorSet(receiver, descriptor, value);
+
+  return value;
+}
+
+function _classExtractFieldDescriptor(receiver, privateMap, action) {
+  if (!privateMap.has(receiver)) {
+    throw new TypeError("attempted to " + action + " private field on non-instance");
+  }
+
+  return privateMap.get(receiver);
+}
+
+function _classApplyDescriptorSet(receiver, descriptor, value) {
+  if (descriptor.set) {
+    descriptor.set.call(receiver, value);
+  } else {
+    if (!descriptor.writable) {
+      throw new TypeError("attempted to set read only private field");
+    }
+
+    descriptor.value = value;
+  }
+}
+
+var _current = new WeakMap();
+
+var _previews = new WeakMap();
+
+var _backends = new WeakMap();
+
+var _backendsList = new WeakMap();
+
+var _nodes = new WeakMap();
+
+var _createBackend = new WeakMap();
+
+var _addEventListeners = new WeakMap();
+
+var _removeEventListeners = new WeakMap();
+
+var _backendSwitcher = new WeakMap();
+
+var _callBackend = new WeakMap();
+
+var _connectBackend = new WeakMap();
+
+var MultiBackendImpl =
+/*private*/
+
+/*private*/
+
+/*private*/
+
+/*private*/
+
+/*private*/
+function MultiBackendImpl(_manager, _context, _options) {
   var _this = this;
 
-  _classCallCheck$h(this, _default);
+  _classCallCheck$h(this, MultiBackendImpl);
 
-  this.setup = function () {
+  _current.set(this, {
+    writable: true,
+    value: void 0
+  });
+
+  _previews.set(this, {
+    writable: true,
+    value: void 0
+  });
+
+  _backends.set(this, {
+    writable: true,
+    value: void 0
+  });
+
+  _backendsList.set(this, {
+    writable: true,
+    value: void 0
+  });
+
+  _nodes.set(this, {
+    writable: true,
+    value: void 0
+  });
+
+  _createBackend.set(this, {
+    writable: true,
+    value: function value(manager, context, backend) {
+      var _backend$preview, _backend$skipDispatch;
+
+      if (!backend.backend) {
+        throw new Error("You must specify a 'backend' property in your Backend entry: ".concat(JSON.stringify(backend)));
+      }
+
+      var instance = backend.backend(manager, context, backend.options);
+      var id = backend.id; // Try to infer an `id` if one doesn't exist
+
+      var inferName = !backend.id && instance && instance.constructor;
+
+      if (inferName) {
+        id = instance.constructor.name;
+      }
+
+      if (!id) {
+        throw new Error("You must specify an 'id' property in your Backend entry: ".concat(JSON.stringify(backend), "\n        see this guide: https://github.com/louisbrunner/dnd-multi-backend/tree/master/packages/react-dnd-multi-backend#migrating-from-5xx"));
+      } else if (inferName) {
+        console.warn( // eslint-disable-line no-console
+        "Deprecation notice: You are using a pipeline which doesn't include backends' 'id'.\n        This might be unsupported in the future, please specify 'id' explicitely for every backend.");
+      }
+
+      if (_classPrivateFieldGet(_this, _backends)[id]) {
+        throw new Error("You must specify a unique 'id' property in your Backend entry:\n        ".concat(JSON.stringify(backend), " (conflicts with: ").concat(JSON.stringify(_classPrivateFieldGet(_this, _backends)[id]), ")"));
+      }
+
+      return {
+        id: id,
+        instance: instance,
+        preview: (_backend$preview = backend.preview) !== null && _backend$preview !== void 0 ? _backend$preview : false,
+        transition: backend.transition,
+        skipDispatchOnTransition: (_backend$skipDispatch = backend.skipDispatchOnTransition) !== null && _backend$skipDispatch !== void 0 ? _backend$skipDispatch : false
+      };
+    }
+  });
+
+  _defineProperty$e(this, "setup", function () {
     if (typeof window === 'undefined') {
       return;
     }
 
-    if (_this.constructor.isSetUp) {
+    if (MultiBackendImpl.isSetUp) {
       throw new Error('Cannot have two MultiBackends at the same time.');
     }
 
-    _this.constructor.isSetUp = true;
+    MultiBackendImpl.isSetUp = true;
 
-    _this.addEventListeners(window);
+    _classPrivateFieldGet(_this, _addEventListeners).call(_this, window);
 
-    _this.backends[_this.current].instance.setup();
-  };
+    _classPrivateFieldGet(_this, _backends)[_classPrivateFieldGet(_this, _current)].instance.setup();
+  });
 
-  this.teardown = function () {
+  _defineProperty$e(this, "teardown", function () {
     if (typeof window === 'undefined') {
       return;
     }
 
-    _this.constructor.isSetUp = false;
+    MultiBackendImpl.isSetUp = false;
 
-    _this.removeEventListeners(window);
+    _classPrivateFieldGet(_this, _removeEventListeners).call(_this, window);
 
-    _this.backends[_this.current].instance.teardown();
-  };
+    _classPrivateFieldGet(_this, _backends)[_classPrivateFieldGet(_this, _current)].instance.teardown();
+  });
 
-  this.connectDragSource = function () {
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
+  _defineProperty$e(this, "connectDragSource", function (sourceId, node, options) {
+    return _classPrivateFieldGet(_this, _connectBackend).call(_this, 'connectDragSource', sourceId, node, options);
+  });
+
+  _defineProperty$e(this, "connectDragPreview", function (sourceId, node, options) {
+    return _classPrivateFieldGet(_this, _connectBackend).call(_this, 'connectDragPreview', sourceId, node, options);
+  });
+
+  _defineProperty$e(this, "connectDropTarget", function (sourceId, node, options) {
+    return _classPrivateFieldGet(_this, _connectBackend).call(_this, 'connectDropTarget', sourceId, node, options);
+  });
+
+  _defineProperty$e(this, "profile", function () {
+    return _classPrivateFieldGet(_this, _backends)[_classPrivateFieldGet(_this, _current)].instance.profile();
+  });
+
+  _defineProperty$e(this, "previewEnabled", function () {
+    return _classPrivateFieldGet(_this, _backends)[_classPrivateFieldGet(_this, _current)].preview;
+  });
+
+  _defineProperty$e(this, "previewsList", function () {
+    return _classPrivateFieldGet(_this, _previews);
+  });
+
+  _defineProperty$e(this, "backendsList", function () {
+    return _classPrivateFieldGet(_this, _backendsList);
+  });
+
+  _addEventListeners.set(this, {
+    writable: true,
+    value: function value(target) {
+      _classPrivateFieldGet(_this, _backendsList).forEach(function (backend) {
+        if (backend.transition) {
+          target.addEventListener(backend.transition.event, _classPrivateFieldGet(_this, _backendSwitcher));
+        }
+      });
     }
+  });
 
-    return _this.connectBackend('connectDragSource', args);
-  };
-
-  this.connectDragPreview = function () {
-    for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-      args[_key2] = arguments[_key2];
+  _removeEventListeners.set(this, {
+    writable: true,
+    value: function value(target) {
+      _classPrivateFieldGet(_this, _backendsList).forEach(function (backend) {
+        if (backend.transition) {
+          target.removeEventListener(backend.transition.event, _classPrivateFieldGet(_this, _backendSwitcher));
+        }
+      });
     }
+  });
 
-    return _this.connectBackend('connectDragPreview', args);
-  };
+  _backendSwitcher.set(this, {
+    writable: true,
+    value: function value(event) {
+      var oldBackend = _classPrivateFieldGet(_this, _current);
 
-  this.connectDropTarget = function () {
-    for (var _len3 = arguments.length, args = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-      args[_key3] = arguments[_key3];
-    }
+      _classPrivateFieldGet(_this, _backendsList).some(function (backend) {
+        if (backend.id !== _classPrivateFieldGet(_this, _current) && backend.transition && backend.transition.check(event)) {
+          _classPrivateFieldSet(_this, _current, backend.id);
 
-    return _this.connectBackend('connectDropTarget', args);
-  };
+          return true;
+        }
 
-  this.previewEnabled = function () {
-    return _this.backends[_this.current].preview;
-  };
-
-  this.addEventListeners = function (target) {
-    _this.backends.forEach(function (backend) {
-      if (backend.transition) {
-        target.addEventListener(backend.transition.event, _this.backendSwitcher, true);
-      }
-    });
-  };
-
-  this.removeEventListeners = function (target) {
-    _this.backends.forEach(function (backend) {
-      if (backend.transition) {
-        target.removeEventListener(backend.transition.event, _this.backendSwitcher, true);
-      }
-    });
-  };
-
-  this.backendSwitcher = function (event) {
-    var oldBackend = _this.current;
-    var i = 0;
-
-    _this.backends.some(function (backend) {
-      if (i !== _this.current && backend.transition && backend.transition.check(event)) {
-        _this.current = i;
-        return true;
-      }
-
-      i += 1;
-      return false;
-    });
-
-    if (_this.current !== oldBackend) {
-      _this.backends[oldBackend].instance.teardown();
-
-      Object.keys(_this.nodes).forEach(function (id) {
-        var node = _this.nodes[id];
-        node.handler();
-        node.handler = _this.callBackend(node.func, node.args);
+        return false;
       });
 
-      _this.previews.backendChanged(_this);
+      if (_classPrivateFieldGet(_this, _current) !== oldBackend) {
+        var _event$target;
 
-      var newBackend = _this.backends[_this.current];
-      newBackend.instance.setup();
+        _classPrivateFieldGet(_this, _backends)[oldBackend].instance.teardown();
 
-      if (newBackend.skipDispatchOnTransition) {
-        return;
+        Object.keys(_classPrivateFieldGet(_this, _nodes)).forEach(function (id) {
+          var _classPrivateFieldGet2;
+
+          var node = _classPrivateFieldGet(_this, _nodes)[id];
+
+          node.unsubscribe();
+          node.unsubscribe = (_classPrivateFieldGet2 = _classPrivateFieldGet(_this, _callBackend)).call.apply(_classPrivateFieldGet2, [_this, node.func].concat(_toConsumableArray$1(node.args)));
+        });
+
+        _classPrivateFieldGet(_this, _previews).backendChanged(_this);
+
+        var newBackend = _classPrivateFieldGet(_this, _backends)[_classPrivateFieldGet(_this, _current)];
+
+        newBackend.instance.setup();
+
+        if (newBackend.skipDispatchOnTransition) {
+          return;
+        }
+
+        var newEvent = null;
+
+        try {
+          newEvent = event.constructor(event.type, event);
+        } catch (_e) {
+          newEvent = document.createEvent('Event');
+          newEvent.initEvent(event.type, event.bubbles, event.cancelable);
+        }
+
+        (_event$target = event.target) === null || _event$target === void 0 ? void 0 : _event$target.dispatchEvent(newEvent);
       }
-
-      var newEvent = null;
-
-      try {
-        newEvent = new event.constructor(event.type, event);
-      } catch (_e) {
-        newEvent = document.createEvent('Event');
-        newEvent.initEvent(event.type, event.bubbles, event.cancelable);
-      }
-
-      event.target.dispatchEvent(newEvent);
     }
-  };
+  });
 
-  this.callBackend = function (func, args) {
-    var _this$backends$_this$;
+  _callBackend.set(this, {
+    writable: true,
+    value: function value(func, sourceId, node, options) {
+      return _classPrivateFieldGet(_this, _backends)[_classPrivateFieldGet(_this, _current)].instance[func](sourceId, node, options);
+    }
+  });
 
-    return (_this$backends$_this$ = _this.backends[_this.current].instance)[func].apply(_this$backends$_this$, _toConsumableArray$1(args));
-  };
+  _connectBackend.set(this, {
+    writable: true,
+    value: function value(func, sourceId, node, options) {
+      var nodeId = "".concat(func, "_").concat(sourceId);
 
-  this.connectBackend = function (func, args) {
-    var nodeId = "".concat(func, "_").concat(args[0]);
+      var unsubscribe = _classPrivateFieldGet(_this, _callBackend).call(_this, func, sourceId, node, options);
 
-    var handler = _this.callBackend(func, args);
+      _classPrivateFieldGet(_this, _nodes)[nodeId] = {
+        func: func,
+        args: [sourceId, node, options],
+        unsubscribe: unsubscribe
+      };
+      return function () {
+        _classPrivateFieldGet(_this, _nodes)[nodeId].unsubscribe();
 
-    _this.nodes[nodeId] = {
-      func: func,
-      args: args,
-      handler: handler
-    };
-    return function () {
-      var _this$nodes$nodeId;
+        delete _classPrivateFieldGet(_this, _nodes)[nodeId];
+      };
+    }
+  });
 
-      var r = (_this$nodes$nodeId = _this.nodes[nodeId]).handler.apply(_this$nodes$nodeId, arguments);
-
-      delete _this.nodes[nodeId];
-      return r;
-    };
-  };
-
-  var options = Object.assign({
-    backends: []
-  }, sourceOptions || {});
-
-  if (options.backends.length < 1) {
+  if (!_options || !_options.backends || _options.backends.length < 1) {
     throw new Error("You must specify at least one Backend, if you are coming from 2.x.x (or don't understand this error)\n        see this guide: https://github.com/louisbrunner/dnd-multi-backend/tree/master/packages/react-dnd-multi-backend#migrating-from-2xx");
   }
 
-  this.current = 0;
-  this.previews = new PreviewList();
-  this.backends = [];
-  options.backends.forEach(function (backend) {
-    if (!backend.backend) {
-      throw new Error("You must specify a 'backend' property in your Backend entry: ".concat(backend));
-    }
+  _classPrivateFieldSet(this, _previews, new PreviewListImpl());
 
-    var transition = backend.transition;
+  _classPrivateFieldSet(this, _backends, {});
 
-    if (transition && !transition._isMBTransition) {
-      throw new Error("You must specify a valid 'transition' property (either undefined or the return of 'createTransition') in your Backend entry: ".concat(backend));
-    }
+  _classPrivateFieldSet(this, _backendsList, []);
 
-    _this.backends.push({
-      instance: backend.backend(manager, context, backend.options),
-      preview: backend.preview || false,
-      transition: transition,
-      skipDispatchOnTransition: Boolean(backend.skipDispatchOnTransition)
-    });
+  _options.backends.forEach(function (backend) {
+    var backendRecord = _classPrivateFieldGet(_this, _createBackend).call(_this, _manager, _context, backend);
+
+    _classPrivateFieldGet(_this, _backends)[backendRecord.id] = backendRecord;
+
+    _classPrivateFieldGet(_this, _backendsList).push(backendRecord);
   });
-  this.nodes = {};
-} // DnD Backend API
-;
 
-var MultiBackend = (function (manager, context, options) {
-  return new _default(manager, context, options);
+  _classPrivateFieldSet(this, _current, _classPrivateFieldGet(this, _backendsList)[0].id);
+
+  _classPrivateFieldSet(this, _nodes, {});
+};
+
+_defineProperty$e(MultiBackendImpl, "isSetUp", false);
+
+var MultiFactory = function MultiFactory(manager, context, options) {
+  return new MultiBackendImpl(manager, context, options);
+};
+
+var createTransition = function createTransition(event, check) {
+  return {
+    event: event,
+    check: check
+  };
+};
+
+var TouchTransition = createTransition('touchstart', function (rawEvent) {
+  var event = rawEvent;
+  return event.touches !== null && event.touches !== undefined;
+});
+var MouseTransition = createTransition('mousedown', function (event) {
+  return event.type.indexOf('touch') === -1 && event.type.indexOf('mouse') !== -1;
 });
 
-var propTypes = {exports: {}};
-
-var reactIs$1 = {exports: {}};
-
-var reactIs_production_min = {};
-
-/** @license React v16.13.1
- * react-is.production.min.js
- *
- * Copyright (c) Facebook, Inc. and its affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
+/**
+ * Create the React Context
  */
 
-var b = "function" === typeof Symbol && Symbol.for,
-    c = b ? Symbol.for("react.element") : 60103,
-    d = b ? Symbol.for("react.portal") : 60106,
-    e = b ? Symbol.for("react.fragment") : 60107,
-    f = b ? Symbol.for("react.strict_mode") : 60108,
-    g = b ? Symbol.for("react.profiler") : 60114,
-    h = b ? Symbol.for("react.provider") : 60109,
-    k = b ? Symbol.for("react.context") : 60110,
-    l = b ? Symbol.for("react.async_mode") : 60111,
-    m = b ? Symbol.for("react.concurrent_mode") : 60111,
-    n = b ? Symbol.for("react.forward_ref") : 60112,
-    p = b ? Symbol.for("react.suspense") : 60113,
-    q = b ? Symbol.for("react.suspense_list") : 60120,
-    r = b ? Symbol.for("react.memo") : 60115,
-    t = b ? Symbol.for("react.lazy") : 60116,
-    v = b ? Symbol.for("react.block") : 60121,
-    w = b ? Symbol.for("react.fundamental") : 60117,
-    x = b ? Symbol.for("react.responder") : 60118,
-    y = b ? Symbol.for("react.scope") : 60119;
+var DndContext$1 = /*#__PURE__*/createContext({
+  dragDropManager: undefined
+});
 
-function z(a) {
-  if ("object" === typeof a && null !== a) {
-    var u = a.$$typeof;
+var jsxRuntime = {exports: {}};
 
-    switch (u) {
-      case c:
-        switch (a = a.type, a) {
-          case l:
-          case m:
-          case e:
-          case g:
-          case f:
-          case p:
-            return a;
-
-          default:
-            switch (a = a && a.$$typeof, a) {
-              case k:
-              case n:
-              case t:
-              case r:
-              case h:
-                return a;
-
-              default:
-                return u;
-            }
-
-        }
-
-      case d:
-        return u;
-    }
-  }
-}
-
-function A(a) {
-  return z(a) === m;
-}
-
-reactIs_production_min.AsyncMode = l;
-reactIs_production_min.ConcurrentMode = m;
-reactIs_production_min.ContextConsumer = k;
-reactIs_production_min.ContextProvider = h;
-reactIs_production_min.Element = c;
-reactIs_production_min.ForwardRef = n;
-reactIs_production_min.Fragment = e;
-reactIs_production_min.Lazy = t;
-reactIs_production_min.Memo = r;
-reactIs_production_min.Portal = d;
-reactIs_production_min.Profiler = g;
-reactIs_production_min.StrictMode = f;
-reactIs_production_min.Suspense = p;
-
-reactIs_production_min.isAsyncMode = function (a) {
-  return A(a) || z(a) === l;
-};
-
-reactIs_production_min.isConcurrentMode = A;
-
-reactIs_production_min.isContextConsumer = function (a) {
-  return z(a) === k;
-};
-
-reactIs_production_min.isContextProvider = function (a) {
-  return z(a) === h;
-};
-
-reactIs_production_min.isElement = function (a) {
-  return "object" === typeof a && null !== a && a.$$typeof === c;
-};
-
-reactIs_production_min.isForwardRef = function (a) {
-  return z(a) === n;
-};
-
-reactIs_production_min.isFragment = function (a) {
-  return z(a) === e;
-};
-
-reactIs_production_min.isLazy = function (a) {
-  return z(a) === t;
-};
-
-reactIs_production_min.isMemo = function (a) {
-  return z(a) === r;
-};
-
-reactIs_production_min.isPortal = function (a) {
-  return z(a) === d;
-};
-
-reactIs_production_min.isProfiler = function (a) {
-  return z(a) === g;
-};
-
-reactIs_production_min.isStrictMode = function (a) {
-  return z(a) === f;
-};
-
-reactIs_production_min.isSuspense = function (a) {
-  return z(a) === p;
-};
-
-reactIs_production_min.isValidElementType = function (a) {
-  return "string" === typeof a || "function" === typeof a || a === e || a === m || a === g || a === f || a === p || a === q || "object" === typeof a && null !== a && (a.$$typeof === t || a.$$typeof === r || a.$$typeof === h || a.$$typeof === k || a.$$typeof === n || a.$$typeof === w || a.$$typeof === x || a.$$typeof === y || a.$$typeof === v);
-};
-
-reactIs_production_min.typeOf = z;
-
-var reactIs_development = {};
-
-/** @license React v16.13.1
- * react-is.development.js
- *
- * Copyright (c) Facebook, Inc. and its affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
-if (process.env.NODE_ENV !== "production") {
-  (function () {
-    // nor polyfill, then a plain number is used for performance.
-
-    var hasSymbol = typeof Symbol === 'function' && Symbol.for;
-    var REACT_ELEMENT_TYPE = hasSymbol ? Symbol.for('react.element') : 0xeac7;
-    var REACT_PORTAL_TYPE = hasSymbol ? Symbol.for('react.portal') : 0xeaca;
-    var REACT_FRAGMENT_TYPE = hasSymbol ? Symbol.for('react.fragment') : 0xeacb;
-    var REACT_STRICT_MODE_TYPE = hasSymbol ? Symbol.for('react.strict_mode') : 0xeacc;
-    var REACT_PROFILER_TYPE = hasSymbol ? Symbol.for('react.profiler') : 0xead2;
-    var REACT_PROVIDER_TYPE = hasSymbol ? Symbol.for('react.provider') : 0xeacd;
-    var REACT_CONTEXT_TYPE = hasSymbol ? Symbol.for('react.context') : 0xeace; // TODO: We don't use AsyncMode or ConcurrentMode anymore. They were temporary
-    // (unstable) APIs that have been removed. Can we remove the symbols?
-
-    var REACT_ASYNC_MODE_TYPE = hasSymbol ? Symbol.for('react.async_mode') : 0xeacf;
-    var REACT_CONCURRENT_MODE_TYPE = hasSymbol ? Symbol.for('react.concurrent_mode') : 0xeacf;
-    var REACT_FORWARD_REF_TYPE = hasSymbol ? Symbol.for('react.forward_ref') : 0xead0;
-    var REACT_SUSPENSE_TYPE = hasSymbol ? Symbol.for('react.suspense') : 0xead1;
-    var REACT_SUSPENSE_LIST_TYPE = hasSymbol ? Symbol.for('react.suspense_list') : 0xead8;
-    var REACT_MEMO_TYPE = hasSymbol ? Symbol.for('react.memo') : 0xead3;
-    var REACT_LAZY_TYPE = hasSymbol ? Symbol.for('react.lazy') : 0xead4;
-    var REACT_BLOCK_TYPE = hasSymbol ? Symbol.for('react.block') : 0xead9;
-    var REACT_FUNDAMENTAL_TYPE = hasSymbol ? Symbol.for('react.fundamental') : 0xead5;
-    var REACT_RESPONDER_TYPE = hasSymbol ? Symbol.for('react.responder') : 0xead6;
-    var REACT_SCOPE_TYPE = hasSymbol ? Symbol.for('react.scope') : 0xead7;
-
-    function isValidElementType(type) {
-      return typeof type === 'string' || typeof type === 'function' || // Note: its typeof might be other than 'symbol' or 'number' if it's a polyfill.
-      type === REACT_FRAGMENT_TYPE || type === REACT_CONCURRENT_MODE_TYPE || type === REACT_PROFILER_TYPE || type === REACT_STRICT_MODE_TYPE || type === REACT_SUSPENSE_TYPE || type === REACT_SUSPENSE_LIST_TYPE || typeof type === 'object' && type !== null && (type.$$typeof === REACT_LAZY_TYPE || type.$$typeof === REACT_MEMO_TYPE || type.$$typeof === REACT_PROVIDER_TYPE || type.$$typeof === REACT_CONTEXT_TYPE || type.$$typeof === REACT_FORWARD_REF_TYPE || type.$$typeof === REACT_FUNDAMENTAL_TYPE || type.$$typeof === REACT_RESPONDER_TYPE || type.$$typeof === REACT_SCOPE_TYPE || type.$$typeof === REACT_BLOCK_TYPE);
-    }
-
-    function typeOf(object) {
-      if (typeof object === 'object' && object !== null) {
-        var $$typeof = object.$$typeof;
-
-        switch ($$typeof) {
-          case REACT_ELEMENT_TYPE:
-            var type = object.type;
-
-            switch (type) {
-              case REACT_ASYNC_MODE_TYPE:
-              case REACT_CONCURRENT_MODE_TYPE:
-              case REACT_FRAGMENT_TYPE:
-              case REACT_PROFILER_TYPE:
-              case REACT_STRICT_MODE_TYPE:
-              case REACT_SUSPENSE_TYPE:
-                return type;
-
-              default:
-                var $$typeofType = type && type.$$typeof;
-
-                switch ($$typeofType) {
-                  case REACT_CONTEXT_TYPE:
-                  case REACT_FORWARD_REF_TYPE:
-                  case REACT_LAZY_TYPE:
-                  case REACT_MEMO_TYPE:
-                  case REACT_PROVIDER_TYPE:
-                    return $$typeofType;
-
-                  default:
-                    return $$typeof;
-                }
-
-            }
-
-          case REACT_PORTAL_TYPE:
-            return $$typeof;
-        }
-      }
-
-      return undefined;
-    } // AsyncMode is deprecated along with isAsyncMode
-
-
-    var AsyncMode = REACT_ASYNC_MODE_TYPE;
-    var ConcurrentMode = REACT_CONCURRENT_MODE_TYPE;
-    var ContextConsumer = REACT_CONTEXT_TYPE;
-    var ContextProvider = REACT_PROVIDER_TYPE;
-    var Element = REACT_ELEMENT_TYPE;
-    var ForwardRef = REACT_FORWARD_REF_TYPE;
-    var Fragment = REACT_FRAGMENT_TYPE;
-    var Lazy = REACT_LAZY_TYPE;
-    var Memo = REACT_MEMO_TYPE;
-    var Portal = REACT_PORTAL_TYPE;
-    var Profiler = REACT_PROFILER_TYPE;
-    var StrictMode = REACT_STRICT_MODE_TYPE;
-    var Suspense = REACT_SUSPENSE_TYPE;
-    var hasWarnedAboutDeprecatedIsAsyncMode = false; // AsyncMode should be deprecated
-
-    function isAsyncMode(object) {
-      {
-        if (!hasWarnedAboutDeprecatedIsAsyncMode) {
-          hasWarnedAboutDeprecatedIsAsyncMode = true; // Using console['warn'] to evade Babel and ESLint
-
-          console['warn']('The ReactIs.isAsyncMode() alias has been deprecated, ' + 'and will be removed in React 17+. Update your code to use ' + 'ReactIs.isConcurrentMode() instead. It has the exact same API.');
-        }
-      }
-      return isConcurrentMode(object) || typeOf(object) === REACT_ASYNC_MODE_TYPE;
-    }
-
-    function isConcurrentMode(object) {
-      return typeOf(object) === REACT_CONCURRENT_MODE_TYPE;
-    }
-
-    function isContextConsumer(object) {
-      return typeOf(object) === REACT_CONTEXT_TYPE;
-    }
-
-    function isContextProvider(object) {
-      return typeOf(object) === REACT_PROVIDER_TYPE;
-    }
-
-    function isElement(object) {
-      return typeof object === 'object' && object !== null && object.$$typeof === REACT_ELEMENT_TYPE;
-    }
-
-    function isForwardRef(object) {
-      return typeOf(object) === REACT_FORWARD_REF_TYPE;
-    }
-
-    function isFragment(object) {
-      return typeOf(object) === REACT_FRAGMENT_TYPE;
-    }
-
-    function isLazy(object) {
-      return typeOf(object) === REACT_LAZY_TYPE;
-    }
-
-    function isMemo(object) {
-      return typeOf(object) === REACT_MEMO_TYPE;
-    }
-
-    function isPortal(object) {
-      return typeOf(object) === REACT_PORTAL_TYPE;
-    }
-
-    function isProfiler(object) {
-      return typeOf(object) === REACT_PROFILER_TYPE;
-    }
-
-    function isStrictMode(object) {
-      return typeOf(object) === REACT_STRICT_MODE_TYPE;
-    }
-
-    function isSuspense(object) {
-      return typeOf(object) === REACT_SUSPENSE_TYPE;
-    }
-
-    reactIs_development.AsyncMode = AsyncMode;
-    reactIs_development.ConcurrentMode = ConcurrentMode;
-    reactIs_development.ContextConsumer = ContextConsumer;
-    reactIs_development.ContextProvider = ContextProvider;
-    reactIs_development.Element = Element;
-    reactIs_development.ForwardRef = ForwardRef;
-    reactIs_development.Fragment = Fragment;
-    reactIs_development.Lazy = Lazy;
-    reactIs_development.Memo = Memo;
-    reactIs_development.Portal = Portal;
-    reactIs_development.Profiler = Profiler;
-    reactIs_development.StrictMode = StrictMode;
-    reactIs_development.Suspense = Suspense;
-    reactIs_development.isAsyncMode = isAsyncMode;
-    reactIs_development.isConcurrentMode = isConcurrentMode;
-    reactIs_development.isContextConsumer = isContextConsumer;
-    reactIs_development.isContextProvider = isContextProvider;
-    reactIs_development.isElement = isElement;
-    reactIs_development.isForwardRef = isForwardRef;
-    reactIs_development.isFragment = isFragment;
-    reactIs_development.isLazy = isLazy;
-    reactIs_development.isMemo = isMemo;
-    reactIs_development.isPortal = isPortal;
-    reactIs_development.isProfiler = isProfiler;
-    reactIs_development.isStrictMode = isStrictMode;
-    reactIs_development.isSuspense = isSuspense;
-    reactIs_development.isValidElementType = isValidElementType;
-    reactIs_development.typeOf = typeOf;
-  })();
-}
-
-if (process.env.NODE_ENV === 'production') {
-  reactIs$1.exports = reactIs_production_min;
-} else {
-  reactIs$1.exports = reactIs_development;
-}
+var reactJsxRuntime_production_min = {};
 
 /*
 object-assign
@@ -799,842 +693,1268 @@ var objectAssign = shouldUseNative() ? Object.assign : function (target, source)
   return to;
 };
 
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
+/** @license React v17.0.2
+ * react-jsx-runtime.production.min.js
+ *
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
 
-var ReactPropTypesSecret$3 = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
-var ReactPropTypesSecret_1 = ReactPropTypesSecret$3;
 
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
 
-var printWarning$1 = function () {};
+var f$1 = React,
+    g$1 = 60103;
 
-if (process.env.NODE_ENV !== 'production') {
-  var ReactPropTypesSecret$2 = ReactPropTypesSecret_1;
+reactJsxRuntime_production_min.Fragment = 60107;
 
-  var loggedTypeFailures = {};
-  var has$1 = Function.call.bind(Object.prototype.hasOwnProperty);
-
-  printWarning$1 = function (text) {
-    var message = 'Warning: ' + text;
-
-    if (typeof console !== 'undefined') {
-      console.error(message);
-    }
-
-    try {
-      // --- Welcome to debugging React ---
-      // This error was thrown as a convenience so that you can use this stack
-      // to find the callsite that caused this warning to fire.
-      throw new Error(message);
-    } catch (x) {}
-  };
+if ("function" === typeof Symbol && Symbol.for) {
+  var h$1 = Symbol.for;
+  g$1 = h$1("react.element");
+  reactJsxRuntime_production_min.Fragment = h$1("react.fragment");
 }
-/**
- * Assert that the values match with the type specs.
- * Error messages are memorized and will only be shown once.
- *
- * @param {object} typeSpecs Map of name to a ReactPropType
- * @param {object} values Runtime values that need to be type-checked
- * @param {string} location e.g. "prop", "context", "child context"
- * @param {string} componentName Name of the component for error messages.
- * @param {?Function} getStack Returns the component stack.
- * @private
- */
 
-
-function checkPropTypes$1(typeSpecs, values, location, componentName, getStack) {
-  if (process.env.NODE_ENV !== 'production') {
-    for (var typeSpecName in typeSpecs) {
-      if (has$1(typeSpecs, typeSpecName)) {
-        var error; // Prop type validation may throw. In case they do, we don't want to
-        // fail the render phase where it didn't fail before. So we log it.
-        // After these have been cleaned up, we'll let them throw.
-
-        try {
-          // This is intentionally an invariant that gets caught. It's the same
-          // behavior as without this statement except with a better message.
-          if (typeof typeSpecs[typeSpecName] !== 'function') {
-            var err = Error((componentName || 'React class') + ': ' + location + ' type `' + typeSpecName + '` is invalid; ' + 'it must be a function, usually from the `prop-types` package, but received `' + typeof typeSpecs[typeSpecName] + '`.');
-            err.name = 'Invariant Violation';
-            throw err;
-          }
-
-          error = typeSpecs[typeSpecName](values, typeSpecName, componentName, location, null, ReactPropTypesSecret$2);
-        } catch (ex) {
-          error = ex;
-        }
-
-        if (error && !(error instanceof Error)) {
-          printWarning$1((componentName || 'React class') + ': type specification of ' + location + ' `' + typeSpecName + '` is invalid; the type checker ' + 'function must return `null` or an `Error` but returned a ' + typeof error + '. ' + 'You may have forgotten to pass an argument to the type checker ' + 'creator (arrayOf, instanceOf, objectOf, oneOf, oneOfType, and ' + 'shape all require an argument).');
-        }
-
-        if (error instanceof Error && !(error.message in loggedTypeFailures)) {
-          // Only monitor this failure once because there tends to be a lot of the
-          // same error.
-          loggedTypeFailures[error.message] = true;
-          var stack = getStack ? getStack() : '';
-          printWarning$1('Failed ' + location + ' type: ' + error.message + (stack != null ? stack : ''));
-        }
-      }
-    }
-  }
-}
-/**
- * Resets warning cache when testing.
- *
- * @private
- */
-
-
-checkPropTypes$1.resetWarningCache = function () {
-  if (process.env.NODE_ENV !== 'production') {
-    loggedTypeFailures = {};
-  }
+var m$1 = f$1.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.ReactCurrentOwner,
+    n$1 = Object.prototype.hasOwnProperty,
+    p$1 = {
+  key: !0,
+  ref: !0,
+  __self: !0,
+  __source: !0
 };
 
-var checkPropTypes_1 = checkPropTypes$1;
+function q$1(c, a, k) {
+  var b,
+      d = {},
+      e = null,
+      l = null;
+  void 0 !== k && (e = "" + k);
+  void 0 !== a.key && (e = "" + a.key);
+  void 0 !== a.ref && (l = a.ref);
 
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
+  for (b in a) n$1.call(a, b) && !p$1.hasOwnProperty(b) && (d[b] = a[b]);
+
+  if (c && c.defaultProps) for (b in a = c.defaultProps, a) void 0 === d[b] && (d[b] = a[b]);
+  return {
+    $$typeof: g$1,
+    type: c,
+    key: e,
+    ref: l,
+    props: d,
+    _owner: m$1.current
+  };
+}
+
+reactJsxRuntime_production_min.jsx = q$1;
+reactJsxRuntime_production_min.jsxs = q$1;
+
+var reactJsxRuntime_development = {};
+
+/** @license React v17.0.2
+ * react-jsx-runtime.development.js
+ *
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
 
-var ReactIs$1 = reactIs$1.exports;
+(function (exports) {
 
-var assign = objectAssign;
+if (process.env.NODE_ENV !== "production") {
+  (function () {
 
-var ReactPropTypesSecret$1 = ReactPropTypesSecret_1;
+    var React$1 = React;
 
-var checkPropTypes = checkPropTypes_1;
+    var _assign = objectAssign; // ATTENTION
+    // When adding new symbols to this file,
+    // Please consider also adding to 'react-devtools-shared/src/backend/ReactSymbols'
+    // The Symbol used to tag the ReactElement-like types. If there is no native Symbol
+    // nor polyfill, then a plain number is used for performance.
 
-var has = Function.call.bind(Object.prototype.hasOwnProperty);
 
-var printWarning = function () {};
+    var REACT_ELEMENT_TYPE = 0xeac7;
+    var REACT_PORTAL_TYPE = 0xeaca;
+    exports.Fragment = 0xeacb;
+    var REACT_STRICT_MODE_TYPE = 0xeacc;
+    var REACT_PROFILER_TYPE = 0xead2;
+    var REACT_PROVIDER_TYPE = 0xeacd;
+    var REACT_CONTEXT_TYPE = 0xeace;
+    var REACT_FORWARD_REF_TYPE = 0xead0;
+    var REACT_SUSPENSE_TYPE = 0xead1;
+    var REACT_SUSPENSE_LIST_TYPE = 0xead8;
+    var REACT_MEMO_TYPE = 0xead3;
+    var REACT_LAZY_TYPE = 0xead4;
+    var REACT_BLOCK_TYPE = 0xead9;
+    var REACT_SERVER_BLOCK_TYPE = 0xeada;
+    var REACT_FUNDAMENTAL_TYPE = 0xead5;
+    var REACT_DEBUG_TRACING_MODE_TYPE = 0xeae1;
+    var REACT_LEGACY_HIDDEN_TYPE = 0xeae3;
 
-if (process.env.NODE_ENV !== 'production') {
-  printWarning = function (text) {
-    var message = 'Warning: ' + text;
-
-    if (typeof console !== 'undefined') {
-      console.error(message);
+    if (typeof Symbol === 'function' && Symbol.for) {
+      var symbolFor = Symbol.for;
+      REACT_ELEMENT_TYPE = symbolFor('react.element');
+      REACT_PORTAL_TYPE = symbolFor('react.portal');
+      exports.Fragment = symbolFor('react.fragment');
+      REACT_STRICT_MODE_TYPE = symbolFor('react.strict_mode');
+      REACT_PROFILER_TYPE = symbolFor('react.profiler');
+      REACT_PROVIDER_TYPE = symbolFor('react.provider');
+      REACT_CONTEXT_TYPE = symbolFor('react.context');
+      REACT_FORWARD_REF_TYPE = symbolFor('react.forward_ref');
+      REACT_SUSPENSE_TYPE = symbolFor('react.suspense');
+      REACT_SUSPENSE_LIST_TYPE = symbolFor('react.suspense_list');
+      REACT_MEMO_TYPE = symbolFor('react.memo');
+      REACT_LAZY_TYPE = symbolFor('react.lazy');
+      REACT_BLOCK_TYPE = symbolFor('react.block');
+      REACT_SERVER_BLOCK_TYPE = symbolFor('react.server.block');
+      REACT_FUNDAMENTAL_TYPE = symbolFor('react.fundamental');
+      symbolFor('react.scope');
+      symbolFor('react.opaque.id');
+      REACT_DEBUG_TRACING_MODE_TYPE = symbolFor('react.debug_trace_mode');
+      symbolFor('react.offscreen');
+      REACT_LEGACY_HIDDEN_TYPE = symbolFor('react.legacy_hidden');
     }
 
-    try {
-      // --- Welcome to debugging React ---
-      // This error was thrown as a convenience so that you can use this stack
-      // to find the callsite that caused this warning to fire.
-      throw new Error(message);
-    } catch (x) {}
-  };
-}
+    var MAYBE_ITERATOR_SYMBOL = typeof Symbol === 'function' && Symbol.iterator;
+    var FAUX_ITERATOR_SYMBOL = '@@iterator';
 
-function emptyFunctionThatReturnsNull() {
-  return null;
-}
-
-var factoryWithTypeCheckers = function (isValidElement, throwOnDirectAccess) {
-  /* global Symbol */
-  var ITERATOR_SYMBOL = typeof Symbol === 'function' && Symbol.iterator;
-  var FAUX_ITERATOR_SYMBOL = '@@iterator'; // Before Symbol spec.
-
-  /**
-   * Returns the iterator method function contained on the iterable object.
-   *
-   * Be sure to invoke the function with the iterable as context:
-   *
-   *     var iteratorFn = getIteratorFn(myIterable);
-   *     if (iteratorFn) {
-   *       var iterator = iteratorFn.call(myIterable);
-   *       ...
-   *     }
-   *
-   * @param {?object} maybeIterable
-   * @return {?function}
-   */
-
-  function getIteratorFn(maybeIterable) {
-    var iteratorFn = maybeIterable && (ITERATOR_SYMBOL && maybeIterable[ITERATOR_SYMBOL] || maybeIterable[FAUX_ITERATOR_SYMBOL]);
-
-    if (typeof iteratorFn === 'function') {
-      return iteratorFn;
-    }
-  }
-  /**
-   * Collection of methods that allow declaration and validation of props that are
-   * supplied to React components. Example usage:
-   *
-   *   var Props = require('ReactPropTypes');
-   *   var MyArticle = React.createClass({
-   *     propTypes: {
-   *       // An optional string prop named "description".
-   *       description: Props.string,
-   *
-   *       // A required enum prop named "category".
-   *       category: Props.oneOf(['News','Photos']).isRequired,
-   *
-   *       // A prop named "dialog" that requires an instance of Dialog.
-   *       dialog: Props.instanceOf(Dialog).isRequired
-   *     },
-   *     render: function() { ... }
-   *   });
-   *
-   * A more formal specification of how these methods are used:
-   *
-   *   type := array|bool|func|object|number|string|oneOf([...])|instanceOf(...)
-   *   decl := ReactPropTypes.{type}(.isRequired)?
-   *
-   * Each and every declaration produces a function with the same signature. This
-   * allows the creation of custom validation functions. For example:
-   *
-   *  var MyLink = React.createClass({
-   *    propTypes: {
-   *      // An optional string or URI prop named "href".
-   *      href: function(props, propName, componentName) {
-   *        var propValue = props[propName];
-   *        if (propValue != null && typeof propValue !== 'string' &&
-   *            !(propValue instanceof URI)) {
-   *          return new Error(
-   *            'Expected a string or an URI for ' + propName + ' in ' +
-   *            componentName
-   *          );
-   *        }
-   *      }
-   *    },
-   *    render: function() {...}
-   *  });
-   *
-   * @internal
-   */
-
-
-  var ANONYMOUS = '<<anonymous>>'; // Important!
-  // Keep this list in sync with production version in `./factoryWithThrowingShims.js`.
-
-  var ReactPropTypes = {
-    array: createPrimitiveTypeChecker('array'),
-    bool: createPrimitiveTypeChecker('boolean'),
-    func: createPrimitiveTypeChecker('function'),
-    number: createPrimitiveTypeChecker('number'),
-    object: createPrimitiveTypeChecker('object'),
-    string: createPrimitiveTypeChecker('string'),
-    symbol: createPrimitiveTypeChecker('symbol'),
-    any: createAnyTypeChecker(),
-    arrayOf: createArrayOfTypeChecker,
-    element: createElementTypeChecker(),
-    elementType: createElementTypeTypeChecker(),
-    instanceOf: createInstanceTypeChecker,
-    node: createNodeChecker(),
-    objectOf: createObjectOfTypeChecker,
-    oneOf: createEnumTypeChecker,
-    oneOfType: createUnionTypeChecker,
-    shape: createShapeTypeChecker,
-    exact: createStrictShapeTypeChecker
-  };
-  /**
-   * inlined Object.is polyfill to avoid requiring consumers ship their own
-   * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is
-   */
-
-  /*eslint-disable no-self-compare*/
-
-  function is(x, y) {
-    // SameValue algorithm
-    if (x === y) {
-      // Steps 1-5, 7-10
-      // Steps 6.b-6.e: +0 != -0
-      return x !== 0 || 1 / x === 1 / y;
-    } else {
-      // Step 6.a: NaN == NaN
-      return x !== x && y !== y;
-    }
-  }
-  /*eslint-enable no-self-compare*/
-
-  /**
-   * We use an Error-like object for backward compatibility as people may call
-   * PropTypes directly and inspect their output. However, we don't use real
-   * Errors anymore. We don't inspect their stack anyway, and creating them
-   * is prohibitively expensive if they are created too often, such as what
-   * happens in oneOfType() for any type before the one that matched.
-   */
-
-
-  function PropTypeError(message) {
-    this.message = message;
-    this.stack = '';
-  } // Make `instanceof Error` still work for returned errors.
-
-
-  PropTypeError.prototype = Error.prototype;
-
-  function createChainableTypeChecker(validate) {
-    if (process.env.NODE_ENV !== 'production') {
-      var manualPropTypeCallCache = {};
-      var manualPropTypeWarningCount = 0;
-    }
-
-    function checkType(isRequired, props, propName, componentName, location, propFullName, secret) {
-      componentName = componentName || ANONYMOUS;
-      propFullName = propFullName || propName;
-
-      if (secret !== ReactPropTypesSecret$1) {
-        if (throwOnDirectAccess) {
-          // New behavior only for users of `prop-types` package
-          var err = new Error('Calling PropTypes validators directly is not supported by the `prop-types` package. ' + 'Use `PropTypes.checkPropTypes()` to call them. ' + 'Read more at http://fb.me/use-check-prop-types');
-          err.name = 'Invariant Violation';
-          throw err;
-        } else if (process.env.NODE_ENV !== 'production' && typeof console !== 'undefined') {
-          // Old behavior for people using React.PropTypes
-          var cacheKey = componentName + ':' + propName;
-
-          if (!manualPropTypeCallCache[cacheKey] && // Avoid spamming the console because they are often not actionable except for lib authors
-          manualPropTypeWarningCount < 3) {
-            printWarning('You are manually calling a React.PropTypes validation ' + 'function for the `' + propFullName + '` prop on `' + componentName + '`. This is deprecated ' + 'and will throw in the standalone `prop-types` package. ' + 'You may be seeing this warning due to a third-party PropTypes ' + 'library. See https://fb.me/react-warning-dont-call-proptypes ' + 'for details.');
-            manualPropTypeCallCache[cacheKey] = true;
-            manualPropTypeWarningCount++;
-          }
-        }
-      }
-
-      if (props[propName] == null) {
-        if (isRequired) {
-          if (props[propName] === null) {
-            return new PropTypeError('The ' + location + ' `' + propFullName + '` is marked as required ' + ('in `' + componentName + '`, but its value is `null`.'));
-          }
-
-          return new PropTypeError('The ' + location + ' `' + propFullName + '` is marked as required in ' + ('`' + componentName + '`, but its value is `undefined`.'));
-        }
-
+    function getIteratorFn(maybeIterable) {
+      if (maybeIterable === null || typeof maybeIterable !== 'object') {
         return null;
-      } else {
-        return validate(props, propName, componentName, location, propFullName);
       }
-    }
 
-    var chainedCheckType = checkType.bind(null, false);
-    chainedCheckType.isRequired = checkType.bind(null, true);
-    return chainedCheckType;
-  }
+      var maybeIterator = MAYBE_ITERATOR_SYMBOL && maybeIterable[MAYBE_ITERATOR_SYMBOL] || maybeIterable[FAUX_ITERATOR_SYMBOL];
 
-  function createPrimitiveTypeChecker(expectedType) {
-    function validate(props, propName, componentName, location, propFullName, secret) {
-      var propValue = props[propName];
-      var propType = getPropType(propValue);
-
-      if (propType !== expectedType) {
-        // `propValue` being instance of, say, date/regexp, pass the 'object'
-        // check, but we can offer a more precise error message here rather than
-        // 'of type `object`'.
-        var preciseType = getPreciseType(propValue);
-        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + preciseType + '` supplied to `' + componentName + '`, expected ') + ('`' + expectedType + '`.'));
+      if (typeof maybeIterator === 'function') {
+        return maybeIterator;
       }
 
       return null;
     }
 
-    return createChainableTypeChecker(validate);
-  }
+    var ReactSharedInternals = React$1.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
 
-  function createAnyTypeChecker() {
-    return createChainableTypeChecker(emptyFunctionThatReturnsNull);
-  }
-
-  function createArrayOfTypeChecker(typeChecker) {
-    function validate(props, propName, componentName, location, propFullName) {
-      if (typeof typeChecker !== 'function') {
-        return new PropTypeError('Property `' + propFullName + '` of component `' + componentName + '` has invalid PropType notation inside arrayOf.');
-      }
-
-      var propValue = props[propName];
-
-      if (!Array.isArray(propValue)) {
-        var propType = getPropType(propValue);
-        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected an array.'));
-      }
-
-      for (var i = 0; i < propValue.length; i++) {
-        var error = typeChecker(propValue, i, componentName, location, propFullName + '[' + i + ']', ReactPropTypesSecret$1);
-
-        if (error instanceof Error) {
-          return error;
-        }
-      }
-
-      return null;
-    }
-
-    return createChainableTypeChecker(validate);
-  }
-
-  function createElementTypeChecker() {
-    function validate(props, propName, componentName, location, propFullName) {
-      var propValue = props[propName];
-
-      if (!isValidElement(propValue)) {
-        var propType = getPropType(propValue);
-        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected a single ReactElement.'));
-      }
-
-      return null;
-    }
-
-    return createChainableTypeChecker(validate);
-  }
-
-  function createElementTypeTypeChecker() {
-    function validate(props, propName, componentName, location, propFullName) {
-      var propValue = props[propName];
-
-      if (!ReactIs$1.isValidElementType(propValue)) {
-        var propType = getPropType(propValue);
-        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected a single ReactElement type.'));
-      }
-
-      return null;
-    }
-
-    return createChainableTypeChecker(validate);
-  }
-
-  function createInstanceTypeChecker(expectedClass) {
-    function validate(props, propName, componentName, location, propFullName) {
-      if (!(props[propName] instanceof expectedClass)) {
-        var expectedClassName = expectedClass.name || ANONYMOUS;
-        var actualClassName = getClassName(props[propName]);
-        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + actualClassName + '` supplied to `' + componentName + '`, expected ') + ('instance of `' + expectedClassName + '`.'));
-      }
-
-      return null;
-    }
-
-    return createChainableTypeChecker(validate);
-  }
-
-  function createEnumTypeChecker(expectedValues) {
-    if (!Array.isArray(expectedValues)) {
-      if (process.env.NODE_ENV !== 'production') {
-        if (arguments.length > 1) {
-          printWarning('Invalid arguments supplied to oneOf, expected an array, got ' + arguments.length + ' arguments. ' + 'A common mistake is to write oneOf(x, y, z) instead of oneOf([x, y, z]).');
-        } else {
-          printWarning('Invalid argument supplied to oneOf, expected an array.');
-        }
-      }
-
-      return emptyFunctionThatReturnsNull;
-    }
-
-    function validate(props, propName, componentName, location, propFullName) {
-      var propValue = props[propName];
-
-      for (var i = 0; i < expectedValues.length; i++) {
-        if (is(propValue, expectedValues[i])) {
-          return null;
-        }
-      }
-
-      var valuesString = JSON.stringify(expectedValues, function replacer(key, value) {
-        var type = getPreciseType(value);
-
-        if (type === 'symbol') {
-          return String(value);
+    function error(format) {
+      {
+        for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+          args[_key2 - 1] = arguments[_key2];
         }
 
-        return value;
-      });
-      return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of value `' + String(propValue) + '` ' + ('supplied to `' + componentName + '`, expected one of ' + valuesString + '.'));
-    }
-
-    return createChainableTypeChecker(validate);
-  }
-
-  function createObjectOfTypeChecker(typeChecker) {
-    function validate(props, propName, componentName, location, propFullName) {
-      if (typeof typeChecker !== 'function') {
-        return new PropTypeError('Property `' + propFullName + '` of component `' + componentName + '` has invalid PropType notation inside objectOf.');
-      }
-
-      var propValue = props[propName];
-      var propType = getPropType(propValue);
-
-      if (propType !== 'object') {
-        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected an object.'));
-      }
-
-      for (var key in propValue) {
-        if (has(propValue, key)) {
-          var error = typeChecker(propValue, key, componentName, location, propFullName + '.' + key, ReactPropTypesSecret$1);
-
-          if (error instanceof Error) {
-            return error;
-          }
-        }
-      }
-
-      return null;
-    }
-
-    return createChainableTypeChecker(validate);
-  }
-
-  function createUnionTypeChecker(arrayOfTypeCheckers) {
-    if (!Array.isArray(arrayOfTypeCheckers)) {
-      process.env.NODE_ENV !== 'production' ? printWarning('Invalid argument supplied to oneOfType, expected an instance of array.') : void 0;
-      return emptyFunctionThatReturnsNull;
-    }
-
-    for (var i = 0; i < arrayOfTypeCheckers.length; i++) {
-      var checker = arrayOfTypeCheckers[i];
-
-      if (typeof checker !== 'function') {
-        printWarning('Invalid argument supplied to oneOfType. Expected an array of check functions, but ' + 'received ' + getPostfixForTypeWarning(checker) + ' at index ' + i + '.');
-        return emptyFunctionThatReturnsNull;
+        printWarning('error', format, args);
       }
     }
 
-    function validate(props, propName, componentName, location, propFullName) {
-      for (var i = 0; i < arrayOfTypeCheckers.length; i++) {
-        var checker = arrayOfTypeCheckers[i];
+    function printWarning(level, format, args) {
+      // When changing this logic, you might want to also
+      // update consoleWithStackDev.www.js as well.
+      {
+        var ReactDebugCurrentFrame = ReactSharedInternals.ReactDebugCurrentFrame;
+        var stack = ReactDebugCurrentFrame.getStackAddendum();
 
-        if (checker(props, propName, componentName, location, propFullName, ReactPropTypesSecret$1) == null) {
-          return null;
-        }
-      }
-
-      return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` supplied to ' + ('`' + componentName + '`.'));
-    }
-
-    return createChainableTypeChecker(validate);
-  }
-
-  function createNodeChecker() {
-    function validate(props, propName, componentName, location, propFullName) {
-      if (!isNode(props[propName])) {
-        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` supplied to ' + ('`' + componentName + '`, expected a ReactNode.'));
-      }
-
-      return null;
-    }
-
-    return createChainableTypeChecker(validate);
-  }
-
-  function createShapeTypeChecker(shapeTypes) {
-    function validate(props, propName, componentName, location, propFullName) {
-      var propValue = props[propName];
-      var propType = getPropType(propValue);
-
-      if (propType !== 'object') {
-        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type `' + propType + '` ' + ('supplied to `' + componentName + '`, expected `object`.'));
-      }
-
-      for (var key in shapeTypes) {
-        var checker = shapeTypes[key];
-
-        if (!checker) {
-          continue;
+        if (stack !== '') {
+          format += '%s';
+          args = args.concat([stack]);
         }
 
-        var error = checker(propValue, key, componentName, location, propFullName + '.' + key, ReactPropTypesSecret$1);
+        var argsWithFormat = args.map(function (item) {
+          return '' + item;
+        }); // Careful: RN currently depends on this prefix
 
-        if (error) {
-          return error;
-        }
+        argsWithFormat.unshift('Warning: ' + format); // We intentionally don't use spread (or .apply) directly because it
+        // breaks IE9: https://github.com/facebook/react/issues/13610
+        // eslint-disable-next-line react-internal/no-production-logging
+
+        Function.prototype.apply.call(console[level], console, argsWithFormat);
       }
-
-      return null;
-    }
-
-    return createChainableTypeChecker(validate);
-  }
-
-  function createStrictShapeTypeChecker(shapeTypes) {
-    function validate(props, propName, componentName, location, propFullName) {
-      var propValue = props[propName];
-      var propType = getPropType(propValue);
-
-      if (propType !== 'object') {
-        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type `' + propType + '` ' + ('supplied to `' + componentName + '`, expected `object`.'));
-      } // We need to check all keys in case some are required but missing from
-      // props.
+    } // Filter certain DOM attributes (e.g. src, href) if their values are empty strings.
 
 
-      var allKeys = assign({}, props[propName], shapeTypes);
+    var enableScopeAPI = false; // Experimental Create Event Handle API.
 
-      for (var key in allKeys) {
-        var checker = shapeTypes[key];
-
-        if (!checker) {
-          return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` key `' + key + '` supplied to `' + componentName + '`.' + '\nBad object: ' + JSON.stringify(props[propName], null, '  ') + '\nValid keys: ' + JSON.stringify(Object.keys(shapeTypes), null, '  '));
-        }
-
-        var error = checker(propValue, key, componentName, location, propFullName + '.' + key, ReactPropTypesSecret$1);
-
-        if (error) {
-          return error;
-        }
-      }
-
-      return null;
-    }
-
-    return createChainableTypeChecker(validate);
-  }
-
-  function isNode(propValue) {
-    switch (typeof propValue) {
-      case 'number':
-      case 'string':
-      case 'undefined':
+    function isValidElementType(type) {
+      if (typeof type === 'string' || typeof type === 'function') {
         return true;
+      } // Note: typeof might be other than 'symbol' or 'number' (e.g. if it's a polyfill).
 
-      case 'boolean':
-        return !propValue;
 
-      case 'object':
-        if (Array.isArray(propValue)) {
-          return propValue.every(isNode);
-        }
+      if (type === exports.Fragment || type === REACT_PROFILER_TYPE || type === REACT_DEBUG_TRACING_MODE_TYPE || type === REACT_STRICT_MODE_TYPE || type === REACT_SUSPENSE_TYPE || type === REACT_SUSPENSE_LIST_TYPE || type === REACT_LEGACY_HIDDEN_TYPE || enableScopeAPI) {
+        return true;
+      }
 
-        if (propValue === null || isValidElement(propValue)) {
+      if (typeof type === 'object' && type !== null) {
+        if (type.$$typeof === REACT_LAZY_TYPE || type.$$typeof === REACT_MEMO_TYPE || type.$$typeof === REACT_PROVIDER_TYPE || type.$$typeof === REACT_CONTEXT_TYPE || type.$$typeof === REACT_FORWARD_REF_TYPE || type.$$typeof === REACT_FUNDAMENTAL_TYPE || type.$$typeof === REACT_BLOCK_TYPE || type[0] === REACT_SERVER_BLOCK_TYPE) {
           return true;
         }
+      }
 
-        var iteratorFn = getIteratorFn(propValue);
+      return false;
+    }
 
-        if (iteratorFn) {
-          var iterator = iteratorFn.call(propValue);
-          var step;
+    function getWrappedName(outerType, innerType, wrapperName) {
+      var functionName = innerType.displayName || innerType.name || '';
+      return outerType.displayName || (functionName !== '' ? wrapperName + "(" + functionName + ")" : wrapperName);
+    }
 
-          if (iteratorFn !== propValue.entries) {
-            while (!(step = iterator.next()).done) {
-              if (!isNode(step.value)) {
-                return false;
+    function getContextName(type) {
+      return type.displayName || 'Context';
+    }
+
+    function getComponentName(type) {
+      if (type == null) {
+        // Host root, text node or just invalid type.
+        return null;
+      }
+
+      {
+        if (typeof type.tag === 'number') {
+          error('Received an unexpected object in getComponentName(). ' + 'This is likely a bug in React. Please file an issue.');
+        }
+      }
+
+      if (typeof type === 'function') {
+        return type.displayName || type.name || null;
+      }
+
+      if (typeof type === 'string') {
+        return type;
+      }
+
+      switch (type) {
+        case exports.Fragment:
+          return 'Fragment';
+
+        case REACT_PORTAL_TYPE:
+          return 'Portal';
+
+        case REACT_PROFILER_TYPE:
+          return 'Profiler';
+
+        case REACT_STRICT_MODE_TYPE:
+          return 'StrictMode';
+
+        case REACT_SUSPENSE_TYPE:
+          return 'Suspense';
+
+        case REACT_SUSPENSE_LIST_TYPE:
+          return 'SuspenseList';
+      }
+
+      if (typeof type === 'object') {
+        switch (type.$$typeof) {
+          case REACT_CONTEXT_TYPE:
+            var context = type;
+            return getContextName(context) + '.Consumer';
+
+          case REACT_PROVIDER_TYPE:
+            var provider = type;
+            return getContextName(provider._context) + '.Provider';
+
+          case REACT_FORWARD_REF_TYPE:
+            return getWrappedName(type, type.render, 'ForwardRef');
+
+          case REACT_MEMO_TYPE:
+            return getComponentName(type.type);
+
+          case REACT_BLOCK_TYPE:
+            return getComponentName(type._render);
+
+          case REACT_LAZY_TYPE:
+            {
+              var lazyComponent = type;
+              var payload = lazyComponent._payload;
+              var init = lazyComponent._init;
+
+              try {
+                return getComponentName(init(payload));
+              } catch (x) {
+                return null;
               }
             }
-          } else {
-            // Iterator will provide entry [k,v] tuples rather than values.
-            while (!(step = iterator.next()).done) {
-              var entry = step.value;
+        }
+      }
 
-              if (entry) {
-                if (!isNode(entry[1])) {
-                  return false;
+      return null;
+    } // Helpers to patch console.logs to avoid logging during side-effect free
+    // replaying on render function. This currently only patches the object
+    // lazily which won't cover if the log function was extracted eagerly.
+    // We could also eagerly patch the method.
+
+
+    var disabledDepth = 0;
+    var prevLog;
+    var prevInfo;
+    var prevWarn;
+    var prevError;
+    var prevGroup;
+    var prevGroupCollapsed;
+    var prevGroupEnd;
+
+    function disabledLog() {}
+
+    disabledLog.__reactDisabledLog = true;
+
+    function disableLogs() {
+      {
+        if (disabledDepth === 0) {
+          /* eslint-disable react-internal/no-production-logging */
+          prevLog = console.log;
+          prevInfo = console.info;
+          prevWarn = console.warn;
+          prevError = console.error;
+          prevGroup = console.group;
+          prevGroupCollapsed = console.groupCollapsed;
+          prevGroupEnd = console.groupEnd; // https://github.com/facebook/react/issues/19099
+
+          var props = {
+            configurable: true,
+            enumerable: true,
+            value: disabledLog,
+            writable: true
+          }; // $FlowFixMe Flow thinks console is immutable.
+
+          Object.defineProperties(console, {
+            info: props,
+            log: props,
+            warn: props,
+            error: props,
+            group: props,
+            groupCollapsed: props,
+            groupEnd: props
+          });
+          /* eslint-enable react-internal/no-production-logging */
+        }
+
+        disabledDepth++;
+      }
+    }
+
+    function reenableLogs() {
+      {
+        disabledDepth--;
+
+        if (disabledDepth === 0) {
+          /* eslint-disable react-internal/no-production-logging */
+          var props = {
+            configurable: true,
+            enumerable: true,
+            writable: true
+          }; // $FlowFixMe Flow thinks console is immutable.
+
+          Object.defineProperties(console, {
+            log: _assign({}, props, {
+              value: prevLog
+            }),
+            info: _assign({}, props, {
+              value: prevInfo
+            }),
+            warn: _assign({}, props, {
+              value: prevWarn
+            }),
+            error: _assign({}, props, {
+              value: prevError
+            }),
+            group: _assign({}, props, {
+              value: prevGroup
+            }),
+            groupCollapsed: _assign({}, props, {
+              value: prevGroupCollapsed
+            }),
+            groupEnd: _assign({}, props, {
+              value: prevGroupEnd
+            })
+          });
+          /* eslint-enable react-internal/no-production-logging */
+        }
+
+        if (disabledDepth < 0) {
+          error('disabledDepth fell below zero. ' + 'This is a bug in React. Please file an issue.');
+        }
+      }
+    }
+
+    var ReactCurrentDispatcher = ReactSharedInternals.ReactCurrentDispatcher;
+    var prefix;
+
+    function describeBuiltInComponentFrame(name, source, ownerFn) {
+      {
+        if (prefix === undefined) {
+          // Extract the VM specific prefix used by each line.
+          try {
+            throw Error();
+          } catch (x) {
+            var match = x.stack.trim().match(/\n( *(at )?)/);
+            prefix = match && match[1] || '';
+          }
+        } // We use the prefix to ensure our stacks line up with native stack frames.
+
+
+        return '\n' + prefix + name;
+      }
+    }
+
+    var reentry = false;
+    var componentFrameCache;
+    {
+      var PossiblyWeakMap = typeof WeakMap === 'function' ? WeakMap : Map;
+      componentFrameCache = new PossiblyWeakMap();
+    }
+
+    function describeNativeComponentFrame(fn, construct) {
+      // If something asked for a stack inside a fake render, it should get ignored.
+      if (!fn || reentry) {
+        return '';
+      }
+
+      {
+        var frame = componentFrameCache.get(fn);
+
+        if (frame !== undefined) {
+          return frame;
+        }
+      }
+      var control;
+      reentry = true;
+      var previousPrepareStackTrace = Error.prepareStackTrace; // $FlowFixMe It does accept undefined.
+
+      Error.prepareStackTrace = undefined;
+      var previousDispatcher;
+      {
+        previousDispatcher = ReactCurrentDispatcher.current; // Set the dispatcher in DEV because this might be call in the render function
+        // for warnings.
+
+        ReactCurrentDispatcher.current = null;
+        disableLogs();
+      }
+
+      try {
+        // This should throw.
+        if (construct) {
+          // Something should be setting the props in the constructor.
+          var Fake = function () {
+            throw Error();
+          }; // $FlowFixMe
+
+
+          Object.defineProperty(Fake.prototype, 'props', {
+            set: function () {
+              // We use a throwing setter instead of frozen or non-writable props
+              // because that won't throw in a non-strict mode function.
+              throw Error();
+            }
+          });
+
+          if (typeof Reflect === 'object' && Reflect.construct) {
+            // We construct a different control for this case to include any extra
+            // frames added by the construct call.
+            try {
+              Reflect.construct(Fake, []);
+            } catch (x) {
+              control = x;
+            }
+
+            Reflect.construct(fn, [], Fake);
+          } else {
+            try {
+              Fake.call();
+            } catch (x) {
+              control = x;
+            }
+
+            fn.call(Fake.prototype);
+          }
+        } else {
+          try {
+            throw Error();
+          } catch (x) {
+            control = x;
+          }
+
+          fn();
+        }
+      } catch (sample) {
+        // This is inlined manually because closure doesn't do it for us.
+        if (sample && control && typeof sample.stack === 'string') {
+          // This extracts the first frame from the sample that isn't also in the control.
+          // Skipping one frame that we assume is the frame that calls the two.
+          var sampleLines = sample.stack.split('\n');
+          var controlLines = control.stack.split('\n');
+          var s = sampleLines.length - 1;
+          var c = controlLines.length - 1;
+
+          while (s >= 1 && c >= 0 && sampleLines[s] !== controlLines[c]) {
+            // We expect at least one stack frame to be shared.
+            // Typically this will be the root most one. However, stack frames may be
+            // cut off due to maximum stack limits. In this case, one maybe cut off
+            // earlier than the other. We assume that the sample is longer or the same
+            // and there for cut off earlier. So we should find the root most frame in
+            // the sample somewhere in the control.
+            c--;
+          }
+
+          for (; s >= 1 && c >= 0; s--, c--) {
+            // Next we find the first one that isn't the same which should be the
+            // frame that called our sample function and the control.
+            if (sampleLines[s] !== controlLines[c]) {
+              // In V8, the first line is describing the message but other VMs don't.
+              // If we're about to return the first line, and the control is also on the same
+              // line, that's a pretty good indicator that our sample threw at same line as
+              // the control. I.e. before we entered the sample frame. So we ignore this result.
+              // This can happen if you passed a class to function component, or non-function.
+              if (s !== 1 || c !== 1) {
+                do {
+                  s--;
+                  c--; // We may still have similar intermediate frames from the construct call.
+                  // The next one that isn't the same should be our match though.
+
+                  if (c < 0 || sampleLines[s] !== controlLines[c]) {
+                    // V8 adds a "new" prefix for native classes. Let's remove it to make it prettier.
+                    var _frame = '\n' + sampleLines[s].replace(' at new ', ' at ');
+
+                    {
+                      if (typeof fn === 'function') {
+                        componentFrameCache.set(fn, _frame);
+                      }
+                    } // Return the line we found.
+
+                    return _frame;
+                  }
+                } while (s >= 1 && c >= 0);
+              }
+
+              break;
+            }
+          }
+        }
+      } finally {
+        reentry = false;
+        {
+          ReactCurrentDispatcher.current = previousDispatcher;
+          reenableLogs();
+        }
+        Error.prepareStackTrace = previousPrepareStackTrace;
+      } // Fallback to just using the name if we couldn't make it throw.
+
+
+      var name = fn ? fn.displayName || fn.name : '';
+      var syntheticFrame = name ? describeBuiltInComponentFrame(name) : '';
+      {
+        if (typeof fn === 'function') {
+          componentFrameCache.set(fn, syntheticFrame);
+        }
+      }
+      return syntheticFrame;
+    }
+
+    function describeFunctionComponentFrame(fn, source, ownerFn) {
+      {
+        return describeNativeComponentFrame(fn, false);
+      }
+    }
+
+    function shouldConstruct(Component) {
+      var prototype = Component.prototype;
+      return !!(prototype && prototype.isReactComponent);
+    }
+
+    function describeUnknownElementTypeFrameInDEV(type, source, ownerFn) {
+      if (type == null) {
+        return '';
+      }
+
+      if (typeof type === 'function') {
+        {
+          return describeNativeComponentFrame(type, shouldConstruct(type));
+        }
+      }
+
+      if (typeof type === 'string') {
+        return describeBuiltInComponentFrame(type);
+      }
+
+      switch (type) {
+        case REACT_SUSPENSE_TYPE:
+          return describeBuiltInComponentFrame('Suspense');
+
+        case REACT_SUSPENSE_LIST_TYPE:
+          return describeBuiltInComponentFrame('SuspenseList');
+      }
+
+      if (typeof type === 'object') {
+        switch (type.$$typeof) {
+          case REACT_FORWARD_REF_TYPE:
+            return describeFunctionComponentFrame(type.render);
+
+          case REACT_MEMO_TYPE:
+            // Memo may contain any component type so we recursively resolve it.
+            return describeUnknownElementTypeFrameInDEV(type.type, source, ownerFn);
+
+          case REACT_BLOCK_TYPE:
+            return describeFunctionComponentFrame(type._render);
+
+          case REACT_LAZY_TYPE:
+            {
+              var lazyComponent = type;
+              var payload = lazyComponent._payload;
+              var init = lazyComponent._init;
+
+              try {
+                // Lazy may contain any component type so we recursively resolve it.
+                return describeUnknownElementTypeFrameInDEV(init(payload), source, ownerFn);
+              } catch (x) {}
+            }
+        }
+      }
+
+      return '';
+    }
+
+    var loggedTypeFailures = {};
+    var ReactDebugCurrentFrame = ReactSharedInternals.ReactDebugCurrentFrame;
+
+    function setCurrentlyValidatingElement(element) {
+      {
+        if (element) {
+          var owner = element._owner;
+          var stack = describeUnknownElementTypeFrameInDEV(element.type, element._source, owner ? owner.type : null);
+          ReactDebugCurrentFrame.setExtraStackFrame(stack);
+        } else {
+          ReactDebugCurrentFrame.setExtraStackFrame(null);
+        }
+      }
+    }
+
+    function checkPropTypes(typeSpecs, values, location, componentName, element) {
+      {
+        // $FlowFixMe This is okay but Flow doesn't know it.
+        var has = Function.call.bind(Object.prototype.hasOwnProperty);
+
+        for (var typeSpecName in typeSpecs) {
+          if (has(typeSpecs, typeSpecName)) {
+            var error$1 = void 0; // Prop type validation may throw. In case they do, we don't want to
+            // fail the render phase where it didn't fail before. So we log it.
+            // After these have been cleaned up, we'll let them throw.
+
+            try {
+              // This is intentionally an invariant that gets caught. It's the same
+              // behavior as without this statement except with a better message.
+              if (typeof typeSpecs[typeSpecName] !== 'function') {
+                var err = Error((componentName || 'React class') + ': ' + location + ' type `' + typeSpecName + '` is invalid; ' + 'it must be a function, usually from the `prop-types` package, but received `' + typeof typeSpecs[typeSpecName] + '`.' + 'This often happens because of typos such as `PropTypes.function` instead of `PropTypes.func`.');
+                err.name = 'Invariant Violation';
+                throw err;
+              }
+
+              error$1 = typeSpecs[typeSpecName](values, typeSpecName, componentName, location, null, 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED');
+            } catch (ex) {
+              error$1 = ex;
+            }
+
+            if (error$1 && !(error$1 instanceof Error)) {
+              setCurrentlyValidatingElement(element);
+              error('%s: type specification of %s' + ' `%s` is invalid; the type checker ' + 'function must return `null` or an `Error` but returned a %s. ' + 'You may have forgotten to pass an argument to the type checker ' + 'creator (arrayOf, instanceOf, objectOf, oneOf, oneOfType, and ' + 'shape all require an argument).', componentName || 'React class', location, typeSpecName, typeof error$1);
+              setCurrentlyValidatingElement(null);
+            }
+
+            if (error$1 instanceof Error && !(error$1.message in loggedTypeFailures)) {
+              // Only monitor this failure once because there tends to be a lot of the
+              // same error.
+              loggedTypeFailures[error$1.message] = true;
+              setCurrentlyValidatingElement(element);
+              error('Failed %s type: %s', location, error$1.message);
+              setCurrentlyValidatingElement(null);
+            }
+          }
+        }
+      }
+    }
+
+    var ReactCurrentOwner = ReactSharedInternals.ReactCurrentOwner;
+    var hasOwnProperty = Object.prototype.hasOwnProperty;
+    var RESERVED_PROPS = {
+      key: true,
+      ref: true,
+      __self: true,
+      __source: true
+    };
+    var specialPropKeyWarningShown;
+    var specialPropRefWarningShown;
+    var didWarnAboutStringRefs;
+    {
+      didWarnAboutStringRefs = {};
+    }
+
+    function hasValidRef(config) {
+      {
+        if (hasOwnProperty.call(config, 'ref')) {
+          var getter = Object.getOwnPropertyDescriptor(config, 'ref').get;
+
+          if (getter && getter.isReactWarning) {
+            return false;
+          }
+        }
+      }
+      return config.ref !== undefined;
+    }
+
+    function hasValidKey(config) {
+      {
+        if (hasOwnProperty.call(config, 'key')) {
+          var getter = Object.getOwnPropertyDescriptor(config, 'key').get;
+
+          if (getter && getter.isReactWarning) {
+            return false;
+          }
+        }
+      }
+      return config.key !== undefined;
+    }
+
+    function warnIfStringRefCannotBeAutoConverted(config, self) {
+      {
+        if (typeof config.ref === 'string' && ReactCurrentOwner.current && self && ReactCurrentOwner.current.stateNode !== self) {
+          var componentName = getComponentName(ReactCurrentOwner.current.type);
+
+          if (!didWarnAboutStringRefs[componentName]) {
+            error('Component "%s" contains the string ref "%s". ' + 'Support for string refs will be removed in a future major release. ' + 'This case cannot be automatically converted to an arrow function. ' + 'We ask you to manually fix this case by using useRef() or createRef() instead. ' + 'Learn more about using refs safely here: ' + 'https://reactjs.org/link/strict-mode-string-ref', getComponentName(ReactCurrentOwner.current.type), config.ref);
+            didWarnAboutStringRefs[componentName] = true;
+          }
+        }
+      }
+    }
+
+    function defineKeyPropWarningGetter(props, displayName) {
+      {
+        var warnAboutAccessingKey = function () {
+          if (!specialPropKeyWarningShown) {
+            specialPropKeyWarningShown = true;
+            error('%s: `key` is not a prop. Trying to access it will result ' + 'in `undefined` being returned. If you need to access the same ' + 'value within the child component, you should pass it as a different ' + 'prop. (https://reactjs.org/link/special-props)', displayName);
+          }
+        };
+
+        warnAboutAccessingKey.isReactWarning = true;
+        Object.defineProperty(props, 'key', {
+          get: warnAboutAccessingKey,
+          configurable: true
+        });
+      }
+    }
+
+    function defineRefPropWarningGetter(props, displayName) {
+      {
+        var warnAboutAccessingRef = function () {
+          if (!specialPropRefWarningShown) {
+            specialPropRefWarningShown = true;
+            error('%s: `ref` is not a prop. Trying to access it will result ' + 'in `undefined` being returned. If you need to access the same ' + 'value within the child component, you should pass it as a different ' + 'prop. (https://reactjs.org/link/special-props)', displayName);
+          }
+        };
+
+        warnAboutAccessingRef.isReactWarning = true;
+        Object.defineProperty(props, 'ref', {
+          get: warnAboutAccessingRef,
+          configurable: true
+        });
+      }
+    }
+    /**
+     * Factory method to create a new React element. This no longer adheres to
+     * the class pattern, so do not use new to call it. Also, instanceof check
+     * will not work. Instead test $$typeof field against Symbol.for('react.element') to check
+     * if something is a React Element.
+     *
+     * @param {*} type
+     * @param {*} props
+     * @param {*} key
+     * @param {string|object} ref
+     * @param {*} owner
+     * @param {*} self A *temporary* helper to detect places where `this` is
+     * different from the `owner` when React.createElement is called, so that we
+     * can warn. We want to get rid of owner and replace string `ref`s with arrow
+     * functions, and as long as `this` and owner are the same, there will be no
+     * change in behavior.
+     * @param {*} source An annotation object (added by a transpiler or otherwise)
+     * indicating filename, line number, and/or other information.
+     * @internal
+     */
+
+
+    var ReactElement = function (type, key, ref, self, source, owner, props) {
+      var element = {
+        // This tag allows us to uniquely identify this as a React Element
+        $$typeof: REACT_ELEMENT_TYPE,
+        // Built-in properties that belong on the element
+        type: type,
+        key: key,
+        ref: ref,
+        props: props,
+        // Record the component responsible for creating this element.
+        _owner: owner
+      };
+      {
+        // The validation flag is currently mutative. We put it on
+        // an external backing store so that we can freeze the whole object.
+        // This can be replaced with a WeakMap once they are implemented in
+        // commonly used development environments.
+        element._store = {}; // To make comparing ReactElements easier for testing purposes, we make
+        // the validation flag non-enumerable (where possible, which should
+        // include every environment we run tests in), so the test framework
+        // ignores it.
+
+        Object.defineProperty(element._store, 'validated', {
+          configurable: false,
+          enumerable: false,
+          writable: true,
+          value: false
+        }); // self and source are DEV only properties.
+
+        Object.defineProperty(element, '_self', {
+          configurable: false,
+          enumerable: false,
+          writable: false,
+          value: self
+        }); // Two elements created in two different places should be considered
+        // equal for testing purposes and therefore we hide it from enumeration.
+
+        Object.defineProperty(element, '_source', {
+          configurable: false,
+          enumerable: false,
+          writable: false,
+          value: source
+        });
+
+        if (Object.freeze) {
+          Object.freeze(element.props);
+          Object.freeze(element);
+        }
+      }
+      return element;
+    };
+    /**
+     * https://github.com/reactjs/rfcs/pull/107
+     * @param {*} type
+     * @param {object} props
+     * @param {string} key
+     */
+
+
+    function jsxDEV(type, config, maybeKey, source, self) {
+      {
+        var propName; // Reserved names are extracted
+
+        var props = {};
+        var key = null;
+        var ref = null; // Currently, key can be spread in as a prop. This causes a potential
+        // issue if key is also explicitly declared (ie. <div {...props} key="Hi" />
+        // or <div key="Hi" {...props} /> ). We want to deprecate key spread,
+        // but as an intermediary step, we will use jsxDEV for everything except
+        // <div {...props} key="Hi" />, because we aren't currently able to tell if
+        // key is explicitly declared to be undefined or not.
+
+        if (maybeKey !== undefined) {
+          key = '' + maybeKey;
+        }
+
+        if (hasValidKey(config)) {
+          key = '' + config.key;
+        }
+
+        if (hasValidRef(config)) {
+          ref = config.ref;
+          warnIfStringRefCannotBeAutoConverted(config, self);
+        } // Remaining properties are added to a new props object
+
+
+        for (propName in config) {
+          if (hasOwnProperty.call(config, propName) && !RESERVED_PROPS.hasOwnProperty(propName)) {
+            props[propName] = config[propName];
+          }
+        } // Resolve default props
+
+
+        if (type && type.defaultProps) {
+          var defaultProps = type.defaultProps;
+
+          for (propName in defaultProps) {
+            if (props[propName] === undefined) {
+              props[propName] = defaultProps[propName];
+            }
+          }
+        }
+
+        if (key || ref) {
+          var displayName = typeof type === 'function' ? type.displayName || type.name || 'Unknown' : type;
+
+          if (key) {
+            defineKeyPropWarningGetter(props, displayName);
+          }
+
+          if (ref) {
+            defineRefPropWarningGetter(props, displayName);
+          }
+        }
+
+        return ReactElement(type, key, ref, self, source, ReactCurrentOwner.current, props);
+      }
+    }
+
+    var ReactCurrentOwner$1 = ReactSharedInternals.ReactCurrentOwner;
+    var ReactDebugCurrentFrame$1 = ReactSharedInternals.ReactDebugCurrentFrame;
+
+    function setCurrentlyValidatingElement$1(element) {
+      {
+        if (element) {
+          var owner = element._owner;
+          var stack = describeUnknownElementTypeFrameInDEV(element.type, element._source, owner ? owner.type : null);
+          ReactDebugCurrentFrame$1.setExtraStackFrame(stack);
+        } else {
+          ReactDebugCurrentFrame$1.setExtraStackFrame(null);
+        }
+      }
+    }
+
+    var propTypesMisspellWarningShown;
+    {
+      propTypesMisspellWarningShown = false;
+    }
+    /**
+     * Verifies the object is a ReactElement.
+     * See https://reactjs.org/docs/react-api.html#isvalidelement
+     * @param {?object} object
+     * @return {boolean} True if `object` is a ReactElement.
+     * @final
+     */
+
+    function isValidElement(object) {
+      {
+        return typeof object === 'object' && object !== null && object.$$typeof === REACT_ELEMENT_TYPE;
+      }
+    }
+
+    function getDeclarationErrorAddendum() {
+      {
+        if (ReactCurrentOwner$1.current) {
+          var name = getComponentName(ReactCurrentOwner$1.current.type);
+
+          if (name) {
+            return '\n\nCheck the render method of `' + name + '`.';
+          }
+        }
+
+        return '';
+      }
+    }
+
+    function getSourceInfoErrorAddendum(source) {
+      {
+        if (source !== undefined) {
+          var fileName = source.fileName.replace(/^.*[\\\/]/, '');
+          var lineNumber = source.lineNumber;
+          return '\n\nCheck your code at ' + fileName + ':' + lineNumber + '.';
+        }
+
+        return '';
+      }
+    }
+    /**
+     * Warn if there's no key explicitly set on dynamic arrays of children or
+     * object keys are not valid. This allows us to keep track of children between
+     * updates.
+     */
+
+
+    var ownerHasKeyUseWarning = {};
+
+    function getCurrentComponentErrorInfo(parentType) {
+      {
+        var info = getDeclarationErrorAddendum();
+
+        if (!info) {
+          var parentName = typeof parentType === 'string' ? parentType : parentType.displayName || parentType.name;
+
+          if (parentName) {
+            info = "\n\nCheck the top-level render call using <" + parentName + ">.";
+          }
+        }
+
+        return info;
+      }
+    }
+    /**
+     * Warn if the element doesn't have an explicit key assigned to it.
+     * This element is in an array. The array could grow and shrink or be
+     * reordered. All children that haven't already been validated are required to
+     * have a "key" property assigned to it. Error statuses are cached so a warning
+     * will only be shown once.
+     *
+     * @internal
+     * @param {ReactElement} element Element that requires a key.
+     * @param {*} parentType element's parent's type.
+     */
+
+
+    function validateExplicitKey(element, parentType) {
+      {
+        if (!element._store || element._store.validated || element.key != null) {
+          return;
+        }
+
+        element._store.validated = true;
+        var currentComponentErrorInfo = getCurrentComponentErrorInfo(parentType);
+
+        if (ownerHasKeyUseWarning[currentComponentErrorInfo]) {
+          return;
+        }
+
+        ownerHasKeyUseWarning[currentComponentErrorInfo] = true; // Usually the current owner is the offender, but if it accepts children as a
+        // property, it may be the creator of the child that's responsible for
+        // assigning it a key.
+
+        var childOwner = '';
+
+        if (element && element._owner && element._owner !== ReactCurrentOwner$1.current) {
+          // Give the component that originally created this child.
+          childOwner = " It was passed a child from " + getComponentName(element._owner.type) + ".";
+        }
+
+        setCurrentlyValidatingElement$1(element);
+        error('Each child in a list should have a unique "key" prop.' + '%s%s See https://reactjs.org/link/warning-keys for more information.', currentComponentErrorInfo, childOwner);
+        setCurrentlyValidatingElement$1(null);
+      }
+    }
+    /**
+     * Ensure that every element either is passed in a static location, in an
+     * array with an explicit keys property defined, or in an object literal
+     * with valid key property.
+     *
+     * @internal
+     * @param {ReactNode} node Statically passed child of any type.
+     * @param {*} parentType node's parent's type.
+     */
+
+
+    function validateChildKeys(node, parentType) {
+      {
+        if (typeof node !== 'object') {
+          return;
+        }
+
+        if (Array.isArray(node)) {
+          for (var i = 0; i < node.length; i++) {
+            var child = node[i];
+
+            if (isValidElement(child)) {
+              validateExplicitKey(child, parentType);
+            }
+          }
+        } else if (isValidElement(node)) {
+          // This element was passed in a valid location.
+          if (node._store) {
+            node._store.validated = true;
+          }
+        } else if (node) {
+          var iteratorFn = getIteratorFn(node);
+
+          if (typeof iteratorFn === 'function') {
+            // Entry iterators used to provide implicit keys,
+            // but now we print a separate warning for them later.
+            if (iteratorFn !== node.entries) {
+              var iterator = iteratorFn.call(node);
+              var step;
+
+              while (!(step = iterator.next()).done) {
+                if (isValidElement(step.value)) {
+                  validateExplicitKey(step.value, parentType);
                 }
               }
             }
           }
-        } else {
-          return false;
+        }
+      }
+    }
+    /**
+     * Given an element, validate that its props follow the propTypes definition,
+     * provided by the type.
+     *
+     * @param {ReactElement} element
+     */
+
+
+    function validatePropTypes(element) {
+      {
+        var type = element.type;
+
+        if (type === null || type === undefined || typeof type === 'string') {
+          return;
         }
 
-        return true;
+        var propTypes;
 
-      default:
-        return false;
+        if (typeof type === 'function') {
+          propTypes = type.propTypes;
+        } else if (typeof type === 'object' && (type.$$typeof === REACT_FORWARD_REF_TYPE || // Note: Memo only checks outer props here.
+        // Inner props are checked in the reconciler.
+        type.$$typeof === REACT_MEMO_TYPE)) {
+          propTypes = type.propTypes;
+        } else {
+          return;
+        }
+
+        if (propTypes) {
+          // Intentionally inside to avoid triggering lazy initializers:
+          var name = getComponentName(type);
+          checkPropTypes(propTypes, element.props, 'prop', name, element);
+        } else if (type.PropTypes !== undefined && !propTypesMisspellWarningShown) {
+          propTypesMisspellWarningShown = true; // Intentionally inside to avoid triggering lazy initializers:
+
+          var _name = getComponentName(type);
+
+          error('Component %s declared `PropTypes` instead of `propTypes`. Did you misspell the property assignment?', _name || 'Unknown');
+        }
+
+        if (typeof type.getDefaultProps === 'function' && !type.getDefaultProps.isReactClassApproved) {
+          error('getDefaultProps is only used on classic React.createClass ' + 'definitions. Use a static property named `defaultProps` instead.');
+        }
+      }
     }
-  }
-
-  function isSymbol(propType, propValue) {
-    // Native Symbol.
-    if (propType === 'symbol') {
-      return true;
-    } // falsy value can't be a Symbol
+    /**
+     * Given a fragment, validate that it can only be provided with fragment props
+     * @param {ReactElement} fragment
+     */
 
 
-    if (!propValue) {
-      return false;
-    } // 19.4.3.5 Symbol.prototype[@@toStringTag] === 'Symbol'
+    function validateFragmentProps(fragment) {
+      {
+        var keys = Object.keys(fragment.props);
 
+        for (var i = 0; i < keys.length; i++) {
+          var key = keys[i];
 
-    if (propValue['@@toStringTag'] === 'Symbol') {
-      return true;
-    } // Fallback for non-spec compliant Symbols which are polyfilled.
+          if (key !== 'children' && key !== 'key') {
+            setCurrentlyValidatingElement$1(fragment);
+            error('Invalid prop `%s` supplied to `React.Fragment`. ' + 'React.Fragment can only have `key` and `children` props.', key);
+            setCurrentlyValidatingElement$1(null);
+            break;
+          }
+        }
 
-
-    if (typeof Symbol === 'function' && propValue instanceof Symbol) {
-      return true;
-    }
-
-    return false;
-  } // Equivalent of `typeof` but with special handling for array and regexp.
-
-
-  function getPropType(propValue) {
-    var propType = typeof propValue;
-
-    if (Array.isArray(propValue)) {
-      return 'array';
-    }
-
-    if (propValue instanceof RegExp) {
-      // Old webkits (at least until Android 4.0) return 'function' rather than
-      // 'object' for typeof a RegExp. We'll normalize this here so that /bla/
-      // passes PropTypes.object.
-      return 'object';
-    }
-
-    if (isSymbol(propType, propValue)) {
-      return 'symbol';
-    }
-
-    return propType;
-  } // This handles more types than `getPropType`. Only used for error messages.
-  // See `createPrimitiveTypeChecker`.
-
-
-  function getPreciseType(propValue) {
-    if (typeof propValue === 'undefined' || propValue === null) {
-      return '' + propValue;
-    }
-
-    var propType = getPropType(propValue);
-
-    if (propType === 'object') {
-      if (propValue instanceof Date) {
-        return 'date';
-      } else if (propValue instanceof RegExp) {
-        return 'regexp';
+        if (fragment.ref !== null) {
+          setCurrentlyValidatingElement$1(fragment);
+          error('Invalid attribute `ref` supplied to `React.Fragment`.');
+          setCurrentlyValidatingElement$1(null);
+        }
       }
     }
 
-    return propType;
-  } // Returns a string that is postfixed to a warning about an invalid type.
-  // For example, "undefined" or "of type array"
+    function jsxWithValidation(type, props, key, isStaticChildren, source, self) {
+      {
+        var validType = isValidElementType(type); // We warn in this case but don't throw. We expect the element creation to
+        // succeed and there will likely be errors in render.
+
+        if (!validType) {
+          var info = '';
+
+          if (type === undefined || typeof type === 'object' && type !== null && Object.keys(type).length === 0) {
+            info += ' You likely forgot to export your component from the file ' + "it's defined in, or you might have mixed up default and named imports.";
+          }
+
+          var sourceInfo = getSourceInfoErrorAddendum(source);
+
+          if (sourceInfo) {
+            info += sourceInfo;
+          } else {
+            info += getDeclarationErrorAddendum();
+          }
+
+          var typeString;
+
+          if (type === null) {
+            typeString = 'null';
+          } else if (Array.isArray(type)) {
+            typeString = 'array';
+          } else if (type !== undefined && type.$$typeof === REACT_ELEMENT_TYPE) {
+            typeString = "<" + (getComponentName(type.type) || 'Unknown') + " />";
+            info = ' Did you accidentally export a JSX literal instead of a component?';
+          } else {
+            typeString = typeof type;
+          }
+
+          error('React.jsx: type is invalid -- expected a string (for ' + 'built-in components) or a class/function (for composite ' + 'components) but got: %s.%s', typeString, info);
+        }
+
+        var element = jsxDEV(type, props, key, source, self); // The result can be nullish if a mock or a custom function is used.
+        // TODO: Drop this when these are no longer allowed as the type argument.
+
+        if (element == null) {
+          return element;
+        } // Skip key warning if the type isn't valid since our key validation logic
+        // doesn't expect a non-string/function type and can throw confusing errors.
+        // We don't want exception behavior to differ between dev and prod.
+        // (Rendering will throw with a helpful message and as soon as the type is
+        // fixed, the key warnings will appear.)
 
 
-  function getPostfixForTypeWarning(value) {
-    var type = getPreciseType(value);
+        if (validType) {
+          var children = props.children;
 
-    switch (type) {
-      case 'array':
-      case 'object':
-        return 'an ' + type;
+          if (children !== undefined) {
+            if (isStaticChildren) {
+              if (Array.isArray(children)) {
+                for (var i = 0; i < children.length; i++) {
+                  validateChildKeys(children[i], type);
+                }
 
-      case 'boolean':
-      case 'date':
-      case 'regexp':
-        return 'a ' + type;
+                if (Object.freeze) {
+                  Object.freeze(children);
+                }
+              } else {
+                error('React.jsx: Static children should always be an array. ' + 'You are likely explicitly calling React.jsxs or React.jsxDEV. ' + 'Use the Babel transform instead.');
+              }
+            } else {
+              validateChildKeys(children, type);
+            }
+          }
+        }
 
-      default:
-        return type;
+        if (type === exports.Fragment) {
+          validateFragmentProps(element);
+        } else {
+          validatePropTypes(element);
+        }
+
+        return element;
+      }
+    } // These two functions exist to still get child warnings in dev
+    // even with the prod transform. This means that jsxDEV is purely
+    // opt-in behavior for better messages but that we won't stop
+    // giving you warnings if you use production apis.
+
+
+    function jsxWithValidationStatic(type, props, key) {
+      {
+        return jsxWithValidation(type, props, key, true);
+      }
     }
-  } // Returns class name of the object, if any.
 
-
-  function getClassName(propValue) {
-    if (!propValue.constructor || !propValue.constructor.name) {
-      return ANONYMOUS;
+    function jsxWithValidationDynamic(type, props, key) {
+      {
+        return jsxWithValidation(type, props, key, false);
+      }
     }
 
-    return propValue.constructor.name;
-  }
+    var jsx = jsxWithValidationDynamic; // we may want to special case jsxs internally to take advantage of static children.
+    // for now we can ship identical prod functions
 
-  ReactPropTypes.checkPropTypes = checkPropTypes;
-  ReactPropTypes.resetWarningCache = checkPropTypes.resetWarningCache;
-  ReactPropTypes.PropTypes = ReactPropTypes;
-  return ReactPropTypes;
-};
-
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
-var ReactPropTypesSecret = ReactPropTypesSecret_1;
-
-function emptyFunction() {}
-
-function emptyFunctionWithReset() {}
-
-emptyFunctionWithReset.resetWarningCache = emptyFunction;
-
-var factoryWithThrowingShims = function () {
-  function shim(props, propName, componentName, location, propFullName, secret) {
-    if (secret === ReactPropTypesSecret) {
-      // It is still safe when called from React.
-      return;
-    }
-
-    var err = new Error('Calling PropTypes validators directly is not supported by the `prop-types` package. ' + 'Use PropTypes.checkPropTypes() to call them. ' + 'Read more at http://fb.me/use-check-prop-types');
-    err.name = 'Invariant Violation';
-    throw err;
-  }
-  shim.isRequired = shim;
-
-  function getShim() {
-    return shim;
-  }
-  // Keep this list in sync with production version in `./factoryWithTypeCheckers.js`.
-
-  var ReactPropTypes = {
-    array: shim,
-    bool: shim,
-    func: shim,
-    number: shim,
-    object: shim,
-    string: shim,
-    symbol: shim,
-    any: shim,
-    arrayOf: getShim,
-    element: shim,
-    elementType: shim,
-    instanceOf: getShim,
-    node: shim,
-    objectOf: getShim,
-    oneOf: getShim,
-    oneOfType: getShim,
-    shape: getShim,
-    exact: getShim,
-    checkPropTypes: emptyFunctionWithReset,
-    resetWarningCache: emptyFunction
-  };
-  ReactPropTypes.PropTypes = ReactPropTypes;
-  return ReactPropTypes;
-};
-
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
-if (process.env.NODE_ENV !== 'production') {
-  var ReactIs = reactIs$1.exports; // By explicitly using `prop-types` you are opting into new development behavior.
-  // http://fb.me/prop-types-in-prod
-
-
-  var throwOnDirectAccess = true;
-  propTypes.exports = factoryWithTypeCheckers(ReactIs.isElement, throwOnDirectAccess);
-} else {
-  // By explicitly using `prop-types` you are opting into new production behavior.
-  // http://fb.me/prop-types-in-prod
-  propTypes.exports = factoryWithThrowingShims();
+    var jsxs = jsxWithValidationStatic;
+    exports.jsx = jsx;
+    exports.jsxs = jsxs;
+  })();
 }
+}(reactJsxRuntime_development));
 
-var PropTypes = propTypes.exports;
-
-/**
- * Create the React Context
- */
-
-var DndContext = /*#__PURE__*/createContext({
-  dragDropManager: undefined
-});
+if (process.env.NODE_ENV === 'production') {
+  jsxRuntime.exports = reactJsxRuntime_production_min;
+} else {
+  jsxRuntime.exports = reactJsxRuntime_development;
+}
 
 var HandlerRole;
 
@@ -1826,12 +2146,7 @@ function createBeginDrag(manager) {
 
     manager.dispatch(setClientOffset(clientOffset, sourceClientOffset));
     var source = registry.getSource(sourceId);
-    var item = source.beginDrag(monitor, sourceId); // If source.beginDrag returns null, this is an indicator to cancel the drag
-
-    if (item == null) {
-      return undefined;
-    }
-
+    var item = source.beginDrag(monitor, sourceId);
     verifyItemIsObject(item);
     registry.pinSource(sourceId);
     var itemType = registry.getSourceType(sourceId);
@@ -1980,7 +2295,7 @@ function _objectSpread$4(target) {
 
     if (i % 2) {
       ownKeys$4(Object(source), true).forEach(function (key) {
-        _defineProperty$i(target, key, source[key]);
+        _defineProperty$d(target, key, source[key]);
       });
     } else if (Object.getOwnPropertyDescriptors) {
       Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
@@ -1994,7 +2309,7 @@ function _objectSpread$4(target) {
   return target;
 }
 
-function _defineProperty$i(obj, key, value) {
+function _defineProperty$d(obj, key, value) {
   if (key in obj) {
     Object.defineProperty(obj, key, {
       value: value,
@@ -2676,7 +2991,7 @@ function _objectSpread$3(target) {
 
     if (i % 2) {
       ownKeys$3(Object(source), true).forEach(function (key) {
-        _defineProperty$h(target, key, source[key]);
+        _defineProperty$c(target, key, source[key]);
       });
     } else if (Object.getOwnPropertyDescriptors) {
       Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
@@ -2690,7 +3005,7 @@ function _objectSpread$3(target) {
   return target;
 }
 
-function _defineProperty$h(obj, key, value) {
+function _defineProperty$c(obj, key, value) {
   if (key in obj) {
     Object.defineProperty(obj, key, {
       value: value,
@@ -2798,7 +3113,7 @@ function _objectSpread$2(target) {
 
     if (i % 2) {
       ownKeys$2(Object(source), true).forEach(function (key) {
-        _defineProperty$g(target, key, source[key]);
+        _defineProperty$b(target, key, source[key]);
       });
     } else if (Object.getOwnPropertyDescriptors) {
       Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
@@ -2812,7 +3127,7 @@ function _objectSpread$2(target) {
   return target;
 }
 
-function _defineProperty$g(obj, key, value) {
+function _defineProperty$b(obj, key, value) {
   if (key in obj) {
     Object.defineProperty(obj, key, {
       value: value,
@@ -3012,7 +3327,7 @@ function _objectSpread$1(target) {
 
     if (i % 2) {
       ownKeys$1(Object(source), true).forEach(function (key) {
-        _defineProperty$f(target, key, source[key]);
+        _defineProperty$a(target, key, source[key]);
       });
     } else if (Object.getOwnPropertyDescriptors) {
       Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
@@ -3026,7 +3341,7 @@ function _objectSpread$1(target) {
   return target;
 }
 
-function _defineProperty$f(obj, key, value) {
+function _defineProperty$a(obj, key, value) {
   if (key in obj) {
     Object.defineProperty(obj, key, {
       value: value,
@@ -3698,24 +4013,24 @@ function _createClass$e(Constructor, protoProps, staticProps) {
   return Constructor;
 }
 
-function _slicedToArray$5(arr, i) {
-  return _arrayWithHoles$5(arr) || _iterableToArrayLimit$5(arr, i) || _unsupportedIterableToArray$6(arr, i) || _nonIterableRest$5();
+function _slicedToArray$6(arr, i) {
+  return _arrayWithHoles$6(arr) || _iterableToArrayLimit$6(arr, i) || _unsupportedIterableToArray$7(arr, i) || _nonIterableRest$6();
 }
 
-function _nonIterableRest$5() {
+function _nonIterableRest$6() {
   throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
 
-function _unsupportedIterableToArray$6(o, minLen) {
+function _unsupportedIterableToArray$7(o, minLen) {
   if (!o) return;
-  if (typeof o === "string") return _arrayLikeToArray$6(o, minLen);
+  if (typeof o === "string") return _arrayLikeToArray$7(o, minLen);
   var n = Object.prototype.toString.call(o).slice(8, -1);
   if (n === "Object" && o.constructor) n = o.constructor.name;
   if (n === "Map" || n === "Set") return Array.from(o);
-  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$6(o, minLen);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$7(o, minLen);
 }
 
-function _arrayLikeToArray$6(arr, len) {
+function _arrayLikeToArray$7(arr, len) {
   if (len == null || len > arr.length) len = arr.length;
 
   for (var i = 0, arr2 = new Array(len); i < len; i++) {
@@ -3725,7 +4040,7 @@ function _arrayLikeToArray$6(arr, len) {
   return arr2;
 }
 
-function _iterableToArrayLimit$5(arr, i) {
+function _iterableToArrayLimit$6(arr, i) {
   if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return;
   var _arr = [];
   var _n = true;
@@ -3752,7 +4067,7 @@ function _iterableToArrayLimit$5(arr, i) {
   return _arr;
 }
 
-function _arrayWithHoles$5(arr) {
+function _arrayWithHoles$6(arr) {
   if (Array.isArray(arr)) return arr;
 }
 
@@ -3791,7 +4106,7 @@ function mapContainsValue(map, searchValue) {
   do {
     var _entries$next = entries.next(),
         done = _entries$next.done,
-        _entries$next$value = _slicedToArray$5(_entries$next.value, 2),
+        _entries$next$value = _slicedToArray$6(_entries$next.value, 2),
         value = _entries$next$value[1];
 
     if (value === searchValue) {
@@ -3955,7 +4270,676 @@ function makeStoreInstance(debugMode) {
   }));
 }
 
-var _excluded = ["children"];
+function _slicedToArray$5(arr, i) {
+  return _arrayWithHoles$5(arr) || _iterableToArrayLimit$5(arr, i) || _unsupportedIterableToArray$6(arr, i) || _nonIterableRest$5();
+}
+
+function _nonIterableRest$5() {
+  throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+
+function _unsupportedIterableToArray$6(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return _arrayLikeToArray$6(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(o);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$6(o, minLen);
+}
+
+function _arrayLikeToArray$6(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+
+  for (var i = 0, arr2 = new Array(len); i < len; i++) {
+    arr2[i] = arr[i];
+  }
+
+  return arr2;
+}
+
+function _iterableToArrayLimit$5(arr, i) {
+  if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return;
+  var _arr = [];
+  var _n = true;
+  var _d = false;
+  var _e = undefined;
+
+  try {
+    for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+      _arr.push(_s.value);
+
+      if (i && _arr.length === i) break;
+    }
+  } catch (err) {
+    _d = true;
+    _e = err;
+  } finally {
+    try {
+      if (!_n && _i["return"] != null) _i["return"]();
+    } finally {
+      if (_d) throw _e;
+    }
+  }
+
+  return _arr;
+}
+
+function _arrayWithHoles$5(arr) {
+  if (Array.isArray(arr)) return arr;
+}
+
+function _objectWithoutProperties$1(source, excluded) {
+  if (source == null) return {};
+
+  var target = _objectWithoutPropertiesLoose$1(source, excluded);
+
+  var key, i;
+
+  if (Object.getOwnPropertySymbols) {
+    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
+
+    for (i = 0; i < sourceSymbolKeys.length; i++) {
+      key = sourceSymbolKeys[i];
+      if (excluded.indexOf(key) >= 0) continue;
+      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
+      target[key] = source[key];
+    }
+  }
+
+  return target;
+}
+
+function _objectWithoutPropertiesLoose$1(source, excluded) {
+  if (source == null) return {};
+  var target = {};
+  var sourceKeys = Object.keys(source);
+  var key, i;
+
+  for (i = 0; i < sourceKeys.length; i++) {
+    key = sourceKeys[i];
+    if (excluded.indexOf(key) >= 0) continue;
+    target[key] = source[key];
+  }
+
+  return target;
+}
+var refCount = 0;
+var INSTANCE_SYM = Symbol.for('__REACT_DND_CONTEXT_INSTANCE__');
+/**
+ * A React component that provides the React-DnD context
+ */
+
+var DndProvider$1 = /*#__PURE__*/memo(function DndProvider(_ref) {
+  var children = _ref.children,
+      props = _objectWithoutProperties$1(_ref, ["children"]);
+
+  var _getDndContextValue = getDndContextValue(props),
+      _getDndContextValue2 = _slicedToArray$5(_getDndContextValue, 2),
+      manager = _getDndContextValue2[0],
+      isGlobalInstance = _getDndContextValue2[1]; // memoized from props
+
+  /**
+   * If the global context was used to store the DND context
+   * then where theres no more references to it we should
+   * clean it up to avoid memory leaks
+   */
+
+
+  useEffect(function () {
+    if (isGlobalInstance) {
+      var context = getGlobalContext();
+      ++refCount;
+      return function () {
+        if (--refCount === 0) {
+          context[INSTANCE_SYM] = null;
+        }
+      };
+    }
+  }, []);
+  return jsxRuntime.exports.jsx(DndContext$1.Provider, Object.assign({
+    value: manager
+  }, {
+    children: children
+  }), void 0);
+});
+
+function getDndContextValue(props) {
+  if ('manager' in props) {
+    var _manager = {
+      dragDropManager: props.manager
+    };
+    return [_manager, false];
+  }
+
+  var manager = createSingletonDndContext(props.backend, props.context, props.options, props.debugMode);
+  var isGlobalInstance = !props.context;
+  return [manager, isGlobalInstance];
+}
+
+function createSingletonDndContext(backend) {
+  var context = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : getGlobalContext();
+  var options = arguments.length > 2 ? arguments[2] : undefined;
+  var debugMode = arguments.length > 3 ? arguments[3] : undefined;
+  var ctx = context;
+
+  if (!ctx[INSTANCE_SYM]) {
+    ctx[INSTANCE_SYM] = {
+      dragDropManager: createDragDropManager(backend, context, options, debugMode)
+    };
+  }
+
+  return ctx[INSTANCE_SYM];
+}
+
+function getGlobalContext() {
+  return typeof global !== 'undefined' ? global : window;
+}
+
+function shallowEqual(objA, objB, compare, compareContext) {
+  var compareResult = compare ? compare.call(compareContext, objA, objB) : void 0;
+
+  if (compareResult !== void 0) {
+    return !!compareResult;
+  }
+
+  if (objA === objB) {
+    return true;
+  }
+
+  if (typeof objA !== 'object' || !objA || typeof objB !== 'object' || !objB) {
+    return false;
+  }
+
+  var keysA = Object.keys(objA);
+  var keysB = Object.keys(objB);
+
+  if (keysA.length !== keysB.length) {
+    return false;
+  }
+
+  var bHasOwnProperty = Object.prototype.hasOwnProperty.bind(objB); // Test for A's keys different from B.
+
+  for (var idx = 0; idx < keysA.length; idx++) {
+    var key = keysA[idx];
+
+    if (!bHasOwnProperty(key)) {
+      return false;
+    }
+
+    var valueA = objA[key];
+    var valueB = objB[key];
+    compareResult = compare ? compare.call(compareContext, valueA, valueB, key) : void 0;
+
+    if (compareResult === false || compareResult === void 0 && valueA !== valueB) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+var reactIs$1 = {exports: {}};
+
+var reactIs_production_min = {};
+
+/** @license React v16.13.1
+ * react-is.production.min.js
+ *
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+var b = "function" === typeof Symbol && Symbol.for,
+    c = b ? Symbol.for("react.element") : 60103,
+    d = b ? Symbol.for("react.portal") : 60106,
+    e = b ? Symbol.for("react.fragment") : 60107,
+    f = b ? Symbol.for("react.strict_mode") : 60108,
+    g = b ? Symbol.for("react.profiler") : 60114,
+    h = b ? Symbol.for("react.provider") : 60109,
+    k = b ? Symbol.for("react.context") : 60110,
+    l = b ? Symbol.for("react.async_mode") : 60111,
+    m = b ? Symbol.for("react.concurrent_mode") : 60111,
+    n = b ? Symbol.for("react.forward_ref") : 60112,
+    p = b ? Symbol.for("react.suspense") : 60113,
+    q = b ? Symbol.for("react.suspense_list") : 60120,
+    r = b ? Symbol.for("react.memo") : 60115,
+    t = b ? Symbol.for("react.lazy") : 60116,
+    v = b ? Symbol.for("react.block") : 60121,
+    w = b ? Symbol.for("react.fundamental") : 60117,
+    x = b ? Symbol.for("react.responder") : 60118,
+    y = b ? Symbol.for("react.scope") : 60119;
+
+function z(a) {
+  if ("object" === typeof a && null !== a) {
+    var u = a.$$typeof;
+
+    switch (u) {
+      case c:
+        switch (a = a.type, a) {
+          case l:
+          case m:
+          case e:
+          case g:
+          case f:
+          case p:
+            return a;
+
+          default:
+            switch (a = a && a.$$typeof, a) {
+              case k:
+              case n:
+              case t:
+              case r:
+              case h:
+                return a;
+
+              default:
+                return u;
+            }
+
+        }
+
+      case d:
+        return u;
+    }
+  }
+}
+
+function A(a) {
+  return z(a) === m;
+}
+
+reactIs_production_min.AsyncMode = l;
+reactIs_production_min.ConcurrentMode = m;
+reactIs_production_min.ContextConsumer = k;
+reactIs_production_min.ContextProvider = h;
+reactIs_production_min.Element = c;
+reactIs_production_min.ForwardRef = n;
+reactIs_production_min.Fragment = e;
+reactIs_production_min.Lazy = t;
+reactIs_production_min.Memo = r;
+reactIs_production_min.Portal = d;
+reactIs_production_min.Profiler = g;
+reactIs_production_min.StrictMode = f;
+reactIs_production_min.Suspense = p;
+
+reactIs_production_min.isAsyncMode = function (a) {
+  return A(a) || z(a) === l;
+};
+
+reactIs_production_min.isConcurrentMode = A;
+
+reactIs_production_min.isContextConsumer = function (a) {
+  return z(a) === k;
+};
+
+reactIs_production_min.isContextProvider = function (a) {
+  return z(a) === h;
+};
+
+reactIs_production_min.isElement = function (a) {
+  return "object" === typeof a && null !== a && a.$$typeof === c;
+};
+
+reactIs_production_min.isForwardRef = function (a) {
+  return z(a) === n;
+};
+
+reactIs_production_min.isFragment = function (a) {
+  return z(a) === e;
+};
+
+reactIs_production_min.isLazy = function (a) {
+  return z(a) === t;
+};
+
+reactIs_production_min.isMemo = function (a) {
+  return z(a) === r;
+};
+
+reactIs_production_min.isPortal = function (a) {
+  return z(a) === d;
+};
+
+reactIs_production_min.isProfiler = function (a) {
+  return z(a) === g;
+};
+
+reactIs_production_min.isStrictMode = function (a) {
+  return z(a) === f;
+};
+
+reactIs_production_min.isSuspense = function (a) {
+  return z(a) === p;
+};
+
+reactIs_production_min.isValidElementType = function (a) {
+  return "string" === typeof a || "function" === typeof a || a === e || a === m || a === g || a === f || a === p || a === q || "object" === typeof a && null !== a && (a.$$typeof === t || a.$$typeof === r || a.$$typeof === h || a.$$typeof === k || a.$$typeof === n || a.$$typeof === w || a.$$typeof === x || a.$$typeof === y || a.$$typeof === v);
+};
+
+reactIs_production_min.typeOf = z;
+
+var reactIs_development = {};
+
+/** @license React v16.13.1
+ * react-is.development.js
+ *
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+if (process.env.NODE_ENV !== "production") {
+  (function () {
+    // nor polyfill, then a plain number is used for performance.
+
+    var hasSymbol = typeof Symbol === 'function' && Symbol.for;
+    var REACT_ELEMENT_TYPE = hasSymbol ? Symbol.for('react.element') : 0xeac7;
+    var REACT_PORTAL_TYPE = hasSymbol ? Symbol.for('react.portal') : 0xeaca;
+    var REACT_FRAGMENT_TYPE = hasSymbol ? Symbol.for('react.fragment') : 0xeacb;
+    var REACT_STRICT_MODE_TYPE = hasSymbol ? Symbol.for('react.strict_mode') : 0xeacc;
+    var REACT_PROFILER_TYPE = hasSymbol ? Symbol.for('react.profiler') : 0xead2;
+    var REACT_PROVIDER_TYPE = hasSymbol ? Symbol.for('react.provider') : 0xeacd;
+    var REACT_CONTEXT_TYPE = hasSymbol ? Symbol.for('react.context') : 0xeace; // TODO: We don't use AsyncMode or ConcurrentMode anymore. They were temporary
+    // (unstable) APIs that have been removed. Can we remove the symbols?
+
+    var REACT_ASYNC_MODE_TYPE = hasSymbol ? Symbol.for('react.async_mode') : 0xeacf;
+    var REACT_CONCURRENT_MODE_TYPE = hasSymbol ? Symbol.for('react.concurrent_mode') : 0xeacf;
+    var REACT_FORWARD_REF_TYPE = hasSymbol ? Symbol.for('react.forward_ref') : 0xead0;
+    var REACT_SUSPENSE_TYPE = hasSymbol ? Symbol.for('react.suspense') : 0xead1;
+    var REACT_SUSPENSE_LIST_TYPE = hasSymbol ? Symbol.for('react.suspense_list') : 0xead8;
+    var REACT_MEMO_TYPE = hasSymbol ? Symbol.for('react.memo') : 0xead3;
+    var REACT_LAZY_TYPE = hasSymbol ? Symbol.for('react.lazy') : 0xead4;
+    var REACT_BLOCK_TYPE = hasSymbol ? Symbol.for('react.block') : 0xead9;
+    var REACT_FUNDAMENTAL_TYPE = hasSymbol ? Symbol.for('react.fundamental') : 0xead5;
+    var REACT_RESPONDER_TYPE = hasSymbol ? Symbol.for('react.responder') : 0xead6;
+    var REACT_SCOPE_TYPE = hasSymbol ? Symbol.for('react.scope') : 0xead7;
+
+    function isValidElementType(type) {
+      return typeof type === 'string' || typeof type === 'function' || // Note: its typeof might be other than 'symbol' or 'number' if it's a polyfill.
+      type === REACT_FRAGMENT_TYPE || type === REACT_CONCURRENT_MODE_TYPE || type === REACT_PROFILER_TYPE || type === REACT_STRICT_MODE_TYPE || type === REACT_SUSPENSE_TYPE || type === REACT_SUSPENSE_LIST_TYPE || typeof type === 'object' && type !== null && (type.$$typeof === REACT_LAZY_TYPE || type.$$typeof === REACT_MEMO_TYPE || type.$$typeof === REACT_PROVIDER_TYPE || type.$$typeof === REACT_CONTEXT_TYPE || type.$$typeof === REACT_FORWARD_REF_TYPE || type.$$typeof === REACT_FUNDAMENTAL_TYPE || type.$$typeof === REACT_RESPONDER_TYPE || type.$$typeof === REACT_SCOPE_TYPE || type.$$typeof === REACT_BLOCK_TYPE);
+    }
+
+    function typeOf(object) {
+      if (typeof object === 'object' && object !== null) {
+        var $$typeof = object.$$typeof;
+
+        switch ($$typeof) {
+          case REACT_ELEMENT_TYPE:
+            var type = object.type;
+
+            switch (type) {
+              case REACT_ASYNC_MODE_TYPE:
+              case REACT_CONCURRENT_MODE_TYPE:
+              case REACT_FRAGMENT_TYPE:
+              case REACT_PROFILER_TYPE:
+              case REACT_STRICT_MODE_TYPE:
+              case REACT_SUSPENSE_TYPE:
+                return type;
+
+              default:
+                var $$typeofType = type && type.$$typeof;
+
+                switch ($$typeofType) {
+                  case REACT_CONTEXT_TYPE:
+                  case REACT_FORWARD_REF_TYPE:
+                  case REACT_LAZY_TYPE:
+                  case REACT_MEMO_TYPE:
+                  case REACT_PROVIDER_TYPE:
+                    return $$typeofType;
+
+                  default:
+                    return $$typeof;
+                }
+
+            }
+
+          case REACT_PORTAL_TYPE:
+            return $$typeof;
+        }
+      }
+
+      return undefined;
+    } // AsyncMode is deprecated along with isAsyncMode
+
+
+    var AsyncMode = REACT_ASYNC_MODE_TYPE;
+    var ConcurrentMode = REACT_CONCURRENT_MODE_TYPE;
+    var ContextConsumer = REACT_CONTEXT_TYPE;
+    var ContextProvider = REACT_PROVIDER_TYPE;
+    var Element = REACT_ELEMENT_TYPE;
+    var ForwardRef = REACT_FORWARD_REF_TYPE;
+    var Fragment = REACT_FRAGMENT_TYPE;
+    var Lazy = REACT_LAZY_TYPE;
+    var Memo = REACT_MEMO_TYPE;
+    var Portal = REACT_PORTAL_TYPE;
+    var Profiler = REACT_PROFILER_TYPE;
+    var StrictMode = REACT_STRICT_MODE_TYPE;
+    var Suspense = REACT_SUSPENSE_TYPE;
+    var hasWarnedAboutDeprecatedIsAsyncMode = false; // AsyncMode should be deprecated
+
+    function isAsyncMode(object) {
+      {
+        if (!hasWarnedAboutDeprecatedIsAsyncMode) {
+          hasWarnedAboutDeprecatedIsAsyncMode = true; // Using console['warn'] to evade Babel and ESLint
+
+          console['warn']('The ReactIs.isAsyncMode() alias has been deprecated, ' + 'and will be removed in React 17+. Update your code to use ' + 'ReactIs.isConcurrentMode() instead. It has the exact same API.');
+        }
+      }
+      return isConcurrentMode(object) || typeOf(object) === REACT_ASYNC_MODE_TYPE;
+    }
+
+    function isConcurrentMode(object) {
+      return typeOf(object) === REACT_CONCURRENT_MODE_TYPE;
+    }
+
+    function isContextConsumer(object) {
+      return typeOf(object) === REACT_CONTEXT_TYPE;
+    }
+
+    function isContextProvider(object) {
+      return typeOf(object) === REACT_PROVIDER_TYPE;
+    }
+
+    function isElement(object) {
+      return typeof object === 'object' && object !== null && object.$$typeof === REACT_ELEMENT_TYPE;
+    }
+
+    function isForwardRef(object) {
+      return typeOf(object) === REACT_FORWARD_REF_TYPE;
+    }
+
+    function isFragment(object) {
+      return typeOf(object) === REACT_FRAGMENT_TYPE;
+    }
+
+    function isLazy(object) {
+      return typeOf(object) === REACT_LAZY_TYPE;
+    }
+
+    function isMemo(object) {
+      return typeOf(object) === REACT_MEMO_TYPE;
+    }
+
+    function isPortal(object) {
+      return typeOf(object) === REACT_PORTAL_TYPE;
+    }
+
+    function isProfiler(object) {
+      return typeOf(object) === REACT_PROFILER_TYPE;
+    }
+
+    function isStrictMode(object) {
+      return typeOf(object) === REACT_STRICT_MODE_TYPE;
+    }
+
+    function isSuspense(object) {
+      return typeOf(object) === REACT_SUSPENSE_TYPE;
+    }
+
+    reactIs_development.AsyncMode = AsyncMode;
+    reactIs_development.ConcurrentMode = ConcurrentMode;
+    reactIs_development.ContextConsumer = ContextConsumer;
+    reactIs_development.ContextProvider = ContextProvider;
+    reactIs_development.Element = Element;
+    reactIs_development.ForwardRef = ForwardRef;
+    reactIs_development.Fragment = Fragment;
+    reactIs_development.Lazy = Lazy;
+    reactIs_development.Memo = Memo;
+    reactIs_development.Portal = Portal;
+    reactIs_development.Profiler = Profiler;
+    reactIs_development.StrictMode = StrictMode;
+    reactIs_development.Suspense = Suspense;
+    reactIs_development.isAsyncMode = isAsyncMode;
+    reactIs_development.isConcurrentMode = isConcurrentMode;
+    reactIs_development.isContextConsumer = isContextConsumer;
+    reactIs_development.isContextProvider = isContextProvider;
+    reactIs_development.isElement = isElement;
+    reactIs_development.isForwardRef = isForwardRef;
+    reactIs_development.isFragment = isFragment;
+    reactIs_development.isLazy = isLazy;
+    reactIs_development.isMemo = isMemo;
+    reactIs_development.isPortal = isPortal;
+    reactIs_development.isProfiler = isProfiler;
+    reactIs_development.isStrictMode = isStrictMode;
+    reactIs_development.isSuspense = isSuspense;
+    reactIs_development.isValidElementType = isValidElementType;
+    reactIs_development.typeOf = typeOf;
+  })();
+}
+
+if (process.env.NODE_ENV === 'production') {
+  reactIs$1.exports = reactIs_production_min;
+} else {
+  reactIs$1.exports = reactIs_development;
+}
+
+var reactIs = reactIs$1.exports;
+/**
+ * Copyright 2015, Yahoo! Inc.
+ * Copyrights licensed under the New BSD License. See the accompanying LICENSE file for terms.
+ */
+
+
+var REACT_STATICS = {
+  childContextTypes: true,
+  contextType: true,
+  contextTypes: true,
+  defaultProps: true,
+  displayName: true,
+  getDefaultProps: true,
+  getDerivedStateFromError: true,
+  getDerivedStateFromProps: true,
+  mixins: true,
+  propTypes: true,
+  type: true
+};
+var KNOWN_STATICS = {
+  name: true,
+  length: true,
+  prototype: true,
+  caller: true,
+  callee: true,
+  arguments: true,
+  arity: true
+};
+var FORWARD_REF_STATICS = {
+  '$$typeof': true,
+  render: true,
+  defaultProps: true,
+  displayName: true,
+  propTypes: true
+};
+var MEMO_STATICS = {
+  '$$typeof': true,
+  compare: true,
+  defaultProps: true,
+  displayName: true,
+  propTypes: true,
+  type: true
+};
+var TYPE_STATICS = {};
+TYPE_STATICS[reactIs.ForwardRef] = FORWARD_REF_STATICS;
+TYPE_STATICS[reactIs.Memo] = MEMO_STATICS;
+
+function getStatics(component) {
+  // React v16.11 and below
+  if (reactIs.isMemo(component)) {
+    return MEMO_STATICS;
+  } // React v16.12 and above
+
+
+  return TYPE_STATICS[component['$$typeof']] || REACT_STATICS;
+}
+
+var defineProperty = Object.defineProperty;
+var getOwnPropertyNames = Object.getOwnPropertyNames;
+var getOwnPropertySymbols = Object.getOwnPropertySymbols;
+var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
+var getPrototypeOf = Object.getPrototypeOf;
+var objectPrototype = Object.prototype;
+
+function hoistNonReactStatics(targetComponent, sourceComponent, blacklist) {
+  if (typeof sourceComponent !== 'string') {
+    // don't hoist over string (html) components
+    if (objectPrototype) {
+      var inheritedComponent = getPrototypeOf(sourceComponent);
+
+      if (inheritedComponent && inheritedComponent !== objectPrototype) {
+        hoistNonReactStatics(targetComponent, inheritedComponent, blacklist);
+      }
+    }
+
+    var keys = getOwnPropertyNames(sourceComponent);
+
+    if (getOwnPropertySymbols) {
+      keys = keys.concat(getOwnPropertySymbols(sourceComponent));
+    }
+
+    var targetStatics = getStatics(targetComponent);
+    var sourceStatics = getStatics(sourceComponent);
+
+    for (var i = 0; i < keys.length; ++i) {
+      var key = keys[i];
+
+      if (!KNOWN_STATICS[key] && !(blacklist && blacklist[key]) && !(sourceStatics && sourceStatics[key]) && !(targetStatics && targetStatics[key])) {
+        var descriptor = getOwnPropertyDescriptor(sourceComponent, key);
+
+        try {
+          // Avoid failures from read-only properties
+          defineProperty(targetComponent, key, descriptor);
+        } catch (e) {}
+      }
+    }
+  }
+
+  return targetComponent;
+}
+
+var hoistNonReactStatics_cjs = hoistNonReactStatics;
+
+var hoistStatics = hoistNonReactStatics_cjs;
+
+function _extends() {
+  _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+
+    return target;
+  };
+
+  return _extends.apply(this, arguments);
+}
 
 function _slicedToArray$4(arr, i) {
   return _arrayWithHoles$4(arr) || _iterableToArrayLimit$4(arr, i) || _unsupportedIterableToArray$5(arr, i) || _nonIterableRest$4();
@@ -3985,17 +4969,14 @@ function _arrayLikeToArray$5(arr, len) {
 }
 
 function _iterableToArrayLimit$4(arr, i) {
-  var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"];
-
-  if (_i == null) return;
+  if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return;
   var _arr = [];
   var _n = true;
   var _d = false;
-
-  var _s, _e;
+  var _e = undefined;
 
   try {
-    for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) {
+    for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
       _arr.push(_s.value);
 
       if (i && _arr.length === i) break;
@@ -4053,76 +5034,62 @@ function _objectWithoutPropertiesLoose(source, excluded) {
 
   return target;
 }
-var refCount = 0;
-var INSTANCE_SYM = Symbol.for('__REACT_DND_CONTEXT_INSTANCE__');
+var PreviewPortalContext = /*#__PURE__*/createContext(null);
+var DndProvider = function DndProvider(_ref) {
+  var portal = _ref.portal,
+      props = _objectWithoutProperties(_ref, ["portal"]);
+
+  var _useState = useState(null),
+      _useState2 = _slicedToArray$4(_useState, 2),
+      previewPortal = _useState2[0],
+      setPreviewPortal = _useState2[1];
+
+  return /*#__PURE__*/React.createElement(PreviewPortalContext.Provider, {
+    value: portal !== null && portal !== void 0 ? portal : previewPortal
+  }, /*#__PURE__*/React.createElement(DndProvider$1, _extends({
+    backend: MultiFactory
+  }, props)), portal ? null : /*#__PURE__*/React.createElement("div", {
+    ref: setPreviewPortal
+  }));
+};
+
+// cheap lodash replacements
+function memoize(fn) {
+  var result = null;
+
+  var memoized = function memoized() {
+    if (result == null) {
+      result = fn();
+    }
+
+    return result;
+  };
+
+  return memoized;
+}
 /**
- * A React component that provides the React-DnD context
+ * drop-in replacement for _.without
  */
 
-var DndProvider$1 = /*#__PURE__*/memo(function DndProvider(_ref) {
-  var children = _ref.children,
-      props = _objectWithoutProperties(_ref, _excluded);
-
-  var _getDndContextValue = getDndContextValue(props),
-      _getDndContextValue2 = _slicedToArray$4(_getDndContextValue, 2),
-      manager = _getDndContextValue2[0],
-      isGlobalInstance = _getDndContextValue2[1]; // memoized from props
-
-  /**
-   * If the global context was used to store the DND context
-   * then where theres no more references to it we should
-   * clean it up to avoid memory leaks
-   */
-
-
-  useEffect(function () {
-    if (isGlobalInstance) {
-      var context = getGlobalContext();
-      ++refCount;
-      return function () {
-        if (--refCount === 0) {
-          context[INSTANCE_SYM] = null;
-        }
-      };
-    }
-  }, []);
-  return jsx(DndContext.Provider, Object.assign({
-    value: manager
-  }, {
-    children: children
-  }), void 0);
-});
-
-function getDndContextValue(props) {
-  if ('manager' in props) {
-    var _manager = {
-      dragDropManager: props.manager
-    };
-    return [_manager, false];
-  }
-
-  var manager = createSingletonDndContext(props.backend, props.context, props.options, props.debugMode);
-  var isGlobalInstance = !props.context;
-  return [manager, isGlobalInstance];
+function without(items, item) {
+  return items.filter(function (i) {
+    return i !== item;
+  });
 }
+function union(itemsA, itemsB) {
+  var set = new Set();
 
-function createSingletonDndContext(backend) {
-  var context = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : getGlobalContext();
-  var options = arguments.length > 2 ? arguments[2] : undefined;
-  var debugMode = arguments.length > 3 ? arguments[3] : undefined;
-  var ctx = context;
+  var insertItem = function insertItem(item) {
+    return set.add(item);
+  };
 
-  if (!ctx[INSTANCE_SYM]) {
-    ctx[INSTANCE_SYM] = {
-      dragDropManager: createDragDropManager(backend, context, options, debugMode)
-    };
-  }
-
-  return ctx[INSTANCE_SYM];
-}
-
-function getGlobalContext() {
-  return typeof global !== 'undefined' ? global : window;
+  itemsA.forEach(insertItem);
+  itemsB.forEach(insertItem);
+  var result = [];
+  set.forEach(function (key) {
+    return result.push(key);
+  });
+  return result;
 }
 
 function _classCallCheck$d(instance, Constructor) {
@@ -4146,8 +5113,4230 @@ function _createClass$d(Constructor, protoProps, staticProps) {
   if (staticProps) _defineProperties$d(Constructor, staticProps);
   return Constructor;
 }
+var EnterLeaveCounter = /*#__PURE__*/function () {
+  function EnterLeaveCounter(isNodeInDocument) {
+    _classCallCheck$d(this, EnterLeaveCounter);
 
-function _defineProperty$e(obj, key, value) {
+    this.entered = [];
+    this.isNodeInDocument = isNodeInDocument;
+  }
+
+  _createClass$d(EnterLeaveCounter, [{
+    key: "enter",
+    value: function enter(enteringNode) {
+      var _this = this;
+
+      var previousLength = this.entered.length;
+
+      var isNodeEntered = function isNodeEntered(node) {
+        return _this.isNodeInDocument(node) && (!node.contains || node.contains(enteringNode));
+      };
+
+      this.entered = union(this.entered.filter(isNodeEntered), [enteringNode]);
+      return previousLength === 0 && this.entered.length > 0;
+    }
+  }, {
+    key: "leave",
+    value: function leave(leavingNode) {
+      var previousLength = this.entered.length;
+      this.entered = without(this.entered.filter(this.isNodeInDocument), leavingNode);
+      return previousLength > 0 && this.entered.length === 0;
+    }
+  }, {
+    key: "reset",
+    value: function reset() {
+      this.entered = [];
+    }
+  }]);
+
+  return EnterLeaveCounter;
+}();
+
+var isFirefox = memoize(function () {
+  return /firefox/i.test(navigator.userAgent);
+});
+var isSafari = memoize(function () {
+  return Boolean(window.safari);
+});
+
+function _classCallCheck$c(instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+}
+
+function _defineProperties$c(target, props) {
+  for (var i = 0; i < props.length; i++) {
+    var descriptor = props[i];
+    descriptor.enumerable = descriptor.enumerable || false;
+    descriptor.configurable = true;
+    if ("value" in descriptor) descriptor.writable = true;
+    Object.defineProperty(target, descriptor.key, descriptor);
+  }
+}
+
+function _createClass$c(Constructor, protoProps, staticProps) {
+  if (protoProps) _defineProperties$c(Constructor.prototype, protoProps);
+  if (staticProps) _defineProperties$c(Constructor, staticProps);
+  return Constructor;
+}
+
+var MonotonicInterpolant = /*#__PURE__*/function () {
+  function MonotonicInterpolant(xs, ys) {
+    _classCallCheck$c(this, MonotonicInterpolant);
+
+    var length = xs.length; // Rearrange xs and ys so that xs is sorted
+
+    var indexes = [];
+
+    for (var i = 0; i < length; i++) {
+      indexes.push(i);
+    }
+
+    indexes.sort(function (a, b) {
+      return xs[a] < xs[b] ? -1 : 1;
+    }); // Get consecutive differences and slopes
+    var dxs = [];
+    var ms = [];
+    var dx;
+    var dy;
+
+    for (var _i = 0; _i < length - 1; _i++) {
+      dx = xs[_i + 1] - xs[_i];
+      dy = ys[_i + 1] - ys[_i];
+      dxs.push(dx);
+      ms.push(dy / dx);
+    } // Get degree-1 coefficients
+
+
+    var c1s = [ms[0]];
+
+    for (var _i2 = 0; _i2 < dxs.length - 1; _i2++) {
+      var m2 = ms[_i2];
+      var mNext = ms[_i2 + 1];
+
+      if (m2 * mNext <= 0) {
+        c1s.push(0);
+      } else {
+        dx = dxs[_i2];
+        var dxNext = dxs[_i2 + 1];
+        var common = dx + dxNext;
+        c1s.push(3 * common / ((common + dxNext) / m2 + (common + dx) / mNext));
+      }
+    }
+
+    c1s.push(ms[ms.length - 1]); // Get degree-2 and degree-3 coefficients
+
+    var c2s = [];
+    var c3s = [];
+    var m;
+
+    for (var _i3 = 0; _i3 < c1s.length - 1; _i3++) {
+      m = ms[_i3];
+      var c1 = c1s[_i3];
+      var invDx = 1 / dxs[_i3];
+
+      var _common = c1 + c1s[_i3 + 1] - m - m;
+
+      c2s.push((m - c1 - _common) * invDx);
+      c3s.push(_common * invDx * invDx);
+    }
+
+    this.xs = xs;
+    this.ys = ys;
+    this.c1s = c1s;
+    this.c2s = c2s;
+    this.c3s = c3s;
+  }
+
+  _createClass$c(MonotonicInterpolant, [{
+    key: "interpolate",
+    value: function interpolate(x) {
+      var xs = this.xs,
+          ys = this.ys,
+          c1s = this.c1s,
+          c2s = this.c2s,
+          c3s = this.c3s; // The rightmost point in the dataset should give an exact result
+
+      var i = xs.length - 1;
+
+      if (x === xs[i]) {
+        return ys[i];
+      } // Search for the interval x is in, returning the corresponding y if x is one of the original xs
+
+
+      var low = 0;
+      var high = c3s.length - 1;
+      var mid;
+
+      while (low <= high) {
+        mid = Math.floor(0.5 * (low + high));
+        var xHere = xs[mid];
+
+        if (xHere < x) {
+          low = mid + 1;
+        } else if (xHere > x) {
+          high = mid - 1;
+        } else {
+          return ys[mid];
+        }
+      }
+
+      i = Math.max(0, high); // Interpolate
+
+      var diff = x - xs[i];
+      var diffSq = diff * diff;
+      return ys[i] + c1s[i] * diff + c2s[i] * diffSq + c3s[i] * diff * diffSq;
+    }
+  }]);
+
+  return MonotonicInterpolant;
+}();
+
+var ELEMENT_NODE$1 = 1;
+function getNodeClientOffset$1(node) {
+  var el = node.nodeType === ELEMENT_NODE$1 ? node : node.parentElement;
+
+  if (!el) {
+    return null;
+  }
+
+  var _el$getBoundingClient = el.getBoundingClientRect(),
+      top = _el$getBoundingClient.top,
+      left = _el$getBoundingClient.left;
+
+  return {
+    x: left,
+    y: top
+  };
+}
+function getEventClientOffset$1(e) {
+  return {
+    x: e.clientX,
+    y: e.clientY
+  };
+}
+
+function isImageNode(node) {
+  var _document$documentEle;
+
+  return node.nodeName === 'IMG' && (isFirefox() || !((_document$documentEle = document.documentElement) === null || _document$documentEle === void 0 ? void 0 : _document$documentEle.contains(node)));
+}
+
+function getDragPreviewSize(isImage, dragPreview, sourceWidth, sourceHeight) {
+  var dragPreviewWidth = isImage ? dragPreview.width : sourceWidth;
+  var dragPreviewHeight = isImage ? dragPreview.height : sourceHeight; // Work around @2x coordinate discrepancies in browsers
+
+  if (isSafari() && isImage) {
+    dragPreviewHeight /= window.devicePixelRatio;
+    dragPreviewWidth /= window.devicePixelRatio;
+  }
+
+  return {
+    dragPreviewWidth: dragPreviewWidth,
+    dragPreviewHeight: dragPreviewHeight
+  };
+}
+
+function getDragPreviewOffset(sourceNode, dragPreview, clientOffset, anchorPoint, offsetPoint) {
+  // The browsers will use the image intrinsic size under different conditions.
+  // Firefox only cares if it's an image, but WebKit also wants it to be detached.
+  var isImage = isImageNode(dragPreview);
+  var dragPreviewNode = isImage ? sourceNode : dragPreview;
+  var dragPreviewNodeOffsetFromClient = getNodeClientOffset$1(dragPreviewNode);
+  var offsetFromDragPreview = {
+    x: clientOffset.x - dragPreviewNodeOffsetFromClient.x,
+    y: clientOffset.y - dragPreviewNodeOffsetFromClient.y
+  };
+  var sourceWidth = sourceNode.offsetWidth,
+      sourceHeight = sourceNode.offsetHeight;
+  var anchorX = anchorPoint.anchorX,
+      anchorY = anchorPoint.anchorY;
+
+  var _getDragPreviewSize = getDragPreviewSize(isImage, dragPreview, sourceWidth, sourceHeight),
+      dragPreviewWidth = _getDragPreviewSize.dragPreviewWidth,
+      dragPreviewHeight = _getDragPreviewSize.dragPreviewHeight;
+
+  var calculateYOffset = function calculateYOffset() {
+    var interpolantY = new MonotonicInterpolant([0, 0.5, 1], [// Dock to the top
+    offsetFromDragPreview.y, // Align at the center
+    offsetFromDragPreview.y / sourceHeight * dragPreviewHeight, // Dock to the bottom
+    offsetFromDragPreview.y + dragPreviewHeight - sourceHeight]);
+    var y = interpolantY.interpolate(anchorY); // Work around Safari 8 positioning bug
+
+    if (isSafari() && isImage) {
+      // We'll have to wait for @3x to see if this is entirely correct
+      y += (window.devicePixelRatio - 1) * dragPreviewHeight;
+    }
+
+    return y;
+  };
+
+  var calculateXOffset = function calculateXOffset() {
+    // Interpolate coordinates depending on anchor point
+    // If you know a simpler way to do this, let me know
+    var interpolantX = new MonotonicInterpolant([0, 0.5, 1], [// Dock to the left
+    offsetFromDragPreview.x, // Align at the center
+    offsetFromDragPreview.x / sourceWidth * dragPreviewWidth, // Dock to the right
+    offsetFromDragPreview.x + dragPreviewWidth - sourceWidth]);
+    return interpolantX.interpolate(anchorX);
+  }; // Force offsets if specified in the options.
+
+
+  var offsetX = offsetPoint.offsetX,
+      offsetY = offsetPoint.offsetY;
+  var isManualOffsetX = offsetX === 0 || offsetX;
+  var isManualOffsetY = offsetY === 0 || offsetY;
+  return {
+    x: isManualOffsetX ? offsetX : calculateXOffset(),
+    y: isManualOffsetY ? offsetY : calculateYOffset()
+  };
+}
+
+var FILE = '__NATIVE_FILE__';
+var URL = '__NATIVE_URL__';
+var TEXT = '__NATIVE_TEXT__';
+
+var NativeTypes = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  FILE: FILE,
+  URL: URL,
+  TEXT: TEXT
+});
+
+function getDataFromDataTransfer(dataTransfer, typesToTry, defaultValue) {
+  var result = typesToTry.reduce(function (resultSoFar, typeToTry) {
+    return resultSoFar || dataTransfer.getData(typeToTry);
+  }, '');
+  return result != null ? result : defaultValue;
+}
+
+var _nativeTypesConfig;
+
+function _defineProperty$9(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+var nativeTypesConfig = (_nativeTypesConfig = {}, _defineProperty$9(_nativeTypesConfig, FILE, {
+  exposeProperties: {
+    files: function files(dataTransfer) {
+      return Array.prototype.slice.call(dataTransfer.files);
+    },
+    items: function items(dataTransfer) {
+      return dataTransfer.items;
+    }
+  },
+  matchesTypes: ['Files']
+}), _defineProperty$9(_nativeTypesConfig, URL, {
+  exposeProperties: {
+    urls: function urls(dataTransfer, matchesTypes) {
+      return getDataFromDataTransfer(dataTransfer, matchesTypes, '').split('\n');
+    }
+  },
+  matchesTypes: ['Url', 'text/uri-list']
+}), _defineProperty$9(_nativeTypesConfig, TEXT, {
+  exposeProperties: {
+    text: function text(dataTransfer, matchesTypes) {
+      return getDataFromDataTransfer(dataTransfer, matchesTypes, '');
+    }
+  },
+  matchesTypes: ['Text', 'text/plain']
+}), _nativeTypesConfig);
+
+function _classCallCheck$b(instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+}
+
+function _defineProperties$b(target, props) {
+  for (var i = 0; i < props.length; i++) {
+    var descriptor = props[i];
+    descriptor.enumerable = descriptor.enumerable || false;
+    descriptor.configurable = true;
+    if ("value" in descriptor) descriptor.writable = true;
+    Object.defineProperty(target, descriptor.key, descriptor);
+  }
+}
+
+function _createClass$b(Constructor, protoProps, staticProps) {
+  if (protoProps) _defineProperties$b(Constructor.prototype, protoProps);
+  if (staticProps) _defineProperties$b(Constructor, staticProps);
+  return Constructor;
+}
+
+var NativeDragSource = /*#__PURE__*/function () {
+  function NativeDragSource(config) {
+    _classCallCheck$b(this, NativeDragSource);
+
+    this.config = config;
+    this.item = {};
+    this.initializeExposedProperties();
+  }
+
+  _createClass$b(NativeDragSource, [{
+    key: "initializeExposedProperties",
+    value: function initializeExposedProperties() {
+      var _this = this;
+
+      Object.keys(this.config.exposeProperties).forEach(function (property) {
+        Object.defineProperty(_this.item, property, {
+          configurable: true,
+          enumerable: true,
+          get: function get() {
+            // eslint-disable-next-line no-console
+            console.warn("Browser doesn't allow reading \"".concat(property, "\" until the drop event."));
+            return null;
+          }
+        });
+      });
+    }
+  }, {
+    key: "loadDataTransfer",
+    value: function loadDataTransfer(dataTransfer) {
+      var _this2 = this;
+
+      if (dataTransfer) {
+        var newProperties = {};
+        Object.keys(this.config.exposeProperties).forEach(function (property) {
+          newProperties[property] = {
+            value: _this2.config.exposeProperties[property](dataTransfer, _this2.config.matchesTypes),
+            configurable: true,
+            enumerable: true
+          };
+        });
+        Object.defineProperties(this.item, newProperties);
+      }
+    }
+  }, {
+    key: "canDrag",
+    value: function canDrag() {
+      return true;
+    }
+  }, {
+    key: "beginDrag",
+    value: function beginDrag() {
+      return this.item;
+    }
+  }, {
+    key: "isDragging",
+    value: function isDragging(monitor, handle) {
+      return handle === monitor.getSourceId();
+    }
+  }, {
+    key: "endDrag",
+    value: function endDrag() {// empty
+    }
+  }]);
+
+  return NativeDragSource;
+}();
+
+function createNativeDragSource(type, dataTransfer) {
+  var result = new NativeDragSource(nativeTypesConfig[type]);
+  result.loadDataTransfer(dataTransfer);
+  return result;
+}
+function matchNativeItemType(dataTransfer) {
+  if (!dataTransfer) {
+    return null;
+  }
+
+  var dataTransferTypes = Array.prototype.slice.call(dataTransfer.types || []);
+  return Object.keys(nativeTypesConfig).filter(function (nativeItemType) {
+    var matchesTypes = nativeTypesConfig[nativeItemType].matchesTypes;
+    return matchesTypes.some(function (t) {
+      return dataTransferTypes.indexOf(t) > -1;
+    });
+  })[0] || null;
+}
+
+function _classCallCheck$a(instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+}
+
+function _defineProperties$a(target, props) {
+  for (var i = 0; i < props.length; i++) {
+    var descriptor = props[i];
+    descriptor.enumerable = descriptor.enumerable || false;
+    descriptor.configurable = true;
+    if ("value" in descriptor) descriptor.writable = true;
+    Object.defineProperty(target, descriptor.key, descriptor);
+  }
+}
+
+function _createClass$a(Constructor, protoProps, staticProps) {
+  if (protoProps) _defineProperties$a(Constructor.prototype, protoProps);
+  if (staticProps) _defineProperties$a(Constructor, staticProps);
+  return Constructor;
+}
+
+var OptionsReader$1 = /*#__PURE__*/function () {
+  function OptionsReader(globalContext) {
+    _classCallCheck$a(this, OptionsReader);
+
+    this.globalContext = globalContext;
+  }
+
+  _createClass$a(OptionsReader, [{
+    key: "window",
+    get: function get() {
+      if (this.globalContext) {
+        return this.globalContext;
+      } else if (typeof window !== 'undefined') {
+        return window;
+      }
+
+      return undefined;
+    }
+  }, {
+    key: "document",
+    get: function get() {
+      if (this.window) {
+        return this.window.document;
+      }
+
+      return undefined;
+    }
+  }]);
+
+  return OptionsReader;
+}();
+
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty$8(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
+function _defineProperty$8(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+function _classCallCheck$9(instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+}
+
+function _defineProperties$9(target, props) {
+  for (var i = 0; i < props.length; i++) {
+    var descriptor = props[i];
+    descriptor.enumerable = descriptor.enumerable || false;
+    descriptor.configurable = true;
+    if ("value" in descriptor) descriptor.writable = true;
+    Object.defineProperty(target, descriptor.key, descriptor);
+  }
+}
+
+function _createClass$9(Constructor, protoProps, staticProps) {
+  if (protoProps) _defineProperties$9(Constructor.prototype, protoProps);
+  if (staticProps) _defineProperties$9(Constructor, staticProps);
+  return Constructor;
+}
+var HTML5BackendImpl = /*#__PURE__*/function () {
+  function HTML5BackendImpl(manager, globalContext) {
+    var _this = this;
+
+    _classCallCheck$9(this, HTML5BackendImpl);
+
+    this.sourcePreviewNodes = new Map();
+    this.sourcePreviewNodeOptions = new Map();
+    this.sourceNodes = new Map();
+    this.sourceNodeOptions = new Map();
+    this.dragStartSourceIds = null;
+    this.dropTargetIds = [];
+    this.dragEnterTargetIds = [];
+    this.currentNativeSource = null;
+    this.currentNativeHandle = null;
+    this.currentDragSourceNode = null;
+    this.altKeyPressed = false;
+    this.mouseMoveTimeoutTimer = null;
+    this.asyncEndDragFrameId = null;
+    this.dragOverTargetIds = null;
+
+    this.getSourceClientOffset = function (sourceId) {
+      var source = _this.sourceNodes.get(sourceId);
+
+      return source && getNodeClientOffset$1(source) || null;
+    };
+
+    this.endDragNativeItem = function () {
+      if (!_this.isDraggingNativeItem()) {
+        return;
+      }
+
+      _this.actions.endDrag();
+
+      if (_this.currentNativeHandle) {
+        _this.registry.removeSource(_this.currentNativeHandle);
+      }
+
+      _this.currentNativeHandle = null;
+      _this.currentNativeSource = null;
+    };
+
+    this.isNodeInDocument = function (node) {
+      // Check the node either in the main document or in the current context
+      return Boolean(node && _this.document && _this.document.body && document.body.contains(node));
+    };
+
+    this.endDragIfSourceWasRemovedFromDOM = function () {
+      var node = _this.currentDragSourceNode;
+
+      if (_this.isNodeInDocument(node)) {
+        return;
+      }
+
+      if (_this.clearCurrentDragSourceNode()) {
+        _this.actions.endDrag();
+      }
+    };
+
+    this.handleTopDragStartCapture = function () {
+      _this.clearCurrentDragSourceNode();
+
+      _this.dragStartSourceIds = [];
+    };
+
+    this.handleTopDragStart = function (e) {
+      if (e.defaultPrevented) {
+        return;
+      }
+
+      var dragStartSourceIds = _this.dragStartSourceIds;
+      _this.dragStartSourceIds = null;
+      var clientOffset = getEventClientOffset$1(e); // Avoid crashing if we missed a drop event or our previous drag died
+
+      if (_this.monitor.isDragging()) {
+        _this.actions.endDrag();
+      } // Don't publish the source just yet (see why below)
+
+
+      _this.actions.beginDrag(dragStartSourceIds || [], {
+        publishSource: false,
+        getSourceClientOffset: _this.getSourceClientOffset,
+        clientOffset: clientOffset
+      });
+
+      var dataTransfer = e.dataTransfer;
+      var nativeType = matchNativeItemType(dataTransfer);
+
+      if (_this.monitor.isDragging()) {
+        if (dataTransfer && typeof dataTransfer.setDragImage === 'function') {
+          // Use custom drag image if user specifies it.
+          // If child drag source refuses drag but parent agrees,
+          // use parent's node as drag image. Neither works in IE though.
+          var sourceId = _this.monitor.getSourceId();
+
+          var sourceNode = _this.sourceNodes.get(sourceId);
+
+          var dragPreview = _this.sourcePreviewNodes.get(sourceId) || sourceNode;
+
+          if (dragPreview) {
+            var _this$getCurrentSourc = _this.getCurrentSourcePreviewNodeOptions(),
+                anchorX = _this$getCurrentSourc.anchorX,
+                anchorY = _this$getCurrentSourc.anchorY,
+                offsetX = _this$getCurrentSourc.offsetX,
+                offsetY = _this$getCurrentSourc.offsetY;
+
+            var anchorPoint = {
+              anchorX: anchorX,
+              anchorY: anchorY
+            };
+            var offsetPoint = {
+              offsetX: offsetX,
+              offsetY: offsetY
+            };
+            var dragPreviewOffset = getDragPreviewOffset(sourceNode, dragPreview, clientOffset, anchorPoint, offsetPoint);
+            dataTransfer.setDragImage(dragPreview, dragPreviewOffset.x, dragPreviewOffset.y);
+          }
+        }
+
+        try {
+          // Firefox won't drag without setting data
+          dataTransfer === null || dataTransfer === void 0 ? void 0 : dataTransfer.setData('application/json', {});
+        } catch (err) {} // IE doesn't support MIME types in setData
+        // Store drag source node so we can check whether
+        // it is removed from DOM and trigger endDrag manually.
+
+
+        _this.setCurrentDragSourceNode(e.target); // Now we are ready to publish the drag source.. or are we not?
+
+
+        var _this$getCurrentSourc2 = _this.getCurrentSourcePreviewNodeOptions(),
+            captureDraggingState = _this$getCurrentSourc2.captureDraggingState;
+
+        if (!captureDraggingState) {
+          // Usually we want to publish it in the next tick so that browser
+          // is able to screenshot the current (not yet dragging) state.
+          //
+          // It also neatly avoids a situation where render() returns null
+          // in the same tick for the source element, and browser freaks out.
+          setTimeout(function () {
+            return _this.actions.publishDragSource();
+          }, 0);
+        } else {
+          // In some cases the user may want to override this behavior, e.g.
+          // to work around IE not supporting custom drag previews.
+          //
+          // When using a custom drag layer, the only way to prevent
+          // the default drag preview from drawing in IE is to screenshot
+          // the dragging state in which the node itself has zero opacity
+          // and height. In this case, though, returning null from render()
+          // will abruptly end the dragging, which is not obvious.
+          //
+          // This is the reason such behavior is strictly opt-in.
+          _this.actions.publishDragSource();
+        }
+      } else if (nativeType) {
+        // A native item (such as URL) dragged from inside the document
+        _this.beginDragNativeItem(nativeType);
+      } else if (dataTransfer && !dataTransfer.types && (e.target && !e.target.hasAttribute || !e.target.hasAttribute('draggable'))) {
+        // Looks like a Safari bug: dataTransfer.types is null, but there was no draggable.
+        // Just let it drag. It's a native type (URL or text) and will be picked up in
+        // dragenter handler.
+        return;
+      } else {
+        // If by this time no drag source reacted, tell browser not to drag.
+        e.preventDefault();
+      }
+    };
+
+    this.handleTopDragEndCapture = function () {
+      if (_this.clearCurrentDragSourceNode()) {
+        // Firefox can dispatch this event in an infinite loop
+        // if dragend handler does something like showing an alert.
+        // Only proceed if we have not handled it already.
+        _this.actions.endDrag();
+      }
+    };
+
+    this.handleTopDragEnterCapture = function (e) {
+      _this.dragEnterTargetIds = [];
+
+      var isFirstEnter = _this.enterLeaveCounter.enter(e.target);
+
+      if (!isFirstEnter || _this.monitor.isDragging()) {
+        return;
+      }
+
+      var dataTransfer = e.dataTransfer;
+      var nativeType = matchNativeItemType(dataTransfer);
+
+      if (nativeType) {
+        // A native item (such as file or URL) dragged from outside the document
+        _this.beginDragNativeItem(nativeType, dataTransfer);
+      }
+    };
+
+    this.handleTopDragEnter = function (e) {
+      var dragEnterTargetIds = _this.dragEnterTargetIds;
+      _this.dragEnterTargetIds = [];
+
+      if (!_this.monitor.isDragging()) {
+        // This is probably a native item type we don't understand.
+        return;
+      }
+
+      _this.altKeyPressed = e.altKey;
+
+      if (!isFirefox()) {
+        // Don't emit hover in `dragenter` on Firefox due to an edge case.
+        // If the target changes position as the result of `dragenter`, Firefox
+        // will still happily dispatch `dragover` despite target being no longer
+        // there. The easy solution is to only fire `hover` in `dragover` on FF.
+        _this.actions.hover(dragEnterTargetIds, {
+          clientOffset: getEventClientOffset$1(e)
+        });
+      }
+
+      var canDrop = dragEnterTargetIds.some(function (targetId) {
+        return _this.monitor.canDropOnTarget(targetId);
+      });
+
+      if (canDrop) {
+        // IE requires this to fire dragover events
+        e.preventDefault();
+
+        if (e.dataTransfer) {
+          e.dataTransfer.dropEffect = _this.getCurrentDropEffect();
+        }
+      }
+    };
+
+    this.handleTopDragOverCapture = function () {
+      _this.dragOverTargetIds = [];
+    };
+
+    this.handleTopDragOver = function (e) {
+      var dragOverTargetIds = _this.dragOverTargetIds;
+      _this.dragOverTargetIds = [];
+
+      if (!_this.monitor.isDragging()) {
+        // This is probably a native item type we don't understand.
+        // Prevent default "drop and blow away the whole document" action.
+        e.preventDefault();
+
+        if (e.dataTransfer) {
+          e.dataTransfer.dropEffect = 'none';
+        }
+
+        return;
+      }
+
+      _this.altKeyPressed = e.altKey;
+
+      _this.actions.hover(dragOverTargetIds || [], {
+        clientOffset: getEventClientOffset$1(e)
+      });
+
+      var canDrop = (dragOverTargetIds || []).some(function (targetId) {
+        return _this.monitor.canDropOnTarget(targetId);
+      });
+
+      if (canDrop) {
+        // Show user-specified drop effect.
+        e.preventDefault();
+
+        if (e.dataTransfer) {
+          e.dataTransfer.dropEffect = _this.getCurrentDropEffect();
+        }
+      } else if (_this.isDraggingNativeItem()) {
+        // Don't show a nice cursor but still prevent default
+        // "drop and blow away the whole document" action.
+        e.preventDefault();
+      } else {
+        e.preventDefault();
+
+        if (e.dataTransfer) {
+          e.dataTransfer.dropEffect = 'none';
+        }
+      }
+    };
+
+    this.handleTopDragLeaveCapture = function (e) {
+      if (_this.isDraggingNativeItem()) {
+        e.preventDefault();
+      }
+
+      var isLastLeave = _this.enterLeaveCounter.leave(e.target);
+
+      if (!isLastLeave) {
+        return;
+      }
+
+      if (_this.isDraggingNativeItem()) {
+        _this.endDragNativeItem();
+      }
+    };
+
+    this.handleTopDropCapture = function (e) {
+      _this.dropTargetIds = [];
+      e.preventDefault();
+
+      if (_this.isDraggingNativeItem()) {
+        var _this$currentNativeSo;
+
+        (_this$currentNativeSo = _this.currentNativeSource) === null || _this$currentNativeSo === void 0 ? void 0 : _this$currentNativeSo.loadDataTransfer(e.dataTransfer);
+      }
+
+      _this.enterLeaveCounter.reset();
+    };
+
+    this.handleTopDrop = function (e) {
+      var dropTargetIds = _this.dropTargetIds;
+      _this.dropTargetIds = [];
+
+      _this.actions.hover(dropTargetIds, {
+        clientOffset: getEventClientOffset$1(e)
+      });
+
+      _this.actions.drop({
+        dropEffect: _this.getCurrentDropEffect()
+      });
+
+      if (_this.isDraggingNativeItem()) {
+        _this.endDragNativeItem();
+      } else {
+        _this.endDragIfSourceWasRemovedFromDOM();
+      }
+    };
+
+    this.handleSelectStart = function (e) {
+      var target = e.target; // Only IE requires us to explicitly say
+      // we want drag drop operation to start
+
+      if (typeof target.dragDrop !== 'function') {
+        return;
+      } // Inputs and textareas should be selectable
+
+
+      if (target.tagName === 'INPUT' || target.tagName === 'SELECT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
+        return;
+      } // For other targets, ask IE
+      // to enable drag and drop
+
+
+      e.preventDefault();
+      target.dragDrop();
+    };
+
+    this.options = new OptionsReader$1(globalContext);
+    this.actions = manager.getActions();
+    this.monitor = manager.getMonitor();
+    this.registry = manager.getRegistry();
+    this.enterLeaveCounter = new EnterLeaveCounter(this.isNodeInDocument);
+  }
+  /**
+   * Generate profiling statistics for the HTML5Backend.
+   */
+
+
+  _createClass$9(HTML5BackendImpl, [{
+    key: "profile",
+    value: function profile() {
+      var _this$dragStartSource, _this$dragOverTargetI;
+
+      return {
+        sourcePreviewNodes: this.sourcePreviewNodes.size,
+        sourcePreviewNodeOptions: this.sourcePreviewNodeOptions.size,
+        sourceNodeOptions: this.sourceNodeOptions.size,
+        sourceNodes: this.sourceNodes.size,
+        dragStartSourceIds: ((_this$dragStartSource = this.dragStartSourceIds) === null || _this$dragStartSource === void 0 ? void 0 : _this$dragStartSource.length) || 0,
+        dropTargetIds: this.dropTargetIds.length,
+        dragEnterTargetIds: this.dragEnterTargetIds.length,
+        dragOverTargetIds: ((_this$dragOverTargetI = this.dragOverTargetIds) === null || _this$dragOverTargetI === void 0 ? void 0 : _this$dragOverTargetI.length) || 0
+      };
+    } // public for test
+
+  }, {
+    key: "setup",
+    value: function setup() {
+      if (this.window === undefined) {
+        return;
+      }
+
+      if (this.window.__isReactDndBackendSetUp) {
+        throw new Error('Cannot have two HTML5 backends at the same time.');
+      }
+
+      this.window.__isReactDndBackendSetUp = true;
+      this.addEventListeners(this.window);
+    }
+  }, {
+    key: "teardown",
+    value: function teardown() {
+      if (this.window === undefined) {
+        return;
+      }
+
+      this.window.__isReactDndBackendSetUp = false;
+      this.removeEventListeners(this.window);
+      this.clearCurrentDragSourceNode();
+
+      if (this.asyncEndDragFrameId) {
+        this.window.cancelAnimationFrame(this.asyncEndDragFrameId);
+      }
+    }
+  }, {
+    key: "connectDragPreview",
+    value: function connectDragPreview(sourceId, node, options) {
+      var _this2 = this;
+
+      this.sourcePreviewNodeOptions.set(sourceId, options);
+      this.sourcePreviewNodes.set(sourceId, node);
+      return function () {
+        _this2.sourcePreviewNodes.delete(sourceId);
+
+        _this2.sourcePreviewNodeOptions.delete(sourceId);
+      };
+    }
+  }, {
+    key: "connectDragSource",
+    value: function connectDragSource(sourceId, node, options) {
+      var _this3 = this;
+
+      this.sourceNodes.set(sourceId, node);
+      this.sourceNodeOptions.set(sourceId, options);
+
+      var handleDragStart = function handleDragStart(e) {
+        return _this3.handleDragStart(e, sourceId);
+      };
+
+      var handleSelectStart = function handleSelectStart(e) {
+        return _this3.handleSelectStart(e);
+      };
+
+      node.setAttribute('draggable', 'true');
+      node.addEventListener('dragstart', handleDragStart);
+      node.addEventListener('selectstart', handleSelectStart);
+      return function () {
+        _this3.sourceNodes.delete(sourceId);
+
+        _this3.sourceNodeOptions.delete(sourceId);
+
+        node.removeEventListener('dragstart', handleDragStart);
+        node.removeEventListener('selectstart', handleSelectStart);
+        node.setAttribute('draggable', 'false');
+      };
+    }
+  }, {
+    key: "connectDropTarget",
+    value: function connectDropTarget(targetId, node) {
+      var _this4 = this;
+
+      var handleDragEnter = function handleDragEnter(e) {
+        return _this4.handleDragEnter(e, targetId);
+      };
+
+      var handleDragOver = function handleDragOver(e) {
+        return _this4.handleDragOver(e, targetId);
+      };
+
+      var handleDrop = function handleDrop(e) {
+        return _this4.handleDrop(e, targetId);
+      };
+
+      node.addEventListener('dragenter', handleDragEnter);
+      node.addEventListener('dragover', handleDragOver);
+      node.addEventListener('drop', handleDrop);
+      return function () {
+        node.removeEventListener('dragenter', handleDragEnter);
+        node.removeEventListener('dragover', handleDragOver);
+        node.removeEventListener('drop', handleDrop);
+      };
+    }
+  }, {
+    key: "addEventListeners",
+    value: function addEventListeners(target) {
+      // SSR Fix (https://github.com/react-dnd/react-dnd/pull/813
+      if (!target.addEventListener) {
+        return;
+      }
+
+      target.addEventListener('dragstart', this.handleTopDragStart);
+      target.addEventListener('dragstart', this.handleTopDragStartCapture, true);
+      target.addEventListener('dragend', this.handleTopDragEndCapture, true);
+      target.addEventListener('dragenter', this.handleTopDragEnter);
+      target.addEventListener('dragenter', this.handleTopDragEnterCapture, true);
+      target.addEventListener('dragleave', this.handleTopDragLeaveCapture, true);
+      target.addEventListener('dragover', this.handleTopDragOver);
+      target.addEventListener('dragover', this.handleTopDragOverCapture, true);
+      target.addEventListener('drop', this.handleTopDrop);
+      target.addEventListener('drop', this.handleTopDropCapture, true);
+    }
+  }, {
+    key: "removeEventListeners",
+    value: function removeEventListeners(target) {
+      // SSR Fix (https://github.com/react-dnd/react-dnd/pull/813
+      if (!target.removeEventListener) {
+        return;
+      }
+
+      target.removeEventListener('dragstart', this.handleTopDragStart);
+      target.removeEventListener('dragstart', this.handleTopDragStartCapture, true);
+      target.removeEventListener('dragend', this.handleTopDragEndCapture, true);
+      target.removeEventListener('dragenter', this.handleTopDragEnter);
+      target.removeEventListener('dragenter', this.handleTopDragEnterCapture, true);
+      target.removeEventListener('dragleave', this.handleTopDragLeaveCapture, true);
+      target.removeEventListener('dragover', this.handleTopDragOver);
+      target.removeEventListener('dragover', this.handleTopDragOverCapture, true);
+      target.removeEventListener('drop', this.handleTopDrop);
+      target.removeEventListener('drop', this.handleTopDropCapture, true);
+    }
+  }, {
+    key: "getCurrentSourceNodeOptions",
+    value: function getCurrentSourceNodeOptions() {
+      var sourceId = this.monitor.getSourceId();
+      var sourceNodeOptions = this.sourceNodeOptions.get(sourceId);
+      return _objectSpread({
+        dropEffect: this.altKeyPressed ? 'copy' : 'move'
+      }, sourceNodeOptions || {});
+    }
+  }, {
+    key: "getCurrentDropEffect",
+    value: function getCurrentDropEffect() {
+      if (this.isDraggingNativeItem()) {
+        // It makes more sense to default to 'copy' for native resources
+        return 'copy';
+      }
+
+      return this.getCurrentSourceNodeOptions().dropEffect;
+    }
+  }, {
+    key: "getCurrentSourcePreviewNodeOptions",
+    value: function getCurrentSourcePreviewNodeOptions() {
+      var sourceId = this.monitor.getSourceId();
+      var sourcePreviewNodeOptions = this.sourcePreviewNodeOptions.get(sourceId);
+      return _objectSpread({
+        anchorX: 0.5,
+        anchorY: 0.5,
+        captureDraggingState: false
+      }, sourcePreviewNodeOptions || {});
+    }
+  }, {
+    key: "isDraggingNativeItem",
+    value: function isDraggingNativeItem() {
+      var itemType = this.monitor.getItemType();
+      return Object.keys(NativeTypes).some(function (key) {
+        return NativeTypes[key] === itemType;
+      });
+    }
+  }, {
+    key: "beginDragNativeItem",
+    value: function beginDragNativeItem(type, dataTransfer) {
+      this.clearCurrentDragSourceNode();
+      this.currentNativeSource = createNativeDragSource(type, dataTransfer);
+      this.currentNativeHandle = this.registry.addSource(type, this.currentNativeSource);
+      this.actions.beginDrag([this.currentNativeHandle]);
+    }
+  }, {
+    key: "setCurrentDragSourceNode",
+    value: function setCurrentDragSourceNode(node) {
+      var _this5 = this;
+
+      this.clearCurrentDragSourceNode();
+      this.currentDragSourceNode = node; // A timeout of > 0 is necessary to resolve Firefox issue referenced
+      // See:
+      //   * https://github.com/react-dnd/react-dnd/pull/928
+      //   * https://github.com/react-dnd/react-dnd/issues/869
+
+      var MOUSE_MOVE_TIMEOUT = 1000; // Receiving a mouse event in the middle of a dragging operation
+      // means it has ended and the drag source node disappeared from DOM,
+      // so the browser didn't dispatch the dragend event.
+      //
+      // We need to wait before we start listening for mousemove events.
+      // This is needed because the drag preview needs to be drawn or else it fires an 'mousemove' event
+      // immediately in some browsers.
+      //
+      // See:
+      //   * https://github.com/react-dnd/react-dnd/pull/928
+      //   * https://github.com/react-dnd/react-dnd/issues/869
+      //
+
+      this.mouseMoveTimeoutTimer = setTimeout(function () {
+        return _this5.window && _this5.window.addEventListener('mousemove', _this5.endDragIfSourceWasRemovedFromDOM, true);
+      }, MOUSE_MOVE_TIMEOUT);
+    }
+  }, {
+    key: "clearCurrentDragSourceNode",
+    value: function clearCurrentDragSourceNode() {
+      if (this.currentDragSourceNode) {
+        this.currentDragSourceNode = null;
+
+        if (this.window) {
+          this.window.clearTimeout(this.mouseMoveTimeoutTimer || undefined);
+          this.window.removeEventListener('mousemove', this.endDragIfSourceWasRemovedFromDOM, true);
+        }
+
+        this.mouseMoveTimeoutTimer = null;
+        return true;
+      }
+
+      return false;
+    }
+  }, {
+    key: "handleDragStart",
+    value: function handleDragStart(e, sourceId) {
+      if (e.defaultPrevented) {
+        return;
+      }
+
+      if (!this.dragStartSourceIds) {
+        this.dragStartSourceIds = [];
+      }
+
+      this.dragStartSourceIds.unshift(sourceId);
+    }
+  }, {
+    key: "handleDragEnter",
+    value: function handleDragEnter(e, targetId) {
+      this.dragEnterTargetIds.unshift(targetId);
+    }
+  }, {
+    key: "handleDragOver",
+    value: function handleDragOver(e, targetId) {
+      if (this.dragOverTargetIds === null) {
+        this.dragOverTargetIds = [];
+      }
+
+      this.dragOverTargetIds.unshift(targetId);
+    }
+  }, {
+    key: "handleDrop",
+    value: function handleDrop(e, targetId) {
+      this.dropTargetIds.unshift(targetId);
+    }
+  }, {
+    key: "window",
+    get: function get() {
+      return this.options.window;
+    }
+  }, {
+    key: "document",
+    get: function get() {
+      return this.options.document;
+    }
+  }]);
+
+  return HTML5BackendImpl;
+}();
+
+var HTML5Backend = function createBackend(manager, context) {
+  return new HTML5BackendImpl(manager, context);
+};
+
+var ListenerType;
+
+(function (ListenerType) {
+  ListenerType["mouse"] = "mouse";
+  ListenerType["touch"] = "touch";
+  ListenerType["keyboard"] = "keyboard";
+})(ListenerType || (ListenerType = {}));
+
+// Used for MouseEvent.buttons (note the s on the end).
+var MouseButtons = {
+  Left: 1,
+  Right: 2,
+  Center: 4
+}; // Used for e.button (note the lack of an s on the end).
+
+var MouseButton = {
+  Left: 0,
+  Center: 1,
+  Right: 2
+};
+/**
+ * Only touch events and mouse events where the left button is pressed should initiate a drag.
+ * @param {MouseEvent | TouchEvent} e The event
+ */
+
+function eventShouldStartDrag(e) {
+  // For touch events, button will be undefined. If e.button is defined,
+  // then it should be MouseButton.Left.
+  return e.button === undefined || e.button === MouseButton.Left;
+}
+/**
+ * Only touch events and mouse events where the left mouse button is no longer held should end a drag.
+ * It's possible the user mouse downs with the left mouse button, then mouse down and ups with the right mouse button.
+ * We don't want releasing the right mouse button to end the drag.
+ * @param {MouseEvent | TouchEvent} e The event
+ */
+
+function eventShouldEndDrag(e) {
+  // Touch events will have buttons be undefined, while mouse events will have e.buttons's left button
+  // bit field unset if the left mouse button has been released
+  return e.buttons === undefined || (e.buttons & MouseButtons.Left) === 0;
+}
+function isTouchEvent(e) {
+  return !!e.targetTouches;
+}
+
+var ELEMENT_NODE = 1;
+function getNodeClientOffset(node) {
+  var el = node.nodeType === ELEMENT_NODE ? node : node.parentElement;
+
+  if (!el) {
+    return undefined;
+  }
+
+  var _el$getBoundingClient = el.getBoundingClientRect(),
+      top = _el$getBoundingClient.top,
+      left = _el$getBoundingClient.left;
+
+  return {
+    x: left,
+    y: top
+  };
+}
+function getEventClientTouchOffset(e, lastTargetTouchFallback) {
+  if (e.targetTouches.length === 1) {
+    return getEventClientOffset(e.targetTouches[0]);
+  } else if (lastTargetTouchFallback && e.touches.length === 1) {
+    if (e.touches[0].target === lastTargetTouchFallback.target) {
+      return getEventClientOffset(e.touches[0]);
+    }
+  }
+}
+function getEventClientOffset(e, lastTargetTouchFallback) {
+  if (isTouchEvent(e)) {
+    return getEventClientTouchOffset(e, lastTargetTouchFallback);
+  } else {
+    return {
+      x: e.clientX,
+      y: e.clientY
+    };
+  }
+}
+
+function distance(x1, y1, x2, y2) {
+  return Math.sqrt(Math.pow(Math.abs(x2 - x1), 2) + Math.pow(Math.abs(y2 - y1), 2));
+}
+function inAngleRanges(x1, y1, x2, y2, angleRanges) {
+  if (!angleRanges) {
+    return false;
+  }
+
+  var angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI + 180;
+
+  for (var i = 0; i < angleRanges.length; ++i) {
+    if ((angleRanges[i].start == null || angle >= angleRanges[i].start) && (angleRanges[i].end == null || angle <= angleRanges[i].end)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+var supportsPassive = function () {
+  // simular to jQuery's test
+  var supported = false;
+
+  try {
+    addEventListener('test', function () {// do nothing
+    }, Object.defineProperty({}, 'passive', {
+      get: function get() {
+        supported = true;
+        return true;
+      }
+    }));
+  } catch (e) {// do nothing
+  }
+
+  return supported;
+}();
+
+function _classCallCheck$8(instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+}
+
+function _defineProperties$8(target, props) {
+  for (var i = 0; i < props.length; i++) {
+    var descriptor = props[i];
+    descriptor.enumerable = descriptor.enumerable || false;
+    descriptor.configurable = true;
+    if ("value" in descriptor) descriptor.writable = true;
+    Object.defineProperty(target, descriptor.key, descriptor);
+  }
+}
+
+function _createClass$8(Constructor, protoProps, staticProps) {
+  if (protoProps) _defineProperties$8(Constructor.prototype, protoProps);
+  if (staticProps) _defineProperties$8(Constructor, staticProps);
+  return Constructor;
+}
+
+var OptionsReader = /*#__PURE__*/function () {
+  function OptionsReader(incoming, context) {
+    var _this = this;
+
+    _classCallCheck$8(this, OptionsReader);
+
+    this.enableTouchEvents = true;
+    this.enableMouseEvents = false;
+    this.enableKeyboardEvents = false;
+    this.ignoreContextMenu = false;
+    this.enableHoverOutsideTarget = false;
+    this.touchSlop = 0;
+    this.scrollAngleRanges = undefined;
+    this.context = context;
+    this.delayTouchStart = incoming.delayTouchStart || incoming.delay || 0;
+    this.delayMouseStart = incoming.delayMouseStart || incoming.delay || 0;
+    Object.keys(incoming).forEach(function (key) {
+      if (incoming[key] != null) {
+        _this[key] = incoming[key];
+      }
+    });
+  }
+
+  _createClass$8(OptionsReader, [{
+    key: "window",
+    get: function get() {
+      if (this.context && this.context.window) {
+        return this.context.window;
+      } else if (typeof window !== 'undefined') {
+        return window;
+      }
+
+      return undefined;
+    }
+  }, {
+    key: "document",
+    get: function get() {
+      if (this.window) {
+        return this.window.document;
+      }
+
+      return undefined;
+    }
+  }]);
+
+  return OptionsReader;
+}();
+
+var _eventNames;
+
+function _classCallCheck$7(instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+}
+
+function _defineProperties$7(target, props) {
+  for (var i = 0; i < props.length; i++) {
+    var descriptor = props[i];
+    descriptor.enumerable = descriptor.enumerable || false;
+    descriptor.configurable = true;
+    if ("value" in descriptor) descriptor.writable = true;
+    Object.defineProperty(target, descriptor.key, descriptor);
+  }
+}
+
+function _createClass$7(Constructor, protoProps, staticProps) {
+  if (protoProps) _defineProperties$7(Constructor.prototype, protoProps);
+  if (staticProps) _defineProperties$7(Constructor, staticProps);
+  return Constructor;
+}
+
+function _defineProperty$7(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+var eventNames = (_eventNames = {}, _defineProperty$7(_eventNames, ListenerType.mouse, {
+  start: 'mousedown',
+  move: 'mousemove',
+  end: 'mouseup',
+  contextmenu: 'contextmenu'
+}), _defineProperty$7(_eventNames, ListenerType.touch, {
+  start: 'touchstart',
+  move: 'touchmove',
+  end: 'touchend'
+}), _defineProperty$7(_eventNames, ListenerType.keyboard, {
+  keydown: 'keydown'
+}), _eventNames);
+var TouchBackendImpl = /*#__PURE__*/function () {
+  function TouchBackendImpl(manager, context, options) {
+    var _this = this;
+
+    _classCallCheck$7(this, TouchBackendImpl);
+
+    this.getSourceClientOffset = function (sourceId) {
+      var element = _this.sourceNodes.get(sourceId);
+
+      return element && getNodeClientOffset(element);
+    };
+
+    this.handleTopMoveStartCapture = function (e) {
+      if (!eventShouldStartDrag(e)) {
+        return;
+      }
+
+      _this.moveStartSourceIds = [];
+    };
+
+    this.handleMoveStart = function (sourceId) {
+      // Just because we received an event doesn't necessarily mean we need to collect drag sources.
+      // We only collect start collecting drag sources on touch and left mouse events.
+      if (Array.isArray(_this.moveStartSourceIds)) {
+        _this.moveStartSourceIds.unshift(sourceId);
+      }
+    };
+
+    this.handleTopMoveStart = function (e) {
+      if (!eventShouldStartDrag(e)) {
+        return;
+      } // Don't prematurely preventDefault() here since it might:
+      // 1. Mess up scrolling
+      // 2. Mess up long tap (which brings up context menu)
+      // 3. If there's an anchor link as a child, tap won't be triggered on link
+
+
+      var clientOffset = getEventClientOffset(e);
+
+      if (clientOffset) {
+        if (isTouchEvent(e)) {
+          _this.lastTargetTouchFallback = e.targetTouches[0];
+        }
+
+        _this._mouseClientOffset = clientOffset;
+      }
+
+      _this.waitingForDelay = false;
+    };
+
+    this.handleTopMoveStartDelay = function (e) {
+      if (!eventShouldStartDrag(e)) {
+        return;
+      }
+
+      var delay = e.type === eventNames.touch.start ? _this.options.delayTouchStart : _this.options.delayMouseStart;
+      _this.timeout = setTimeout(_this.handleTopMoveStart.bind(_this, e), delay);
+      _this.waitingForDelay = true;
+    };
+
+    this.handleTopMoveCapture = function () {
+      _this.dragOverTargetIds = [];
+    };
+
+    this.handleMove = function (_evt, targetId) {
+      if (_this.dragOverTargetIds) {
+        _this.dragOverTargetIds.unshift(targetId);
+      }
+    };
+
+    this.handleTopMove = function (e) {
+      if (_this.timeout) {
+        clearTimeout(_this.timeout);
+      }
+
+      if (!_this.document || _this.waitingForDelay) {
+        return;
+      }
+
+      var moveStartSourceIds = _this.moveStartSourceIds,
+          dragOverTargetIds = _this.dragOverTargetIds;
+      var enableHoverOutsideTarget = _this.options.enableHoverOutsideTarget;
+      var clientOffset = getEventClientOffset(e, _this.lastTargetTouchFallback);
+
+      if (!clientOffset) {
+        return;
+      } // If the touch move started as a scroll, or is is between the scroll angles
+
+
+      if (_this._isScrolling || !_this.monitor.isDragging() && inAngleRanges(_this._mouseClientOffset.x || 0, _this._mouseClientOffset.y || 0, clientOffset.x, clientOffset.y, _this.options.scrollAngleRanges)) {
+        _this._isScrolling = true;
+        return;
+      } // If we're not dragging and we've moved a little, that counts as a drag start
+
+
+      if (!_this.monitor.isDragging() && // eslint-disable-next-line no-prototype-builtins
+      _this._mouseClientOffset.hasOwnProperty('x') && moveStartSourceIds && distance(_this._mouseClientOffset.x || 0, _this._mouseClientOffset.y || 0, clientOffset.x, clientOffset.y) > (_this.options.touchSlop ? _this.options.touchSlop : 0)) {
+        _this.moveStartSourceIds = undefined;
+
+        _this.actions.beginDrag(moveStartSourceIds, {
+          clientOffset: _this._mouseClientOffset,
+          getSourceClientOffset: _this.getSourceClientOffset,
+          publishSource: false
+        });
+      }
+
+      if (!_this.monitor.isDragging()) {
+        return;
+      }
+
+      var sourceNode = _this.sourceNodes.get(_this.monitor.getSourceId());
+
+      _this.installSourceNodeRemovalObserver(sourceNode);
+
+      _this.actions.publishDragSource();
+
+      if (e.cancelable) e.preventDefault(); // Get the node elements of the hovered DropTargets
+
+      var dragOverTargetNodes = (dragOverTargetIds || []).map(function (key) {
+        return _this.targetNodes.get(key);
+      }).filter(function (e) {
+        return !!e;
+      }); // Get the a ordered list of nodes that are touched by
+
+      var elementsAtPoint = _this.options.getDropTargetElementsAtPoint ? _this.options.getDropTargetElementsAtPoint(clientOffset.x, clientOffset.y, dragOverTargetNodes) : _this.document.elementsFromPoint(clientOffset.x, clientOffset.y); // Extend list with parents that are not receiving elementsFromPoint events (size 0 elements and svg groups)
+
+      var elementsAtPointExtended = [];
+
+      for (var nodeId in elementsAtPoint) {
+        // eslint-disable-next-line no-prototype-builtins
+        if (!elementsAtPoint.hasOwnProperty(nodeId)) {
+          continue;
+        }
+
+        var currentNode = elementsAtPoint[nodeId];
+        elementsAtPointExtended.push(currentNode);
+
+        while (currentNode) {
+          currentNode = currentNode.parentElement;
+
+          if (currentNode && elementsAtPointExtended.indexOf(currentNode) === -1) {
+            elementsAtPointExtended.push(currentNode);
+          }
+        }
+      }
+
+      var orderedDragOverTargetIds = elementsAtPointExtended // Filter off nodes that arent a hovered DropTargets nodes
+      .filter(function (node) {
+        return dragOverTargetNodes.indexOf(node) > -1;
+      }) // Map back the nodes elements to targetIds
+      .map(function (node) {
+        return _this._getDropTargetId(node);
+      }) // Filter off possible null rows
+      .filter(function (node) {
+        return !!node;
+      }).filter(function (id, index, ids) {
+        return ids.indexOf(id) === index;
+      }); // Invoke hover for drop targets when source node is still over and pointer is outside
+
+      if (enableHoverOutsideTarget) {
+        for (var targetId in _this.targetNodes) {
+          var targetNode = _this.targetNodes.get(targetId);
+
+          if (sourceNode && targetNode && targetNode.contains(sourceNode) && orderedDragOverTargetIds.indexOf(targetId) === -1) {
+            orderedDragOverTargetIds.unshift(targetId);
+            break;
+          }
+        }
+      } // Reverse order because dnd-core reverse it before calling the DropTarget drop methods
+
+
+      orderedDragOverTargetIds.reverse();
+
+      _this.actions.hover(orderedDragOverTargetIds, {
+        clientOffset: clientOffset
+      });
+    };
+    /**
+     *
+     * visible for testing
+     */
+
+
+    this._getDropTargetId = function (node) {
+      var keys = _this.targetNodes.keys();
+
+      var next = keys.next();
+
+      while (next.done === false) {
+        var targetId = next.value;
+
+        if (node === _this.targetNodes.get(targetId)) {
+          return targetId;
+        } else {
+          next = keys.next();
+        }
+      }
+
+      return undefined;
+    };
+
+    this.handleTopMoveEndCapture = function (e) {
+      _this._isScrolling = false;
+      _this.lastTargetTouchFallback = undefined;
+
+      if (!eventShouldEndDrag(e)) {
+        return;
+      }
+
+      if (!_this.monitor.isDragging() || _this.monitor.didDrop()) {
+        _this.moveStartSourceIds = undefined;
+        return;
+      }
+
+      if (e.cancelable) e.preventDefault();
+      _this._mouseClientOffset = {};
+
+      _this.uninstallSourceNodeRemovalObserver();
+
+      _this.actions.drop();
+
+      _this.actions.endDrag();
+    };
+
+    this.handleCancelOnEscape = function (e) {
+      if (e.key === 'Escape' && _this.monitor.isDragging()) {
+        _this._mouseClientOffset = {};
+
+        _this.uninstallSourceNodeRemovalObserver();
+
+        _this.actions.endDrag();
+      }
+    };
+
+    this.options = new OptionsReader(options, context);
+    this.actions = manager.getActions();
+    this.monitor = manager.getMonitor();
+    this.sourceNodes = new Map();
+    this.sourcePreviewNodes = new Map();
+    this.sourcePreviewNodeOptions = new Map();
+    this.targetNodes = new Map();
+    this.listenerTypes = [];
+    this._mouseClientOffset = {};
+    this._isScrolling = false;
+
+    if (this.options.enableMouseEvents) {
+      this.listenerTypes.push(ListenerType.mouse);
+    }
+
+    if (this.options.enableTouchEvents) {
+      this.listenerTypes.push(ListenerType.touch);
+    }
+
+    if (this.options.enableKeyboardEvents) {
+      this.listenerTypes.push(ListenerType.keyboard);
+    }
+  }
+  /**
+   * Generate profiling statistics for the HTML5Backend.
+   */
+
+
+  _createClass$7(TouchBackendImpl, [{
+    key: "profile",
+    value: function profile() {
+      var _this$dragOverTargetI;
+
+      return {
+        sourceNodes: this.sourceNodes.size,
+        sourcePreviewNodes: this.sourcePreviewNodes.size,
+        sourcePreviewNodeOptions: this.sourcePreviewNodeOptions.size,
+        targetNodes: this.targetNodes.size,
+        dragOverTargetIds: ((_this$dragOverTargetI = this.dragOverTargetIds) === null || _this$dragOverTargetI === void 0 ? void 0 : _this$dragOverTargetI.length) || 0
+      };
+    } // public for test
+
+  }, {
+    key: "setup",
+    value: function setup() {
+      if (!this.window) {
+        return;
+      }
+
+      invariant(!TouchBackendImpl.isSetUp, 'Cannot have two Touch backends at the same time.');
+      TouchBackendImpl.isSetUp = true;
+      this.addEventListener(this.window, 'start', this.getTopMoveStartHandler());
+      this.addEventListener(this.window, 'start', this.handleTopMoveStartCapture, true);
+      this.addEventListener(this.window, 'move', this.handleTopMove);
+      this.addEventListener(this.window, 'move', this.handleTopMoveCapture, true);
+      this.addEventListener(this.window, 'end', this.handleTopMoveEndCapture, true);
+
+      if (this.options.enableMouseEvents && !this.options.ignoreContextMenu) {
+        this.addEventListener(this.window, 'contextmenu', this.handleTopMoveEndCapture);
+      }
+
+      if (this.options.enableKeyboardEvents) {
+        this.addEventListener(this.window, 'keydown', this.handleCancelOnEscape, true);
+      }
+    }
+  }, {
+    key: "teardown",
+    value: function teardown() {
+      if (!this.window) {
+        return;
+      }
+
+      TouchBackendImpl.isSetUp = false;
+      this._mouseClientOffset = {};
+      this.removeEventListener(this.window, 'start', this.handleTopMoveStartCapture, true);
+      this.removeEventListener(this.window, 'start', this.handleTopMoveStart);
+      this.removeEventListener(this.window, 'move', this.handleTopMoveCapture, true);
+      this.removeEventListener(this.window, 'move', this.handleTopMove);
+      this.removeEventListener(this.window, 'end', this.handleTopMoveEndCapture, true);
+
+      if (this.options.enableMouseEvents && !this.options.ignoreContextMenu) {
+        this.removeEventListener(this.window, 'contextmenu', this.handleTopMoveEndCapture);
+      }
+
+      if (this.options.enableKeyboardEvents) {
+        this.removeEventListener(this.window, 'keydown', this.handleCancelOnEscape, true);
+      }
+
+      this.uninstallSourceNodeRemovalObserver();
+    }
+  }, {
+    key: "addEventListener",
+    value: function addEventListener(subject, event, handler, capture) {
+      var options = supportsPassive ? {
+        capture: capture,
+        passive: false
+      } : capture;
+      this.listenerTypes.forEach(function (listenerType) {
+        var evt = eventNames[listenerType][event];
+
+        if (evt) {
+          subject.addEventListener(evt, handler, options);
+        }
+      });
+    }
+  }, {
+    key: "removeEventListener",
+    value: function removeEventListener(subject, event, handler, capture) {
+      var options = supportsPassive ? {
+        capture: capture,
+        passive: false
+      } : capture;
+      this.listenerTypes.forEach(function (listenerType) {
+        var evt = eventNames[listenerType][event];
+
+        if (evt) {
+          subject.removeEventListener(evt, handler, options);
+        }
+      });
+    }
+  }, {
+    key: "connectDragSource",
+    value: function connectDragSource(sourceId, node) {
+      var _this2 = this;
+
+      var handleMoveStart = this.handleMoveStart.bind(this, sourceId);
+      this.sourceNodes.set(sourceId, node);
+      this.addEventListener(node, 'start', handleMoveStart);
+      return function () {
+        _this2.sourceNodes.delete(sourceId);
+
+        _this2.removeEventListener(node, 'start', handleMoveStart);
+      };
+    }
+  }, {
+    key: "connectDragPreview",
+    value: function connectDragPreview(sourceId, node, options) {
+      var _this3 = this;
+
+      this.sourcePreviewNodeOptions.set(sourceId, options);
+      this.sourcePreviewNodes.set(sourceId, node);
+      return function () {
+        _this3.sourcePreviewNodes.delete(sourceId);
+
+        _this3.sourcePreviewNodeOptions.delete(sourceId);
+      };
+    }
+  }, {
+    key: "connectDropTarget",
+    value: function connectDropTarget(targetId, node) {
+      var _this4 = this;
+
+      if (!this.document) {
+        return function () {
+          /* noop */
+        };
+      }
+
+      var handleMove = function handleMove(e) {
+        if (!_this4.document || !_this4.monitor.isDragging()) {
+          return;
+        }
+
+        var coords;
+        /**
+         * Grab the coordinates for the current mouse/touch position
+         */
+
+        switch (e.type) {
+          case eventNames.mouse.move:
+            coords = {
+              x: e.clientX,
+              y: e.clientY
+            };
+            break;
+
+          case eventNames.touch.move:
+            coords = {
+              x: e.touches[0].clientX,
+              y: e.touches[0].clientY
+            };
+            break;
+        }
+        /**
+         * Use the coordinates to grab the element the drag ended on.
+         * If the element is the same as the target node (or any of it's children) then we have hit a drop target and can handle the move.
+         */
+
+
+        var droppedOn = coords != null ? _this4.document.elementFromPoint(coords.x, coords.y) : undefined;
+        var childMatch = droppedOn && node.contains(droppedOn);
+
+        if (droppedOn === node || childMatch) {
+          return _this4.handleMove(e, targetId);
+        }
+      };
+      /**
+       * Attaching the event listener to the body so that touchmove will work while dragging over multiple target elements.
+       */
+
+
+      this.addEventListener(this.document.body, 'move', handleMove);
+      this.targetNodes.set(targetId, node);
+      return function () {
+        if (_this4.document) {
+          _this4.targetNodes.delete(targetId);
+
+          _this4.removeEventListener(_this4.document.body, 'move', handleMove);
+        }
+      };
+    }
+  }, {
+    key: "getTopMoveStartHandler",
+    value: function getTopMoveStartHandler() {
+      if (!this.options.delayTouchStart && !this.options.delayMouseStart) {
+        return this.handleTopMoveStart;
+      }
+
+      return this.handleTopMoveStartDelay;
+    }
+  }, {
+    key: "installSourceNodeRemovalObserver",
+    value: function installSourceNodeRemovalObserver(node) {
+      var _this5 = this;
+
+      this.uninstallSourceNodeRemovalObserver();
+      this.draggedSourceNode = node;
+      this.draggedSourceNodeRemovalObserver = new MutationObserver(function () {
+        if (node && !node.parentElement) {
+          _this5.resurrectSourceNode();
+
+          _this5.uninstallSourceNodeRemovalObserver();
+        }
+      });
+
+      if (!node || !node.parentElement) {
+        return;
+      }
+
+      this.draggedSourceNodeRemovalObserver.observe(node.parentElement, {
+        childList: true
+      });
+    }
+  }, {
+    key: "resurrectSourceNode",
+    value: function resurrectSourceNode() {
+      if (this.document && this.draggedSourceNode) {
+        this.draggedSourceNode.style.display = 'none';
+        this.draggedSourceNode.removeAttribute('data-reactid');
+        this.document.body.appendChild(this.draggedSourceNode);
+      }
+    }
+  }, {
+    key: "uninstallSourceNodeRemovalObserver",
+    value: function uninstallSourceNodeRemovalObserver() {
+      if (this.draggedSourceNodeRemovalObserver) {
+        this.draggedSourceNodeRemovalObserver.disconnect();
+      }
+
+      this.draggedSourceNodeRemovalObserver = undefined;
+      this.draggedSourceNode = undefined;
+    }
+  }, {
+    key: "window",
+    get: function get() {
+      return this.options.window;
+    } // public for test
+
+  }, {
+    key: "document",
+    get: function get() {
+      if (this.window) {
+        return this.window.document;
+      }
+
+      return undefined;
+    }
+  }]);
+
+  return TouchBackendImpl;
+}();
+
+var TouchBackend = function createBackend(manager) {
+  var context = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+  return new TouchBackendImpl(manager, context, options);
+};
+
+var HTML5toTouch = {
+  backends: [{
+    id: 'html5',
+    backend: HTML5Backend,
+    transition: MouseTransition
+  }, {
+    id: 'touch',
+    backend: TouchBackend,
+    options: {
+      enableMouseEvents: true
+    },
+    preview: true,
+    transition: TouchTransition
+  }]
+};
+
+var propTypes = {exports: {}};
+
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+var ReactPropTypesSecret$3 = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
+var ReactPropTypesSecret_1 = ReactPropTypesSecret$3;
+
+var has$2 = Function.call.bind(Object.prototype.hasOwnProperty);
+
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+var printWarning$1 = function () {};
+
+if (process.env.NODE_ENV !== 'production') {
+  var ReactPropTypesSecret$2 = ReactPropTypesSecret_1;
+
+  var loggedTypeFailures = {};
+
+  var has$1 = has$2;
+
+  printWarning$1 = function (text) {
+    var message = 'Warning: ' + text;
+
+    if (typeof console !== 'undefined') {
+      console.error(message);
+    }
+
+    try {
+      // --- Welcome to debugging React ---
+      // This error was thrown as a convenience so that you can use this stack
+      // to find the callsite that caused this warning to fire.
+      throw new Error(message);
+    } catch (x) {
+      /**/
+    }
+  };
+}
+/**
+ * Assert that the values match with the type specs.
+ * Error messages are memorized and will only be shown once.
+ *
+ * @param {object} typeSpecs Map of name to a ReactPropType
+ * @param {object} values Runtime values that need to be type-checked
+ * @param {string} location e.g. "prop", "context", "child context"
+ * @param {string} componentName Name of the component for error messages.
+ * @param {?Function} getStack Returns the component stack.
+ * @private
+ */
+
+
+function checkPropTypes$1(typeSpecs, values, location, componentName, getStack) {
+  if (process.env.NODE_ENV !== 'production') {
+    for (var typeSpecName in typeSpecs) {
+      if (has$1(typeSpecs, typeSpecName)) {
+        var error; // Prop type validation may throw. In case they do, we don't want to
+        // fail the render phase where it didn't fail before. So we log it.
+        // After these have been cleaned up, we'll let them throw.
+
+        try {
+          // This is intentionally an invariant that gets caught. It's the same
+          // behavior as without this statement except with a better message.
+          if (typeof typeSpecs[typeSpecName] !== 'function') {
+            var err = Error((componentName || 'React class') + ': ' + location + ' type `' + typeSpecName + '` is invalid; ' + 'it must be a function, usually from the `prop-types` package, but received `' + typeof typeSpecs[typeSpecName] + '`.' + 'This often happens because of typos such as `PropTypes.function` instead of `PropTypes.func`.');
+            err.name = 'Invariant Violation';
+            throw err;
+          }
+
+          error = typeSpecs[typeSpecName](values, typeSpecName, componentName, location, null, ReactPropTypesSecret$2);
+        } catch (ex) {
+          error = ex;
+        }
+
+        if (error && !(error instanceof Error)) {
+          printWarning$1((componentName || 'React class') + ': type specification of ' + location + ' `' + typeSpecName + '` is invalid; the type checker ' + 'function must return `null` or an `Error` but returned a ' + typeof error + '. ' + 'You may have forgotten to pass an argument to the type checker ' + 'creator (arrayOf, instanceOf, objectOf, oneOf, oneOfType, and ' + 'shape all require an argument).');
+        }
+
+        if (error instanceof Error && !(error.message in loggedTypeFailures)) {
+          // Only monitor this failure once because there tends to be a lot of the
+          // same error.
+          loggedTypeFailures[error.message] = true;
+          var stack = getStack ? getStack() : '';
+          printWarning$1('Failed ' + location + ' type: ' + error.message + (stack != null ? stack : ''));
+        }
+      }
+    }
+  }
+}
+/**
+ * Resets warning cache when testing.
+ *
+ * @private
+ */
+
+
+checkPropTypes$1.resetWarningCache = function () {
+  if (process.env.NODE_ENV !== 'production') {
+    loggedTypeFailures = {};
+  }
+};
+
+var checkPropTypes_1 = checkPropTypes$1;
+
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+var ReactIs$1 = reactIs$1.exports;
+
+var assign = objectAssign;
+
+var ReactPropTypesSecret$1 = ReactPropTypesSecret_1;
+
+var has = has$2;
+
+var checkPropTypes = checkPropTypes_1;
+
+var printWarning = function () {};
+
+if (process.env.NODE_ENV !== 'production') {
+  printWarning = function (text) {
+    var message = 'Warning: ' + text;
+
+    if (typeof console !== 'undefined') {
+      console.error(message);
+    }
+
+    try {
+      // --- Welcome to debugging React ---
+      // This error was thrown as a convenience so that you can use this stack
+      // to find the callsite that caused this warning to fire.
+      throw new Error(message);
+    } catch (x) {}
+  };
+}
+
+function emptyFunctionThatReturnsNull() {
+  return null;
+}
+
+var factoryWithTypeCheckers = function (isValidElement, throwOnDirectAccess) {
+  /* global Symbol */
+  var ITERATOR_SYMBOL = typeof Symbol === 'function' && Symbol.iterator;
+  var FAUX_ITERATOR_SYMBOL = '@@iterator'; // Before Symbol spec.
+
+  /**
+   * Returns the iterator method function contained on the iterable object.
+   *
+   * Be sure to invoke the function with the iterable as context:
+   *
+   *     var iteratorFn = getIteratorFn(myIterable);
+   *     if (iteratorFn) {
+   *       var iterator = iteratorFn.call(myIterable);
+   *       ...
+   *     }
+   *
+   * @param {?object} maybeIterable
+   * @return {?function}
+   */
+
+  function getIteratorFn(maybeIterable) {
+    var iteratorFn = maybeIterable && (ITERATOR_SYMBOL && maybeIterable[ITERATOR_SYMBOL] || maybeIterable[FAUX_ITERATOR_SYMBOL]);
+
+    if (typeof iteratorFn === 'function') {
+      return iteratorFn;
+    }
+  }
+  /**
+   * Collection of methods that allow declaration and validation of props that are
+   * supplied to React components. Example usage:
+   *
+   *   var Props = require('ReactPropTypes');
+   *   var MyArticle = React.createClass({
+   *     propTypes: {
+   *       // An optional string prop named "description".
+   *       description: Props.string,
+   *
+   *       // A required enum prop named "category".
+   *       category: Props.oneOf(['News','Photos']).isRequired,
+   *
+   *       // A prop named "dialog" that requires an instance of Dialog.
+   *       dialog: Props.instanceOf(Dialog).isRequired
+   *     },
+   *     render: function() { ... }
+   *   });
+   *
+   * A more formal specification of how these methods are used:
+   *
+   *   type := array|bool|func|object|number|string|oneOf([...])|instanceOf(...)
+   *   decl := ReactPropTypes.{type}(.isRequired)?
+   *
+   * Each and every declaration produces a function with the same signature. This
+   * allows the creation of custom validation functions. For example:
+   *
+   *  var MyLink = React.createClass({
+   *    propTypes: {
+   *      // An optional string or URI prop named "href".
+   *      href: function(props, propName, componentName) {
+   *        var propValue = props[propName];
+   *        if (propValue != null && typeof propValue !== 'string' &&
+   *            !(propValue instanceof URI)) {
+   *          return new Error(
+   *            'Expected a string or an URI for ' + propName + ' in ' +
+   *            componentName
+   *          );
+   *        }
+   *      }
+   *    },
+   *    render: function() {...}
+   *  });
+   *
+   * @internal
+   */
+
+
+  var ANONYMOUS = '<<anonymous>>'; // Important!
+  // Keep this list in sync with production version in `./factoryWithThrowingShims.js`.
+
+  var ReactPropTypes = {
+    array: createPrimitiveTypeChecker('array'),
+    bigint: createPrimitiveTypeChecker('bigint'),
+    bool: createPrimitiveTypeChecker('boolean'),
+    func: createPrimitiveTypeChecker('function'),
+    number: createPrimitiveTypeChecker('number'),
+    object: createPrimitiveTypeChecker('object'),
+    string: createPrimitiveTypeChecker('string'),
+    symbol: createPrimitiveTypeChecker('symbol'),
+    any: createAnyTypeChecker(),
+    arrayOf: createArrayOfTypeChecker,
+    element: createElementTypeChecker(),
+    elementType: createElementTypeTypeChecker(),
+    instanceOf: createInstanceTypeChecker,
+    node: createNodeChecker(),
+    objectOf: createObjectOfTypeChecker,
+    oneOf: createEnumTypeChecker,
+    oneOfType: createUnionTypeChecker,
+    shape: createShapeTypeChecker,
+    exact: createStrictShapeTypeChecker
+  };
+  /**
+   * inlined Object.is polyfill to avoid requiring consumers ship their own
+   * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is
+   */
+
+  /*eslint-disable no-self-compare*/
+
+  function is(x, y) {
+    // SameValue algorithm
+    if (x === y) {
+      // Steps 1-5, 7-10
+      // Steps 6.b-6.e: +0 != -0
+      return x !== 0 || 1 / x === 1 / y;
+    } else {
+      // Step 6.a: NaN == NaN
+      return x !== x && y !== y;
+    }
+  }
+  /*eslint-enable no-self-compare*/
+
+  /**
+   * We use an Error-like object for backward compatibility as people may call
+   * PropTypes directly and inspect their output. However, we don't use real
+   * Errors anymore. We don't inspect their stack anyway, and creating them
+   * is prohibitively expensive if they are created too often, such as what
+   * happens in oneOfType() for any type before the one that matched.
+   */
+
+
+  function PropTypeError(message, data) {
+    this.message = message;
+    this.data = data && typeof data === 'object' ? data : {};
+    this.stack = '';
+  } // Make `instanceof Error` still work for returned errors.
+
+
+  PropTypeError.prototype = Error.prototype;
+
+  function createChainableTypeChecker(validate) {
+    if (process.env.NODE_ENV !== 'production') {
+      var manualPropTypeCallCache = {};
+      var manualPropTypeWarningCount = 0;
+    }
+
+    function checkType(isRequired, props, propName, componentName, location, propFullName, secret) {
+      componentName = componentName || ANONYMOUS;
+      propFullName = propFullName || propName;
+
+      if (secret !== ReactPropTypesSecret$1) {
+        if (throwOnDirectAccess) {
+          // New behavior only for users of `prop-types` package
+          var err = new Error('Calling PropTypes validators directly is not supported by the `prop-types` package. ' + 'Use `PropTypes.checkPropTypes()` to call them. ' + 'Read more at http://fb.me/use-check-prop-types');
+          err.name = 'Invariant Violation';
+          throw err;
+        } else if (process.env.NODE_ENV !== 'production' && typeof console !== 'undefined') {
+          // Old behavior for people using React.PropTypes
+          var cacheKey = componentName + ':' + propName;
+
+          if (!manualPropTypeCallCache[cacheKey] && // Avoid spamming the console because they are often not actionable except for lib authors
+          manualPropTypeWarningCount < 3) {
+            printWarning('You are manually calling a React.PropTypes validation ' + 'function for the `' + propFullName + '` prop on `' + componentName + '`. This is deprecated ' + 'and will throw in the standalone `prop-types` package. ' + 'You may be seeing this warning due to a third-party PropTypes ' + 'library. See https://fb.me/react-warning-dont-call-proptypes ' + 'for details.');
+            manualPropTypeCallCache[cacheKey] = true;
+            manualPropTypeWarningCount++;
+          }
+        }
+      }
+
+      if (props[propName] == null) {
+        if (isRequired) {
+          if (props[propName] === null) {
+            return new PropTypeError('The ' + location + ' `' + propFullName + '` is marked as required ' + ('in `' + componentName + '`, but its value is `null`.'));
+          }
+
+          return new PropTypeError('The ' + location + ' `' + propFullName + '` is marked as required in ' + ('`' + componentName + '`, but its value is `undefined`.'));
+        }
+
+        return null;
+      } else {
+        return validate(props, propName, componentName, location, propFullName);
+      }
+    }
+
+    var chainedCheckType = checkType.bind(null, false);
+    chainedCheckType.isRequired = checkType.bind(null, true);
+    return chainedCheckType;
+  }
+
+  function createPrimitiveTypeChecker(expectedType) {
+    function validate(props, propName, componentName, location, propFullName, secret) {
+      var propValue = props[propName];
+      var propType = getPropType(propValue);
+
+      if (propType !== expectedType) {
+        // `propValue` being instance of, say, date/regexp, pass the 'object'
+        // check, but we can offer a more precise error message here rather than
+        // 'of type `object`'.
+        var preciseType = getPreciseType(propValue);
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + preciseType + '` supplied to `' + componentName + '`, expected ') + ('`' + expectedType + '`.'), {
+          expectedType: expectedType
+        });
+      }
+
+      return null;
+    }
+
+    return createChainableTypeChecker(validate);
+  }
+
+  function createAnyTypeChecker() {
+    return createChainableTypeChecker(emptyFunctionThatReturnsNull);
+  }
+
+  function createArrayOfTypeChecker(typeChecker) {
+    function validate(props, propName, componentName, location, propFullName) {
+      if (typeof typeChecker !== 'function') {
+        return new PropTypeError('Property `' + propFullName + '` of component `' + componentName + '` has invalid PropType notation inside arrayOf.');
+      }
+
+      var propValue = props[propName];
+
+      if (!Array.isArray(propValue)) {
+        var propType = getPropType(propValue);
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected an array.'));
+      }
+
+      for (var i = 0; i < propValue.length; i++) {
+        var error = typeChecker(propValue, i, componentName, location, propFullName + '[' + i + ']', ReactPropTypesSecret$1);
+
+        if (error instanceof Error) {
+          return error;
+        }
+      }
+
+      return null;
+    }
+
+    return createChainableTypeChecker(validate);
+  }
+
+  function createElementTypeChecker() {
+    function validate(props, propName, componentName, location, propFullName) {
+      var propValue = props[propName];
+
+      if (!isValidElement(propValue)) {
+        var propType = getPropType(propValue);
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected a single ReactElement.'));
+      }
+
+      return null;
+    }
+
+    return createChainableTypeChecker(validate);
+  }
+
+  function createElementTypeTypeChecker() {
+    function validate(props, propName, componentName, location, propFullName) {
+      var propValue = props[propName];
+
+      if (!ReactIs$1.isValidElementType(propValue)) {
+        var propType = getPropType(propValue);
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected a single ReactElement type.'));
+      }
+
+      return null;
+    }
+
+    return createChainableTypeChecker(validate);
+  }
+
+  function createInstanceTypeChecker(expectedClass) {
+    function validate(props, propName, componentName, location, propFullName) {
+      if (!(props[propName] instanceof expectedClass)) {
+        var expectedClassName = expectedClass.name || ANONYMOUS;
+        var actualClassName = getClassName(props[propName]);
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + actualClassName + '` supplied to `' + componentName + '`, expected ') + ('instance of `' + expectedClassName + '`.'));
+      }
+
+      return null;
+    }
+
+    return createChainableTypeChecker(validate);
+  }
+
+  function createEnumTypeChecker(expectedValues) {
+    if (!Array.isArray(expectedValues)) {
+      if (process.env.NODE_ENV !== 'production') {
+        if (arguments.length > 1) {
+          printWarning('Invalid arguments supplied to oneOf, expected an array, got ' + arguments.length + ' arguments. ' + 'A common mistake is to write oneOf(x, y, z) instead of oneOf([x, y, z]).');
+        } else {
+          printWarning('Invalid argument supplied to oneOf, expected an array.');
+        }
+      }
+
+      return emptyFunctionThatReturnsNull;
+    }
+
+    function validate(props, propName, componentName, location, propFullName) {
+      var propValue = props[propName];
+
+      for (var i = 0; i < expectedValues.length; i++) {
+        if (is(propValue, expectedValues[i])) {
+          return null;
+        }
+      }
+
+      var valuesString = JSON.stringify(expectedValues, function replacer(key, value) {
+        var type = getPreciseType(value);
+
+        if (type === 'symbol') {
+          return String(value);
+        }
+
+        return value;
+      });
+      return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of value `' + String(propValue) + '` ' + ('supplied to `' + componentName + '`, expected one of ' + valuesString + '.'));
+    }
+
+    return createChainableTypeChecker(validate);
+  }
+
+  function createObjectOfTypeChecker(typeChecker) {
+    function validate(props, propName, componentName, location, propFullName) {
+      if (typeof typeChecker !== 'function') {
+        return new PropTypeError('Property `' + propFullName + '` of component `' + componentName + '` has invalid PropType notation inside objectOf.');
+      }
+
+      var propValue = props[propName];
+      var propType = getPropType(propValue);
+
+      if (propType !== 'object') {
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected an object.'));
+      }
+
+      for (var key in propValue) {
+        if (has(propValue, key)) {
+          var error = typeChecker(propValue, key, componentName, location, propFullName + '.' + key, ReactPropTypesSecret$1);
+
+          if (error instanceof Error) {
+            return error;
+          }
+        }
+      }
+
+      return null;
+    }
+
+    return createChainableTypeChecker(validate);
+  }
+
+  function createUnionTypeChecker(arrayOfTypeCheckers) {
+    if (!Array.isArray(arrayOfTypeCheckers)) {
+      process.env.NODE_ENV !== 'production' ? printWarning('Invalid argument supplied to oneOfType, expected an instance of array.') : void 0;
+      return emptyFunctionThatReturnsNull;
+    }
+
+    for (var i = 0; i < arrayOfTypeCheckers.length; i++) {
+      var checker = arrayOfTypeCheckers[i];
+
+      if (typeof checker !== 'function') {
+        printWarning('Invalid argument supplied to oneOfType. Expected an array of check functions, but ' + 'received ' + getPostfixForTypeWarning(checker) + ' at index ' + i + '.');
+        return emptyFunctionThatReturnsNull;
+      }
+    }
+
+    function validate(props, propName, componentName, location, propFullName) {
+      var expectedTypes = [];
+
+      for (var i = 0; i < arrayOfTypeCheckers.length; i++) {
+        var checker = arrayOfTypeCheckers[i];
+        var checkerResult = checker(props, propName, componentName, location, propFullName, ReactPropTypesSecret$1);
+
+        if (checkerResult == null) {
+          return null;
+        }
+
+        if (checkerResult.data && has(checkerResult.data, 'expectedType')) {
+          expectedTypes.push(checkerResult.data.expectedType);
+        }
+      }
+
+      var expectedTypesMessage = expectedTypes.length > 0 ? ', expected one of type [' + expectedTypes.join(', ') + ']' : '';
+      return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` supplied to ' + ('`' + componentName + '`' + expectedTypesMessage + '.'));
+    }
+
+    return createChainableTypeChecker(validate);
+  }
+
+  function createNodeChecker() {
+    function validate(props, propName, componentName, location, propFullName) {
+      if (!isNode(props[propName])) {
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` supplied to ' + ('`' + componentName + '`, expected a ReactNode.'));
+      }
+
+      return null;
+    }
+
+    return createChainableTypeChecker(validate);
+  }
+
+  function invalidValidatorError(componentName, location, propFullName, key, type) {
+    return new PropTypeError((componentName || 'React class') + ': ' + location + ' type `' + propFullName + '.' + key + '` is invalid; ' + 'it must be a function, usually from the `prop-types` package, but received `' + type + '`.');
+  }
+
+  function createShapeTypeChecker(shapeTypes) {
+    function validate(props, propName, componentName, location, propFullName) {
+      var propValue = props[propName];
+      var propType = getPropType(propValue);
+
+      if (propType !== 'object') {
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type `' + propType + '` ' + ('supplied to `' + componentName + '`, expected `object`.'));
+      }
+
+      for (var key in shapeTypes) {
+        var checker = shapeTypes[key];
+
+        if (typeof checker !== 'function') {
+          return invalidValidatorError(componentName, location, propFullName, key, getPreciseType(checker));
+        }
+
+        var error = checker(propValue, key, componentName, location, propFullName + '.' + key, ReactPropTypesSecret$1);
+
+        if (error) {
+          return error;
+        }
+      }
+
+      return null;
+    }
+
+    return createChainableTypeChecker(validate);
+  }
+
+  function createStrictShapeTypeChecker(shapeTypes) {
+    function validate(props, propName, componentName, location, propFullName) {
+      var propValue = props[propName];
+      var propType = getPropType(propValue);
+
+      if (propType !== 'object') {
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type `' + propType + '` ' + ('supplied to `' + componentName + '`, expected `object`.'));
+      } // We need to check all keys in case some are required but missing from props.
+
+
+      var allKeys = assign({}, props[propName], shapeTypes);
+
+      for (var key in allKeys) {
+        var checker = shapeTypes[key];
+
+        if (has(shapeTypes, key) && typeof checker !== 'function') {
+          return invalidValidatorError(componentName, location, propFullName, key, getPreciseType(checker));
+        }
+
+        if (!checker) {
+          return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` key `' + key + '` supplied to `' + componentName + '`.' + '\nBad object: ' + JSON.stringify(props[propName], null, '  ') + '\nValid keys: ' + JSON.stringify(Object.keys(shapeTypes), null, '  '));
+        }
+
+        var error = checker(propValue, key, componentName, location, propFullName + '.' + key, ReactPropTypesSecret$1);
+
+        if (error) {
+          return error;
+        }
+      }
+
+      return null;
+    }
+
+    return createChainableTypeChecker(validate);
+  }
+
+  function isNode(propValue) {
+    switch (typeof propValue) {
+      case 'number':
+      case 'string':
+      case 'undefined':
+        return true;
+
+      case 'boolean':
+        return !propValue;
+
+      case 'object':
+        if (Array.isArray(propValue)) {
+          return propValue.every(isNode);
+        }
+
+        if (propValue === null || isValidElement(propValue)) {
+          return true;
+        }
+
+        var iteratorFn = getIteratorFn(propValue);
+
+        if (iteratorFn) {
+          var iterator = iteratorFn.call(propValue);
+          var step;
+
+          if (iteratorFn !== propValue.entries) {
+            while (!(step = iterator.next()).done) {
+              if (!isNode(step.value)) {
+                return false;
+              }
+            }
+          } else {
+            // Iterator will provide entry [k,v] tuples rather than values.
+            while (!(step = iterator.next()).done) {
+              var entry = step.value;
+
+              if (entry) {
+                if (!isNode(entry[1])) {
+                  return false;
+                }
+              }
+            }
+          }
+        } else {
+          return false;
+        }
+
+        return true;
+
+      default:
+        return false;
+    }
+  }
+
+  function isSymbol(propType, propValue) {
+    // Native Symbol.
+    if (propType === 'symbol') {
+      return true;
+    } // falsy value can't be a Symbol
+
+
+    if (!propValue) {
+      return false;
+    } // 19.4.3.5 Symbol.prototype[@@toStringTag] === 'Symbol'
+
+
+    if (propValue['@@toStringTag'] === 'Symbol') {
+      return true;
+    } // Fallback for non-spec compliant Symbols which are polyfilled.
+
+
+    if (typeof Symbol === 'function' && propValue instanceof Symbol) {
+      return true;
+    }
+
+    return false;
+  } // Equivalent of `typeof` but with special handling for array and regexp.
+
+
+  function getPropType(propValue) {
+    var propType = typeof propValue;
+
+    if (Array.isArray(propValue)) {
+      return 'array';
+    }
+
+    if (propValue instanceof RegExp) {
+      // Old webkits (at least until Android 4.0) return 'function' rather than
+      // 'object' for typeof a RegExp. We'll normalize this here so that /bla/
+      // passes PropTypes.object.
+      return 'object';
+    }
+
+    if (isSymbol(propType, propValue)) {
+      return 'symbol';
+    }
+
+    return propType;
+  } // This handles more types than `getPropType`. Only used for error messages.
+  // See `createPrimitiveTypeChecker`.
+
+
+  function getPreciseType(propValue) {
+    if (typeof propValue === 'undefined' || propValue === null) {
+      return '' + propValue;
+    }
+
+    var propType = getPropType(propValue);
+
+    if (propType === 'object') {
+      if (propValue instanceof Date) {
+        return 'date';
+      } else if (propValue instanceof RegExp) {
+        return 'regexp';
+      }
+    }
+
+    return propType;
+  } // Returns a string that is postfixed to a warning about an invalid type.
+  // For example, "undefined" or "of type array"
+
+
+  function getPostfixForTypeWarning(value) {
+    var type = getPreciseType(value);
+
+    switch (type) {
+      case 'array':
+      case 'object':
+        return 'an ' + type;
+
+      case 'boolean':
+      case 'date':
+      case 'regexp':
+        return 'a ' + type;
+
+      default:
+        return type;
+    }
+  } // Returns class name of the object, if any.
+
+
+  function getClassName(propValue) {
+    if (!propValue.constructor || !propValue.constructor.name) {
+      return ANONYMOUS;
+    }
+
+    return propValue.constructor.name;
+  }
+
+  ReactPropTypes.checkPropTypes = checkPropTypes;
+  ReactPropTypes.resetWarningCache = checkPropTypes.resetWarningCache;
+  ReactPropTypes.PropTypes = ReactPropTypes;
+  return ReactPropTypes;
+};
+
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+var ReactPropTypesSecret = ReactPropTypesSecret_1;
+
+function emptyFunction() {}
+
+function emptyFunctionWithReset() {}
+
+emptyFunctionWithReset.resetWarningCache = emptyFunction;
+
+var factoryWithThrowingShims = function () {
+  function shim(props, propName, componentName, location, propFullName, secret) {
+    if (secret === ReactPropTypesSecret) {
+      // It is still safe when called from React.
+      return;
+    }
+
+    var err = new Error('Calling PropTypes validators directly is not supported by the `prop-types` package. ' + 'Use PropTypes.checkPropTypes() to call them. ' + 'Read more at http://fb.me/use-check-prop-types');
+    err.name = 'Invariant Violation';
+    throw err;
+  }
+  shim.isRequired = shim;
+
+  function getShim() {
+    return shim;
+  }
+  // Keep this list in sync with production version in `./factoryWithTypeCheckers.js`.
+
+  var ReactPropTypes = {
+    array: shim,
+    bigint: shim,
+    bool: shim,
+    func: shim,
+    number: shim,
+    object: shim,
+    string: shim,
+    symbol: shim,
+    any: shim,
+    arrayOf: getShim,
+    element: shim,
+    elementType: shim,
+    instanceOf: getShim,
+    node: shim,
+    objectOf: getShim,
+    oneOf: getShim,
+    oneOfType: getShim,
+    shape: getShim,
+    exact: getShim,
+    checkPropTypes: emptyFunctionWithReset,
+    resetWarningCache: emptyFunction
+  };
+  ReactPropTypes.PropTypes = ReactPropTypes;
+  return ReactPropTypes;
+};
+
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+if (process.env.NODE_ENV !== 'production') {
+  var ReactIs = reactIs$1.exports; // By explicitly using `prop-types` you are opting into new development behavior.
+  // http://fb.me/prop-types-in-prod
+
+
+  var throwOnDirectAccess = true;
+  propTypes.exports = factoryWithTypeCheckers(ReactIs.isElement, throwOnDirectAccess);
+} else {
+  // By explicitly using `prop-types` you are opting into new production behavior.
+  // http://fb.me/prop-types-in-prod
+  propTypes.exports = factoryWithThrowingShims();
+}
+
+var PropTypes = propTypes.exports;
+
+const COLUMNS = 'abcdefgh'.split('');
+const chessboardPropTypes = {
+  // time in milliseconds for piece to slide to target square. Only used when the position is programmatically changed
+  animationDuration: PropTypes.number,
+  // whether or not arrows can be drawn with right click and dragging
+  areArrowsAllowed: PropTypes.bool,
+  // if pieces are draggable
+  arePiecesDraggable: PropTypes.bool,
+  // if premoves are allowed
+  arePremovesAllowed: PropTypes.bool,
+  // Orientation of the board
+  boardOrientation: PropTypes.oneOf(['white', 'black']),
+  // width of board in pixels. for responsive width show useChessBoardSize/useScreenSize example
+  boardWidth: PropTypes.number,
+  // if premoves should be cleared on right click
+  clearPremovesOnRightClick: PropTypes.bool,
+  // array of custom arrows to draw on the board. Each arrow within the array must be an array of length 2 with strings denoting the from and to square to draw the arrow e.g. [ ['a3', 'a5'], ['g1', 'f3'] ].
+  customArrows: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string)),
+  // string with rgb or hex value to colour drawn arrows
+  customArrowColor: PropTypes.string,
+  // board style object e.g. { borderRadius: '5px', boxShadow: `0 5px 15px rgba(0, 0, 0, 0.5)`}
+  customBoardStyle: PropTypes.object,
+  // dark square style object e.g. { backgroundColor: '#B58863' }
+  customDarkSquareStyle: PropTypes.object,
+  // current drop square style object e.g. { backgroundColor: 'sienna' }
+  customDropSquareStyle: PropTypes.object,
+  // light square style object e.g. { backgroundColor: '#F0D9B5' }
+  customLightSquareStyle: PropTypes.object,
+  // pieces object where each piece returns JSX to render. { wK: ({ isDragging: boolean, squareWidth: pixels, droppedPiece: piece string, targetSquare: square string, sourceSquare: square string }) => jsx }
+  customPieces: PropTypes.object,
+  // premove highlight dark square style object e.g. { backgroundColor: '#F0D9B5' }
+  customPremoveDarkSquareStyle: PropTypes.object,
+  // premove highlight light square style object e.g. { backgroundColor: '#F0D9B5' }
+  customPremoveLightSquareStyle: PropTypes.object,
+  // custom squares style object. e.g. {'e4': {backgroundColor: 'orange'}, ...}
+  customSquareStyles: PropTypes.object,
+  // behavior of pieces when dropped off the board. 'snapback' brings the piece back to it's original square, 'trash' deletes the piece from the board
+  dropOffBoardAction: PropTypes.oneOf(['snapback', 'trash']),
+  // board identifier, necessary if more than one board is mounted for drag and drop.
+  id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  // function called when a piece drag is initiated. Returns if piece is draggable ({ piece: string, sourceSquare: string }) => bool
+  isDraggablePiece: PropTypes.func,
+  // user function that receives current position object when position changes. (currentPosition: object) => void
+  getPositionObject: PropTypes.func,
+  // user function that is run when piece is dragged over a square (square: string) => void
+  onDragOverSquare: PropTypes.func,
+  // user function that is run when mouse leaves a square (square: string) => void
+  onMouseOutSquare: PropTypes.func,
+  // user function that is run when mouse is over a square (square: string) => void
+  onMouseOverSquare: PropTypes.func,
+  // user function that is run when piece is clicked (piece: string) => void
+  onPieceClick: PropTypes.func,
+  // user function that is run when piece is dropped on a square ({ sourceSquare: string, targetSquare: string, piece: string }) => void
+  onPieceDrop: PropTypes.func,
+  // user function that is run when a square is clicked (square: string) => void
+  onSquareClick: PropTypes.func,
+  // user function that is run when a square is right clicked (square: string) => void
+  onSquareRightClick: PropTypes.func,
+  // FEN string or a position object ({ e5: 'wK', e4: 'wP', e7: 'bK' })
+  position: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
+  // show file character and rank numbers (a..h, 1..8)
+  showBoardNotation: PropTypes.bool // show spare pieces above and below board.
+  // showSparePieces: PropTypes.bool
+
+};
+const chessboardDefaultProps = {
+  animationDuration: 300,
+  areArrowsAllowed: true,
+  arePiecesDraggable: true,
+  arePremovesAllowed: false,
+  boardOrientation: 'white',
+  boardWidth: 560,
+  clearPremovesOnRightClick: true,
+  customArrows: [],
+  customArrowColor: 'rgb(255,170,0)',
+  customBoardStyle: {},
+  customDarkSquareStyle: {
+    backgroundColor: '#B58863'
+  },
+  customDropSquareStyle: {
+    boxShadow: 'inset 0 0 1px 6px rgba(255,255,255,0.75)'
+  },
+  customLightSquareStyle: {
+    backgroundColor: '#F0D9B5'
+  },
+  customPieces: {},
+  customPremoveDarkSquareStyle: {
+    backgroundColor: '#A42323'
+  },
+  customPremoveLightSquareStyle: {
+    backgroundColor: '#BD2828'
+  },
+  customSquareStyles: {},
+  dropOffBoardAction: 'snapback',
+  id: 0,
+  isDraggablePiece: () => true,
+  getPositionObject: () => {},
+  onDragOverSquare: () => {},
+  onMouseOutSquare: () => {},
+  onMouseOverSquare: () => {},
+  onPieceClick: () => {},
+  onPieceDrop: () => true,
+  onSquareClick: () => {},
+  onSquareRightClick: () => {},
+  position: 'start',
+  showBoardNotation: true // showSparePieces: false
+
+};
+
+const startPositionObject = {
+  a8: 'bR',
+  b8: 'bN',
+  c8: 'bB',
+  d8: 'bQ',
+  e8: 'bK',
+  f8: 'bB',
+  g8: 'bN',
+  h8: 'bR',
+  a7: 'bP',
+  b7: 'bP',
+  c7: 'bP',
+  d7: 'bP',
+  e7: 'bP',
+  f7: 'bP',
+  g7: 'bP',
+  h7: 'bP',
+  a2: 'wP',
+  b2: 'wP',
+  c2: 'wP',
+  d2: 'wP',
+  e2: 'wP',
+  f2: 'wP',
+  g2: 'wP',
+  h2: 'wP',
+  a1: 'wR',
+  b1: 'wN',
+  c1: 'wB',
+  d1: 'wQ',
+  e1: 'wK',
+  f1: 'wB',
+  g1: 'wN',
+  h1: 'wR'
+};
+const whiteColumnValues = {
+  a: 0,
+  b: 1,
+  c: 2,
+  d: 3,
+  e: 4,
+  f: 5,
+  g: 6,
+  h: 7
+};
+const blackColumnValues = {
+  a: 7,
+  b: 6,
+  c: 5,
+  d: 4,
+  e: 3,
+  f: 2,
+  g: 1,
+  h: 0
+};
+const whiteRows = [7, 6, 5, 4, 3, 2, 1, 0];
+const blackRows = [0, 1, 2, 3, 4, 5, 6, 7];
+const getRelativeCoords = (boardOrientation, boardWidth, square) => {
+  const squareWidth = boardWidth / 8;
+  const columns = boardOrientation === 'white' ? whiteColumnValues : blackColumnValues;
+  const rows = boardOrientation === 'white' ? whiteRows : blackRows;
+  const x = columns[square[0]] * squareWidth + squareWidth / 2;
+  const y = rows[square[1] - 1] * squareWidth + squareWidth / 2;
+  return {
+    x,
+    y
+  };
+};
+const isDifferentFromStart = newPosition => {
+  let isDifferent = false;
+  Object.keys(startPositionObject).forEach(square => {
+    if (newPosition[square] !== startPositionObject[square]) isDifferent = true;
+  });
+  Object.keys(newPosition).forEach(square => {
+    if (startPositionObject[square] !== newPosition[square]) isDifferent = true;
+  });
+  return isDifferent;
+};
+const getPositionDifferences = (currentPosition, newPosition) => {
+  const difference = {
+    removed: {},
+    added: {}
+  }; // removed from current
+
+  Object.keys(currentPosition).forEach(square => {
+    if (newPosition[square] !== currentPosition[square]) difference.removed[square] = currentPosition[square];
+  }); // added from new
+
+  Object.keys(newPosition).forEach(square => {
+    if (currentPosition[square] !== newPosition[square]) difference.added[square] = newPosition[square];
+  });
+  return difference;
+};
+
+function isString(s) {
+  return typeof s === 'string';
+}
+
+function convertPositionToObject(position) {
+  if (position === 'start') return fenToObj('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR');
+  if (validFen(position)) return fenToObj(position);
+  if (validPositionObject(position)) return position;
+  return {};
+}
+function fenToObj(fen) {
+  if (!validFen(fen)) return false; // cut off any move, castling, etc info from the end. we're only interested in position information
+
+  fen = fen.replace(/ .+$/, '');
+  const rows = fen.split('/');
+  const position = {};
+  let currentRow = 8;
+
+  for (let i = 0; i < 8; i++) {
+    const row = rows[i].split('');
+    let colIdx = 0; // loop through each character in the FEN section
+
+    for (let j = 0; j < row.length; j++) {
+      // number / empty squares
+      if (row[j].search(/[1-8]/) !== -1) {
+        const numEmptySquares = parseInt(row[j], 10);
+        colIdx = colIdx + numEmptySquares;
+      } else {
+        // piece
+        const square = COLUMNS[colIdx] + currentRow;
+        position[square] = fenToPieceCode(row[j]);
+        colIdx = colIdx + 1;
+      }
+    }
+
+    currentRow = currentRow - 1;
+  }
+
+  return position;
+}
+
+function expandFenEmptySquares(fen) {
+  return fen.replace(/8/g, '11111111').replace(/7/g, '1111111').replace(/6/g, '111111').replace(/5/g, '11111').replace(/4/g, '1111').replace(/3/g, '111').replace(/2/g, '11');
+}
+
+function validFen(fen) {
+  if (!isString(fen)) return false; // cut off any move, castling, etc info from the end. we're only interested in position information
+
+  fen = fen.replace(/ .+$/, ''); // expand the empty square numbers to just 1s
+
+  fen = expandFenEmptySquares(fen); // FEN should be 8 sections separated by slashes
+
+  const chunks = fen.split('/');
+  if (chunks.length !== 8) return false; // check each section
+
+  for (let i = 0; i < 8; i++) {
+    if (chunks[i].length !== 8 || chunks[i].search(/[^kqrnbpKQRNBP1]/) !== -1) {
+      return false;
+    }
+  }
+
+  return true;
+} // convert FEN piece code to bP, wK, etc
+
+function fenToPieceCode(piece) {
+  // black piece
+  if (piece.toLowerCase() === piece) {
+    return 'b' + piece.toUpperCase();
+  } // white piece
+
+
+  return 'w' + piece.toUpperCase();
+}
+
+function validSquare(square) {
+  return isString(square) && square.search(/^[a-h][1-8]$/) !== -1;
+}
+
+function validPieceCode(code) {
+  return isString(code) && code.search(/^[bw][KQRNBP]$/) !== -1;
+}
+
+function validPositionObject(pos) {
+  if (pos === null || typeof pos !== 'object') return false;
+
+  for (const i in pos) {
+    if (!pos[i]) continue;
+
+    if (!validSquare(i) || !validPieceCode(pos[i])) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+const defaultPieces = {
+  wP: /*#__PURE__*/jsxRuntime.exports.jsx("svg", {
+    xmlns: "http://www.w3.org/2000/svg",
+    version: "1.1",
+    width: "45",
+    height: "45",
+    children: /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+      d: "m 22.5,9 c -2.21,0 -4,1.79 -4,4 0,0.89 0.29,1.71 0.78,2.38 C 17.33,16.5 16,18.59 16,21 c 0,2.03 0.94,3.84 2.41,5.03 C 15.41,27.09 11,31.58 11,39.5 H 34 C 34,31.58 29.59,27.09 26.59,26.03 28.06,24.84 29,23.03 29,21 29,18.59 27.67,16.5 25.72,15.38 26.21,14.71 26.5,13.89 26.5,13 c 0,-2.21 -1.79,-4 -4,-4 z",
+      style: {
+        opacity: '1',
+        fill: '#ffffff',
+        fillOpacity: '1',
+        fillRule: 'nonzero',
+        stroke: '#000000',
+        strokeWidth: '1.5',
+        strokeLinecap: 'round',
+        strokeLinejoin: 'miter',
+        strokeMiterlimit: '4',
+        strokeDasharray: 'none',
+        strokeOpacity: '1'
+      }
+    })
+  }),
+  wR: /*#__PURE__*/jsxRuntime.exports.jsx("svg", {
+    xmlns: "http://www.w3.org/2000/svg",
+    version: "1.1",
+    width: "45",
+    height: "45",
+    children: /*#__PURE__*/jsxRuntime.exports.jsxs("g", {
+      style: {
+        opacity: '1',
+        fill: '#ffffff',
+        fillOpacity: '1',
+        fillRule: 'evenodd',
+        stroke: '#000000',
+        strokeWidth: '1.5',
+        strokeLinecap: 'round',
+        strokeLinejoin: 'round',
+        strokeMiterlimit: '4',
+        strokeDasharray: 'none',
+        strokeOpacity: '1'
+      },
+      children: [/*#__PURE__*/jsxRuntime.exports.jsx("path", {
+        d: "M 9,39 L 36,39 L 36,36 L 9,36 L 9,39 z ",
+        style: {
+          strokeLinecap: 'butt'
+        }
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+        d: "M 12,36 L 12,32 L 33,32 L 33,36 L 12,36 z ",
+        style: {
+          strokeLinecap: 'butt'
+        }
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+        d: "M 11,14 L 11,9 L 15,9 L 15,11 L 20,11 L 20,9 L 25,9 L 25,11 L 30,11 L 30,9 L 34,9 L 34,14",
+        style: {
+          strokeLinecap: 'butt'
+        }
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+        d: "M 34,14 L 31,17 L 14,17 L 11,14"
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+        d: "M 31,17 L 31,29.5 L 14,29.5 L 14,17",
+        style: {
+          strokeLinecap: 'butt',
+          strokeLinejoin: 'miter'
+        }
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+        d: "M 31,29.5 L 32.5,32 L 12.5,32 L 14,29.5"
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+        d: "M 11,14 L 34,14",
+        style: {
+          fill: 'none',
+          stroke: '#000000',
+          strokeLinejoin: 'miter'
+        }
+      })]
+    })
+  }),
+  wN: /*#__PURE__*/jsxRuntime.exports.jsx("svg", {
+    xmlns: "http://www.w3.org/2000/svg",
+    version: "1.1",
+    width: "45",
+    height: "45",
+    children: /*#__PURE__*/jsxRuntime.exports.jsxs("g", {
+      style: {
+        opacity: '1',
+        fill: 'none',
+        fillOpacity: '1',
+        fillRule: 'evenodd',
+        stroke: '#000000',
+        strokeWidth: '1.5',
+        strokeLinecap: 'round',
+        strokeLinejoin: 'round',
+        strokeMiterlimit: '4',
+        strokeDasharray: 'none',
+        strokeOpacity: '1'
+      },
+      children: [/*#__PURE__*/jsxRuntime.exports.jsx("path", {
+        d: "M 22,10 C 32.5,11 38.5,18 38,39 L 15,39 C 15,30 25,32.5 23,18",
+        style: {
+          fill: '#ffffff',
+          stroke: '#000000'
+        }
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+        d: "M 24,18 C 24.38,20.91 18.45,25.37 16,27 C 13,29 13.18,31.34 11,31 C 9.958,30.06 12.41,27.96 11,28 C 10,28 11.19,29.23 10,30 C 9,30 5.997,31 6,26 C 6,24 12,14 12,14 C 12,14 13.89,12.1 14,10.5 C 13.27,9.506 13.5,8.5 13.5,7.5 C 14.5,6.5 16.5,10 16.5,10 L 18.5,10 C 18.5,10 19.28,8.008 21,7 C 22,7 22,10 22,10",
+        style: {
+          fill: '#ffffff',
+          stroke: '#000000'
+        }
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+        d: "M 9.5 25.5 A 0.5 0.5 0 1 1 8.5,25.5 A 0.5 0.5 0 1 1 9.5 25.5 z",
+        style: {
+          fill: '#000000',
+          stroke: '#000000'
+        }
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+        d: "M 15 15.5 A 0.5 1.5 0 1 1  14,15.5 A 0.5 1.5 0 1 1  15 15.5 z",
+        transform: "matrix(0.866,0.5,-0.5,0.866,9.693,-5.173)",
+        style: {
+          fill: '#000000',
+          stroke: '#000000'
+        }
+      })]
+    })
+  }),
+  wB: /*#__PURE__*/jsxRuntime.exports.jsx("svg", {
+    xmlns: "http://www.w3.org/2000/svg",
+    version: "1.1",
+    width: "45",
+    height: "45",
+    children: /*#__PURE__*/jsxRuntime.exports.jsxs("g", {
+      style: {
+        opacity: '1',
+        fill: 'none',
+        fillRule: 'evenodd',
+        fillOpacity: '1',
+        stroke: '#000000',
+        strokeWidth: '1.5',
+        strokeLinecap: 'round',
+        strokeLinejoin: 'round',
+        strokeMiterlimit: '4',
+        strokeDasharray: 'none',
+        strokeOpacity: '1'
+      },
+      children: [/*#__PURE__*/jsxRuntime.exports.jsxs("g", {
+        style: {
+          fill: '#ffffff',
+          stroke: '#000000',
+          strokeLinecap: 'butt'
+        },
+        children: [/*#__PURE__*/jsxRuntime.exports.jsx("path", {
+          d: "M 9,36 C 12.39,35.03 19.11,36.43 22.5,34 C 25.89,36.43 32.61,35.03 36,36 C 36,36 37.65,36.54 39,38 C 38.32,38.97 37.35,38.99 36,38.5 C 32.61,37.53 25.89,38.96 22.5,37.5 C 19.11,38.96 12.39,37.53 9,38.5 C 7.65,38.99 6.68,38.97 6,38 C 7.35,36.54 9,36 9,36 z"
+        }), /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+          d: "M 15,32 C 17.5,34.5 27.5,34.5 30,32 C 30.5,30.5 30,30 30,30 C 30,27.5 27.5,26 27.5,26 C 33,24.5 33.5,14.5 22.5,10.5 C 11.5,14.5 12,24.5 17.5,26 C 17.5,26 15,27.5 15,30 C 15,30 14.5,30.5 15,32 z"
+        }), /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+          d: "M 25 8 A 2.5 2.5 0 1 1  20,8 A 2.5 2.5 0 1 1  25 8 z"
+        })]
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+        d: "M 17.5,26 L 27.5,26 M 15,30 L 30,30 M 22.5,15.5 L 22.5,20.5 M 20,18 L 25,18",
+        style: {
+          fill: 'none',
+          stroke: '#000000',
+          strokeLinejoin: 'miter'
+        }
+      })]
+    })
+  }),
+  wQ: /*#__PURE__*/jsxRuntime.exports.jsx("svg", {
+    xmlns: "http://www.w3.org/2000/svg",
+    version: "1.1",
+    width: "45",
+    height: "45",
+    children: /*#__PURE__*/jsxRuntime.exports.jsxs("g", {
+      style: {
+        fill: '#ffffff',
+        stroke: '#000000',
+        strokeWidth: '1.5',
+        strokeLinejoin: 'round'
+      },
+      children: [/*#__PURE__*/jsxRuntime.exports.jsx("path", {
+        d: "M 9,26 C 17.5,24.5 30,24.5 36,26 L 38.5,13.5 L 31,25 L 30.7,10.9 L 25.5,24.5 L 22.5,10 L 19.5,24.5 L 14.3,10.9 L 14,25 L 6.5,13.5 L 9,26 z"
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+        d: "M 9,26 C 9,28 10.5,28 11.5,30 C 12.5,31.5 12.5,31 12,33.5 C 10.5,34.5 11,36 11,36 C 9.5,37.5 11,38.5 11,38.5 C 17.5,39.5 27.5,39.5 34,38.5 C 34,38.5 35.5,37.5 34,36 C 34,36 34.5,34.5 33,33.5 C 32.5,31 32.5,31.5 33.5,30 C 34.5,28 36,28 36,26 C 27.5,24.5 17.5,24.5 9,26 z"
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+        d: "M 11.5,30 C 15,29 30,29 33.5,30",
+        style: {
+          fill: 'none'
+        }
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+        d: "M 12,33.5 C 18,32.5 27,32.5 33,33.5",
+        style: {
+          fill: 'none'
+        }
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("circle", {
+        cx: "6",
+        cy: "12",
+        r: "2"
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("circle", {
+        cx: "14",
+        cy: "9",
+        r: "2"
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("circle", {
+        cx: "22.5",
+        cy: "8",
+        r: "2"
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("circle", {
+        cx: "31",
+        cy: "9",
+        r: "2"
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("circle", {
+        cx: "39",
+        cy: "12",
+        r: "2"
+      })]
+    })
+  }),
+  wK: /*#__PURE__*/jsxRuntime.exports.jsx("svg", {
+    xmlns: "http://www.w3.org/2000/svg",
+    version: "1.1",
+    width: "45",
+    height: "45",
+    children: /*#__PURE__*/jsxRuntime.exports.jsxs("g", {
+      style: {
+        fill: 'none',
+        fillOpacity: '1',
+        fillRule: 'evenodd',
+        stroke: '#000000',
+        strokeWidth: '1.5',
+        strokeLinecap: 'round',
+        strokeLinejoin: 'round',
+        strokeMiterlimit: '4',
+        strokeDasharray: 'none',
+        strokeOpacity: '1'
+      },
+      children: [/*#__PURE__*/jsxRuntime.exports.jsx("path", {
+        d: "M 22.5,11.63 L 22.5,6",
+        style: {
+          fill: 'none',
+          stroke: '#000000',
+          strokeLinejoin: 'miter'
+        }
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+        d: "M 20,8 L 25,8",
+        style: {
+          fill: 'none',
+          stroke: '#000000',
+          strokeLinejoin: 'miter'
+        }
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+        d: "M 22.5,25 C 22.5,25 27,17.5 25.5,14.5 C 25.5,14.5 24.5,12 22.5,12 C 20.5,12 19.5,14.5 19.5,14.5 C 18,17.5 22.5,25 22.5,25",
+        style: {
+          fill: '#ffffff',
+          stroke: '#000000',
+          strokeLinecap: 'butt',
+          strokeLinejoin: 'miter'
+        }
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+        d: "M 12.5,37 C 18,40.5 27,40.5 32.5,37 L 32.5,30 C 32.5,30 41.5,25.5 38.5,19.5 C 34.5,13 25,16 22.5,23.5 L 22.5,27 L 22.5,23.5 C 20,16 10.5,13 6.5,19.5 C 3.5,25.5 12.5,30 12.5,30 L 12.5,37",
+        style: {
+          fill: '#ffffff',
+          stroke: '#000000'
+        }
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+        d: "M 12.5,30 C 18,27 27,27 32.5,30",
+        style: {
+          fill: 'none',
+          stroke: '#000000'
+        }
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+        d: "M 12.5,33.5 C 18,30.5 27,30.5 32.5,33.5",
+        style: {
+          fill: 'none',
+          stroke: '#000000'
+        }
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+        d: "M 12.5,37 C 18,34 27,34 32.5,37",
+        style: {
+          fill: 'none',
+          stroke: '#000000'
+        }
+      })]
+    })
+  }),
+  bP: /*#__PURE__*/jsxRuntime.exports.jsx("svg", {
+    xmlns: "http://www.w3.org/2000/svg",
+    version: "1.1",
+    width: "45",
+    height: "45",
+    children: /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+      d: "m 22.5,9 c -2.21,0 -4,1.79 -4,4 0,0.89 0.29,1.71 0.78,2.38 C 17.33,16.5 16,18.59 16,21 c 0,2.03 0.94,3.84 2.41,5.03 C 15.41,27.09 11,31.58 11,39.5 H 34 C 34,31.58 29.59,27.09 26.59,26.03 28.06,24.84 29,23.03 29,21 29,18.59 27.67,16.5 25.72,15.38 26.21,14.71 26.5,13.89 26.5,13 c 0,-2.21 -1.79,-4 -4,-4 z",
+      style: {
+        opacity: '1',
+        fill: '#000000',
+        fillOpacity: '1',
+        fillRule: 'nonzero',
+        stroke: '#000000',
+        strokeWidth: '1.5',
+        strokeLinecap: 'round',
+        strokeLinejoin: 'miter',
+        strokeMiterlimit: '4',
+        strokeDasharray: 'none',
+        strokeOpacity: '1'
+      }
+    })
+  }),
+  bR: /*#__PURE__*/jsxRuntime.exports.jsx("svg", {
+    xmlns: "http://www.w3.org/2000/svg",
+    version: "1.1",
+    width: "45",
+    height: "45",
+    children: /*#__PURE__*/jsxRuntime.exports.jsxs("g", {
+      style: {
+        opacity: '1',
+        fill: '#000000',
+        fillOpacity: '1',
+        fillRule: 'evenodd',
+        stroke: '#000000',
+        strokeWidth: '1.5',
+        strokeLinecap: 'round',
+        strokeLinejoin: 'round',
+        strokeMiterlimit: '4',
+        strokeDasharray: 'none',
+        strokeOpacity: '1'
+      },
+      children: [/*#__PURE__*/jsxRuntime.exports.jsx("path", {
+        d: "M 9,39 L 36,39 L 36,36 L 9,36 L 9,39 z ",
+        style: {
+          strokeLinecap: 'butt'
+        }
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+        d: "M 12.5,32 L 14,29.5 L 31,29.5 L 32.5,32 L 12.5,32 z ",
+        style: {
+          strokeLinecap: 'butt'
+        }
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+        d: "M 12,36 L 12,32 L 33,32 L 33,36 L 12,36 z ",
+        style: {
+          strokeLinecap: 'butt'
+        }
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+        d: "M 14,29.5 L 14,16.5 L 31,16.5 L 31,29.5 L 14,29.5 z ",
+        style: {
+          strokeLinecap: 'butt',
+          strokeLinejoin: 'miter'
+        }
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+        d: "M 14,16.5 L 11,14 L 34,14 L 31,16.5 L 14,16.5 z ",
+        style: {
+          strokeLinecap: 'butt'
+        }
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+        d: "M 11,14 L 11,9 L 15,9 L 15,11 L 20,11 L 20,9 L 25,9 L 25,11 L 30,11 L 30,9 L 34,9 L 34,14 L 11,14 z ",
+        style: {
+          strokeLinecap: 'butt'
+        }
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+        d: "M 12,35.5 L 33,35.5 L 33,35.5",
+        style: {
+          fill: 'none',
+          stroke: '#ffffff',
+          strokeWidth: '1',
+          strokeLinejoin: 'miter'
+        }
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+        d: "M 13,31.5 L 32,31.5",
+        style: {
+          fill: 'none',
+          stroke: '#ffffff',
+          strokeWidth: '1',
+          strokeLinejoin: 'miter'
+        }
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+        d: "M 14,29.5 L 31,29.5",
+        style: {
+          fill: 'none',
+          stroke: '#ffffff',
+          strokeWidth: '1',
+          strokeLinejoin: 'miter'
+        }
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+        d: "M 14,16.5 L 31,16.5",
+        style: {
+          fill: 'none',
+          stroke: '#ffffff',
+          strokeWidth: '1',
+          strokeLinejoin: 'miter'
+        }
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+        d: "M 11,14 L 34,14",
+        style: {
+          fill: 'none',
+          stroke: '#ffffff',
+          strokeWidth: '1',
+          strokeLinejoin: 'miter'
+        }
+      })]
+    })
+  }),
+  bN: /*#__PURE__*/jsxRuntime.exports.jsx("svg", {
+    xmlns: "http://www.w3.org/2000/svg",
+    version: "1.1",
+    width: "45",
+    height: "45",
+    children: /*#__PURE__*/jsxRuntime.exports.jsxs("g", {
+      style: {
+        opacity: '1',
+        fill: 'none',
+        fillOpacity: '1',
+        fillRule: 'evenodd',
+        stroke: '#000000',
+        strokeWidth: '1.5',
+        strokeLinecap: 'round',
+        strokeLinejoin: 'round',
+        strokeMiterlimit: '4',
+        strokeDasharray: 'none',
+        strokeOpacity: '1'
+      },
+      children: [/*#__PURE__*/jsxRuntime.exports.jsx("path", {
+        d: "M 22,10 C 32.5,11 38.5,18 38,39 L 15,39 C 15,30 25,32.5 23,18",
+        style: {
+          fill: '#000000',
+          stroke: '#000000'
+        }
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+        d: "M 24,18 C 24.38,20.91 18.45,25.37 16,27 C 13,29 13.18,31.34 11,31 C 9.958,30.06 12.41,27.96 11,28 C 10,28 11.19,29.23 10,30 C 9,30 5.997,31 6,26 C 6,24 12,14 12,14 C 12,14 13.89,12.1 14,10.5 C 13.27,9.506 13.5,8.5 13.5,7.5 C 14.5,6.5 16.5,10 16.5,10 L 18.5,10 C 18.5,10 19.28,8.008 21,7 C 22,7 22,10 22,10",
+        style: {
+          fill: '#000000',
+          stroke: '#000000'
+        }
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+        d: "M 9.5 25.5 A 0.5 0.5 0 1 1 8.5,25.5 A 0.5 0.5 0 1 1 9.5 25.5 z",
+        style: {
+          fill: '#ffffff',
+          stroke: '#ffffff'
+        }
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+        d: "M 15 15.5 A 0.5 1.5 0 1 1  14,15.5 A 0.5 1.5 0 1 1  15 15.5 z",
+        transform: "matrix(0.866,0.5,-0.5,0.866,9.693,-5.173)",
+        style: {
+          fill: '#ffffff',
+          stroke: '#ffffff'
+        }
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+        d: "M 24.55,10.4 L 24.1,11.85 L 24.6,12 C 27.75,13 30.25,14.49 32.5,18.75 C 34.75,23.01 35.75,29.06 35.25,39 L 35.2,39.5 L 37.45,39.5 L 37.5,39 C 38,28.94 36.62,22.15 34.25,17.66 C 31.88,13.17 28.46,11.02 25.06,10.5 L 24.55,10.4 z ",
+        style: {
+          fill: '#ffffff',
+          stroke: 'none'
+        }
+      })]
+    })
+  }),
+  bB: /*#__PURE__*/jsxRuntime.exports.jsx("svg", {
+    xmlns: "http://www.w3.org/2000/svg",
+    version: "1.1",
+    width: "45",
+    height: "45",
+    children: /*#__PURE__*/jsxRuntime.exports.jsxs("g", {
+      style: {
+        opacity: '1',
+        fill: 'none',
+        fillRule: 'evenodd',
+        fillOpacity: '1',
+        stroke: '#000000',
+        strokeWidth: '1.5',
+        strokeLinecap: 'round',
+        strokeLinejoin: 'round',
+        strokeMiterlimit: '4',
+        strokeDasharray: 'none',
+        strokeOpacity: '1'
+      },
+      children: [/*#__PURE__*/jsxRuntime.exports.jsxs("g", {
+        style: {
+          fill: '#000000',
+          stroke: '#000000',
+          strokeLinecap: 'butt'
+        },
+        children: [/*#__PURE__*/jsxRuntime.exports.jsx("path", {
+          d: "M 9,36 C 12.39,35.03 19.11,36.43 22.5,34 C 25.89,36.43 32.61,35.03 36,36 C 36,36 37.65,36.54 39,38 C 38.32,38.97 37.35,38.99 36,38.5 C 32.61,37.53 25.89,38.96 22.5,37.5 C 19.11,38.96 12.39,37.53 9,38.5 C 7.65,38.99 6.68,38.97 6,38 C 7.35,36.54 9,36 9,36 z"
+        }), /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+          d: "M 15,32 C 17.5,34.5 27.5,34.5 30,32 C 30.5,30.5 30,30 30,30 C 30,27.5 27.5,26 27.5,26 C 33,24.5 33.5,14.5 22.5,10.5 C 11.5,14.5 12,24.5 17.5,26 C 17.5,26 15,27.5 15,30 C 15,30 14.5,30.5 15,32 z"
+        }), /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+          d: "M 25 8 A 2.5 2.5 0 1 1  20,8 A 2.5 2.5 0 1 1  25 8 z"
+        })]
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+        d: "M 17.5,26 L 27.5,26 M 15,30 L 30,30 M 22.5,15.5 L 22.5,20.5 M 20,18 L 25,18",
+        style: {
+          fill: 'none',
+          stroke: '#ffffff',
+          strokeLinejoin: 'miter'
+        }
+      })]
+    })
+  }),
+  bQ: /*#__PURE__*/jsxRuntime.exports.jsx("svg", {
+    xmlns: "http://www.w3.org/2000/svg",
+    version: "1.1",
+    width: "45",
+    height: "45",
+    children: /*#__PURE__*/jsxRuntime.exports.jsxs("g", {
+      style: {
+        fill: '#000000',
+        stroke: '#000000',
+        strokeWidth: '1.5',
+        strokeLinecap: 'round',
+        strokeLinejoin: 'round'
+      },
+      children: [/*#__PURE__*/jsxRuntime.exports.jsx("path", {
+        d: "M 9,26 C 17.5,24.5 30,24.5 36,26 L 38.5,13.5 L 31,25 L 30.7,10.9 L 25.5,24.5 L 22.5,10 L 19.5,24.5 L 14.3,10.9 L 14,25 L 6.5,13.5 L 9,26 z",
+        style: {
+          strokeLinecap: 'butt',
+          fill: '#000000'
+        }
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+        d: "m 9,26 c 0,2 1.5,2 2.5,4 1,1.5 1,1 0.5,3.5 -1.5,1 -1,2.5 -1,2.5 -1.5,1.5 0,2.5 0,2.5 6.5,1 16.5,1 23,0 0,0 1.5,-1 0,-2.5 0,0 0.5,-1.5 -1,-2.5 -0.5,-2.5 -0.5,-2 0.5,-3.5 1,-2 2.5,-2 2.5,-4 -8.5,-1.5 -18.5,-1.5 -27,0 z"
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+        d: "M 11.5,30 C 15,29 30,29 33.5,30"
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+        d: "m 12,33.5 c 6,-1 15,-1 21,0"
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("circle", {
+        cx: "6",
+        cy: "12",
+        r: "2"
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("circle", {
+        cx: "14",
+        cy: "9",
+        r: "2"
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("circle", {
+        cx: "22.5",
+        cy: "8",
+        r: "2"
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("circle", {
+        cx: "31",
+        cy: "9",
+        r: "2"
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("circle", {
+        cx: "39",
+        cy: "12",
+        r: "2"
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+        d: "M 11,38.5 A 35,35 1 0 0 34,38.5",
+        style: {
+          fill: 'none',
+          stroke: '#000000',
+          strokeLinecap: 'butt'
+        }
+      }), /*#__PURE__*/jsxRuntime.exports.jsxs("g", {
+        style: {
+          fill: 'none',
+          stroke: '#ffffff'
+        },
+        children: [/*#__PURE__*/jsxRuntime.exports.jsx("path", {
+          d: "M 11,29 A 35,35 1 0 1 34,29"
+        }), /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+          d: "M 12.5,31.5 L 32.5,31.5"
+        }), /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+          d: "M 11.5,34.5 A 35,35 1 0 0 33.5,34.5"
+        }), /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+          d: "M 10.5,37.5 A 35,35 1 0 0 34.5,37.5"
+        })]
+      })]
+    })
+  }),
+  bK: /*#__PURE__*/jsxRuntime.exports.jsx("svg", {
+    xmlns: "http://www.w3.org/2000/svg",
+    version: "1.1",
+    width: "45",
+    height: "45",
+    children: /*#__PURE__*/jsxRuntime.exports.jsxs("g", {
+      style: {
+        fill: 'none',
+        fillOpacity: '1',
+        fillRule: 'evenodd',
+        stroke: '#000000',
+        strokeWidth: '1.5',
+        strokeLinecap: 'round',
+        strokeLinejoin: 'round',
+        strokeMiterlimit: '4',
+        strokeDasharray: 'none',
+        strokeOpacity: '1'
+      },
+      children: [/*#__PURE__*/jsxRuntime.exports.jsx("path", {
+        d: "M 22.5,11.63 L 22.5,6",
+        style: {
+          fill: 'none',
+          stroke: '#000000',
+          strokeLinejoin: 'miter'
+        },
+        id: "path6570"
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+        d: "M 22.5,25 C 22.5,25 27,17.5 25.5,14.5 C 25.5,14.5 24.5,12 22.5,12 C 20.5,12 19.5,14.5 19.5,14.5 C 18,17.5 22.5,25 22.5,25",
+        style: {
+          fill: '#000000',
+          fillOpacity: '1',
+          strokeLinecap: 'butt',
+          strokeLinejoin: 'miter'
+        }
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+        d: "M 12.5,37 C 18,40.5 27,40.5 32.5,37 L 32.5,30 C 32.5,30 41.5,25.5 38.5,19.5 C 34.5,13 25,16 22.5,23.5 L 22.5,27 L 22.5,23.5 C 20,16 10.5,13 6.5,19.5 C 3.5,25.5 12.5,30 12.5,30 L 12.5,37",
+        style: {
+          fill: '#000000',
+          stroke: '#000000'
+        }
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+        d: "M 20,8 L 25,8",
+        style: {
+          fill: 'none',
+          stroke: '#000000',
+          strokeLinejoin: 'miter'
+        }
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+        d: "M 32,29.5 C 32,29.5 40.5,25.5 38.03,19.85 C 34.15,14 25,18 22.5,24.5 L 22.5,26.6 L 22.5,24.5 C 20,18 10.85,14 6.97,19.85 C 4.5,25.5 13,29.5 13,29.5",
+        style: {
+          fill: 'none',
+          stroke: '#ffffff'
+        }
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("path", {
+        d: "M 12.5,30 C 18,27 27,27 32.5,30 M 12.5,33.5 C 18,30.5 27,30.5 32.5,33.5 M 12.5,37 C 18,34 27,34 32.5,37",
+        style: {
+          fill: 'none',
+          stroke: '#ffffff'
+        }
+      })]
+    })
+  })
+};
+
+const ChessboardContext = /*#__PURE__*/React.createContext();
+const useChessboard = () => useContext(ChessboardContext);
+const ChessboardProvider = /*#__PURE__*/forwardRef(({
+  animationDuration,
+  areArrowsAllowed,
+  arePiecesDraggable,
+  arePremovesAllowed,
+  boardOrientation,
+  boardWidth,
+  clearPremovesOnRightClick,
+  customArrows,
+  customArrowColor,
+  customBoardStyle,
+  customDarkSquareStyle,
+  customDropSquareStyle,
+  customLightSquareStyle,
+  customPieces,
+  customPremoveDarkSquareStyle,
+  customPremoveLightSquareStyle,
+  customSquareStyles,
+  dropOffBoardAction,
+  id,
+  isDraggablePiece,
+  getPositionObject,
+  onDragOverSquare,
+  onMouseOutSquare,
+  onMouseOverSquare,
+  onPieceClick,
+  onPieceDrop,
+  onSquareClick,
+  onSquareRightClick,
+  position,
+  showBoardNotation,
+  showSparePieces,
+  children
+}, ref) => {
+  // position stored and displayed on board
+  const [currentPosition, setCurrentPosition] = useState(convertPositionToObject(position)); // calculated differences between current and incoming positions
+
+  const [positionDifferences, setPositionDifferences] = useState({}); // colour of last piece moved to determine if premoving
+
+  const [lastPieceColour, setLastPieceColour] = useState(undefined); // current premoves
+
+  const [premoves, setPremoves] = useState([]); // ref used to access current value during timeouts (closures)
+
+  const premovesRef = useRef(premoves); // current right mouse down square
+
+  const [currentRightClickDown, setCurrentRightClickDown] = useState(); // current arrows
+
+  const [arrows, setArrows] = useState([]); // chess pieces/styling
+
+  const [chessPieces, setChessPieces] = useState({ ...defaultPieces,
+    ...customPieces
+  }); // whether the last move was a manual drop or not
+
+  const [manualDrop, setManualDrop] = useState(false); // the most recent timeout whilst waiting for animation to complete
+
+  const [previousTimeout, setPreviousTimeout] = useState(undefined); // if currently waiting for an animation to finish
+
+  const [waitingForAnimation, setWaitingForAnimation] = useState(false); // open clearPremoves() to allow user to call on undo/reset/whenever
+
+  useImperativeHandle(ref, () => ({
+    clearPremoves() {
+      clearPremoves();
+    }
+
+  })); // handle external arrows change
+
+  useEffect(() => {
+    setArrows(customArrows);
+  }, [customArrows]); // handle custom pieces change
+
+  useEffect(() => {
+    setChessPieces({ ...defaultPieces,
+      ...customPieces
+    });
+  }, [customPieces]); // handle external position change
+
+  useEffect(() => {
+    var _Object$keys, _Object$entries, _Object$entries$;
+
+    const newPosition = convertPositionToObject(position);
+    const differences = getPositionDifferences(currentPosition, newPosition);
+    const newPieceColour = ((_Object$keys = Object.keys(differences.added)) === null || _Object$keys === void 0 ? void 0 : _Object$keys.length) <= 2 ? (_Object$entries = Object.entries(differences.added)) === null || _Object$entries === void 0 ? void 0 : (_Object$entries$ = _Object$entries[0]) === null || _Object$entries$ === void 0 ? void 0 : _Object$entries$[1][0] : undefined; // external move has come in before animation is over
+    // cancel animation and immediately update position
+
+    if (waitingForAnimation) {
+      setCurrentPosition(newPosition);
+      setWaitingForAnimation(false);
+      arePremovesAllowed && attemptPremove(newPieceColour);
+
+      if (previousTimeout) {
+        clearTimeout(previousTimeout);
+      }
+    } else {
+      // move was made using drag and drop
+      if (manualDrop) {
+        setCurrentPosition(newPosition);
+        setWaitingForAnimation(false);
+        arePremovesAllowed && attemptPremove(newPieceColour);
+      } else {
+        // move was made by external position change
+        // if position === start then don't override newPieceColour
+        // needs isDifferentFromStart in scenario where premoves have been cleared upon board reset but first move is made by computer, the last move colour would need to be updated
+        if (isDifferentFromStart(newPosition) && lastPieceColour !== undefined) {
+          setLastPieceColour(newPieceColour);
+        } else {
+          // position === start, likely a board reset
+          setLastPieceColour(undefined);
+        }
+
+        setPositionDifferences(differences); // animate external move
+
+        setWaitingForAnimation(true);
+        const newTimeout = setTimeout(() => {
+          setCurrentPosition(newPosition);
+          setWaitingForAnimation(false);
+          arePremovesAllowed && attemptPremove(newPieceColour);
+        }, animationDuration);
+        setPreviousTimeout(newTimeout);
+      }
+    } // reset manual drop, ready for next move to be made by user or external
+
+
+    setManualDrop(false); // inform latest position information
+
+    getPositionObject(newPosition); // clear arrows
+
+    clearArrows(); // clear timeout on unmount
+
+    return () => {
+      clearTimeout(previousTimeout);
+    };
+  }, [position]); // handle drop position change
+
+  function handleSetPosition(sourceSq, targetSq, piece) {
+    // if dropped back down, don't do anything
+    if (sourceSq === targetSq) {
+      return;
+    }
+
+    clearArrows(); // if second move is made for same colour, or there are still premoves queued, then this move needs to be added to premove queue instead of played
+    // premoves length check for colour is added in because white could make 3 premoves, and then black responds to the first move (changing the last piece colour) and then white pre-moves again
+
+    if (arePremovesAllowed && waitingForAnimation || arePremovesAllowed && (lastPieceColour === piece[0] || premovesRef.current.filter(p => p.piece[0] === piece[0]).length > 0)) {
+      const oldPremoves = [...premovesRef.current];
+      oldPremoves.push({
+        sourceSq,
+        targetSq,
+        piece
+      });
+      premovesRef.current = oldPremoves;
+      setPremoves([...oldPremoves]);
+      return;
+    } // if transitioning, don't allow new drop
+
+
+    if (!arePremovesAllowed && waitingForAnimation) return;
+    const newOnDropPosition = { ...currentPosition
+    };
+    setManualDrop(true);
+    setLastPieceColour(piece[0]); // if onPieceDrop function provided, execute it, position must be updated externally and captured by useEffect above for this move to show on board
+
+    if (onPieceDrop.length) {
+      const isValidMove = onPieceDrop(sourceSq, targetSq, piece);
+      if (!isValidMove) clearPremoves();
+    } else {
+      // delete if dropping off board
+      if (dropOffBoardAction === 'trash' && !targetSq) {
+        delete newOnDropPosition[sourceSq];
+      } // delete source piece if not dropping from spare piece
+
+
+      if (sourceSq !== 'spare') {
+        delete newOnDropPosition[sourceSq];
+      } // add piece in new position
+
+
+      newOnDropPosition[targetSq] = piece;
+      setCurrentPosition(newOnDropPosition);
+    } // inform latest position information
+
+
+    getPositionObject(newOnDropPosition);
+  }
+
+  function attemptPremove(newPieceColour) {
+    if (premovesRef.current.length === 0) return; // get current value of premove as this is called in a timeout so value may have changed since timeout was set
+
+    const premove = premovesRef.current[0]; // if premove is a differing colour to last move made, then this move can be made
+
+    if (premove.piece[0] !== undefined && premove.piece[0] !== newPieceColour && onPieceDrop.length) {
+      setLastPieceColour(premove.piece[0]);
+      setManualDrop(true); // pre-move doesn't need animation
+
+      const isValidMove = onPieceDrop(premove.sourceSq, premove.targetSq, premove.piece); // premove was successful and can be removed from queue
+
+      if (isValidMove) {
+        const oldPremoves = [...premovesRef.current];
+        oldPremoves.shift();
+        premovesRef.current = oldPremoves;
+        setPremoves([...oldPremoves]);
+      } else {
+        // premove wasn't successful, clear premove queue
+        clearPremoves();
+      }
+    }
+  }
+
+  function clearPremoves() {
+    setLastPieceColour(undefined);
+    premovesRef.current = [];
+    setPremoves([]);
+  }
+
+  function onRightClickDown(square) {
+    setCurrentRightClickDown(square);
+  }
+
+  function onRightClickUp(square) {
+    if (!areArrowsAllowed) return;
+
+    if (currentRightClickDown) {
+      // same square, don't draw an arrow, but do clear premoves and run onSquareRightClick
+      if (currentRightClickDown === square) {
+        setCurrentRightClickDown(null);
+        clearPremovesOnRightClick && clearPremoves();
+        onSquareRightClick(square);
+        return;
+      } // if arrow already exists then it needs to be removed
+
+
+      for (const i in arrows) {
+        if (arrows[i][0] === currentRightClickDown && arrows[i][1] === square) {
+          setArrows(oldArrows => {
+            const newArrows = [...oldArrows];
+            newArrows.splice(i, 1);
+            return newArrows;
+          });
+          return;
+        }
+      } // different square, draw an arrow
+
+
+      setArrows(oldArrows => [...oldArrows, [currentRightClickDown, square]]);
+    } else setCurrentRightClickDown(null);
+  }
+
+  function clearCurrentRightClickDown() {
+    setCurrentRightClickDown(null);
+  }
+
+  function clearArrows() {
+    setArrows([]);
+  }
+
+  return /*#__PURE__*/jsxRuntime.exports.jsx(ChessboardContext.Provider, {
+    value: {
+      animationDuration,
+      arePiecesDraggable,
+      arePremovesAllowed,
+      boardOrientation,
+      boardWidth,
+      customArrowColor,
+      customBoardStyle,
+      customDarkSquareStyle,
+      customDropSquareStyle,
+      customLightSquareStyle,
+      customPremoveDarkSquareStyle,
+      customPremoveLightSquareStyle,
+      customSquareStyles,
+      dropOffBoardAction,
+      id,
+      isDraggablePiece,
+      getPositionObject,
+      onDragOverSquare,
+      onMouseOutSquare,
+      onMouseOverSquare,
+      onPieceClick,
+      onPieceDrop,
+      onSquareClick,
+      onSquareRightClick,
+      showBoardNotation,
+      showSparePieces,
+      arrows,
+      chessPieces,
+      clearArrows,
+      clearCurrentRightClickDown,
+      clearPremoves,
+      currentPosition,
+      handleSetPosition,
+      lastPieceColour,
+      manualDrop,
+      onRightClickDown,
+      onRightClickUp,
+      positionDifferences,
+      premoves,
+      setChessPieces,
+      setCurrentPosition,
+      setManualDrop,
+      waitingForAnimation
+    },
+    children: children
+  });
+});
+
+function Notation({
+  row,
+  col
+}) {
+  const {
+    boardOrientation,
+    boardWidth,
+    customDarkSquareStyle,
+    customLightSquareStyle
+  } = useChessboard();
+  const whiteColor = customLightSquareStyle.backgroundColor;
+  const blackColor = customDarkSquareStyle.backgroundColor;
+  const isRow = col === 0;
+  const isColumn = row === 7;
+  const isBottomLeftSquare = isRow && isColumn;
+
+  function getRow() {
+    return boardOrientation === 'white' ? 8 - row : row + 1;
+  }
+
+  function getColumn() {
+    return boardOrientation === 'black' ? COLUMNS[7 - col] : COLUMNS[col];
+  }
+
+  function renderBottomLeft() {
+    return /*#__PURE__*/jsxRuntime.exports.jsxs(jsxRuntime.exports.Fragment, {
+      children: [/*#__PURE__*/jsxRuntime.exports.jsx("div", {
+        style: { ...notationStyle,
+          ...{
+            color: whiteColor
+          },
+          ...numericStyle(boardWidth)
+        },
+        children: getRow()
+      }), /*#__PURE__*/jsxRuntime.exports.jsx("div", {
+        style: { ...notationStyle,
+          ...{
+            color: whiteColor
+          },
+          ...alphaStyle(boardWidth)
+        },
+        children: getColumn()
+      })]
+    });
+  }
+
+  function renderLetters() {
+    return /*#__PURE__*/jsxRuntime.exports.jsx("div", {
+      style: { ...notationStyle,
+        ...{
+          color: col % 2 !== 0 ? blackColor : whiteColor
+        },
+        ...alphaStyle(boardWidth)
+      },
+      children: getColumn()
+    });
+  }
+
+  function renderNumbers() {
+    return /*#__PURE__*/jsxRuntime.exports.jsx("div", {
+      style: { ...notationStyle,
+        ...(boardOrientation === 'black' ? {
+          color: row % 2 === 0 ? blackColor : whiteColor
+        } : {
+          color: row % 2 === 0 ? blackColor : whiteColor
+        }),
+        ...numericStyle(boardWidth)
+      },
+      children: getRow()
+    });
+  }
+
+  if (isBottomLeftSquare) {
+    return renderBottomLeft();
+  }
+
+  if (isColumn) {
+    return renderLetters();
+  }
+
+  if (isRow) {
+    return renderNumbers();
+  }
+
+  return null;
+}
+
+const alphaStyle = width => ({
+  alignSelf: 'flex-end',
+  paddingLeft: width / 8 - width / 48,
+  fontSize: width / 48
+});
+
+const numericStyle = width => ({
+  alignSelf: 'flex-start',
+  paddingRight: width / 8 - width / 48,
+  fontSize: width / 48
+});
+
+const notationStyle = {
+  fontFamily: 'Helvetica Neue',
+  zIndex: 3,
+  position: 'absolute'
+};
+
+/**
+ * Create the React Context
+ */
+
+var DndContext = /*#__PURE__*/createContext({
+  dragDropManager: undefined
+});
+
+function _classCallCheck$6(instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+}
+
+function _defineProperties$6(target, props) {
+  for (var i = 0; i < props.length; i++) {
+    var descriptor = props[i];
+    descriptor.enumerable = descriptor.enumerable || false;
+    descriptor.configurable = true;
+    if ("value" in descriptor) descriptor.writable = true;
+    Object.defineProperty(target, descriptor.key, descriptor);
+  }
+}
+
+function _createClass$6(Constructor, protoProps, staticProps) {
+  if (protoProps) _defineProperties$6(Constructor.prototype, protoProps);
+  if (staticProps) _defineProperties$6(Constructor, staticProps);
+  return Constructor;
+}
+
+function _defineProperty$6(obj, key, value) {
   if (key in obj) {
     Object.defineProperty(obj, key, {
       value: value,
@@ -4165,16 +9354,16 @@ var isCallingCanDrag = false;
 var isCallingIsDragging = false;
 var DragSourceMonitorImpl = /*#__PURE__*/function () {
   function DragSourceMonitorImpl(manager) {
-    _classCallCheck$d(this, DragSourceMonitorImpl);
+    _classCallCheck$6(this, DragSourceMonitorImpl);
 
-    _defineProperty$e(this, "internalMonitor", void 0);
+    _defineProperty$6(this, "internalMonitor", void 0);
 
-    _defineProperty$e(this, "sourceId", null);
+    _defineProperty$6(this, "sourceId", null);
 
     this.internalMonitor = manager.getMonitor();
   }
 
-  _createClass$d(DragSourceMonitorImpl, [{
+  _createClass$6(DragSourceMonitorImpl, [{
     key: "receiveHandlerId",
     value: function receiveHandlerId(sourceId) {
       this.sourceId = sourceId;
@@ -4307,13 +9496,13 @@ var DragSourceMonitorImpl = /*#__PURE__*/function () {
   return DragSourceMonitorImpl;
 }();
 
-function _classCallCheck$c(instance, Constructor) {
+function _classCallCheck$5(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
   }
 }
 
-function _defineProperties$c(target, props) {
+function _defineProperties$5(target, props) {
   for (var i = 0; i < props.length; i++) {
     var descriptor = props[i];
     descriptor.enumerable = descriptor.enumerable || false;
@@ -4323,13 +9512,13 @@ function _defineProperties$c(target, props) {
   }
 }
 
-function _createClass$c(Constructor, protoProps, staticProps) {
-  if (protoProps) _defineProperties$c(Constructor.prototype, protoProps);
-  if (staticProps) _defineProperties$c(Constructor, staticProps);
+function _createClass$5(Constructor, protoProps, staticProps) {
+  if (protoProps) _defineProperties$5(Constructor.prototype, protoProps);
+  if (staticProps) _defineProperties$5(Constructor, staticProps);
   return Constructor;
 }
 
-function _defineProperty$d(obj, key, value) {
+function _defineProperty$5(obj, key, value) {
   if (key in obj) {
     Object.defineProperty(obj, key, {
       value: value,
@@ -4346,16 +9535,16 @@ function _defineProperty$d(obj, key, value) {
 var isCallingCanDrop = false;
 var DropTargetMonitorImpl = /*#__PURE__*/function () {
   function DropTargetMonitorImpl(manager) {
-    _classCallCheck$c(this, DropTargetMonitorImpl);
+    _classCallCheck$5(this, DropTargetMonitorImpl);
 
-    _defineProperty$d(this, "internalMonitor", void 0);
+    _defineProperty$5(this, "internalMonitor", void 0);
 
-    _defineProperty$d(this, "targetId", null);
+    _defineProperty$5(this, "targetId", null);
 
     this.internalMonitor = manager.getMonitor();
   }
 
-  _createClass$c(DropTargetMonitorImpl, [{
+  _createClass$5(DropTargetMonitorImpl, [{
     key: "receiveHandlerId",
     value: function receiveHandlerId(targetId) {
       this.targetId = targetId;
@@ -4552,56 +9741,13 @@ function isRef(obj) {
   );
 }
 
-function shallowEqual(objA, objB, compare, compareContext) {
-  var compareResult = compare ? compare.call(compareContext, objA, objB) : void 0;
-
-  if (compareResult !== void 0) {
-    return !!compareResult;
-  }
-
-  if (objA === objB) {
-    return true;
-  }
-
-  if (typeof objA !== 'object' || !objA || typeof objB !== 'object' || !objB) {
-    return false;
-  }
-
-  var keysA = Object.keys(objA);
-  var keysB = Object.keys(objB);
-
-  if (keysA.length !== keysB.length) {
-    return false;
-  }
-
-  var bHasOwnProperty = Object.prototype.hasOwnProperty.bind(objB); // Test for A's keys different from B.
-
-  for (var idx = 0; idx < keysA.length; idx++) {
-    var key = keysA[idx];
-
-    if (!bHasOwnProperty(key)) {
-      return false;
-    }
-
-    var valueA = objA[key];
-    var valueB = objB[key];
-    compareResult = compare ? compare.call(compareContext, valueA, valueB, key) : void 0;
-
-    if (compareResult === false || compareResult === void 0 && valueA !== valueB) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
-function _classCallCheck$b(instance, Constructor) {
+function _classCallCheck$4(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
   }
 }
 
-function _defineProperties$b(target, props) {
+function _defineProperties$4(target, props) {
   for (var i = 0; i < props.length; i++) {
     var descriptor = props[i];
     descriptor.enumerable = descriptor.enumerable || false;
@@ -4611,13 +9757,13 @@ function _defineProperties$b(target, props) {
   }
 }
 
-function _createClass$b(Constructor, protoProps, staticProps) {
-  if (protoProps) _defineProperties$b(Constructor.prototype, protoProps);
-  if (staticProps) _defineProperties$b(Constructor, staticProps);
+function _createClass$4(Constructor, protoProps, staticProps) {
+  if (protoProps) _defineProperties$4(Constructor.prototype, protoProps);
+  if (staticProps) _defineProperties$4(Constructor, staticProps);
   return Constructor;
 }
 
-function _defineProperty$c(obj, key, value) {
+function _defineProperty$4(obj, key, value) {
   if (key in obj) {
     Object.defineProperty(obj, key, {
       value: value,
@@ -4637,9 +9783,9 @@ var SourceConnector = /*#__PURE__*/function () {
   function SourceConnector(backend) {
     var _this = this;
 
-    _classCallCheck$b(this, SourceConnector);
+    _classCallCheck$4(this, SourceConnector);
 
-    _defineProperty$c(this, "hooks", wrapConnectorHooks({
+    _defineProperty$4(this, "hooks", wrapConnectorHooks({
       dragSource: function dragSource(node, options) {
         _this.clearDragSource();
 
@@ -4668,40 +9814,40 @@ var SourceConnector = /*#__PURE__*/function () {
       }
     }));
 
-    _defineProperty$c(this, "handlerId", null);
+    _defineProperty$4(this, "handlerId", null);
 
-    _defineProperty$c(this, "dragSourceRef", null);
+    _defineProperty$4(this, "dragSourceRef", null);
 
-    _defineProperty$c(this, "dragSourceNode", void 0);
+    _defineProperty$4(this, "dragSourceNode", void 0);
 
-    _defineProperty$c(this, "dragSourceOptionsInternal", null);
+    _defineProperty$4(this, "dragSourceOptionsInternal", null);
 
-    _defineProperty$c(this, "dragSourceUnsubscribe", void 0);
+    _defineProperty$4(this, "dragSourceUnsubscribe", void 0);
 
-    _defineProperty$c(this, "dragPreviewRef", null);
+    _defineProperty$4(this, "dragPreviewRef", null);
 
-    _defineProperty$c(this, "dragPreviewNode", void 0);
+    _defineProperty$4(this, "dragPreviewNode", void 0);
 
-    _defineProperty$c(this, "dragPreviewOptionsInternal", null);
+    _defineProperty$4(this, "dragPreviewOptionsInternal", null);
 
-    _defineProperty$c(this, "dragPreviewUnsubscribe", void 0);
+    _defineProperty$4(this, "dragPreviewUnsubscribe", void 0);
 
-    _defineProperty$c(this, "lastConnectedHandlerId", null);
+    _defineProperty$4(this, "lastConnectedHandlerId", null);
 
-    _defineProperty$c(this, "lastConnectedDragSource", null);
+    _defineProperty$4(this, "lastConnectedDragSource", null);
 
-    _defineProperty$c(this, "lastConnectedDragSourceOptions", null);
+    _defineProperty$4(this, "lastConnectedDragSourceOptions", null);
 
-    _defineProperty$c(this, "lastConnectedDragPreview", null);
+    _defineProperty$4(this, "lastConnectedDragPreview", null);
 
-    _defineProperty$c(this, "lastConnectedDragPreviewOptions", null);
+    _defineProperty$4(this, "lastConnectedDragPreviewOptions", null);
 
-    _defineProperty$c(this, "backend", void 0);
+    _defineProperty$4(this, "backend", void 0);
 
     this.backend = backend;
   }
 
-  _createClass$b(SourceConnector, [{
+  _createClass$4(SourceConnector, [{
     key: "receiveHandlerId",
     value: function receiveHandlerId(newHandlerId) {
       if (this.handlerId === newHandlerId) {
@@ -4862,13 +10008,13 @@ var SourceConnector = /*#__PURE__*/function () {
   return SourceConnector;
 }();
 
-function _classCallCheck$a(instance, Constructor) {
+function _classCallCheck$3(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
   }
 }
 
-function _defineProperties$a(target, props) {
+function _defineProperties$3(target, props) {
   for (var i = 0; i < props.length; i++) {
     var descriptor = props[i];
     descriptor.enumerable = descriptor.enumerable || false;
@@ -4878,13 +10024,13 @@ function _defineProperties$a(target, props) {
   }
 }
 
-function _createClass$a(Constructor, protoProps, staticProps) {
-  if (protoProps) _defineProperties$a(Constructor.prototype, protoProps);
-  if (staticProps) _defineProperties$a(Constructor, staticProps);
+function _createClass$3(Constructor, protoProps, staticProps) {
+  if (protoProps) _defineProperties$3(Constructor.prototype, protoProps);
+  if (staticProps) _defineProperties$3(Constructor, staticProps);
   return Constructor;
 }
 
-function _defineProperty$b(obj, key, value) {
+function _defineProperty$3(obj, key, value) {
   if (key in obj) {
     Object.defineProperty(obj, key, {
       value: value,
@@ -4903,9 +10049,9 @@ var TargetConnector = /*#__PURE__*/function () {
   function TargetConnector(backend) {
     var _this = this;
 
-    _classCallCheck$a(this, TargetConnector);
+    _classCallCheck$3(this, TargetConnector);
 
-    _defineProperty$b(this, "hooks", wrapConnectorHooks({
+    _defineProperty$3(this, "hooks", wrapConnectorHooks({
       dropTarget: function dropTarget(node, options) {
         _this.clearDropTarget();
 
@@ -4921,28 +10067,28 @@ var TargetConnector = /*#__PURE__*/function () {
       }
     }));
 
-    _defineProperty$b(this, "handlerId", null);
+    _defineProperty$3(this, "handlerId", null);
 
-    _defineProperty$b(this, "dropTargetRef", null);
+    _defineProperty$3(this, "dropTargetRef", null);
 
-    _defineProperty$b(this, "dropTargetNode", void 0);
+    _defineProperty$3(this, "dropTargetNode", void 0);
 
-    _defineProperty$b(this, "dropTargetOptionsInternal", null);
+    _defineProperty$3(this, "dropTargetOptionsInternal", null);
 
-    _defineProperty$b(this, "unsubscribeDropTarget", void 0);
+    _defineProperty$3(this, "unsubscribeDropTarget", void 0);
 
-    _defineProperty$b(this, "lastConnectedHandlerId", null);
+    _defineProperty$3(this, "lastConnectedHandlerId", null);
 
-    _defineProperty$b(this, "lastConnectedDropTarget", null);
+    _defineProperty$3(this, "lastConnectedDropTarget", null);
 
-    _defineProperty$b(this, "lastConnectedDropTargetOptions", null);
+    _defineProperty$3(this, "lastConnectedDropTargetOptions", null);
 
-    _defineProperty$b(this, "backend", void 0);
+    _defineProperty$3(this, "backend", void 0);
 
     this.backend = backend;
   }
 
-  _createClass$a(TargetConnector, [{
+  _createClass$3(TargetConnector, [{
     key: "connectTarget",
     get: function get() {
       return this.dropTarget;
@@ -5110,112 +10256,6 @@ function isPlainObject(input) {
   return Object.getPrototypeOf(input) === proto;
 }
 
-var reactIs = reactIs$1.exports;
-/**
- * Copyright 2015, Yahoo! Inc.
- * Copyrights licensed under the New BSD License. See the accompanying LICENSE file for terms.
- */
-
-
-var REACT_STATICS = {
-  childContextTypes: true,
-  contextType: true,
-  contextTypes: true,
-  defaultProps: true,
-  displayName: true,
-  getDefaultProps: true,
-  getDerivedStateFromError: true,
-  getDerivedStateFromProps: true,
-  mixins: true,
-  propTypes: true,
-  type: true
-};
-var KNOWN_STATICS = {
-  name: true,
-  length: true,
-  prototype: true,
-  caller: true,
-  callee: true,
-  arguments: true,
-  arity: true
-};
-var FORWARD_REF_STATICS = {
-  '$$typeof': true,
-  render: true,
-  defaultProps: true,
-  displayName: true,
-  propTypes: true
-};
-var MEMO_STATICS = {
-  '$$typeof': true,
-  compare: true,
-  defaultProps: true,
-  displayName: true,
-  propTypes: true,
-  type: true
-};
-var TYPE_STATICS = {};
-TYPE_STATICS[reactIs.ForwardRef] = FORWARD_REF_STATICS;
-TYPE_STATICS[reactIs.Memo] = MEMO_STATICS;
-
-function getStatics(component) {
-  // React v16.11 and below
-  if (reactIs.isMemo(component)) {
-    return MEMO_STATICS;
-  } // React v16.12 and above
-
-
-  return TYPE_STATICS[component['$$typeof']] || REACT_STATICS;
-}
-
-var defineProperty = Object.defineProperty;
-var getOwnPropertyNames = Object.getOwnPropertyNames;
-var getOwnPropertySymbols = Object.getOwnPropertySymbols;
-var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
-var getPrototypeOf = Object.getPrototypeOf;
-var objectPrototype = Object.prototype;
-
-function hoistNonReactStatics(targetComponent, sourceComponent, blacklist) {
-  if (typeof sourceComponent !== 'string') {
-    // don't hoist over string (html) components
-    if (objectPrototype) {
-      var inheritedComponent = getPrototypeOf(sourceComponent);
-
-      if (inheritedComponent && inheritedComponent !== objectPrototype) {
-        hoistNonReactStatics(targetComponent, inheritedComponent, blacklist);
-      }
-    }
-
-    var keys = getOwnPropertyNames(sourceComponent);
-
-    if (getOwnPropertySymbols) {
-      keys = keys.concat(getOwnPropertySymbols(sourceComponent));
-    }
-
-    var targetStatics = getStatics(targetComponent);
-    var sourceStatics = getStatics(sourceComponent);
-
-    for (var i = 0; i < keys.length; ++i) {
-      var key = keys[i];
-
-      if (!KNOWN_STATICS[key] && !(blacklist && blacklist[key]) && !(sourceStatics && sourceStatics[key]) && !(targetStatics && targetStatics[key])) {
-        var descriptor = getOwnPropertyDescriptor(sourceComponent, key);
-
-        try {
-          // Avoid failures from read-only properties
-          defineProperty(targetComponent, key, descriptor);
-        } catch (e) {}
-      }
-    }
-  }
-
-  return targetComponent;
-}
-
-var hoistNonReactStatics_cjs = hoistNonReactStatics;
-
-var hoistStatics = hoistNonReactStatics_cjs;
-
 function _typeof$1(obj) {
   "@babel/helpers - typeof";
 
@@ -5232,13 +10272,13 @@ function _typeof$1(obj) {
   return _typeof$1(obj);
 }
 
-function _classCallCheck$9(instance, Constructor) {
+function _classCallCheck$2(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
   }
 }
 
-function _defineProperties$9(target, props) {
+function _defineProperties$2(target, props) {
   for (var i = 0; i < props.length; i++) {
     var descriptor = props[i];
     descriptor.enumerable = descriptor.enumerable || false;
@@ -5248,9 +10288,9 @@ function _defineProperties$9(target, props) {
   }
 }
 
-function _createClass$9(Constructor, protoProps, staticProps) {
-  if (protoProps) _defineProperties$9(Constructor.prototype, protoProps);
-  if (staticProps) _defineProperties$9(Constructor, staticProps);
+function _createClass$2(Constructor, protoProps, staticProps) {
+  if (protoProps) _defineProperties$2(Constructor.prototype, protoProps);
+  if (staticProps) _defineProperties$2(Constructor, staticProps);
   return Constructor;
 }
 
@@ -5335,7 +10375,7 @@ function _getPrototypeOf(o) {
   return _getPrototypeOf(o);
 }
 
-function _defineProperty$a(obj, key, value) {
+function _defineProperty$2(obj, key, value) {
   if (key in obj) {
     Object.defineProperty(obj, key, {
       value: value,
@@ -5373,7 +10413,7 @@ function DragLayer(collect) {
       function DragLayerContainer() {
         var _this;
 
-        _classCallCheck$9(this, DragLayerContainer);
+        _classCallCheck$2(this, DragLayerContainer);
 
         for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
           args[_key] = arguments[_key];
@@ -5381,17 +10421,17 @@ function DragLayer(collect) {
 
         _this = _super.call.apply(_super, [this].concat(args));
 
-        _defineProperty$a(_assertThisInitialized(_this), "manager", void 0);
+        _defineProperty$2(_assertThisInitialized(_this), "manager", void 0);
 
-        _defineProperty$a(_assertThisInitialized(_this), "isCurrentlyMounted", false);
+        _defineProperty$2(_assertThisInitialized(_this), "isCurrentlyMounted", false);
 
-        _defineProperty$a(_assertThisInitialized(_this), "unsubscribeFromOffsetChange", void 0);
+        _defineProperty$2(_assertThisInitialized(_this), "unsubscribeFromOffsetChange", void 0);
 
-        _defineProperty$a(_assertThisInitialized(_this), "unsubscribeFromStateChange", void 0);
+        _defineProperty$2(_assertThisInitialized(_this), "unsubscribeFromStateChange", void 0);
 
-        _defineProperty$a(_assertThisInitialized(_this), "ref", /*#__PURE__*/createRef());
+        _defineProperty$2(_assertThisInitialized(_this), "ref", /*#__PURE__*/createRef());
 
-        _defineProperty$a(_assertThisInitialized(_this), "handleChange", function () {
+        _defineProperty$2(_assertThisInitialized(_this), "handleChange", function () {
           if (!_this.isCurrentlyMounted) {
             return;
           }
@@ -5406,7 +10446,7 @@ function DragLayer(collect) {
         return _this;
       }
 
-      _createClass$9(DragLayerContainer, [{
+      _createClass$2(DragLayerContainer, [{
         key: "getDecoratedComponentInstance",
         value: function getDecoratedComponentInstance() {
           invariant(this.ref.current, 'In order to access an instance of the decorated component, it must either be a class component or use React.forwardRef()');
@@ -5443,7 +10483,7 @@ function DragLayer(collect) {
         value: function render() {
           var _this2 = this;
 
-          return jsx(DndContext.Consumer, {
+          return jsxRuntime.exports.jsx(DndContext.Consumer, {
             children: function children(_ref) {
               var dragDropManager = _ref.dragDropManager;
 
@@ -5458,7 +10498,7 @@ function DragLayer(collect) {
                 return null;
               }
 
-              return jsx(Decorated, Object.assign({}, _this2.props, _this2.state, {
+              return jsxRuntime.exports.jsx(Decorated, Object.assign({}, _this2.props, _this2.state, {
                 ref: isRefable(Decorated) ? _this2.ref : null
               }), void 0);
             }
@@ -5492,9 +10532,9 @@ function DragLayer(collect) {
       return DragLayerContainer;
     }(Component);
 
-    _defineProperty$a(DragLayerContainer, "displayName", "DragLayer(".concat(displayName, ")"));
+    _defineProperty$2(DragLayerContainer, "displayName", "DragLayer(".concat(displayName, ")"));
 
-    _defineProperty$a(DragLayerContainer, "DecoratedComponent", DecoratedComponent);
+    _defineProperty$2(DragLayerContainer, "DecoratedComponent", DecoratedComponent);
 
     return hoistStatics(DragLayerContainer, DecoratedComponent);
   };
@@ -5518,13 +10558,13 @@ function _typeof(obj) {
   return _typeof(obj);
 }
 
-function _classCallCheck$8(instance, Constructor) {
+function _classCallCheck$1(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
   }
 }
 
-function _defineProperties$8(target, props) {
+function _defineProperties$1(target, props) {
   for (var i = 0; i < props.length; i++) {
     var descriptor = props[i];
     descriptor.enumerable = descriptor.enumerable || false;
@@ -5534,13 +10574,13 @@ function _defineProperties$8(target, props) {
   }
 }
 
-function _createClass$8(Constructor, protoProps, staticProps) {
-  if (protoProps) _defineProperties$8(Constructor.prototype, protoProps);
-  if (staticProps) _defineProperties$8(Constructor, staticProps);
+function _createClass$1(Constructor, protoProps, staticProps) {
+  if (protoProps) _defineProperties$1(Constructor.prototype, protoProps);
+  if (staticProps) _defineProperties$1(Constructor, staticProps);
   return Constructor;
 }
 
-function _defineProperty$9(obj, key, value) {
+function _defineProperty$1(obj, key, value) {
   if (key in obj) {
     Object.defineProperty(obj, key, {
       value: value,
@@ -5557,20 +10597,20 @@ function _defineProperty$9(obj, key, value) {
 
 var DragSourceImpl = /*#__PURE__*/function () {
   function DragSourceImpl(spec, monitor, connector) {
-    _classCallCheck$8(this, DragSourceImpl);
+    _classCallCheck$1(this, DragSourceImpl);
 
-    _defineProperty$9(this, "spec", void 0);
+    _defineProperty$1(this, "spec", void 0);
 
-    _defineProperty$9(this, "monitor", void 0);
+    _defineProperty$1(this, "monitor", void 0);
 
-    _defineProperty$9(this, "connector", void 0);
+    _defineProperty$1(this, "connector", void 0);
 
     this.spec = spec;
     this.monitor = monitor;
     this.connector = connector;
   }
 
-  _createClass$8(DragSourceImpl, [{
+  _createClass$1(DragSourceImpl, [{
     key: "beginDrag",
     value: function beginDrag() {
       var _result;
@@ -6072,13 +11112,13 @@ function useAccept(spec) {
   }, [accept]);
 }
 
-function _classCallCheck$7(instance, Constructor) {
+function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
   }
 }
 
-function _defineProperties$7(target, props) {
+function _defineProperties(target, props) {
   for (var i = 0; i < props.length; i++) {
     var descriptor = props[i];
     descriptor.enumerable = descriptor.enumerable || false;
@@ -6088,13 +11128,13 @@ function _defineProperties$7(target, props) {
   }
 }
 
-function _createClass$7(Constructor, protoProps, staticProps) {
-  if (protoProps) _defineProperties$7(Constructor.prototype, protoProps);
-  if (staticProps) _defineProperties$7(Constructor, staticProps);
+function _createClass(Constructor, protoProps, staticProps) {
+  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+  if (staticProps) _defineProperties(Constructor, staticProps);
   return Constructor;
 }
 
-function _defineProperty$8(obj, key, value) {
+function _defineProperty(obj, key, value) {
   if (key in obj) {
     Object.defineProperty(obj, key, {
       value: value,
@@ -6111,17 +11151,17 @@ function _defineProperty$8(obj, key, value) {
 
 var DropTargetImpl = /*#__PURE__*/function () {
   function DropTargetImpl(spec, monitor) {
-    _classCallCheck$7(this, DropTargetImpl);
+    _classCallCheck(this, DropTargetImpl);
 
-    _defineProperty$8(this, "spec", void 0);
+    _defineProperty(this, "spec", void 0);
 
-    _defineProperty$8(this, "monitor", void 0);
+    _defineProperty(this, "monitor", void 0);
 
     this.spec = spec;
     this.monitor = monitor;
   }
 
-  _createClass$7(DropTargetImpl, [{
+  _createClass(DropTargetImpl, [{
     key: "canDrop",
     value: function canDrop() {
       var spec = this.spec;
@@ -6283,1484 +11323,6 @@ function useDrop(specArg, deps) {
   return [useCollectedProps(spec.collect, monitor, connector), useConnectDropTarget(connector)];
 }
 
-function _extends() {
-  _extends = Object.assign || function (target) {
-    for (var i = 1; i < arguments.length; i++) {
-      var source = arguments[i];
-
-      for (var key in source) {
-        if (Object.prototype.hasOwnProperty.call(source, key)) {
-          target[key] = source[key];
-        }
-      }
-    }
-
-    return target;
-  };
-
-  return _extends.apply(this, arguments);
-}
-var PreviewPortalContext = /*#__PURE__*/React.createContext(null);
-var DndProvider = function DndProvider(props) {
-  var previewPortal = useRef();
-  return /*#__PURE__*/React.createElement(PreviewPortalContext.Provider, {
-    value: previewPortal.current
-  }, /*#__PURE__*/React.createElement(DndProvider$1, _extends({
-    backend: MultiBackend
-  }, props)), /*#__PURE__*/React.createElement("div", {
-    ref: previewPortal
-  }));
-};
-DndProvider.propTypes = {
-  manager: PropTypes.any,
-  context: PropTypes.any,
-  options: PropTypes.any,
-  debugMode: PropTypes.bool
-};
-
-({
-  generator: PropTypes.func,
-  children: PropTypes.oneOfType([PropTypes.node, PropTypes.func])
-});
-
-// cheap lodash replacements
-function memoize(fn) {
-  var result = null;
-
-  var memoized = function memoized() {
-    if (result == null) {
-      result = fn();
-    }
-
-    return result;
-  };
-
-  return memoized;
-}
-/**
- * drop-in replacement for _.without
- */
-
-function without(items, item) {
-  return items.filter(function (i) {
-    return i !== item;
-  });
-}
-function union(itemsA, itemsB) {
-  var set = new Set();
-
-  var insertItem = function insertItem(item) {
-    return set.add(item);
-  };
-
-  itemsA.forEach(insertItem);
-  itemsB.forEach(insertItem);
-  var result = [];
-  set.forEach(function (key) {
-    return result.push(key);
-  });
-  return result;
-}
-
-function _classCallCheck$6(instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-}
-
-function _defineProperties$6(target, props) {
-  for (var i = 0; i < props.length; i++) {
-    var descriptor = props[i];
-    descriptor.enumerable = descriptor.enumerable || false;
-    descriptor.configurable = true;
-    if ("value" in descriptor) descriptor.writable = true;
-    Object.defineProperty(target, descriptor.key, descriptor);
-  }
-}
-
-function _createClass$6(Constructor, protoProps, staticProps) {
-  if (protoProps) _defineProperties$6(Constructor.prototype, protoProps);
-  if (staticProps) _defineProperties$6(Constructor, staticProps);
-  return Constructor;
-}
-
-function _defineProperty$7(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-var EnterLeaveCounter = /*#__PURE__*/function () {
-  function EnterLeaveCounter(isNodeInDocument) {
-    _classCallCheck$6(this, EnterLeaveCounter);
-
-    _defineProperty$7(this, "entered", []);
-
-    _defineProperty$7(this, "isNodeInDocument", void 0);
-
-    this.isNodeInDocument = isNodeInDocument;
-  }
-
-  _createClass$6(EnterLeaveCounter, [{
-    key: "enter",
-    value: function enter(enteringNode) {
-      var _this = this;
-
-      var previousLength = this.entered.length;
-
-      var isNodeEntered = function isNodeEntered(node) {
-        return _this.isNodeInDocument(node) && (!node.contains || node.contains(enteringNode));
-      };
-
-      this.entered = union(this.entered.filter(isNodeEntered), [enteringNode]);
-      return previousLength === 0 && this.entered.length > 0;
-    }
-  }, {
-    key: "leave",
-    value: function leave(leavingNode) {
-      var previousLength = this.entered.length;
-      this.entered = without(this.entered.filter(this.isNodeInDocument), leavingNode);
-      return previousLength > 0 && this.entered.length === 0;
-    }
-  }, {
-    key: "reset",
-    value: function reset() {
-      this.entered = [];
-    }
-  }]);
-
-  return EnterLeaveCounter;
-}();
-
-var isFirefox = memoize(function () {
-  return /firefox/i.test(navigator.userAgent);
-});
-var isSafari = memoize(function () {
-  return Boolean(window.safari);
-});
-
-function _classCallCheck$5(instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-}
-
-function _defineProperties$5(target, props) {
-  for (var i = 0; i < props.length; i++) {
-    var descriptor = props[i];
-    descriptor.enumerable = descriptor.enumerable || false;
-    descriptor.configurable = true;
-    if ("value" in descriptor) descriptor.writable = true;
-    Object.defineProperty(target, descriptor.key, descriptor);
-  }
-}
-
-function _createClass$5(Constructor, protoProps, staticProps) {
-  if (protoProps) _defineProperties$5(Constructor.prototype, protoProps);
-  if (staticProps) _defineProperties$5(Constructor, staticProps);
-  return Constructor;
-}
-
-function _defineProperty$6(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-var MonotonicInterpolant = /*#__PURE__*/function () {
-  function MonotonicInterpolant(xs, ys) {
-    _classCallCheck$5(this, MonotonicInterpolant);
-
-    _defineProperty$6(this, "xs", void 0);
-
-    _defineProperty$6(this, "ys", void 0);
-
-    _defineProperty$6(this, "c1s", void 0);
-
-    _defineProperty$6(this, "c2s", void 0);
-
-    _defineProperty$6(this, "c3s", void 0);
-
-    var length = xs.length; // Rearrange xs and ys so that xs is sorted
-
-    var indexes = [];
-
-    for (var i = 0; i < length; i++) {
-      indexes.push(i);
-    }
-
-    indexes.sort(function (a, b) {
-      return xs[a] < xs[b] ? -1 : 1;
-    }); // Get consecutive differences and slopes
-    var dxs = [];
-    var ms = [];
-    var dx;
-    var dy;
-
-    for (var _i = 0; _i < length - 1; _i++) {
-      dx = xs[_i + 1] - xs[_i];
-      dy = ys[_i + 1] - ys[_i];
-      dxs.push(dx);
-      ms.push(dy / dx);
-    } // Get degree-1 coefficients
-
-
-    var c1s = [ms[0]];
-
-    for (var _i2 = 0; _i2 < dxs.length - 1; _i2++) {
-      var m2 = ms[_i2];
-      var mNext = ms[_i2 + 1];
-
-      if (m2 * mNext <= 0) {
-        c1s.push(0);
-      } else {
-        dx = dxs[_i2];
-        var dxNext = dxs[_i2 + 1];
-        var common = dx + dxNext;
-        c1s.push(3 * common / ((common + dxNext) / m2 + (common + dx) / mNext));
-      }
-    }
-
-    c1s.push(ms[ms.length - 1]); // Get degree-2 and degree-3 coefficients
-
-    var c2s = [];
-    var c3s = [];
-    var m;
-
-    for (var _i3 = 0; _i3 < c1s.length - 1; _i3++) {
-      m = ms[_i3];
-      var c1 = c1s[_i3];
-      var invDx = 1 / dxs[_i3];
-
-      var _common = c1 + c1s[_i3 + 1] - m - m;
-
-      c2s.push((m - c1 - _common) * invDx);
-      c3s.push(_common * invDx * invDx);
-    }
-
-    this.xs = xs;
-    this.ys = ys;
-    this.c1s = c1s;
-    this.c2s = c2s;
-    this.c3s = c3s;
-  }
-
-  _createClass$5(MonotonicInterpolant, [{
-    key: "interpolate",
-    value: function interpolate(x) {
-      var xs = this.xs,
-          ys = this.ys,
-          c1s = this.c1s,
-          c2s = this.c2s,
-          c3s = this.c3s; // The rightmost point in the dataset should give an exact result
-
-      var i = xs.length - 1;
-
-      if (x === xs[i]) {
-        return ys[i];
-      } // Search for the interval x is in, returning the corresponding y if x is one of the original xs
-
-
-      var low = 0;
-      var high = c3s.length - 1;
-      var mid;
-
-      while (low <= high) {
-        mid = Math.floor(0.5 * (low + high));
-        var xHere = xs[mid];
-
-        if (xHere < x) {
-          low = mid + 1;
-        } else if (xHere > x) {
-          high = mid - 1;
-        } else {
-          return ys[mid];
-        }
-      }
-
-      i = Math.max(0, high); // Interpolate
-
-      var diff = x - xs[i];
-      var diffSq = diff * diff;
-      return ys[i] + c1s[i] * diff + c2s[i] * diffSq + c3s[i] * diff * diffSq;
-    }
-  }]);
-
-  return MonotonicInterpolant;
-}();
-
-var ELEMENT_NODE$1 = 1;
-function getNodeClientOffset$1(node) {
-  var el = node.nodeType === ELEMENT_NODE$1 ? node : node.parentElement;
-
-  if (!el) {
-    return null;
-  }
-
-  var _el$getBoundingClient = el.getBoundingClientRect(),
-      top = _el$getBoundingClient.top,
-      left = _el$getBoundingClient.left;
-
-  return {
-    x: left,
-    y: top
-  };
-}
-function getEventClientOffset$1(e) {
-  return {
-    x: e.clientX,
-    y: e.clientY
-  };
-}
-
-function isImageNode(node) {
-  var _document$documentEle;
-
-  return node.nodeName === 'IMG' && (isFirefox() || !((_document$documentEle = document.documentElement) !== null && _document$documentEle !== void 0 && _document$documentEle.contains(node)));
-}
-
-function getDragPreviewSize(isImage, dragPreview, sourceWidth, sourceHeight) {
-  var dragPreviewWidth = isImage ? dragPreview.width : sourceWidth;
-  var dragPreviewHeight = isImage ? dragPreview.height : sourceHeight; // Work around @2x coordinate discrepancies in browsers
-
-  if (isSafari() && isImage) {
-    dragPreviewHeight /= window.devicePixelRatio;
-    dragPreviewWidth /= window.devicePixelRatio;
-  }
-
-  return {
-    dragPreviewWidth: dragPreviewWidth,
-    dragPreviewHeight: dragPreviewHeight
-  };
-}
-
-function getDragPreviewOffset(sourceNode, dragPreview, clientOffset, anchorPoint, offsetPoint) {
-  // The browsers will use the image intrinsic size under different conditions.
-  // Firefox only cares if it's an image, but WebKit also wants it to be detached.
-  var isImage = isImageNode(dragPreview);
-  var dragPreviewNode = isImage ? sourceNode : dragPreview;
-  var dragPreviewNodeOffsetFromClient = getNodeClientOffset$1(dragPreviewNode);
-  var offsetFromDragPreview = {
-    x: clientOffset.x - dragPreviewNodeOffsetFromClient.x,
-    y: clientOffset.y - dragPreviewNodeOffsetFromClient.y
-  };
-  var sourceWidth = sourceNode.offsetWidth,
-      sourceHeight = sourceNode.offsetHeight;
-  var anchorX = anchorPoint.anchorX,
-      anchorY = anchorPoint.anchorY;
-
-  var _getDragPreviewSize = getDragPreviewSize(isImage, dragPreview, sourceWidth, sourceHeight),
-      dragPreviewWidth = _getDragPreviewSize.dragPreviewWidth,
-      dragPreviewHeight = _getDragPreviewSize.dragPreviewHeight;
-
-  var calculateYOffset = function calculateYOffset() {
-    var interpolantY = new MonotonicInterpolant([0, 0.5, 1], [// Dock to the top
-    offsetFromDragPreview.y, // Align at the center
-    offsetFromDragPreview.y / sourceHeight * dragPreviewHeight, // Dock to the bottom
-    offsetFromDragPreview.y + dragPreviewHeight - sourceHeight]);
-    var y = interpolantY.interpolate(anchorY); // Work around Safari 8 positioning bug
-
-    if (isSafari() && isImage) {
-      // We'll have to wait for @3x to see if this is entirely correct
-      y += (window.devicePixelRatio - 1) * dragPreviewHeight;
-    }
-
-    return y;
-  };
-
-  var calculateXOffset = function calculateXOffset() {
-    // Interpolate coordinates depending on anchor point
-    // If you know a simpler way to do this, let me know
-    var interpolantX = new MonotonicInterpolant([0, 0.5, 1], [// Dock to the left
-    offsetFromDragPreview.x, // Align at the center
-    offsetFromDragPreview.x / sourceWidth * dragPreviewWidth, // Dock to the right
-    offsetFromDragPreview.x + dragPreviewWidth - sourceWidth]);
-    return interpolantX.interpolate(anchorX);
-  }; // Force offsets if specified in the options.
-
-
-  var offsetX = offsetPoint.offsetX,
-      offsetY = offsetPoint.offsetY;
-  var isManualOffsetX = offsetX === 0 || offsetX;
-  var isManualOffsetY = offsetY === 0 || offsetY;
-  return {
-    x: isManualOffsetX ? offsetX : calculateXOffset(),
-    y: isManualOffsetY ? offsetY : calculateYOffset()
-  };
-}
-
-var FILE = '__NATIVE_FILE__';
-var URL = '__NATIVE_URL__';
-var TEXT = '__NATIVE_TEXT__';
-var HTML = '__NATIVE_HTML__';
-
-var NativeTypes = /*#__PURE__*/Object.freeze({
-  __proto__: null,
-  FILE: FILE,
-  URL: URL,
-  TEXT: TEXT,
-  HTML: HTML
-});
-
-function getDataFromDataTransfer(dataTransfer, typesToTry, defaultValue) {
-  var result = typesToTry.reduce(function (resultSoFar, typeToTry) {
-    return resultSoFar || dataTransfer.getData(typeToTry);
-  }, '');
-  return result != null ? result : defaultValue;
-}
-
-var _nativeTypesConfig;
-
-function _defineProperty$5(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-var nativeTypesConfig = (_nativeTypesConfig = {}, _defineProperty$5(_nativeTypesConfig, FILE, {
-  exposeProperties: {
-    files: function files(dataTransfer) {
-      return Array.prototype.slice.call(dataTransfer.files);
-    },
-    items: function items(dataTransfer) {
-      return dataTransfer.items;
-    }
-  },
-  matchesTypes: ['Files']
-}), _defineProperty$5(_nativeTypesConfig, HTML, {
-  exposeProperties: {
-    html: function html(dataTransfer, matchesTypes) {
-      return getDataFromDataTransfer(dataTransfer, matchesTypes, '');
-    }
-  },
-  matchesTypes: ['Html', 'text/html']
-}), _defineProperty$5(_nativeTypesConfig, URL, {
-  exposeProperties: {
-    urls: function urls(dataTransfer, matchesTypes) {
-      return getDataFromDataTransfer(dataTransfer, matchesTypes, '').split('\n');
-    }
-  },
-  matchesTypes: ['Url', 'text/uri-list']
-}), _defineProperty$5(_nativeTypesConfig, TEXT, {
-  exposeProperties: {
-    text: function text(dataTransfer, matchesTypes) {
-      return getDataFromDataTransfer(dataTransfer, matchesTypes, '');
-    }
-  },
-  matchesTypes: ['Text', 'text/plain']
-}), _nativeTypesConfig);
-
-function _classCallCheck$4(instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-}
-
-function _defineProperties$4(target, props) {
-  for (var i = 0; i < props.length; i++) {
-    var descriptor = props[i];
-    descriptor.enumerable = descriptor.enumerable || false;
-    descriptor.configurable = true;
-    if ("value" in descriptor) descriptor.writable = true;
-    Object.defineProperty(target, descriptor.key, descriptor);
-  }
-}
-
-function _createClass$4(Constructor, protoProps, staticProps) {
-  if (protoProps) _defineProperties$4(Constructor.prototype, protoProps);
-  if (staticProps) _defineProperties$4(Constructor, staticProps);
-  return Constructor;
-}
-
-function _defineProperty$4(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-var NativeDragSource = /*#__PURE__*/function () {
-  function NativeDragSource(config) {
-    _classCallCheck$4(this, NativeDragSource);
-
-    _defineProperty$4(this, "item", void 0);
-
-    _defineProperty$4(this, "config", void 0);
-
-    this.config = config;
-    this.item = {};
-    this.initializeExposedProperties();
-  }
-
-  _createClass$4(NativeDragSource, [{
-    key: "initializeExposedProperties",
-    value: function initializeExposedProperties() {
-      var _this = this;
-
-      Object.keys(this.config.exposeProperties).forEach(function (property) {
-        Object.defineProperty(_this.item, property, {
-          configurable: true,
-          enumerable: true,
-          get: function get() {
-            // eslint-disable-next-line no-console
-            console.warn("Browser doesn't allow reading \"".concat(property, "\" until the drop event."));
-            return null;
-          }
-        });
-      });
-    }
-  }, {
-    key: "loadDataTransfer",
-    value: function loadDataTransfer(dataTransfer) {
-      var _this2 = this;
-
-      if (dataTransfer) {
-        var newProperties = {};
-        Object.keys(this.config.exposeProperties).forEach(function (property) {
-          newProperties[property] = {
-            value: _this2.config.exposeProperties[property](dataTransfer, _this2.config.matchesTypes),
-            configurable: true,
-            enumerable: true
-          };
-        });
-        Object.defineProperties(this.item, newProperties);
-      }
-    }
-  }, {
-    key: "canDrag",
-    value: function canDrag() {
-      return true;
-    }
-  }, {
-    key: "beginDrag",
-    value: function beginDrag() {
-      return this.item;
-    }
-  }, {
-    key: "isDragging",
-    value: function isDragging(monitor, handle) {
-      return handle === monitor.getSourceId();
-    }
-  }, {
-    key: "endDrag",
-    value: function endDrag() {// empty
-    }
-  }]);
-
-  return NativeDragSource;
-}();
-
-function createNativeDragSource(type, dataTransfer) {
-  var result = new NativeDragSource(nativeTypesConfig[type]);
-  result.loadDataTransfer(dataTransfer);
-  return result;
-}
-function matchNativeItemType(dataTransfer) {
-  if (!dataTransfer) {
-    return null;
-  }
-
-  var dataTransferTypes = Array.prototype.slice.call(dataTransfer.types || []);
-  return Object.keys(nativeTypesConfig).filter(function (nativeItemType) {
-    var matchesTypes = nativeTypesConfig[nativeItemType].matchesTypes;
-    return matchesTypes.some(function (t) {
-      return dataTransferTypes.indexOf(t) > -1;
-    });
-  })[0] || null;
-}
-
-function _classCallCheck$3(instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-}
-
-function _defineProperties$3(target, props) {
-  for (var i = 0; i < props.length; i++) {
-    var descriptor = props[i];
-    descriptor.enumerable = descriptor.enumerable || false;
-    descriptor.configurable = true;
-    if ("value" in descriptor) descriptor.writable = true;
-    Object.defineProperty(target, descriptor.key, descriptor);
-  }
-}
-
-function _createClass$3(Constructor, protoProps, staticProps) {
-  if (protoProps) _defineProperties$3(Constructor.prototype, protoProps);
-  if (staticProps) _defineProperties$3(Constructor, staticProps);
-  return Constructor;
-}
-
-function _defineProperty$3(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-var OptionsReader$1 = /*#__PURE__*/function () {
-  function OptionsReader(globalContext, options) {
-    _classCallCheck$3(this, OptionsReader);
-
-    _defineProperty$3(this, "ownerDocument", null);
-
-    _defineProperty$3(this, "globalContext", void 0);
-
-    _defineProperty$3(this, "optionsArgs", void 0);
-
-    this.globalContext = globalContext;
-    this.optionsArgs = options;
-  }
-
-  _createClass$3(OptionsReader, [{
-    key: "window",
-    get: function get() {
-      if (this.globalContext) {
-        return this.globalContext;
-      } else if (typeof window !== 'undefined') {
-        return window;
-      }
-
-      return undefined;
-    }
-  }, {
-    key: "document",
-    get: function get() {
-      var _this$globalContext;
-
-      if ((_this$globalContext = this.globalContext) !== null && _this$globalContext !== void 0 && _this$globalContext.document) {
-        return this.globalContext.document;
-      } else if (this.window) {
-        return this.window.document;
-      } else {
-        return undefined;
-      }
-    }
-  }, {
-    key: "rootElement",
-    get: function get() {
-      var _this$optionsArgs;
-
-      return ((_this$optionsArgs = this.optionsArgs) === null || _this$optionsArgs === void 0 ? void 0 : _this$optionsArgs.rootElement) || this.window;
-    }
-  }]);
-
-  return OptionsReader;
-}();
-
-function ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
-
-  if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-
-    if (enumerableOnly) {
-      symbols = symbols.filter(function (sym) {
-        return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-      });
-    }
-
-    keys.push.apply(keys, symbols);
-  }
-
-  return keys;
-}
-
-function _objectSpread(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-
-    if (i % 2) {
-      ownKeys(Object(source), true).forEach(function (key) {
-        _defineProperty$2(target, key, source[key]);
-      });
-    } else if (Object.getOwnPropertyDescriptors) {
-      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-      ownKeys(Object(source)).forEach(function (key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-      });
-    }
-  }
-
-  return target;
-}
-
-function _classCallCheck$2(instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-}
-
-function _defineProperties$2(target, props) {
-  for (var i = 0; i < props.length; i++) {
-    var descriptor = props[i];
-    descriptor.enumerable = descriptor.enumerable || false;
-    descriptor.configurable = true;
-    if ("value" in descriptor) descriptor.writable = true;
-    Object.defineProperty(target, descriptor.key, descriptor);
-  }
-}
-
-function _createClass$2(Constructor, protoProps, staticProps) {
-  if (protoProps) _defineProperties$2(Constructor.prototype, protoProps);
-  if (staticProps) _defineProperties$2(Constructor, staticProps);
-  return Constructor;
-}
-
-function _defineProperty$2(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-var HTML5BackendImpl = /*#__PURE__*/function () {
-  // React-Dnd Components
-  // Internal State
-  function HTML5BackendImpl(manager, globalContext, options) {
-    var _this = this;
-
-    _classCallCheck$2(this, HTML5BackendImpl);
-
-    _defineProperty$2(this, "options", void 0);
-
-    _defineProperty$2(this, "actions", void 0);
-
-    _defineProperty$2(this, "monitor", void 0);
-
-    _defineProperty$2(this, "registry", void 0);
-
-    _defineProperty$2(this, "enterLeaveCounter", void 0);
-
-    _defineProperty$2(this, "sourcePreviewNodes", new Map());
-
-    _defineProperty$2(this, "sourcePreviewNodeOptions", new Map());
-
-    _defineProperty$2(this, "sourceNodes", new Map());
-
-    _defineProperty$2(this, "sourceNodeOptions", new Map());
-
-    _defineProperty$2(this, "dragStartSourceIds", null);
-
-    _defineProperty$2(this, "dropTargetIds", []);
-
-    _defineProperty$2(this, "dragEnterTargetIds", []);
-
-    _defineProperty$2(this, "currentNativeSource", null);
-
-    _defineProperty$2(this, "currentNativeHandle", null);
-
-    _defineProperty$2(this, "currentDragSourceNode", null);
-
-    _defineProperty$2(this, "altKeyPressed", false);
-
-    _defineProperty$2(this, "mouseMoveTimeoutTimer", null);
-
-    _defineProperty$2(this, "asyncEndDragFrameId", null);
-
-    _defineProperty$2(this, "dragOverTargetIds", null);
-
-    _defineProperty$2(this, "getSourceClientOffset", function (sourceId) {
-      var source = _this.sourceNodes.get(sourceId);
-
-      return source && getNodeClientOffset$1(source) || null;
-    });
-
-    _defineProperty$2(this, "endDragNativeItem", function () {
-      if (!_this.isDraggingNativeItem()) {
-        return;
-      }
-
-      _this.actions.endDrag();
-
-      if (_this.currentNativeHandle) {
-        _this.registry.removeSource(_this.currentNativeHandle);
-      }
-
-      _this.currentNativeHandle = null;
-      _this.currentNativeSource = null;
-    });
-
-    _defineProperty$2(this, "isNodeInDocument", function (node) {
-      // Check the node either in the main document or in the current context
-      return Boolean(node && _this.document && _this.document.body && _this.document.body.contains(node));
-    });
-
-    _defineProperty$2(this, "endDragIfSourceWasRemovedFromDOM", function () {
-      var node = _this.currentDragSourceNode;
-
-      if (node == null || _this.isNodeInDocument(node)) {
-        return;
-      }
-
-      if (_this.clearCurrentDragSourceNode() && _this.monitor.isDragging()) {
-        _this.actions.endDrag();
-      }
-    });
-
-    _defineProperty$2(this, "handleTopDragStartCapture", function () {
-      _this.clearCurrentDragSourceNode();
-
-      _this.dragStartSourceIds = [];
-    });
-
-    _defineProperty$2(this, "handleTopDragStart", function (e) {
-      if (e.defaultPrevented) {
-        return;
-      }
-
-      var dragStartSourceIds = _this.dragStartSourceIds;
-      _this.dragStartSourceIds = null;
-      var clientOffset = getEventClientOffset$1(e); // Avoid crashing if we missed a drop event or our previous drag died
-
-      if (_this.monitor.isDragging()) {
-        _this.actions.endDrag();
-      } // Don't publish the source just yet (see why below)
-
-
-      _this.actions.beginDrag(dragStartSourceIds || [], {
-        publishSource: false,
-        getSourceClientOffset: _this.getSourceClientOffset,
-        clientOffset: clientOffset
-      });
-
-      var dataTransfer = e.dataTransfer;
-      var nativeType = matchNativeItemType(dataTransfer);
-
-      if (_this.monitor.isDragging()) {
-        if (dataTransfer && typeof dataTransfer.setDragImage === 'function') {
-          // Use custom drag image if user specifies it.
-          // If child drag source refuses drag but parent agrees,
-          // use parent's node as drag image. Neither works in IE though.
-          var sourceId = _this.monitor.getSourceId();
-
-          var sourceNode = _this.sourceNodes.get(sourceId);
-
-          var dragPreview = _this.sourcePreviewNodes.get(sourceId) || sourceNode;
-
-          if (dragPreview) {
-            var _this$getCurrentSourc = _this.getCurrentSourcePreviewNodeOptions(),
-                anchorX = _this$getCurrentSourc.anchorX,
-                anchorY = _this$getCurrentSourc.anchorY,
-                offsetX = _this$getCurrentSourc.offsetX,
-                offsetY = _this$getCurrentSourc.offsetY;
-
-            var anchorPoint = {
-              anchorX: anchorX,
-              anchorY: anchorY
-            };
-            var offsetPoint = {
-              offsetX: offsetX,
-              offsetY: offsetY
-            };
-            var dragPreviewOffset = getDragPreviewOffset(sourceNode, dragPreview, clientOffset, anchorPoint, offsetPoint);
-            dataTransfer.setDragImage(dragPreview, dragPreviewOffset.x, dragPreviewOffset.y);
-          }
-        }
-
-        try {
-          // Firefox won't drag without setting data
-          dataTransfer === null || dataTransfer === void 0 ? void 0 : dataTransfer.setData('application/json', {});
-        } catch (err) {// IE doesn't support MIME types in setData
-        } // Store drag source node so we can check whether
-        // it is removed from DOM and trigger endDrag manually.
-
-
-        _this.setCurrentDragSourceNode(e.target); // Now we are ready to publish the drag source.. or are we not?
-
-
-        var _this$getCurrentSourc2 = _this.getCurrentSourcePreviewNodeOptions(),
-            captureDraggingState = _this$getCurrentSourc2.captureDraggingState;
-
-        if (!captureDraggingState) {
-          // Usually we want to publish it in the next tick so that browser
-          // is able to screenshot the current (not yet dragging) state.
-          //
-          // It also neatly avoids a situation where render() returns null
-          // in the same tick for the source element, and browser freaks out.
-          setTimeout(function () {
-            return _this.actions.publishDragSource();
-          }, 0);
-        } else {
-          // In some cases the user may want to override this behavior, e.g.
-          // to work around IE not supporting custom drag previews.
-          //
-          // When using a custom drag layer, the only way to prevent
-          // the default drag preview from drawing in IE is to screenshot
-          // the dragging state in which the node itself has zero opacity
-          // and height. In this case, though, returning null from render()
-          // will abruptly end the dragging, which is not obvious.
-          //
-          // This is the reason such behavior is strictly opt-in.
-          _this.actions.publishDragSource();
-        }
-      } else if (nativeType) {
-        // A native item (such as URL) dragged from inside the document
-        _this.beginDragNativeItem(nativeType);
-      } else if (dataTransfer && !dataTransfer.types && (e.target && !e.target.hasAttribute || !e.target.hasAttribute('draggable'))) {
-        // Looks like a Safari bug: dataTransfer.types is null, but there was no draggable.
-        // Just let it drag. It's a native type (URL or text) and will be picked up in
-        // dragenter handler.
-        return;
-      } else {
-        // If by this time no drag source reacted, tell browser not to drag.
-        e.preventDefault();
-      }
-    });
-
-    _defineProperty$2(this, "handleTopDragEndCapture", function () {
-      if (_this.clearCurrentDragSourceNode() && _this.monitor.isDragging()) {
-        // Firefox can dispatch this event in an infinite loop
-        // if dragend handler does something like showing an alert.
-        // Only proceed if we have not handled it already.
-        _this.actions.endDrag();
-      }
-    });
-
-    _defineProperty$2(this, "handleTopDragEnterCapture", function (e) {
-      _this.dragEnterTargetIds = [];
-
-      var isFirstEnter = _this.enterLeaveCounter.enter(e.target);
-
-      if (!isFirstEnter || _this.monitor.isDragging()) {
-        return;
-      }
-
-      var dataTransfer = e.dataTransfer;
-      var nativeType = matchNativeItemType(dataTransfer);
-
-      if (nativeType) {
-        // A native item (such as file or URL) dragged from outside the document
-        _this.beginDragNativeItem(nativeType, dataTransfer);
-      }
-    });
-
-    _defineProperty$2(this, "handleTopDragEnter", function (e) {
-      var dragEnterTargetIds = _this.dragEnterTargetIds;
-      _this.dragEnterTargetIds = [];
-
-      if (!_this.monitor.isDragging()) {
-        // This is probably a native item type we don't understand.
-        return;
-      }
-
-      _this.altKeyPressed = e.altKey; // If the target changes position as the result of `dragenter`, `dragover` might still
-      // get dispatched despite target being no longer there. The easy solution is to check
-      // whether there actually is a target before firing `hover`.
-
-      if (dragEnterTargetIds.length > 0) {
-        _this.actions.hover(dragEnterTargetIds, {
-          clientOffset: getEventClientOffset$1(e)
-        });
-      }
-
-      var canDrop = dragEnterTargetIds.some(function (targetId) {
-        return _this.monitor.canDropOnTarget(targetId);
-      });
-
-      if (canDrop) {
-        // IE requires this to fire dragover events
-        e.preventDefault();
-
-        if (e.dataTransfer) {
-          e.dataTransfer.dropEffect = _this.getCurrentDropEffect();
-        }
-      }
-    });
-
-    _defineProperty$2(this, "handleTopDragOverCapture", function () {
-      _this.dragOverTargetIds = [];
-    });
-
-    _defineProperty$2(this, "handleTopDragOver", function (e) {
-      var dragOverTargetIds = _this.dragOverTargetIds;
-      _this.dragOverTargetIds = [];
-
-      if (!_this.monitor.isDragging()) {
-        // This is probably a native item type we don't understand.
-        // Prevent default "drop and blow away the whole document" action.
-        e.preventDefault();
-
-        if (e.dataTransfer) {
-          e.dataTransfer.dropEffect = 'none';
-        }
-
-        return;
-      }
-
-      _this.altKeyPressed = e.altKey;
-
-      _this.actions.hover(dragOverTargetIds || [], {
-        clientOffset: getEventClientOffset$1(e)
-      });
-
-      var canDrop = (dragOverTargetIds || []).some(function (targetId) {
-        return _this.monitor.canDropOnTarget(targetId);
-      });
-
-      if (canDrop) {
-        // Show user-specified drop effect.
-        e.preventDefault();
-
-        if (e.dataTransfer) {
-          e.dataTransfer.dropEffect = _this.getCurrentDropEffect();
-        }
-      } else if (_this.isDraggingNativeItem()) {
-        // Don't show a nice cursor but still prevent default
-        // "drop and blow away the whole document" action.
-        e.preventDefault();
-      } else {
-        e.preventDefault();
-
-        if (e.dataTransfer) {
-          e.dataTransfer.dropEffect = 'none';
-        }
-      }
-    });
-
-    _defineProperty$2(this, "handleTopDragLeaveCapture", function (e) {
-      if (_this.isDraggingNativeItem()) {
-        e.preventDefault();
-      }
-
-      var isLastLeave = _this.enterLeaveCounter.leave(e.target);
-
-      if (!isLastLeave) {
-        return;
-      }
-
-      if (_this.isDraggingNativeItem()) {
-        setTimeout(function () {
-          return _this.endDragNativeItem();
-        }, 0);
-      }
-    });
-
-    _defineProperty$2(this, "handleTopDropCapture", function (e) {
-      _this.dropTargetIds = [];
-
-      if (_this.isDraggingNativeItem()) {
-        var _this$currentNativeSo;
-
-        e.preventDefault();
-        (_this$currentNativeSo = _this.currentNativeSource) === null || _this$currentNativeSo === void 0 ? void 0 : _this$currentNativeSo.loadDataTransfer(e.dataTransfer);
-      } else if (matchNativeItemType(e.dataTransfer)) {
-        // Dragging some elements, like <a> and <img> may still behave like a native drag event,
-        // even if the current drag event matches a user-defined type.
-        // Stop the default behavior when we're not expecting a native item to be dropped.
-        e.preventDefault();
-      }
-
-      _this.enterLeaveCounter.reset();
-    });
-
-    _defineProperty$2(this, "handleTopDrop", function (e) {
-      var dropTargetIds = _this.dropTargetIds;
-      _this.dropTargetIds = [];
-
-      _this.actions.hover(dropTargetIds, {
-        clientOffset: getEventClientOffset$1(e)
-      });
-
-      _this.actions.drop({
-        dropEffect: _this.getCurrentDropEffect()
-      });
-
-      if (_this.isDraggingNativeItem()) {
-        _this.endDragNativeItem();
-      } else if (_this.monitor.isDragging()) {
-        _this.actions.endDrag();
-      }
-    });
-
-    _defineProperty$2(this, "handleSelectStart", function (e) {
-      var target = e.target; // Only IE requires us to explicitly say
-      // we want drag drop operation to start
-
-      if (typeof target.dragDrop !== 'function') {
-        return;
-      } // Inputs and textareas should be selectable
-
-
-      if (target.tagName === 'INPUT' || target.tagName === 'SELECT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
-        return;
-      } // For other targets, ask IE
-      // to enable drag and drop
-
-
-      e.preventDefault();
-      target.dragDrop();
-    });
-
-    this.options = new OptionsReader$1(globalContext, options);
-    this.actions = manager.getActions();
-    this.monitor = manager.getMonitor();
-    this.registry = manager.getRegistry();
-    this.enterLeaveCounter = new EnterLeaveCounter(this.isNodeInDocument);
-  }
-  /**
-   * Generate profiling statistics for the HTML5Backend.
-   */
-
-
-  _createClass$2(HTML5BackendImpl, [{
-    key: "profile",
-    value: function profile() {
-      var _this$dragStartSource, _this$dragOverTargetI;
-
-      return {
-        sourcePreviewNodes: this.sourcePreviewNodes.size,
-        sourcePreviewNodeOptions: this.sourcePreviewNodeOptions.size,
-        sourceNodeOptions: this.sourceNodeOptions.size,
-        sourceNodes: this.sourceNodes.size,
-        dragStartSourceIds: ((_this$dragStartSource = this.dragStartSourceIds) === null || _this$dragStartSource === void 0 ? void 0 : _this$dragStartSource.length) || 0,
-        dropTargetIds: this.dropTargetIds.length,
-        dragEnterTargetIds: this.dragEnterTargetIds.length,
-        dragOverTargetIds: ((_this$dragOverTargetI = this.dragOverTargetIds) === null || _this$dragOverTargetI === void 0 ? void 0 : _this$dragOverTargetI.length) || 0
-      };
-    } // public for test
-
-  }, {
-    key: "window",
-    get: function get() {
-      return this.options.window;
-    }
-  }, {
-    key: "document",
-    get: function get() {
-      return this.options.document;
-    }
-    /**
-     * Get the root element to use for event subscriptions
-     */
-
-  }, {
-    key: "rootElement",
-    get: function get() {
-      return this.options.rootElement;
-    }
-  }, {
-    key: "setup",
-    value: function setup() {
-      var root = this.rootElement;
-
-      if (root === undefined) {
-        return;
-      }
-
-      if (root.__isReactDndBackendSetUp) {
-        throw new Error('Cannot have two HTML5 backends at the same time.');
-      }
-
-      root.__isReactDndBackendSetUp = true;
-      this.addEventListeners(root);
-    }
-  }, {
-    key: "teardown",
-    value: function teardown() {
-      var root = this.rootElement;
-
-      if (root === undefined) {
-        return;
-      }
-
-      root.__isReactDndBackendSetUp = false;
-      this.removeEventListeners(this.rootElement);
-      this.clearCurrentDragSourceNode();
-
-      if (this.asyncEndDragFrameId) {
-        var _this$window;
-
-        (_this$window = this.window) === null || _this$window === void 0 ? void 0 : _this$window.cancelAnimationFrame(this.asyncEndDragFrameId);
-      }
-    }
-  }, {
-    key: "connectDragPreview",
-    value: function connectDragPreview(sourceId, node, options) {
-      var _this2 = this;
-
-      this.sourcePreviewNodeOptions.set(sourceId, options);
-      this.sourcePreviewNodes.set(sourceId, node);
-      return function () {
-        _this2.sourcePreviewNodes.delete(sourceId);
-
-        _this2.sourcePreviewNodeOptions.delete(sourceId);
-      };
-    }
-  }, {
-    key: "connectDragSource",
-    value: function connectDragSource(sourceId, node, options) {
-      var _this3 = this;
-
-      this.sourceNodes.set(sourceId, node);
-      this.sourceNodeOptions.set(sourceId, options);
-
-      var handleDragStart = function handleDragStart(e) {
-        return _this3.handleDragStart(e, sourceId);
-      };
-
-      var handleSelectStart = function handleSelectStart(e) {
-        return _this3.handleSelectStart(e);
-      };
-
-      node.setAttribute('draggable', 'true');
-      node.addEventListener('dragstart', handleDragStart);
-      node.addEventListener('selectstart', handleSelectStart);
-      return function () {
-        _this3.sourceNodes.delete(sourceId);
-
-        _this3.sourceNodeOptions.delete(sourceId);
-
-        node.removeEventListener('dragstart', handleDragStart);
-        node.removeEventListener('selectstart', handleSelectStart);
-        node.setAttribute('draggable', 'false');
-      };
-    }
-  }, {
-    key: "connectDropTarget",
-    value: function connectDropTarget(targetId, node) {
-      var _this4 = this;
-
-      var handleDragEnter = function handleDragEnter(e) {
-        return _this4.handleDragEnter(e, targetId);
-      };
-
-      var handleDragOver = function handleDragOver(e) {
-        return _this4.handleDragOver(e, targetId);
-      };
-
-      var handleDrop = function handleDrop(e) {
-        return _this4.handleDrop(e, targetId);
-      };
-
-      node.addEventListener('dragenter', handleDragEnter);
-      node.addEventListener('dragover', handleDragOver);
-      node.addEventListener('drop', handleDrop);
-      return function () {
-        node.removeEventListener('dragenter', handleDragEnter);
-        node.removeEventListener('dragover', handleDragOver);
-        node.removeEventListener('drop', handleDrop);
-      };
-    }
-  }, {
-    key: "addEventListeners",
-    value: function addEventListeners(target) {
-      // SSR Fix (https://github.com/react-dnd/react-dnd/pull/813
-      if (!target.addEventListener) {
-        return;
-      }
-
-      target.addEventListener('dragstart', this.handleTopDragStart);
-      target.addEventListener('dragstart', this.handleTopDragStartCapture, true);
-      target.addEventListener('dragend', this.handleTopDragEndCapture, true);
-      target.addEventListener('dragenter', this.handleTopDragEnter);
-      target.addEventListener('dragenter', this.handleTopDragEnterCapture, true);
-      target.addEventListener('dragleave', this.handleTopDragLeaveCapture, true);
-      target.addEventListener('dragover', this.handleTopDragOver);
-      target.addEventListener('dragover', this.handleTopDragOverCapture, true);
-      target.addEventListener('drop', this.handleTopDrop);
-      target.addEventListener('drop', this.handleTopDropCapture, true);
-    }
-  }, {
-    key: "removeEventListeners",
-    value: function removeEventListeners(target) {
-      // SSR Fix (https://github.com/react-dnd/react-dnd/pull/813
-      if (!target.removeEventListener) {
-        return;
-      }
-
-      target.removeEventListener('dragstart', this.handleTopDragStart);
-      target.removeEventListener('dragstart', this.handleTopDragStartCapture, true);
-      target.removeEventListener('dragend', this.handleTopDragEndCapture, true);
-      target.removeEventListener('dragenter', this.handleTopDragEnter);
-      target.removeEventListener('dragenter', this.handleTopDragEnterCapture, true);
-      target.removeEventListener('dragleave', this.handleTopDragLeaveCapture, true);
-      target.removeEventListener('dragover', this.handleTopDragOver);
-      target.removeEventListener('dragover', this.handleTopDragOverCapture, true);
-      target.removeEventListener('drop', this.handleTopDrop);
-      target.removeEventListener('drop', this.handleTopDropCapture, true);
-    }
-  }, {
-    key: "getCurrentSourceNodeOptions",
-    value: function getCurrentSourceNodeOptions() {
-      var sourceId = this.monitor.getSourceId();
-      var sourceNodeOptions = this.sourceNodeOptions.get(sourceId);
-      return _objectSpread({
-        dropEffect: this.altKeyPressed ? 'copy' : 'move'
-      }, sourceNodeOptions || {});
-    }
-  }, {
-    key: "getCurrentDropEffect",
-    value: function getCurrentDropEffect() {
-      if (this.isDraggingNativeItem()) {
-        // It makes more sense to default to 'copy' for native resources
-        return 'copy';
-      }
-
-      return this.getCurrentSourceNodeOptions().dropEffect;
-    }
-  }, {
-    key: "getCurrentSourcePreviewNodeOptions",
-    value: function getCurrentSourcePreviewNodeOptions() {
-      var sourceId = this.monitor.getSourceId();
-      var sourcePreviewNodeOptions = this.sourcePreviewNodeOptions.get(sourceId);
-      return _objectSpread({
-        anchorX: 0.5,
-        anchorY: 0.5,
-        captureDraggingState: false
-      }, sourcePreviewNodeOptions || {});
-    }
-  }, {
-    key: "isDraggingNativeItem",
-    value: function isDraggingNativeItem() {
-      var itemType = this.monitor.getItemType();
-      return Object.keys(NativeTypes).some(function (key) {
-        return NativeTypes[key] === itemType;
-      });
-    }
-  }, {
-    key: "beginDragNativeItem",
-    value: function beginDragNativeItem(type, dataTransfer) {
-      this.clearCurrentDragSourceNode();
-      this.currentNativeSource = createNativeDragSource(type, dataTransfer);
-      this.currentNativeHandle = this.registry.addSource(type, this.currentNativeSource);
-      this.actions.beginDrag([this.currentNativeHandle]);
-    }
-  }, {
-    key: "setCurrentDragSourceNode",
-    value: function setCurrentDragSourceNode(node) {
-      var _this5 = this;
-
-      this.clearCurrentDragSourceNode();
-      this.currentDragSourceNode = node; // A timeout of > 0 is necessary to resolve Firefox issue referenced
-      // See:
-      //   * https://github.com/react-dnd/react-dnd/pull/928
-      //   * https://github.com/react-dnd/react-dnd/issues/869
-
-      var MOUSE_MOVE_TIMEOUT = 1000; // Receiving a mouse event in the middle of a dragging operation
-      // means it has ended and the drag source node disappeared from DOM,
-      // so the browser didn't dispatch the dragend event.
-      //
-      // We need to wait before we start listening for mousemove events.
-      // This is needed because the drag preview needs to be drawn or else it fires an 'mousemove' event
-      // immediately in some browsers.
-      //
-      // See:
-      //   * https://github.com/react-dnd/react-dnd/pull/928
-      //   * https://github.com/react-dnd/react-dnd/issues/869
-      //
-
-      this.mouseMoveTimeoutTimer = setTimeout(function () {
-        var _this5$rootElement;
-
-        return (_this5$rootElement = _this5.rootElement) === null || _this5$rootElement === void 0 ? void 0 : _this5$rootElement.addEventListener('mousemove', _this5.endDragIfSourceWasRemovedFromDOM, true);
-      }, MOUSE_MOVE_TIMEOUT);
-    }
-  }, {
-    key: "clearCurrentDragSourceNode",
-    value: function clearCurrentDragSourceNode() {
-      if (this.currentDragSourceNode) {
-        this.currentDragSourceNode = null;
-
-        if (this.rootElement) {
-          var _this$window2;
-
-          (_this$window2 = this.window) === null || _this$window2 === void 0 ? void 0 : _this$window2.clearTimeout(this.mouseMoveTimeoutTimer || undefined);
-          this.rootElement.removeEventListener('mousemove', this.endDragIfSourceWasRemovedFromDOM, true);
-        }
-
-        this.mouseMoveTimeoutTimer = null;
-        return true;
-      }
-
-      return false;
-    }
-  }, {
-    key: "handleDragStart",
-    value: function handleDragStart(e, sourceId) {
-      if (e.defaultPrevented) {
-        return;
-      }
-
-      if (!this.dragStartSourceIds) {
-        this.dragStartSourceIds = [];
-      }
-
-      this.dragStartSourceIds.unshift(sourceId);
-    }
-  }, {
-    key: "handleDragEnter",
-    value: function handleDragEnter(e, targetId) {
-      this.dragEnterTargetIds.unshift(targetId);
-    }
-  }, {
-    key: "handleDragOver",
-    value: function handleDragOver(e, targetId) {
-      if (this.dragOverTargetIds === null) {
-        this.dragOverTargetIds = [];
-      }
-
-      this.dragOverTargetIds.unshift(targetId);
-    }
-  }, {
-    key: "handleDrop",
-    value: function handleDrop(e, targetId) {
-      this.dropTargetIds.unshift(targetId);
-    }
-  }]);
-
-  return HTML5BackendImpl;
-}();
-
 var emptyImage;
 function getEmptyImage() {
   if (!emptyImage) {
@@ -7770,2238 +11332,6 @@ function getEmptyImage() {
 
   return emptyImage;
 }
-
-var HTML5Backend = function createBackend(manager, context, options) {
-  return new HTML5BackendImpl(manager, context, options);
-};
-
-var ListenerType;
-
-(function (ListenerType) {
-  ListenerType["mouse"] = "mouse";
-  ListenerType["touch"] = "touch";
-  ListenerType["keyboard"] = "keyboard";
-})(ListenerType || (ListenerType = {}));
-
-// Used for MouseEvent.buttons (note the s on the end).
-var MouseButtons = {
-  Left: 1,
-  Right: 2,
-  Center: 4
-}; // Used for e.button (note the lack of an s on the end).
-
-var MouseButton = {
-  Left: 0,
-  Center: 1,
-  Right: 2
-};
-/**
- * Only touch events and mouse events where the left button is pressed should initiate a drag.
- * @param {MouseEvent | TouchEvent} e The event
- */
-
-function eventShouldStartDrag(e) {
-  // For touch events, button will be undefined. If e.button is defined,
-  // then it should be MouseButton.Left.
-  return e.button === undefined || e.button === MouseButton.Left;
-}
-/**
- * Only touch events and mouse events where the left mouse button is no longer held should end a drag.
- * It's possible the user mouse downs with the left mouse button, then mouse down and ups with the right mouse button.
- * We don't want releasing the right mouse button to end the drag.
- * @param {MouseEvent | TouchEvent} e The event
- */
-
-function eventShouldEndDrag(e) {
-  // Touch events will have buttons be undefined, while mouse events will have e.buttons's left button
-  // bit field unset if the left mouse button has been released
-  return e.buttons === undefined || (e.buttons & MouseButtons.Left) === 0;
-}
-function isTouchEvent(e) {
-  return !!e.targetTouches;
-}
-
-var ELEMENT_NODE = 1;
-function getNodeClientOffset(node) {
-  var el = node.nodeType === ELEMENT_NODE ? node : node.parentElement;
-
-  if (!el) {
-    return undefined;
-  }
-
-  var _el$getBoundingClient = el.getBoundingClientRect(),
-      top = _el$getBoundingClient.top,
-      left = _el$getBoundingClient.left;
-
-  return {
-    x: left,
-    y: top
-  };
-}
-function getEventClientTouchOffset(e, lastTargetTouchFallback) {
-  if (e.targetTouches.length === 1) {
-    return getEventClientOffset(e.targetTouches[0]);
-  } else if (lastTargetTouchFallback && e.touches.length === 1) {
-    if (e.touches[0].target === lastTargetTouchFallback.target) {
-      return getEventClientOffset(e.touches[0]);
-    }
-  }
-}
-function getEventClientOffset(e, lastTargetTouchFallback) {
-  if (isTouchEvent(e)) {
-    return getEventClientTouchOffset(e, lastTargetTouchFallback);
-  } else {
-    return {
-      x: e.clientX,
-      y: e.clientY
-    };
-  }
-}
-
-function distance(x1, y1, x2, y2) {
-  return Math.sqrt(Math.pow(Math.abs(x2 - x1), 2) + Math.pow(Math.abs(y2 - y1), 2));
-}
-function inAngleRanges(x1, y1, x2, y2, angleRanges) {
-  if (!angleRanges) {
-    return false;
-  }
-
-  var angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI + 180;
-
-  for (var i = 0; i < angleRanges.length; ++i) {
-    if ((angleRanges[i].start == null || angle >= angleRanges[i].start) && (angleRanges[i].end == null || angle <= angleRanges[i].end)) {
-      return true;
-    }
-  }
-
-  return false;
-}
-
-var supportsPassive = function () {
-  // simular to jQuery's test
-  var supported = false;
-
-  try {
-    addEventListener('test', function () {// do nothing
-    }, Object.defineProperty({}, 'passive', {
-      get: function get() {
-        supported = true;
-        return true;
-      }
-    }));
-  } catch (e) {// do nothing
-  }
-
-  return supported;
-}();
-
-function _classCallCheck$1(instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-}
-
-function _defineProperties$1(target, props) {
-  for (var i = 0; i < props.length; i++) {
-    var descriptor = props[i];
-    descriptor.enumerable = descriptor.enumerable || false;
-    descriptor.configurable = true;
-    if ("value" in descriptor) descriptor.writable = true;
-    Object.defineProperty(target, descriptor.key, descriptor);
-  }
-}
-
-function _createClass$1(Constructor, protoProps, staticProps) {
-  if (protoProps) _defineProperties$1(Constructor.prototype, protoProps);
-  if (staticProps) _defineProperties$1(Constructor, staticProps);
-  return Constructor;
-}
-
-function _defineProperty$1(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-var OptionsReader = /*#__PURE__*/function () {
-  function OptionsReader(args, context) {
-    _classCallCheck$1(this, OptionsReader);
-
-    _defineProperty$1(this, "args", void 0);
-
-    _defineProperty$1(this, "context", void 0);
-
-    this.args = args;
-    this.context = context;
-  }
-
-  _createClass$1(OptionsReader, [{
-    key: "delay",
-    get: function get() {
-      var _this$args$delay;
-
-      return (_this$args$delay = this.args.delay) !== null && _this$args$delay !== void 0 ? _this$args$delay : 0;
-    }
-  }, {
-    key: "scrollAngleRanges",
-    get: function get() {
-      return this.args.scrollAngleRanges;
-    }
-  }, {
-    key: "getDropTargetElementsAtPoint",
-    get: function get() {
-      return this.args.getDropTargetElementsAtPoint;
-    }
-  }, {
-    key: "ignoreContextMenu",
-    get: function get() {
-      var _this$args$ignoreCont;
-
-      return (_this$args$ignoreCont = this.args.ignoreContextMenu) !== null && _this$args$ignoreCont !== void 0 ? _this$args$ignoreCont : false;
-    }
-  }, {
-    key: "enableHoverOutsideTarget",
-    get: function get() {
-      var _this$args$enableHove;
-
-      return (_this$args$enableHove = this.args.enableHoverOutsideTarget) !== null && _this$args$enableHove !== void 0 ? _this$args$enableHove : false;
-    }
-  }, {
-    key: "enableKeyboardEvents",
-    get: function get() {
-      var _this$args$enableKeyb;
-
-      return (_this$args$enableKeyb = this.args.enableKeyboardEvents) !== null && _this$args$enableKeyb !== void 0 ? _this$args$enableKeyb : false;
-    }
-  }, {
-    key: "enableMouseEvents",
-    get: function get() {
-      var _this$args$enableMous;
-
-      return (_this$args$enableMous = this.args.enableMouseEvents) !== null && _this$args$enableMous !== void 0 ? _this$args$enableMous : false;
-    }
-  }, {
-    key: "enableTouchEvents",
-    get: function get() {
-      var _this$args$enableTouc;
-
-      return (_this$args$enableTouc = this.args.enableTouchEvents) !== null && _this$args$enableTouc !== void 0 ? _this$args$enableTouc : true;
-    }
-  }, {
-    key: "touchSlop",
-    get: function get() {
-      return this.args.touchSlop || 0;
-    }
-  }, {
-    key: "delayTouchStart",
-    get: function get() {
-      var _ref, _this$args$delayTouch, _this$args, _this$args2;
-
-      return (_ref = (_this$args$delayTouch = (_this$args = this.args) === null || _this$args === void 0 ? void 0 : _this$args.delayTouchStart) !== null && _this$args$delayTouch !== void 0 ? _this$args$delayTouch : (_this$args2 = this.args) === null || _this$args2 === void 0 ? void 0 : _this$args2.delay) !== null && _ref !== void 0 ? _ref : 0;
-    }
-  }, {
-    key: "delayMouseStart",
-    get: function get() {
-      var _ref2, _this$args$delayMouse, _this$args3, _this$args4;
-
-      return (_ref2 = (_this$args$delayMouse = (_this$args3 = this.args) === null || _this$args3 === void 0 ? void 0 : _this$args3.delayMouseStart) !== null && _this$args$delayMouse !== void 0 ? _this$args$delayMouse : (_this$args4 = this.args) === null || _this$args4 === void 0 ? void 0 : _this$args4.delay) !== null && _ref2 !== void 0 ? _ref2 : 0;
-    }
-  }, {
-    key: "window",
-    get: function get() {
-      if (this.context && this.context.window) {
-        return this.context.window;
-      } else if (typeof window !== 'undefined') {
-        return window;
-      }
-
-      return undefined;
-    }
-  }, {
-    key: "document",
-    get: function get() {
-      var _this$context;
-
-      if ((_this$context = this.context) !== null && _this$context !== void 0 && _this$context.document) {
-        return this.context.document;
-      }
-
-      if (this.window) {
-        return this.window.document;
-      }
-
-      return undefined;
-    }
-  }, {
-    key: "rootElement",
-    get: function get() {
-      var _this$args5;
-
-      return ((_this$args5 = this.args) === null || _this$args5 === void 0 ? void 0 : _this$args5.rootElement) || this.document;
-    }
-  }]);
-
-  return OptionsReader;
-}();
-
-var _eventNames;
-
-function _classCallCheck(instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-}
-
-function _defineProperties(target, props) {
-  for (var i = 0; i < props.length; i++) {
-    var descriptor = props[i];
-    descriptor.enumerable = descriptor.enumerable || false;
-    descriptor.configurable = true;
-    if ("value" in descriptor) descriptor.writable = true;
-    Object.defineProperty(target, descriptor.key, descriptor);
-  }
-}
-
-function _createClass(Constructor, protoProps, staticProps) {
-  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
-  if (staticProps) _defineProperties(Constructor, staticProps);
-  return Constructor;
-}
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-var eventNames = (_eventNames = {}, _defineProperty(_eventNames, ListenerType.mouse, {
-  start: 'mousedown',
-  move: 'mousemove',
-  end: 'mouseup',
-  contextmenu: 'contextmenu'
-}), _defineProperty(_eventNames, ListenerType.touch, {
-  start: 'touchstart',
-  move: 'touchmove',
-  end: 'touchend'
-}), _defineProperty(_eventNames, ListenerType.keyboard, {
-  keydown: 'keydown'
-}), _eventNames);
-var TouchBackendImpl = /*#__PURE__*/function () {
-  // React-DnD Dependencies
-  // Internal State
-  // Patch for iOS 13, discussion over #1585
-  function TouchBackendImpl(manager, context, options) {
-    var _this = this;
-
-    _classCallCheck(this, TouchBackendImpl);
-
-    _defineProperty(this, "options", void 0);
-
-    _defineProperty(this, "actions", void 0);
-
-    _defineProperty(this, "monitor", void 0);
-
-    _defineProperty(this, "sourceNodes", void 0);
-
-    _defineProperty(this, "sourcePreviewNodes", void 0);
-
-    _defineProperty(this, "sourcePreviewNodeOptions", void 0);
-
-    _defineProperty(this, "targetNodes", void 0);
-
-    _defineProperty(this, "_mouseClientOffset", void 0);
-
-    _defineProperty(this, "_isScrolling", void 0);
-
-    _defineProperty(this, "listenerTypes", void 0);
-
-    _defineProperty(this, "moveStartSourceIds", void 0);
-
-    _defineProperty(this, "waitingForDelay", void 0);
-
-    _defineProperty(this, "timeout", void 0);
-
-    _defineProperty(this, "dragOverTargetIds", void 0);
-
-    _defineProperty(this, "draggedSourceNode", void 0);
-
-    _defineProperty(this, "draggedSourceNodeRemovalObserver", void 0);
-
-    _defineProperty(this, "lastTargetTouchFallback", void 0);
-
-    _defineProperty(this, "getSourceClientOffset", function (sourceId) {
-      var element = _this.sourceNodes.get(sourceId);
-
-      return element && getNodeClientOffset(element);
-    });
-
-    _defineProperty(this, "handleTopMoveStartCapture", function (e) {
-      if (!eventShouldStartDrag(e)) {
-        return;
-      }
-
-      _this.moveStartSourceIds = [];
-    });
-
-    _defineProperty(this, "handleMoveStart", function (sourceId) {
-      // Just because we received an event doesn't necessarily mean we need to collect drag sources.
-      // We only collect start collecting drag sources on touch and left mouse events.
-      if (Array.isArray(_this.moveStartSourceIds)) {
-        _this.moveStartSourceIds.unshift(sourceId);
-      }
-    });
-
-    _defineProperty(this, "handleTopMoveStart", function (e) {
-      if (!eventShouldStartDrag(e)) {
-        return;
-      } // Don't prematurely preventDefault() here since it might:
-      // 1. Mess up scrolling
-      // 2. Mess up long tap (which brings up context menu)
-      // 3. If there's an anchor link as a child, tap won't be triggered on link
-
-
-      var clientOffset = getEventClientOffset(e);
-
-      if (clientOffset) {
-        if (isTouchEvent(e)) {
-          _this.lastTargetTouchFallback = e.targetTouches[0];
-        }
-
-        _this._mouseClientOffset = clientOffset;
-      }
-
-      _this.waitingForDelay = false;
-    });
-
-    _defineProperty(this, "handleTopMoveStartDelay", function (e) {
-      if (!eventShouldStartDrag(e)) {
-        return;
-      }
-
-      var delay = e.type === eventNames.touch.start ? _this.options.delayTouchStart : _this.options.delayMouseStart;
-      _this.timeout = setTimeout(_this.handleTopMoveStart.bind(_this, e), delay);
-      _this.waitingForDelay = true;
-    });
-
-    _defineProperty(this, "handleTopMoveCapture", function () {
-      _this.dragOverTargetIds = [];
-    });
-
-    _defineProperty(this, "handleMove", function (_evt, targetId) {
-      if (_this.dragOverTargetIds) {
-        _this.dragOverTargetIds.unshift(targetId);
-      }
-    });
-
-    _defineProperty(this, "handleTopMove", function (e) {
-      if (_this.timeout) {
-        clearTimeout(_this.timeout);
-      }
-
-      if (!_this.document || _this.waitingForDelay) {
-        return;
-      }
-
-      var moveStartSourceIds = _this.moveStartSourceIds,
-          dragOverTargetIds = _this.dragOverTargetIds;
-      var enableHoverOutsideTarget = _this.options.enableHoverOutsideTarget;
-      var clientOffset = getEventClientOffset(e, _this.lastTargetTouchFallback);
-
-      if (!clientOffset) {
-        return;
-      } // If the touch move started as a scroll, or is is between the scroll angles
-
-
-      if (_this._isScrolling || !_this.monitor.isDragging() && inAngleRanges(_this._mouseClientOffset.x || 0, _this._mouseClientOffset.y || 0, clientOffset.x, clientOffset.y, _this.options.scrollAngleRanges)) {
-        _this._isScrolling = true;
-        return;
-      } // If we're not dragging and we've moved a little, that counts as a drag start
-
-
-      if (!_this.monitor.isDragging() && // eslint-disable-next-line no-prototype-builtins
-      _this._mouseClientOffset.hasOwnProperty('x') && moveStartSourceIds && distance(_this._mouseClientOffset.x || 0, _this._mouseClientOffset.y || 0, clientOffset.x, clientOffset.y) > (_this.options.touchSlop ? _this.options.touchSlop : 0)) {
-        _this.moveStartSourceIds = undefined;
-
-        _this.actions.beginDrag(moveStartSourceIds, {
-          clientOffset: _this._mouseClientOffset,
-          getSourceClientOffset: _this.getSourceClientOffset,
-          publishSource: false
-        });
-      }
-
-      if (!_this.monitor.isDragging()) {
-        return;
-      }
-
-      var sourceNode = _this.sourceNodes.get(_this.monitor.getSourceId());
-
-      _this.installSourceNodeRemovalObserver(sourceNode);
-
-      _this.actions.publishDragSource();
-
-      if (e.cancelable) e.preventDefault(); // Get the node elements of the hovered DropTargets
-
-      var dragOverTargetNodes = (dragOverTargetIds || []).map(function (key) {
-        return _this.targetNodes.get(key);
-      }).filter(function (e) {
-        return !!e;
-      }); // Get the a ordered list of nodes that are touched by
-
-      var elementsAtPoint = _this.options.getDropTargetElementsAtPoint ? _this.options.getDropTargetElementsAtPoint(clientOffset.x, clientOffset.y, dragOverTargetNodes) : _this.document.elementsFromPoint(clientOffset.x, clientOffset.y); // Extend list with parents that are not receiving elementsFromPoint events (size 0 elements and svg groups)
-
-      var elementsAtPointExtended = [];
-
-      for (var nodeId in elementsAtPoint) {
-        // eslint-disable-next-line no-prototype-builtins
-        if (!elementsAtPoint.hasOwnProperty(nodeId)) {
-          continue;
-        }
-
-        var currentNode = elementsAtPoint[nodeId];
-        elementsAtPointExtended.push(currentNode);
-
-        while (currentNode) {
-          currentNode = currentNode.parentElement;
-
-          if (currentNode && elementsAtPointExtended.indexOf(currentNode) === -1) {
-            elementsAtPointExtended.push(currentNode);
-          }
-        }
-      }
-
-      var orderedDragOverTargetIds = elementsAtPointExtended // Filter off nodes that arent a hovered DropTargets nodes
-      .filter(function (node) {
-        return dragOverTargetNodes.indexOf(node) > -1;
-      }) // Map back the nodes elements to targetIds
-      .map(function (node) {
-        return _this._getDropTargetId(node);
-      }) // Filter off possible null rows
-      .filter(function (node) {
-        return !!node;
-      }).filter(function (id, index, ids) {
-        return ids.indexOf(id) === index;
-      }); // Invoke hover for drop targets when source node is still over and pointer is outside
-
-      if (enableHoverOutsideTarget) {
-        for (var targetId in _this.targetNodes) {
-          var targetNode = _this.targetNodes.get(targetId);
-
-          if (sourceNode && targetNode && targetNode.contains(sourceNode) && orderedDragOverTargetIds.indexOf(targetId) === -1) {
-            orderedDragOverTargetIds.unshift(targetId);
-            break;
-          }
-        }
-      } // Reverse order because dnd-core reverse it before calling the DropTarget drop methods
-
-
-      orderedDragOverTargetIds.reverse();
-
-      _this.actions.hover(orderedDragOverTargetIds, {
-        clientOffset: clientOffset
-      });
-    });
-
-    _defineProperty(this, "_getDropTargetId", function (node) {
-      var keys = _this.targetNodes.keys();
-
-      var next = keys.next();
-
-      while (next.done === false) {
-        var targetId = next.value;
-
-        if (node === _this.targetNodes.get(targetId)) {
-          return targetId;
-        } else {
-          next = keys.next();
-        }
-      }
-
-      return undefined;
-    });
-
-    _defineProperty(this, "handleTopMoveEndCapture", function (e) {
-      _this._isScrolling = false;
-      _this.lastTargetTouchFallback = undefined;
-
-      if (!eventShouldEndDrag(e)) {
-        return;
-      }
-
-      if (!_this.monitor.isDragging() || _this.monitor.didDrop()) {
-        _this.moveStartSourceIds = undefined;
-        return;
-      }
-
-      if (e.cancelable) e.preventDefault();
-      _this._mouseClientOffset = {};
-
-      _this.uninstallSourceNodeRemovalObserver();
-
-      _this.actions.drop();
-
-      _this.actions.endDrag();
-    });
-
-    _defineProperty(this, "handleCancelOnEscape", function (e) {
-      if (e.key === 'Escape' && _this.monitor.isDragging()) {
-        _this._mouseClientOffset = {};
-
-        _this.uninstallSourceNodeRemovalObserver();
-
-        _this.actions.endDrag();
-      }
-    });
-
-    this.options = new OptionsReader(options, context);
-    this.actions = manager.getActions();
-    this.monitor = manager.getMonitor();
-    this.sourceNodes = new Map();
-    this.sourcePreviewNodes = new Map();
-    this.sourcePreviewNodeOptions = new Map();
-    this.targetNodes = new Map();
-    this.listenerTypes = [];
-    this._mouseClientOffset = {};
-    this._isScrolling = false;
-
-    if (this.options.enableMouseEvents) {
-      this.listenerTypes.push(ListenerType.mouse);
-    }
-
-    if (this.options.enableTouchEvents) {
-      this.listenerTypes.push(ListenerType.touch);
-    }
-
-    if (this.options.enableKeyboardEvents) {
-      this.listenerTypes.push(ListenerType.keyboard);
-    }
-  }
-  /**
-   * Generate profiling statistics for the HTML5Backend.
-   */
-
-
-  _createClass(TouchBackendImpl, [{
-    key: "profile",
-    value: function profile() {
-      var _this$dragOverTargetI;
-
-      return {
-        sourceNodes: this.sourceNodes.size,
-        sourcePreviewNodes: this.sourcePreviewNodes.size,
-        sourcePreviewNodeOptions: this.sourcePreviewNodeOptions.size,
-        targetNodes: this.targetNodes.size,
-        dragOverTargetIds: ((_this$dragOverTargetI = this.dragOverTargetIds) === null || _this$dragOverTargetI === void 0 ? void 0 : _this$dragOverTargetI.length) || 0
-      };
-    } // public for test
-
-  }, {
-    key: "document",
-    get: function get() {
-      return this.options.document;
-    }
-  }, {
-    key: "setup",
-    value: function setup() {
-      var root = this.options.rootElement;
-
-      if (!root) {
-        return;
-      }
-
-      invariant(!TouchBackendImpl.isSetUp, 'Cannot have two Touch backends at the same time.');
-      TouchBackendImpl.isSetUp = true;
-      this.addEventListener(root, 'start', this.getTopMoveStartHandler());
-      this.addEventListener(root, 'start', this.handleTopMoveStartCapture, true);
-      this.addEventListener(root, 'move', this.handleTopMove);
-      this.addEventListener(root, 'move', this.handleTopMoveCapture, true);
-      this.addEventListener(root, 'end', this.handleTopMoveEndCapture, true);
-
-      if (this.options.enableMouseEvents && !this.options.ignoreContextMenu) {
-        this.addEventListener(root, 'contextmenu', this.handleTopMoveEndCapture);
-      }
-
-      if (this.options.enableKeyboardEvents) {
-        this.addEventListener(root, 'keydown', this.handleCancelOnEscape, true);
-      }
-    }
-  }, {
-    key: "teardown",
-    value: function teardown() {
-      var root = this.options.rootElement;
-
-      if (!root) {
-        return;
-      }
-
-      TouchBackendImpl.isSetUp = false;
-      this._mouseClientOffset = {};
-      this.removeEventListener(root, 'start', this.handleTopMoveStartCapture, true);
-      this.removeEventListener(root, 'start', this.handleTopMoveStart);
-      this.removeEventListener(root, 'move', this.handleTopMoveCapture, true);
-      this.removeEventListener(root, 'move', this.handleTopMove);
-      this.removeEventListener(root, 'end', this.handleTopMoveEndCapture, true);
-
-      if (this.options.enableMouseEvents && !this.options.ignoreContextMenu) {
-        this.removeEventListener(root, 'contextmenu', this.handleTopMoveEndCapture);
-      }
-
-      if (this.options.enableKeyboardEvents) {
-        this.removeEventListener(root, 'keydown', this.handleCancelOnEscape, true);
-      }
-
-      this.uninstallSourceNodeRemovalObserver();
-    }
-  }, {
-    key: "addEventListener",
-    value: function addEventListener(subject, event, handler, capture) {
-      var options = supportsPassive ? {
-        capture: capture,
-        passive: false
-      } : capture;
-      this.listenerTypes.forEach(function (listenerType) {
-        var evt = eventNames[listenerType][event];
-
-        if (evt) {
-          subject.addEventListener(evt, handler, options);
-        }
-      });
-    }
-  }, {
-    key: "removeEventListener",
-    value: function removeEventListener(subject, event, handler, capture) {
-      var options = supportsPassive ? {
-        capture: capture,
-        passive: false
-      } : capture;
-      this.listenerTypes.forEach(function (listenerType) {
-        var evt = eventNames[listenerType][event];
-
-        if (evt) {
-          subject.removeEventListener(evt, handler, options);
-        }
-      });
-    }
-  }, {
-    key: "connectDragSource",
-    value: function connectDragSource(sourceId, node) {
-      var _this2 = this;
-
-      var handleMoveStart = this.handleMoveStart.bind(this, sourceId);
-      this.sourceNodes.set(sourceId, node);
-      this.addEventListener(node, 'start', handleMoveStart);
-      return function () {
-        _this2.sourceNodes.delete(sourceId);
-
-        _this2.removeEventListener(node, 'start', handleMoveStart);
-      };
-    }
-  }, {
-    key: "connectDragPreview",
-    value: function connectDragPreview(sourceId, node, options) {
-      var _this3 = this;
-
-      this.sourcePreviewNodeOptions.set(sourceId, options);
-      this.sourcePreviewNodes.set(sourceId, node);
-      return function () {
-        _this3.sourcePreviewNodes.delete(sourceId);
-
-        _this3.sourcePreviewNodeOptions.delete(sourceId);
-      };
-    }
-  }, {
-    key: "connectDropTarget",
-    value: function connectDropTarget(targetId, node) {
-      var _this4 = this;
-
-      var root = this.options.rootElement;
-
-      if (!this.document || !root) {
-        return function () {
-          /* noop */
-        };
-      }
-
-      var handleMove = function handleMove(e) {
-        if (!_this4.document || !root || !_this4.monitor.isDragging()) {
-          return;
-        }
-
-        var coords;
-        /**
-         * Grab the coordinates for the current mouse/touch position
-         */
-
-        switch (e.type) {
-          case eventNames.mouse.move:
-            coords = {
-              x: e.clientX,
-              y: e.clientY
-            };
-            break;
-
-          case eventNames.touch.move:
-            coords = {
-              x: e.touches[0].clientX,
-              y: e.touches[0].clientY
-            };
-            break;
-        }
-        /**
-         * Use the coordinates to grab the element the drag ended on.
-         * If the element is the same as the target node (or any of it's children) then we have hit a drop target and can handle the move.
-         */
-
-
-        var droppedOn = coords != null ? _this4.document.elementFromPoint(coords.x, coords.y) : undefined;
-        var childMatch = droppedOn && node.contains(droppedOn);
-
-        if (droppedOn === node || childMatch) {
-          return _this4.handleMove(e, targetId);
-        }
-      };
-      /**
-       * Attaching the event listener to the body so that touchmove will work while dragging over multiple target elements.
-       */
-
-
-      this.addEventListener(this.document.body, 'move', handleMove);
-      this.targetNodes.set(targetId, node);
-      return function () {
-        if (_this4.document) {
-          _this4.targetNodes.delete(targetId);
-
-          _this4.removeEventListener(_this4.document.body, 'move', handleMove);
-        }
-      };
-    }
-  }, {
-    key: "getTopMoveStartHandler",
-    value: function getTopMoveStartHandler() {
-      if (!this.options.delayTouchStart && !this.options.delayMouseStart) {
-        return this.handleTopMoveStart;
-      }
-
-      return this.handleTopMoveStartDelay;
-    }
-  }, {
-    key: "installSourceNodeRemovalObserver",
-    value: function installSourceNodeRemovalObserver(node) {
-      var _this5 = this;
-
-      this.uninstallSourceNodeRemovalObserver();
-      this.draggedSourceNode = node;
-      this.draggedSourceNodeRemovalObserver = new MutationObserver(function () {
-        if (node && !node.parentElement) {
-          _this5.resurrectSourceNode();
-
-          _this5.uninstallSourceNodeRemovalObserver();
-        }
-      });
-
-      if (!node || !node.parentElement) {
-        return;
-      }
-
-      this.draggedSourceNodeRemovalObserver.observe(node.parentElement, {
-        childList: true
-      });
-    }
-  }, {
-    key: "resurrectSourceNode",
-    value: function resurrectSourceNode() {
-      if (this.document && this.draggedSourceNode) {
-        this.draggedSourceNode.style.display = 'none';
-        this.draggedSourceNode.removeAttribute('data-reactid');
-        this.document.body.appendChild(this.draggedSourceNode);
-      }
-    }
-  }, {
-    key: "uninstallSourceNodeRemovalObserver",
-    value: function uninstallSourceNodeRemovalObserver() {
-      if (this.draggedSourceNodeRemovalObserver) {
-        this.draggedSourceNodeRemovalObserver.disconnect();
-      }
-
-      this.draggedSourceNodeRemovalObserver = undefined;
-      this.draggedSourceNode = undefined;
-    }
-  }]);
-
-  return TouchBackendImpl;
-}();
-
-_defineProperty(TouchBackendImpl, "isSetUp", void 0);
-
-var TouchBackend = function createBackend(manager) {
-  var context = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-  var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-  return new TouchBackendImpl(manager, context, options);
-};
-
-var HTML5toTouch = {
-  backends: [{
-    backend: HTML5Backend,
-    transition: MouseTransition
-  }, {
-    backend: TouchBackend,
-    options: {
-      enableMouseEvents: true
-    },
-    preview: true,
-    transition: TouchTransition
-  }]
-};
-
-const COLUMNS = 'abcdefgh'.split('');
-const chessboardPropTypes = {
-  // time in milliseconds for piece to slide to target square. Only used when the position is programmatically changed
-  animationDuration: PropTypes.number,
-  // whether or not arrows can be drawn with right click and dragging
-  areArrowsAllowed: PropTypes.bool,
-  // if pieces are draggable
-  arePiecesDraggable: PropTypes.bool,
-  // if premoves are allowed
-  arePremovesAllowed: PropTypes.bool,
-  // Orientation of the board
-  boardOrientation: PropTypes.oneOf(['white', 'black']),
-  // width of board in pixels. for responsive width show useChessBoardSize/useScreenSize example
-  boardWidth: PropTypes.number,
-  // if premoves should be cleared on right click
-  clearPremovesOnRightClick: PropTypes.bool,
-  // array of custom arrows to draw on the board. Each arrow within the array must be an array of length 2 with strings denoting the from and to square to draw the arrow e.g. [ ['a3', 'a5'], ['g1', 'f3'] ].
-  customArrows: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string)),
-  // string with rgb or hex value to colour drawn arrows
-  customArrowColor: PropTypes.string,
-  // board style object e.g. { borderRadius: '5px', boxShadow: `0 5px 15px rgba(0, 0, 0, 0.5)`}
-  customBoardStyle: PropTypes.object,
-  // dark square style object e.g. { backgroundColor: '#B58863' }
-  customDarkSquareStyle: PropTypes.object,
-  // current drop square style object e.g. { backgroundColor: 'sienna' }
-  customDropSquareStyle: PropTypes.object,
-  // light square style object e.g. { backgroundColor: '#F0D9B5' }
-  customLightSquareStyle: PropTypes.object,
-  // pieces object where each piece returns JSX to render. { wK: ({ isDragging: boolean, squareWidth: pixels, droppedPiece: piece string, targetSquare: square string, sourceSquare: square string }) => jsx }
-  customPieces: PropTypes.object,
-  // premove highlight dark square style object e.g. { backgroundColor: '#F0D9B5' }
-  customPremoveDarkSquareStyle: PropTypes.object,
-  // premove highlight light square style object e.g. { backgroundColor: '#F0D9B5' }
-  customPremoveLightSquareStyle: PropTypes.object,
-  // custom squares style object. e.g. {'e4': {backgroundColor: 'orange'}, ...}
-  customSquareStyles: PropTypes.object,
-  // behavior of pieces when dropped off the board. 'snapback' brings the piece back to it's original square, 'trash' deletes the piece from the board
-  dropOffBoardAction: PropTypes.oneOf(['snapback', 'trash']),
-  // board identifier, necessary if more than one board is mounted for drag and drop.
-  id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  // function called when a piece drag is initiated. Returns if piece is draggable ({ piece: string, sourceSquare: string }) => bool
-  isDraggablePiece: PropTypes.func,
-  // user function that receives current position object when position changes. (currentPosition: object) => void
-  getPositionObject: PropTypes.func,
-  // user function that is run when piece is dragged over a square (square: string) => void
-  onDragOverSquare: PropTypes.func,
-  // user function that is run when mouse leaves a square (square: string) => void
-  onMouseOutSquare: PropTypes.func,
-  // user function that is run when mouse is over a square (square: string) => void
-  onMouseOverSquare: PropTypes.func,
-  // user function that is run when piece is clicked (piece: string) => void
-  onPieceClick: PropTypes.func,
-  // user function that is run when piece is dropped on a square ({ sourceSquare: string, targetSquare: string, piece: string }) => void
-  onPieceDrop: PropTypes.func,
-  // user function that is run when a square is clicked (square: string) => void
-  onSquareClick: PropTypes.func,
-  // user function that is run when a square is right clicked (square: string) => void
-  onSquareRightClick: PropTypes.func,
-  // FEN string or a position object ({ e5: 'wK', e4: 'wP', e7: 'bK' })
-  position: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
-  // show file character and rank numbers (a..h, 1..8)
-  showBoardNotation: PropTypes.bool // show spare pieces above and below board.
-  // showSparePieces: PropTypes.bool
-
-};
-const chessboardDefaultProps = {
-  animationDuration: 300,
-  areArrowsAllowed: true,
-  arePiecesDraggable: true,
-  arePremovesAllowed: false,
-  boardOrientation: 'white',
-  boardWidth: 560,
-  clearPremovesOnRightClick: true,
-  customArrows: [],
-  customArrowColor: 'rgb(255,170,0)',
-  customBoardStyle: {},
-  customDarkSquareStyle: {
-    backgroundColor: '#B58863'
-  },
-  customDropSquareStyle: {
-    boxShadow: 'inset 0 0 1px 6px rgba(255,255,255,0.75)'
-  },
-  customLightSquareStyle: {
-    backgroundColor: '#F0D9B5'
-  },
-  customPieces: {},
-  customPremoveDarkSquareStyle: {
-    backgroundColor: '#A42323'
-  },
-  customPremoveLightSquareStyle: {
-    backgroundColor: '#BD2828'
-  },
-  customSquareStyles: {},
-  dropOffBoardAction: 'snapback',
-  id: 0,
-  isDraggablePiece: () => true,
-  getPositionObject: () => {},
-  onDragOverSquare: () => {},
-  onMouseOutSquare: () => {},
-  onMouseOverSquare: () => {},
-  onPieceClick: () => {},
-  onPieceDrop: () => true,
-  onSquareClick: () => {},
-  onSquareRightClick: () => {},
-  position: 'start',
-  showBoardNotation: true // showSparePieces: false
-
-};
-
-const startPositionObject = {
-  a8: 'bR',
-  b8: 'bN',
-  c8: 'bB',
-  d8: 'bQ',
-  e8: 'bK',
-  f8: 'bB',
-  g8: 'bN',
-  h8: 'bR',
-  a7: 'bP',
-  b7: 'bP',
-  c7: 'bP',
-  d7: 'bP',
-  e7: 'bP',
-  f7: 'bP',
-  g7: 'bP',
-  h7: 'bP',
-  a2: 'wP',
-  b2: 'wP',
-  c2: 'wP',
-  d2: 'wP',
-  e2: 'wP',
-  f2: 'wP',
-  g2: 'wP',
-  h2: 'wP',
-  a1: 'wR',
-  b1: 'wN',
-  c1: 'wB',
-  d1: 'wQ',
-  e1: 'wK',
-  f1: 'wB',
-  g1: 'wN',
-  h1: 'wR'
-};
-const whiteColumnValues = {
-  a: 0,
-  b: 1,
-  c: 2,
-  d: 3,
-  e: 4,
-  f: 5,
-  g: 6,
-  h: 7
-};
-const blackColumnValues = {
-  a: 7,
-  b: 6,
-  c: 5,
-  d: 4,
-  e: 3,
-  f: 2,
-  g: 1,
-  h: 0
-};
-const whiteRows = [7, 6, 5, 4, 3, 2, 1, 0];
-const blackRows = [0, 1, 2, 3, 4, 5, 6, 7];
-const getRelativeCoords = (boardOrientation, boardWidth, square) => {
-  const squareWidth = boardWidth / 8;
-  const columns = boardOrientation === 'white' ? whiteColumnValues : blackColumnValues;
-  const rows = boardOrientation === 'white' ? whiteRows : blackRows;
-  const x = columns[square[0]] * squareWidth + squareWidth / 2;
-  const y = rows[square[1] - 1] * squareWidth + squareWidth / 2;
-  return {
-    x,
-    y
-  };
-};
-const isDifferentFromStart = newPosition => {
-  let isDifferent = false;
-  Object.keys(startPositionObject).forEach(square => {
-    if (newPosition[square] !== startPositionObject[square]) isDifferent = true;
-  });
-  Object.keys(newPosition).forEach(square => {
-    if (startPositionObject[square] !== newPosition[square]) isDifferent = true;
-  });
-  return isDifferent;
-};
-const getPositionDifferences = (currentPosition, newPosition) => {
-  const difference = {
-    removed: {},
-    added: {}
-  }; // removed from current
-
-  Object.keys(currentPosition).forEach(square => {
-    if (newPosition[square] !== currentPosition[square]) difference.removed[square] = currentPosition[square];
-  }); // added from new
-
-  Object.keys(newPosition).forEach(square => {
-    if (currentPosition[square] !== newPosition[square]) difference.added[square] = newPosition[square];
-  });
-  return difference;
-};
-
-function isString(s) {
-  return typeof s === 'string';
-}
-
-function convertPositionToObject(position) {
-  if (position === 'start') return fenToObj('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR');
-  if (validFen(position)) return fenToObj(position);
-  if (validPositionObject(position)) return position;
-  return {};
-}
-function fenToObj(fen) {
-  if (!validFen(fen)) return false; // cut off any move, castling, etc info from the end. we're only interested in position information
-
-  fen = fen.replace(/ .+$/, '');
-  const rows = fen.split('/');
-  const position = {};
-  let currentRow = 8;
-
-  for (let i = 0; i < 8; i++) {
-    const row = rows[i].split('');
-    let colIdx = 0; // loop through each character in the FEN section
-
-    for (let j = 0; j < row.length; j++) {
-      // number / empty squares
-      if (row[j].search(/[1-8]/) !== -1) {
-        const numEmptySquares = parseInt(row[j], 10);
-        colIdx = colIdx + numEmptySquares;
-      } else {
-        // piece
-        const square = COLUMNS[colIdx] + currentRow;
-        position[square] = fenToPieceCode(row[j]);
-        colIdx = colIdx + 1;
-      }
-    }
-
-    currentRow = currentRow - 1;
-  }
-
-  return position;
-}
-
-function expandFenEmptySquares(fen) {
-  return fen.replace(/8/g, '11111111').replace(/7/g, '1111111').replace(/6/g, '111111').replace(/5/g, '11111').replace(/4/g, '1111').replace(/3/g, '111').replace(/2/g, '11');
-}
-
-function validFen(fen) {
-  if (!isString(fen)) return false; // cut off any move, castling, etc info from the end. we're only interested in position information
-
-  fen = fen.replace(/ .+$/, ''); // expand the empty square numbers to just 1s
-
-  fen = expandFenEmptySquares(fen); // FEN should be 8 sections separated by slashes
-
-  const chunks = fen.split('/');
-  if (chunks.length !== 8) return false; // check each section
-
-  for (let i = 0; i < 8; i++) {
-    if (chunks[i].length !== 8 || chunks[i].search(/[^kqrnbpKQRNBP1]/) !== -1) {
-      return false;
-    }
-  }
-
-  return true;
-} // convert FEN piece code to bP, wK, etc
-
-function fenToPieceCode(piece) {
-  // black piece
-  if (piece.toLowerCase() === piece) {
-    return 'b' + piece.toUpperCase();
-  } // white piece
-
-
-  return 'w' + piece.toUpperCase();
-}
-
-function validSquare(square) {
-  return isString(square) && square.search(/^[a-h][1-8]$/) !== -1;
-}
-
-function validPieceCode(code) {
-  return isString(code) && code.search(/^[bw][KQRNBP]$/) !== -1;
-}
-
-function validPositionObject(pos) {
-  if (pos === null || typeof pos !== 'object') return false;
-
-  for (const i in pos) {
-    if (!pos[i]) continue;
-
-    if (!validSquare(i) || !validPieceCode(pos[i])) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
-const defaultPieces = {
-  wP: /*#__PURE__*/jsx("svg", {
-    xmlns: "http://www.w3.org/2000/svg",
-    version: "1.1",
-    width: "45",
-    height: "45",
-    children: /*#__PURE__*/jsx("path", {
-      d: "m 22.5,9 c -2.21,0 -4,1.79 -4,4 0,0.89 0.29,1.71 0.78,2.38 C 17.33,16.5 16,18.59 16,21 c 0,2.03 0.94,3.84 2.41,5.03 C 15.41,27.09 11,31.58 11,39.5 H 34 C 34,31.58 29.59,27.09 26.59,26.03 28.06,24.84 29,23.03 29,21 29,18.59 27.67,16.5 25.72,15.38 26.21,14.71 26.5,13.89 26.5,13 c 0,-2.21 -1.79,-4 -4,-4 z",
-      style: {
-        opacity: '1',
-        fill: '#ffffff',
-        fillOpacity: '1',
-        fillRule: 'nonzero',
-        stroke: '#000000',
-        strokeWidth: '1.5',
-        strokeLinecap: 'round',
-        strokeLinejoin: 'miter',
-        strokeMiterlimit: '4',
-        strokeDasharray: 'none',
-        strokeOpacity: '1'
-      }
-    })
-  }),
-  wR: /*#__PURE__*/jsx("svg", {
-    xmlns: "http://www.w3.org/2000/svg",
-    version: "1.1",
-    width: "45",
-    height: "45",
-    children: /*#__PURE__*/jsxs("g", {
-      style: {
-        opacity: '1',
-        fill: '#ffffff',
-        fillOpacity: '1',
-        fillRule: 'evenodd',
-        stroke: '#000000',
-        strokeWidth: '1.5',
-        strokeLinecap: 'round',
-        strokeLinejoin: 'round',
-        strokeMiterlimit: '4',
-        strokeDasharray: 'none',
-        strokeOpacity: '1'
-      },
-      children: [/*#__PURE__*/jsx("path", {
-        d: "M 9,39 L 36,39 L 36,36 L 9,36 L 9,39 z ",
-        style: {
-          strokeLinecap: 'butt'
-        }
-      }), /*#__PURE__*/jsx("path", {
-        d: "M 12,36 L 12,32 L 33,32 L 33,36 L 12,36 z ",
-        style: {
-          strokeLinecap: 'butt'
-        }
-      }), /*#__PURE__*/jsx("path", {
-        d: "M 11,14 L 11,9 L 15,9 L 15,11 L 20,11 L 20,9 L 25,9 L 25,11 L 30,11 L 30,9 L 34,9 L 34,14",
-        style: {
-          strokeLinecap: 'butt'
-        }
-      }), /*#__PURE__*/jsx("path", {
-        d: "M 34,14 L 31,17 L 14,17 L 11,14"
-      }), /*#__PURE__*/jsx("path", {
-        d: "M 31,17 L 31,29.5 L 14,29.5 L 14,17",
-        style: {
-          strokeLinecap: 'butt',
-          strokeLinejoin: 'miter'
-        }
-      }), /*#__PURE__*/jsx("path", {
-        d: "M 31,29.5 L 32.5,32 L 12.5,32 L 14,29.5"
-      }), /*#__PURE__*/jsx("path", {
-        d: "M 11,14 L 34,14",
-        style: {
-          fill: 'none',
-          stroke: '#000000',
-          strokeLinejoin: 'miter'
-        }
-      })]
-    })
-  }),
-  wN: /*#__PURE__*/jsx("svg", {
-    xmlns: "http://www.w3.org/2000/svg",
-    version: "1.1",
-    width: "45",
-    height: "45",
-    children: /*#__PURE__*/jsxs("g", {
-      style: {
-        opacity: '1',
-        fill: 'none',
-        fillOpacity: '1',
-        fillRule: 'evenodd',
-        stroke: '#000000',
-        strokeWidth: '1.5',
-        strokeLinecap: 'round',
-        strokeLinejoin: 'round',
-        strokeMiterlimit: '4',
-        strokeDasharray: 'none',
-        strokeOpacity: '1'
-      },
-      children: [/*#__PURE__*/jsx("path", {
-        d: "M 22,10 C 32.5,11 38.5,18 38,39 L 15,39 C 15,30 25,32.5 23,18",
-        style: {
-          fill: '#ffffff',
-          stroke: '#000000'
-        }
-      }), /*#__PURE__*/jsx("path", {
-        d: "M 24,18 C 24.38,20.91 18.45,25.37 16,27 C 13,29 13.18,31.34 11,31 C 9.958,30.06 12.41,27.96 11,28 C 10,28 11.19,29.23 10,30 C 9,30 5.997,31 6,26 C 6,24 12,14 12,14 C 12,14 13.89,12.1 14,10.5 C 13.27,9.506 13.5,8.5 13.5,7.5 C 14.5,6.5 16.5,10 16.5,10 L 18.5,10 C 18.5,10 19.28,8.008 21,7 C 22,7 22,10 22,10",
-        style: {
-          fill: '#ffffff',
-          stroke: '#000000'
-        }
-      }), /*#__PURE__*/jsx("path", {
-        d: "M 9.5 25.5 A 0.5 0.5 0 1 1 8.5,25.5 A 0.5 0.5 0 1 1 9.5 25.5 z",
-        style: {
-          fill: '#000000',
-          stroke: '#000000'
-        }
-      }), /*#__PURE__*/jsx("path", {
-        d: "M 15 15.5 A 0.5 1.5 0 1 1  14,15.5 A 0.5 1.5 0 1 1  15 15.5 z",
-        transform: "matrix(0.866,0.5,-0.5,0.866,9.693,-5.173)",
-        style: {
-          fill: '#000000',
-          stroke: '#000000'
-        }
-      })]
-    })
-  }),
-  wB: /*#__PURE__*/jsx("svg", {
-    xmlns: "http://www.w3.org/2000/svg",
-    version: "1.1",
-    width: "45",
-    height: "45",
-    children: /*#__PURE__*/jsxs("g", {
-      style: {
-        opacity: '1',
-        fill: 'none',
-        fillRule: 'evenodd',
-        fillOpacity: '1',
-        stroke: '#000000',
-        strokeWidth: '1.5',
-        strokeLinecap: 'round',
-        strokeLinejoin: 'round',
-        strokeMiterlimit: '4',
-        strokeDasharray: 'none',
-        strokeOpacity: '1'
-      },
-      children: [/*#__PURE__*/jsxs("g", {
-        style: {
-          fill: '#ffffff',
-          stroke: '#000000',
-          strokeLinecap: 'butt'
-        },
-        children: [/*#__PURE__*/jsx("path", {
-          d: "M 9,36 C 12.39,35.03 19.11,36.43 22.5,34 C 25.89,36.43 32.61,35.03 36,36 C 36,36 37.65,36.54 39,38 C 38.32,38.97 37.35,38.99 36,38.5 C 32.61,37.53 25.89,38.96 22.5,37.5 C 19.11,38.96 12.39,37.53 9,38.5 C 7.65,38.99 6.68,38.97 6,38 C 7.35,36.54 9,36 9,36 z"
-        }), /*#__PURE__*/jsx("path", {
-          d: "M 15,32 C 17.5,34.5 27.5,34.5 30,32 C 30.5,30.5 30,30 30,30 C 30,27.5 27.5,26 27.5,26 C 33,24.5 33.5,14.5 22.5,10.5 C 11.5,14.5 12,24.5 17.5,26 C 17.5,26 15,27.5 15,30 C 15,30 14.5,30.5 15,32 z"
-        }), /*#__PURE__*/jsx("path", {
-          d: "M 25 8 A 2.5 2.5 0 1 1  20,8 A 2.5 2.5 0 1 1  25 8 z"
-        })]
-      }), /*#__PURE__*/jsx("path", {
-        d: "M 17.5,26 L 27.5,26 M 15,30 L 30,30 M 22.5,15.5 L 22.5,20.5 M 20,18 L 25,18",
-        style: {
-          fill: 'none',
-          stroke: '#000000',
-          strokeLinejoin: 'miter'
-        }
-      })]
-    })
-  }),
-  wQ: /*#__PURE__*/jsx("svg", {
-    xmlns: "http://www.w3.org/2000/svg",
-    version: "1.1",
-    width: "45",
-    height: "45",
-    children: /*#__PURE__*/jsxs("g", {
-      style: {
-        fill: '#ffffff',
-        stroke: '#000000',
-        strokeWidth: '1.5',
-        strokeLinejoin: 'round'
-      },
-      children: [/*#__PURE__*/jsx("path", {
-        d: "M 9,26 C 17.5,24.5 30,24.5 36,26 L 38.5,13.5 L 31,25 L 30.7,10.9 L 25.5,24.5 L 22.5,10 L 19.5,24.5 L 14.3,10.9 L 14,25 L 6.5,13.5 L 9,26 z"
-      }), /*#__PURE__*/jsx("path", {
-        d: "M 9,26 C 9,28 10.5,28 11.5,30 C 12.5,31.5 12.5,31 12,33.5 C 10.5,34.5 11,36 11,36 C 9.5,37.5 11,38.5 11,38.5 C 17.5,39.5 27.5,39.5 34,38.5 C 34,38.5 35.5,37.5 34,36 C 34,36 34.5,34.5 33,33.5 C 32.5,31 32.5,31.5 33.5,30 C 34.5,28 36,28 36,26 C 27.5,24.5 17.5,24.5 9,26 z"
-      }), /*#__PURE__*/jsx("path", {
-        d: "M 11.5,30 C 15,29 30,29 33.5,30",
-        style: {
-          fill: 'none'
-        }
-      }), /*#__PURE__*/jsx("path", {
-        d: "M 12,33.5 C 18,32.5 27,32.5 33,33.5",
-        style: {
-          fill: 'none'
-        }
-      }), /*#__PURE__*/jsx("circle", {
-        cx: "6",
-        cy: "12",
-        r: "2"
-      }), /*#__PURE__*/jsx("circle", {
-        cx: "14",
-        cy: "9",
-        r: "2"
-      }), /*#__PURE__*/jsx("circle", {
-        cx: "22.5",
-        cy: "8",
-        r: "2"
-      }), /*#__PURE__*/jsx("circle", {
-        cx: "31",
-        cy: "9",
-        r: "2"
-      }), /*#__PURE__*/jsx("circle", {
-        cx: "39",
-        cy: "12",
-        r: "2"
-      })]
-    })
-  }),
-  wK: /*#__PURE__*/jsx("svg", {
-    xmlns: "http://www.w3.org/2000/svg",
-    version: "1.1",
-    width: "45",
-    height: "45",
-    children: /*#__PURE__*/jsxs("g", {
-      style: {
-        fill: 'none',
-        fillOpacity: '1',
-        fillRule: 'evenodd',
-        stroke: '#000000',
-        strokeWidth: '1.5',
-        strokeLinecap: 'round',
-        strokeLinejoin: 'round',
-        strokeMiterlimit: '4',
-        strokeDasharray: 'none',
-        strokeOpacity: '1'
-      },
-      children: [/*#__PURE__*/jsx("path", {
-        d: "M 22.5,11.63 L 22.5,6",
-        style: {
-          fill: 'none',
-          stroke: '#000000',
-          strokeLinejoin: 'miter'
-        }
-      }), /*#__PURE__*/jsx("path", {
-        d: "M 20,8 L 25,8",
-        style: {
-          fill: 'none',
-          stroke: '#000000',
-          strokeLinejoin: 'miter'
-        }
-      }), /*#__PURE__*/jsx("path", {
-        d: "M 22.5,25 C 22.5,25 27,17.5 25.5,14.5 C 25.5,14.5 24.5,12 22.5,12 C 20.5,12 19.5,14.5 19.5,14.5 C 18,17.5 22.5,25 22.5,25",
-        style: {
-          fill: '#ffffff',
-          stroke: '#000000',
-          strokeLinecap: 'butt',
-          strokeLinejoin: 'miter'
-        }
-      }), /*#__PURE__*/jsx("path", {
-        d: "M 12.5,37 C 18,40.5 27,40.5 32.5,37 L 32.5,30 C 32.5,30 41.5,25.5 38.5,19.5 C 34.5,13 25,16 22.5,23.5 L 22.5,27 L 22.5,23.5 C 20,16 10.5,13 6.5,19.5 C 3.5,25.5 12.5,30 12.5,30 L 12.5,37",
-        style: {
-          fill: '#ffffff',
-          stroke: '#000000'
-        }
-      }), /*#__PURE__*/jsx("path", {
-        d: "M 12.5,30 C 18,27 27,27 32.5,30",
-        style: {
-          fill: 'none',
-          stroke: '#000000'
-        }
-      }), /*#__PURE__*/jsx("path", {
-        d: "M 12.5,33.5 C 18,30.5 27,30.5 32.5,33.5",
-        style: {
-          fill: 'none',
-          stroke: '#000000'
-        }
-      }), /*#__PURE__*/jsx("path", {
-        d: "M 12.5,37 C 18,34 27,34 32.5,37",
-        style: {
-          fill: 'none',
-          stroke: '#000000'
-        }
-      })]
-    })
-  }),
-  bP: /*#__PURE__*/jsx("svg", {
-    xmlns: "http://www.w3.org/2000/svg",
-    version: "1.1",
-    width: "45",
-    height: "45",
-    children: /*#__PURE__*/jsx("path", {
-      d: "m 22.5,9 c -2.21,0 -4,1.79 -4,4 0,0.89 0.29,1.71 0.78,2.38 C 17.33,16.5 16,18.59 16,21 c 0,2.03 0.94,3.84 2.41,5.03 C 15.41,27.09 11,31.58 11,39.5 H 34 C 34,31.58 29.59,27.09 26.59,26.03 28.06,24.84 29,23.03 29,21 29,18.59 27.67,16.5 25.72,15.38 26.21,14.71 26.5,13.89 26.5,13 c 0,-2.21 -1.79,-4 -4,-4 z",
-      style: {
-        opacity: '1',
-        fill: '#000000',
-        fillOpacity: '1',
-        fillRule: 'nonzero',
-        stroke: '#000000',
-        strokeWidth: '1.5',
-        strokeLinecap: 'round',
-        strokeLinejoin: 'miter',
-        strokeMiterlimit: '4',
-        strokeDasharray: 'none',
-        strokeOpacity: '1'
-      }
-    })
-  }),
-  bR: /*#__PURE__*/jsx("svg", {
-    xmlns: "http://www.w3.org/2000/svg",
-    version: "1.1",
-    width: "45",
-    height: "45",
-    children: /*#__PURE__*/jsxs("g", {
-      style: {
-        opacity: '1',
-        fill: '#000000',
-        fillOpacity: '1',
-        fillRule: 'evenodd',
-        stroke: '#000000',
-        strokeWidth: '1.5',
-        strokeLinecap: 'round',
-        strokeLinejoin: 'round',
-        strokeMiterlimit: '4',
-        strokeDasharray: 'none',
-        strokeOpacity: '1'
-      },
-      children: [/*#__PURE__*/jsx("path", {
-        d: "M 9,39 L 36,39 L 36,36 L 9,36 L 9,39 z ",
-        style: {
-          strokeLinecap: 'butt'
-        }
-      }), /*#__PURE__*/jsx("path", {
-        d: "M 12.5,32 L 14,29.5 L 31,29.5 L 32.5,32 L 12.5,32 z ",
-        style: {
-          strokeLinecap: 'butt'
-        }
-      }), /*#__PURE__*/jsx("path", {
-        d: "M 12,36 L 12,32 L 33,32 L 33,36 L 12,36 z ",
-        style: {
-          strokeLinecap: 'butt'
-        }
-      }), /*#__PURE__*/jsx("path", {
-        d: "M 14,29.5 L 14,16.5 L 31,16.5 L 31,29.5 L 14,29.5 z ",
-        style: {
-          strokeLinecap: 'butt',
-          strokeLinejoin: 'miter'
-        }
-      }), /*#__PURE__*/jsx("path", {
-        d: "M 14,16.5 L 11,14 L 34,14 L 31,16.5 L 14,16.5 z ",
-        style: {
-          strokeLinecap: 'butt'
-        }
-      }), /*#__PURE__*/jsx("path", {
-        d: "M 11,14 L 11,9 L 15,9 L 15,11 L 20,11 L 20,9 L 25,9 L 25,11 L 30,11 L 30,9 L 34,9 L 34,14 L 11,14 z ",
-        style: {
-          strokeLinecap: 'butt'
-        }
-      }), /*#__PURE__*/jsx("path", {
-        d: "M 12,35.5 L 33,35.5 L 33,35.5",
-        style: {
-          fill: 'none',
-          stroke: '#ffffff',
-          strokeWidth: '1',
-          strokeLinejoin: 'miter'
-        }
-      }), /*#__PURE__*/jsx("path", {
-        d: "M 13,31.5 L 32,31.5",
-        style: {
-          fill: 'none',
-          stroke: '#ffffff',
-          strokeWidth: '1',
-          strokeLinejoin: 'miter'
-        }
-      }), /*#__PURE__*/jsx("path", {
-        d: "M 14,29.5 L 31,29.5",
-        style: {
-          fill: 'none',
-          stroke: '#ffffff',
-          strokeWidth: '1',
-          strokeLinejoin: 'miter'
-        }
-      }), /*#__PURE__*/jsx("path", {
-        d: "M 14,16.5 L 31,16.5",
-        style: {
-          fill: 'none',
-          stroke: '#ffffff',
-          strokeWidth: '1',
-          strokeLinejoin: 'miter'
-        }
-      }), /*#__PURE__*/jsx("path", {
-        d: "M 11,14 L 34,14",
-        style: {
-          fill: 'none',
-          stroke: '#ffffff',
-          strokeWidth: '1',
-          strokeLinejoin: 'miter'
-        }
-      })]
-    })
-  }),
-  bN: /*#__PURE__*/jsx("svg", {
-    xmlns: "http://www.w3.org/2000/svg",
-    version: "1.1",
-    width: "45",
-    height: "45",
-    children: /*#__PURE__*/jsxs("g", {
-      style: {
-        opacity: '1',
-        fill: 'none',
-        fillOpacity: '1',
-        fillRule: 'evenodd',
-        stroke: '#000000',
-        strokeWidth: '1.5',
-        strokeLinecap: 'round',
-        strokeLinejoin: 'round',
-        strokeMiterlimit: '4',
-        strokeDasharray: 'none',
-        strokeOpacity: '1'
-      },
-      children: [/*#__PURE__*/jsx("path", {
-        d: "M 22,10 C 32.5,11 38.5,18 38,39 L 15,39 C 15,30 25,32.5 23,18",
-        style: {
-          fill: '#000000',
-          stroke: '#000000'
-        }
-      }), /*#__PURE__*/jsx("path", {
-        d: "M 24,18 C 24.38,20.91 18.45,25.37 16,27 C 13,29 13.18,31.34 11,31 C 9.958,30.06 12.41,27.96 11,28 C 10,28 11.19,29.23 10,30 C 9,30 5.997,31 6,26 C 6,24 12,14 12,14 C 12,14 13.89,12.1 14,10.5 C 13.27,9.506 13.5,8.5 13.5,7.5 C 14.5,6.5 16.5,10 16.5,10 L 18.5,10 C 18.5,10 19.28,8.008 21,7 C 22,7 22,10 22,10",
-        style: {
-          fill: '#000000',
-          stroke: '#000000'
-        }
-      }), /*#__PURE__*/jsx("path", {
-        d: "M 9.5 25.5 A 0.5 0.5 0 1 1 8.5,25.5 A 0.5 0.5 0 1 1 9.5 25.5 z",
-        style: {
-          fill: '#ffffff',
-          stroke: '#ffffff'
-        }
-      }), /*#__PURE__*/jsx("path", {
-        d: "M 15 15.5 A 0.5 1.5 0 1 1  14,15.5 A 0.5 1.5 0 1 1  15 15.5 z",
-        transform: "matrix(0.866,0.5,-0.5,0.866,9.693,-5.173)",
-        style: {
-          fill: '#ffffff',
-          stroke: '#ffffff'
-        }
-      }), /*#__PURE__*/jsx("path", {
-        d: "M 24.55,10.4 L 24.1,11.85 L 24.6,12 C 27.75,13 30.25,14.49 32.5,18.75 C 34.75,23.01 35.75,29.06 35.25,39 L 35.2,39.5 L 37.45,39.5 L 37.5,39 C 38,28.94 36.62,22.15 34.25,17.66 C 31.88,13.17 28.46,11.02 25.06,10.5 L 24.55,10.4 z ",
-        style: {
-          fill: '#ffffff',
-          stroke: 'none'
-        }
-      })]
-    })
-  }),
-  bB: /*#__PURE__*/jsx("svg", {
-    xmlns: "http://www.w3.org/2000/svg",
-    version: "1.1",
-    width: "45",
-    height: "45",
-    children: /*#__PURE__*/jsxs("g", {
-      style: {
-        opacity: '1',
-        fill: 'none',
-        fillRule: 'evenodd',
-        fillOpacity: '1',
-        stroke: '#000000',
-        strokeWidth: '1.5',
-        strokeLinecap: 'round',
-        strokeLinejoin: 'round',
-        strokeMiterlimit: '4',
-        strokeDasharray: 'none',
-        strokeOpacity: '1'
-      },
-      children: [/*#__PURE__*/jsxs("g", {
-        style: {
-          fill: '#000000',
-          stroke: '#000000',
-          strokeLinecap: 'butt'
-        },
-        children: [/*#__PURE__*/jsx("path", {
-          d: "M 9,36 C 12.39,35.03 19.11,36.43 22.5,34 C 25.89,36.43 32.61,35.03 36,36 C 36,36 37.65,36.54 39,38 C 38.32,38.97 37.35,38.99 36,38.5 C 32.61,37.53 25.89,38.96 22.5,37.5 C 19.11,38.96 12.39,37.53 9,38.5 C 7.65,38.99 6.68,38.97 6,38 C 7.35,36.54 9,36 9,36 z"
-        }), /*#__PURE__*/jsx("path", {
-          d: "M 15,32 C 17.5,34.5 27.5,34.5 30,32 C 30.5,30.5 30,30 30,30 C 30,27.5 27.5,26 27.5,26 C 33,24.5 33.5,14.5 22.5,10.5 C 11.5,14.5 12,24.5 17.5,26 C 17.5,26 15,27.5 15,30 C 15,30 14.5,30.5 15,32 z"
-        }), /*#__PURE__*/jsx("path", {
-          d: "M 25 8 A 2.5 2.5 0 1 1  20,8 A 2.5 2.5 0 1 1  25 8 z"
-        })]
-      }), /*#__PURE__*/jsx("path", {
-        d: "M 17.5,26 L 27.5,26 M 15,30 L 30,30 M 22.5,15.5 L 22.5,20.5 M 20,18 L 25,18",
-        style: {
-          fill: 'none',
-          stroke: '#ffffff',
-          strokeLinejoin: 'miter'
-        }
-      })]
-    })
-  }),
-  bQ: /*#__PURE__*/jsx("svg", {
-    xmlns: "http://www.w3.org/2000/svg",
-    version: "1.1",
-    width: "45",
-    height: "45",
-    children: /*#__PURE__*/jsxs("g", {
-      style: {
-        fill: '#000000',
-        stroke: '#000000',
-        strokeWidth: '1.5',
-        strokeLinecap: 'round',
-        strokeLinejoin: 'round'
-      },
-      children: [/*#__PURE__*/jsx("path", {
-        d: "M 9,26 C 17.5,24.5 30,24.5 36,26 L 38.5,13.5 L 31,25 L 30.7,10.9 L 25.5,24.5 L 22.5,10 L 19.5,24.5 L 14.3,10.9 L 14,25 L 6.5,13.5 L 9,26 z",
-        style: {
-          strokeLinecap: 'butt',
-          fill: '#000000'
-        }
-      }), /*#__PURE__*/jsx("path", {
-        d: "m 9,26 c 0,2 1.5,2 2.5,4 1,1.5 1,1 0.5,3.5 -1.5,1 -1,2.5 -1,2.5 -1.5,1.5 0,2.5 0,2.5 6.5,1 16.5,1 23,0 0,0 1.5,-1 0,-2.5 0,0 0.5,-1.5 -1,-2.5 -0.5,-2.5 -0.5,-2 0.5,-3.5 1,-2 2.5,-2 2.5,-4 -8.5,-1.5 -18.5,-1.5 -27,0 z"
-      }), /*#__PURE__*/jsx("path", {
-        d: "M 11.5,30 C 15,29 30,29 33.5,30"
-      }), /*#__PURE__*/jsx("path", {
-        d: "m 12,33.5 c 6,-1 15,-1 21,0"
-      }), /*#__PURE__*/jsx("circle", {
-        cx: "6",
-        cy: "12",
-        r: "2"
-      }), /*#__PURE__*/jsx("circle", {
-        cx: "14",
-        cy: "9",
-        r: "2"
-      }), /*#__PURE__*/jsx("circle", {
-        cx: "22.5",
-        cy: "8",
-        r: "2"
-      }), /*#__PURE__*/jsx("circle", {
-        cx: "31",
-        cy: "9",
-        r: "2"
-      }), /*#__PURE__*/jsx("circle", {
-        cx: "39",
-        cy: "12",
-        r: "2"
-      }), /*#__PURE__*/jsx("path", {
-        d: "M 11,38.5 A 35,35 1 0 0 34,38.5",
-        style: {
-          fill: 'none',
-          stroke: '#000000',
-          strokeLinecap: 'butt'
-        }
-      }), /*#__PURE__*/jsxs("g", {
-        style: {
-          fill: 'none',
-          stroke: '#ffffff'
-        },
-        children: [/*#__PURE__*/jsx("path", {
-          d: "M 11,29 A 35,35 1 0 1 34,29"
-        }), /*#__PURE__*/jsx("path", {
-          d: "M 12.5,31.5 L 32.5,31.5"
-        }), /*#__PURE__*/jsx("path", {
-          d: "M 11.5,34.5 A 35,35 1 0 0 33.5,34.5"
-        }), /*#__PURE__*/jsx("path", {
-          d: "M 10.5,37.5 A 35,35 1 0 0 34.5,37.5"
-        })]
-      })]
-    })
-  }),
-  bK: /*#__PURE__*/jsx("svg", {
-    xmlns: "http://www.w3.org/2000/svg",
-    version: "1.1",
-    width: "45",
-    height: "45",
-    children: /*#__PURE__*/jsxs("g", {
-      style: {
-        fill: 'none',
-        fillOpacity: '1',
-        fillRule: 'evenodd',
-        stroke: '#000000',
-        strokeWidth: '1.5',
-        strokeLinecap: 'round',
-        strokeLinejoin: 'round',
-        strokeMiterlimit: '4',
-        strokeDasharray: 'none',
-        strokeOpacity: '1'
-      },
-      children: [/*#__PURE__*/jsx("path", {
-        d: "M 22.5,11.63 L 22.5,6",
-        style: {
-          fill: 'none',
-          stroke: '#000000',
-          strokeLinejoin: 'miter'
-        },
-        id: "path6570"
-      }), /*#__PURE__*/jsx("path", {
-        d: "M 22.5,25 C 22.5,25 27,17.5 25.5,14.5 C 25.5,14.5 24.5,12 22.5,12 C 20.5,12 19.5,14.5 19.5,14.5 C 18,17.5 22.5,25 22.5,25",
-        style: {
-          fill: '#000000',
-          fillOpacity: '1',
-          strokeLinecap: 'butt',
-          strokeLinejoin: 'miter'
-        }
-      }), /*#__PURE__*/jsx("path", {
-        d: "M 12.5,37 C 18,40.5 27,40.5 32.5,37 L 32.5,30 C 32.5,30 41.5,25.5 38.5,19.5 C 34.5,13 25,16 22.5,23.5 L 22.5,27 L 22.5,23.5 C 20,16 10.5,13 6.5,19.5 C 3.5,25.5 12.5,30 12.5,30 L 12.5,37",
-        style: {
-          fill: '#000000',
-          stroke: '#000000'
-        }
-      }), /*#__PURE__*/jsx("path", {
-        d: "M 20,8 L 25,8",
-        style: {
-          fill: 'none',
-          stroke: '#000000',
-          strokeLinejoin: 'miter'
-        }
-      }), /*#__PURE__*/jsx("path", {
-        d: "M 32,29.5 C 32,29.5 40.5,25.5 38.03,19.85 C 34.15,14 25,18 22.5,24.5 L 22.5,26.6 L 22.5,24.5 C 20,18 10.85,14 6.97,19.85 C 4.5,25.5 13,29.5 13,29.5",
-        style: {
-          fill: 'none',
-          stroke: '#ffffff'
-        }
-      }), /*#__PURE__*/jsx("path", {
-        d: "M 12.5,30 C 18,27 27,27 32.5,30 M 12.5,33.5 C 18,30.5 27,30.5 32.5,33.5 M 12.5,37 C 18,34 27,34 32.5,37",
-        style: {
-          fill: 'none',
-          stroke: '#ffffff'
-        }
-      })]
-    })
-  })
-};
-
-const ChessboardContext = /*#__PURE__*/React.createContext();
-const useChessboard = () => useContext(ChessboardContext);
-const ChessboardProvider = /*#__PURE__*/forwardRef(({
-  animationDuration,
-  areArrowsAllowed,
-  arePiecesDraggable,
-  arePremovesAllowed,
-  boardOrientation,
-  boardWidth,
-  clearPremovesOnRightClick,
-  customArrows,
-  customArrowColor,
-  customBoardStyle,
-  customDarkSquareStyle,
-  customDropSquareStyle,
-  customLightSquareStyle,
-  customPieces,
-  customPremoveDarkSquareStyle,
-  customPremoveLightSquareStyle,
-  customSquareStyles,
-  dropOffBoardAction,
-  id,
-  isDraggablePiece,
-  getPositionObject,
-  onDragOverSquare,
-  onMouseOutSquare,
-  onMouseOverSquare,
-  onPieceClick,
-  onPieceDrop,
-  onSquareClick,
-  onSquareRightClick,
-  position,
-  showBoardNotation,
-  showSparePieces,
-  children
-}, ref) => {
-  // position stored and displayed on board
-  const [currentPosition, setCurrentPosition] = useState(convertPositionToObject(position)); // calculated differences between current and incoming positions
-
-  const [positionDifferences, setPositionDifferences] = useState({}); // colour of last piece moved to determine if premoving
-
-  const [lastPieceColour, setLastPieceColour] = useState(undefined); // current premoves
-
-  const [premoves, setPremoves] = useState([]); // ref used to access current value during timeouts (closures)
-
-  const premovesRef = useRef(premoves); // current right mouse down square
-
-  const [currentRightClickDown, setCurrentRightClickDown] = useState(); // current arrows
-
-  const [arrows, setArrows] = useState([]); // chess pieces/styling
-
-  const [chessPieces, setChessPieces] = useState({ ...defaultPieces,
-    ...customPieces
-  }); // whether the last move was a manual drop or not
-
-  const [manualDrop, setManualDrop] = useState(false); // the most recent timeout whilst waiting for animation to complete
-
-  const [previousTimeout, setPreviousTimeout] = useState(undefined); // if currently waiting for an animation to finish
-
-  const [waitingForAnimation, setWaitingForAnimation] = useState(false); // open clearPremoves() to allow user to call on undo/reset/whenever
-
-  useImperativeHandle(ref, () => ({
-    clearPremoves() {
-      clearPremoves();
-    }
-
-  })); // handle external arrows change
-
-  useEffect(() => {
-    setArrows(customArrows);
-  }, [customArrows]); // handle custom pieces change
-
-  useEffect(() => {
-    setChessPieces({ ...defaultPieces,
-      ...customPieces
-    });
-  }, [customPieces]); // handle external position change
-
-  useEffect(() => {
-    var _Object$keys, _Object$entries, _Object$entries$;
-
-    const newPosition = convertPositionToObject(position);
-    const differences = getPositionDifferences(currentPosition, newPosition);
-    const newPieceColour = ((_Object$keys = Object.keys(differences.added)) === null || _Object$keys === void 0 ? void 0 : _Object$keys.length) <= 2 ? (_Object$entries = Object.entries(differences.added)) === null || _Object$entries === void 0 ? void 0 : (_Object$entries$ = _Object$entries[0]) === null || _Object$entries$ === void 0 ? void 0 : _Object$entries$[1][0] : undefined; // external move has come in before animation is over
-    // cancel animation and immediately update position
-
-    if (waitingForAnimation) {
-      setCurrentPosition(newPosition);
-      setWaitingForAnimation(false);
-      arePremovesAllowed && attemptPremove(newPieceColour);
-
-      if (previousTimeout) {
-        clearTimeout(previousTimeout);
-      }
-    } else {
-      // move was made using drag and drop
-      if (manualDrop) {
-        setCurrentPosition(newPosition);
-        setWaitingForAnimation(false);
-        arePremovesAllowed && attemptPremove(newPieceColour);
-      } else {
-        // move was made by external position change
-        // if position === start then don't override newPieceColour
-        // needs isDifferentFromStart in scenario where premoves have been cleared upon board reset but first move is made by computer, the last move colour would need to be updated
-        if (isDifferentFromStart(newPosition) && lastPieceColour !== undefined) {
-          setLastPieceColour(newPieceColour);
-        } else {
-          // position === start, likely a board reset
-          setLastPieceColour(undefined);
-        }
-
-        setPositionDifferences(differences); // animate external move
-
-        setWaitingForAnimation(true);
-        const newTimeout = setTimeout(() => {
-          setCurrentPosition(newPosition);
-          setWaitingForAnimation(false);
-          arePremovesAllowed && attemptPremove(newPieceColour);
-        }, animationDuration);
-        setPreviousTimeout(newTimeout);
-      }
-    } // reset manual drop, ready for next move to be made by user or external
-
-
-    setManualDrop(false); // inform latest position information
-
-    getPositionObject(newPosition); // clear arrows
-
-    clearArrows(); // clear timeout on unmount
-
-    return () => {
-      clearTimeout(previousTimeout);
-    };
-  }, [position]); // handle drop position change
-
-  function handleSetPosition(sourceSq, targetSq, piece) {
-    // if dropped back down, don't do anything
-    if (sourceSq === targetSq) {
-      return;
-    }
-
-    clearArrows(); // if second move is made for same colour, or there are still premoves queued, then this move needs to be added to premove queue instead of played
-    // premoves length check for colour is added in because white could make 3 premoves, and then black responds to the first move (changing the last piece colour) and then white pre-moves again
-
-    if (arePremovesAllowed && waitingForAnimation || arePremovesAllowed && (lastPieceColour === piece[0] || premovesRef.current.filter(p => p.piece[0] === piece[0]).length > 0)) {
-      const oldPremoves = [...premovesRef.current];
-      oldPremoves.push({
-        sourceSq,
-        targetSq,
-        piece
-      });
-      premovesRef.current = oldPremoves;
-      setPremoves([...oldPremoves]);
-      return;
-    } // if transitioning, don't allow new drop
-
-
-    if (!arePremovesAllowed && waitingForAnimation) return;
-    const newOnDropPosition = { ...currentPosition
-    };
-    setManualDrop(true);
-    setLastPieceColour(piece[0]); // if onPieceDrop function provided, execute it, position must be updated externally and captured by useEffect above for this move to show on board
-
-    if (onPieceDrop.length) {
-      const isValidMove = onPieceDrop(sourceSq, targetSq, piece);
-      if (!isValidMove) clearPremoves();
-    } else {
-      // delete if dropping off board
-      if (dropOffBoardAction === 'trash' && !targetSq) {
-        delete newOnDropPosition[sourceSq];
-      } // delete source piece if not dropping from spare piece
-
-
-      if (sourceSq !== 'spare') {
-        delete newOnDropPosition[sourceSq];
-      } // add piece in new position
-
-
-      newOnDropPosition[targetSq] = piece;
-      setCurrentPosition(newOnDropPosition);
-    } // inform latest position information
-
-
-    getPositionObject(newOnDropPosition);
-  }
-
-  function attemptPremove(newPieceColour) {
-    if (premovesRef.current.length === 0) return; // get current value of premove as this is called in a timeout so value may have changed since timeout was set
-
-    const premove = premovesRef.current[0]; // if premove is a differing colour to last move made, then this move can be made
-
-    if (premove.piece[0] !== undefined && premove.piece[0] !== newPieceColour && onPieceDrop.length) {
-      setLastPieceColour(premove.piece[0]);
-      setManualDrop(true); // pre-move doesn't need animation
-
-      const isValidMove = onPieceDrop(premove.sourceSq, premove.targetSq, premove.piece); // premove was successful and can be removed from queue
-
-      if (isValidMove) {
-        const oldPremoves = [...premovesRef.current];
-        oldPremoves.shift();
-        premovesRef.current = oldPremoves;
-        setPremoves([...oldPremoves]);
-      } else {
-        // premove wasn't successful, clear premove queue
-        clearPremoves();
-      }
-    }
-  }
-
-  function clearPremoves() {
-    setLastPieceColour(undefined);
-    premovesRef.current = [];
-    setPremoves([]);
-  }
-
-  function onRightClickDown(square) {
-    setCurrentRightClickDown(square);
-  }
-
-  function onRightClickUp(square) {
-    if (!areArrowsAllowed) return;
-
-    if (currentRightClickDown) {
-      // same square, don't draw an arrow, but do clear premoves and run onSquareRightClick
-      if (currentRightClickDown === square) {
-        setCurrentRightClickDown(null);
-        clearPremovesOnRightClick && clearPremoves();
-        onSquareRightClick(square);
-        return;
-      } // if arrow already exists then it needs to be removed
-
-
-      for (const i in arrows) {
-        if (arrows[i][0] === currentRightClickDown && arrows[i][1] === square) {
-          setArrows(oldArrows => {
-            const newArrows = [...oldArrows];
-            newArrows.splice(i, 1);
-            return newArrows;
-          });
-          return;
-        }
-      } // different square, draw an arrow
-
-
-      setArrows(oldArrows => [...oldArrows, [currentRightClickDown, square]]);
-    } else setCurrentRightClickDown(null);
-  }
-
-  function clearCurrentRightClickDown() {
-    setCurrentRightClickDown(null);
-  }
-
-  function clearArrows() {
-    setArrows([]);
-  }
-
-  return /*#__PURE__*/jsx(ChessboardContext.Provider, {
-    value: {
-      animationDuration,
-      arePiecesDraggable,
-      arePremovesAllowed,
-      boardOrientation,
-      boardWidth,
-      customArrowColor,
-      customBoardStyle,
-      customDarkSquareStyle,
-      customDropSquareStyle,
-      customLightSquareStyle,
-      customPremoveDarkSquareStyle,
-      customPremoveLightSquareStyle,
-      customSquareStyles,
-      dropOffBoardAction,
-      id,
-      isDraggablePiece,
-      getPositionObject,
-      onDragOverSquare,
-      onMouseOutSquare,
-      onMouseOverSquare,
-      onPieceClick,
-      onPieceDrop,
-      onSquareClick,
-      onSquareRightClick,
-      showBoardNotation,
-      showSparePieces,
-      arrows,
-      chessPieces,
-      clearArrows,
-      clearCurrentRightClickDown,
-      clearPremoves,
-      currentPosition,
-      handleSetPosition,
-      lastPieceColour,
-      manualDrop,
-      onRightClickDown,
-      onRightClickUp,
-      positionDifferences,
-      premoves,
-      setChessPieces,
-      setCurrentPosition,
-      setManualDrop,
-      waitingForAnimation
-    },
-    children: children
-  });
-});
-
-function Notation({
-  row,
-  col
-}) {
-  const {
-    boardOrientation,
-    boardWidth,
-    customDarkSquareStyle,
-    customLightSquareStyle
-  } = useChessboard();
-  const whiteColor = customLightSquareStyle.backgroundColor;
-  const blackColor = customDarkSquareStyle.backgroundColor;
-  const isRow = col === 0;
-  const isColumn = row === 7;
-  const isBottomLeftSquare = isRow && isColumn;
-
-  function getRow() {
-    return boardOrientation === 'white' ? 8 - row : row + 1;
-  }
-
-  function getColumn() {
-    return boardOrientation === 'black' ? COLUMNS[7 - col] : COLUMNS[col];
-  }
-
-  function renderBottomLeft() {
-    return /*#__PURE__*/jsxs(Fragment, {
-      children: [/*#__PURE__*/jsx("div", {
-        style: { ...notationStyle,
-          ...{
-            color: whiteColor
-          },
-          ...numericStyle(boardWidth)
-        },
-        children: getRow()
-      }), /*#__PURE__*/jsx("div", {
-        style: { ...notationStyle,
-          ...{
-            color: whiteColor
-          },
-          ...alphaStyle(boardWidth)
-        },
-        children: getColumn()
-      })]
-    });
-  }
-
-  function renderLetters() {
-    return /*#__PURE__*/jsx("div", {
-      style: { ...notationStyle,
-        ...{
-          color: col % 2 !== 0 ? blackColor : whiteColor
-        },
-        ...alphaStyle(boardWidth)
-      },
-      children: getColumn()
-    });
-  }
-
-  function renderNumbers() {
-    return /*#__PURE__*/jsx("div", {
-      style: { ...notationStyle,
-        ...(boardOrientation === 'black' ? {
-          color: row % 2 === 0 ? blackColor : whiteColor
-        } : {
-          color: row % 2 === 0 ? blackColor : whiteColor
-        }),
-        ...numericStyle(boardWidth)
-      },
-      children: getRow()
-    });
-  }
-
-  if (isBottomLeftSquare) {
-    return renderBottomLeft();
-  }
-
-  if (isColumn) {
-    return renderLetters();
-  }
-
-  if (isRow) {
-    return renderNumbers();
-  }
-
-  return null;
-}
-
-const alphaStyle = width => ({
-  alignSelf: 'flex-end',
-  paddingLeft: width / 8 - width / 48,
-  fontSize: width / 48
-});
-
-const numericStyle = width => ({
-  alignSelf: 'flex-start',
-  paddingRight: width / 8 - width / 48,
-  fontSize: width / 48
-});
-
-const notationStyle = {
-  fontFamily: 'Helvetica Neue',
-  zIndex: 3,
-  position: 'absolute'
-};
 
 function Piece({
   piece,
@@ -10140,7 +11470,7 @@ function Piece({
     };
   }
 
-  return /*#__PURE__*/jsx("div", {
+  return /*#__PURE__*/jsxRuntime.exports.jsx("div", {
     ref: arePiecesDraggable ? canDrag ? drag : null : null,
     onClick: () => onPieceClick(piece),
     style: pieceStyle,
@@ -10150,11 +11480,11 @@ function Piece({
       droppedPiece: dropTarget === null || dropTarget === void 0 ? void 0 : dropTarget.piece,
       targetSquare: dropTarget === null || dropTarget === void 0 ? void 0 : dropTarget.target,
       sourceSquare: dropTarget === null || dropTarget === void 0 ? void 0 : dropTarget.source
-    }) : /*#__PURE__*/jsx("svg", {
+    }) : /*#__PURE__*/jsxRuntime.exports.jsx("svg", {
       viewBox: '1 1 43 43',
       width: boardWidth / 8,
       height: boardWidth / 8,
-      children: /*#__PURE__*/jsx("g", {
+      children: /*#__PURE__*/jsxRuntime.exports.jsx("g", {
         children: chessPieces[piece]
       })
     })
@@ -10218,7 +11548,7 @@ function Square({
     ...(squareHasPremove && (squareColor === 'black' ? customPremoveDarkSquareStyle : customPremoveLightSquareStyle)),
     ...(isOver && customDropSquareStyle)
   };
-  return /*#__PURE__*/jsx("div", {
+  return /*#__PURE__*/jsxRuntime.exports.jsx("div", {
     ref: drop,
     style: defaultSquareStyle,
     "data-square-color": squareColor,
@@ -10239,7 +11569,7 @@ function Square({
     onContextMenu: e => {
       e.preventDefault();
     },
-    children: /*#__PURE__*/jsx("div", {
+    children: /*#__PURE__*/jsxRuntime.exports.jsx("div", {
       ref: squareRef,
       style: { ...size(boardWidth),
         ...center,
@@ -10306,13 +11636,13 @@ function Squares({
     customBoardStyle,
     id
   } = useChessboard();
-  return /*#__PURE__*/jsx("div", {
+  return /*#__PURE__*/jsxRuntime.exports.jsx("div", {
     "data-boardid": id,
     style: { ...boardStyles(boardWidth),
       ...customBoardStyle
     },
     children: [...Array(8)].map((_, r) => {
-      return /*#__PURE__*/jsx("div", {
+      return /*#__PURE__*/jsxRuntime.exports.jsx("div", {
         style: rowStyles(boardWidth),
         children: [...Array(8)].map((_, c) => {
           // a1, a2 ...
@@ -10343,7 +11673,7 @@ const rowStyles = width => ({
 });
 
 const errorImage = {
-  whiteKing: /*#__PURE__*/jsx("svg", {
+  whiteKing: /*#__PURE__*/jsxRuntime.exports.jsx("svg", {
     xmlns: "http://www.w3.org/2000/svg",
     version: "1.1",
     style: {
@@ -10358,8 +11688,8 @@ const errorImage = {
     clipRule: "evenodd",
     width: "250",
     height: "250",
-    children: /*#__PURE__*/jsx("g", {
-      children: /*#__PURE__*/jsx("path", {
+    children: /*#__PURE__*/jsxRuntime.exports.jsx("g", {
+      children: /*#__PURE__*/jsxRuntime.exports.jsx("path", {
         style: {
           fill: 'black',
           fillRule: 'nonzero'
@@ -10376,7 +11706,7 @@ function ErrorBoundary({
   try {
     return children;
   } catch (error) {
-    return /*#__PURE__*/jsx(WhiteKing, {
+    return /*#__PURE__*/jsxRuntime.exports.jsx(WhiteKing, {
       showError: true
     });
   }
@@ -10384,12 +11714,12 @@ function ErrorBoundary({
 function WhiteKing({
   showError = false
 }) {
-  return /*#__PURE__*/jsxs("div", {
+  return /*#__PURE__*/jsxRuntime.exports.jsxs("div", {
     style: container,
-    children: [/*#__PURE__*/jsx("div", {
+    children: [/*#__PURE__*/jsxRuntime.exports.jsx("div", {
       style: whiteKingStyle,
       children: errorImage.whiteKing
-    }), showError && /*#__PURE__*/jsx("h1", {
+    }), showError && /*#__PURE__*/jsxRuntime.exports.jsx("h1", {
       children: "Something went wrong"
     })]
   });
@@ -10431,12 +11761,12 @@ function Board() {
       document.removeEventListener('mouseup', handleClickOutside);
     };
   }, []);
-  return boardWidth ? /*#__PURE__*/jsxs("div", {
+  return boardWidth ? /*#__PURE__*/jsxRuntime.exports.jsxs("div", {
     ref: boardRef,
     style: {
       position: 'relative'
     },
-    children: [/*#__PURE__*/jsx(Squares, {
+    children: [/*#__PURE__*/jsxRuntime.exports.jsx(Squares, {
       children: ({
         square,
         squareColor,
@@ -10445,27 +11775,27 @@ function Board() {
       }) => {
         const squareHasPremove = premoves.find(p => p.sourceSq === square || p.targetSq === square);
         const squareHasPremoveTarget = premoves.find(p => p.targetSq === square);
-        return /*#__PURE__*/jsxs(Square, {
+        return /*#__PURE__*/jsxRuntime.exports.jsxs(Square, {
           square: square,
           squareColor: squareColor,
           setSquares: setSquares,
           squareHasPremove: squareHasPremove,
-          children: [currentPosition[square] && /*#__PURE__*/jsx(Piece, {
+          children: [currentPosition[square] && /*#__PURE__*/jsxRuntime.exports.jsx(Piece, {
             piece: currentPosition[square],
             square: square,
             squares: squares
-          }), squareHasPremoveTarget && /*#__PURE__*/jsx(Piece, {
+          }), squareHasPremoveTarget && /*#__PURE__*/jsxRuntime.exports.jsx(Piece, {
             isPremovedPiece: true,
             piece: squareHasPremoveTarget.piece,
             square: square,
             squares: squares
-          }), showBoardNotation && /*#__PURE__*/jsx(Notation, {
+          }), showBoardNotation && /*#__PURE__*/jsxRuntime.exports.jsx(Notation, {
             row: row,
             col: col
           })]
         }, `${col}${row}`);
       }
-    }), /*#__PURE__*/jsx("svg", {
+    }), /*#__PURE__*/jsxRuntime.exports.jsx("svg", {
       width: boardWidth,
       height: boardWidth,
       style: {
@@ -10478,23 +11808,23 @@ function Board() {
       children: arrows.map((arrow, i) => {
         const from = getRelativeCoords(boardOrientation, boardWidth, arrow[0]);
         const to = getRelativeCoords(boardOrientation, boardWidth, arrow[1]);
-        return /*#__PURE__*/jsxs(Fragment, {
-          children: [/*#__PURE__*/jsx("defs", {
-            children: /*#__PURE__*/jsx("marker", {
+        return /*#__PURE__*/jsxRuntime.exports.jsxs(jsxRuntime.exports.Fragment, {
+          children: [/*#__PURE__*/jsxRuntime.exports.jsx("defs", {
+            children: /*#__PURE__*/jsxRuntime.exports.jsx("marker", {
               id: "arrowhead",
               markerWidth: "2",
               markerHeight: "2.5",
               refX: "1.25",
               refY: "1.25",
               orient: "auto",
-              children: /*#__PURE__*/jsx("polygon", {
+              children: /*#__PURE__*/jsxRuntime.exports.jsx("polygon", {
                 points: "0 0, 2 1.25, 0 2.5",
                 style: {
                   fill: customArrowColor
                 }
               })
             })
-          }), /*#__PURE__*/jsx("line", {
+          }), /*#__PURE__*/jsxRuntime.exports.jsx("line", {
             x1: from.x,
             y1: from.y,
             x2: to.x,
@@ -10508,7 +11838,7 @@ function Board() {
         });
       })
     })]
-  }) : /*#__PURE__*/jsx(WhiteKing, {});
+  }) : /*#__PURE__*/jsxRuntime.exports.jsx(WhiteKing, {});
 }
 
 function CDragLayer(props) {
@@ -10546,18 +11876,18 @@ function CDragLayer(props) {
     };
   };
 
-  return isDragging && item.id === id ? /*#__PURE__*/jsx("div", {
+  return isDragging && item.id === id ? /*#__PURE__*/jsxRuntime.exports.jsx("div", {
     style: layerStyles,
-    children: /*#__PURE__*/jsx("div", {
+    children: /*#__PURE__*/jsxRuntime.exports.jsx("div", {
       style: getItemStyle(currentOffset),
       children: typeof chessPieces[item.piece] === 'function' ? chessPieces[item.piece]({
         squareWidth: boardWidth / 8,
         isDragging: true
-      }) : /*#__PURE__*/jsx("svg", {
+      }) : /*#__PURE__*/jsxRuntime.exports.jsx("svg", {
         viewBox: '1 1 43 43',
         width: boardWidth / 8,
         height: boardWidth / 8,
-        children: /*#__PURE__*/jsx("g", {
+        children: /*#__PURE__*/jsxRuntime.exports.jsx("g", {
           children: chessPieces[item.piece]
         })
       })
@@ -10576,14 +11906,14 @@ function collect(monitor) {
 const CustomDragLayer = DragLayer(collect)(CDragLayer);
 
 const Chessboard = /*#__PURE__*/forwardRef((props, ref) => {
-  return /*#__PURE__*/jsx(ErrorBoundary, {
-    children: /*#__PURE__*/jsx(DndProvider, {
+  return /*#__PURE__*/jsxRuntime.exports.jsx(ErrorBoundary, {
+    children: /*#__PURE__*/jsxRuntime.exports.jsx(DndProvider, {
       options: HTML5toTouch,
-      children: /*#__PURE__*/jsxs(ChessboardProvider, {
+      children: /*#__PURE__*/jsxRuntime.exports.jsxs(ChessboardProvider, {
         ref: ref,
         ...props,
-        children: [/*#__PURE__*/jsx(CustomDragLayer, {}), /*#__PURE__*/jsx("div", {
-          children: /*#__PURE__*/jsx(Board, {})
+        children: [/*#__PURE__*/jsxRuntime.exports.jsx(CustomDragLayer, {}), /*#__PURE__*/jsxRuntime.exports.jsx("div", {
+          children: /*#__PURE__*/jsxRuntime.exports.jsx(Board, {})
         })]
       })
     })
