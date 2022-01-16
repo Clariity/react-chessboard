@@ -809,6 +809,8 @@ var objectAssign = shouldUseNative() ? Object.assign : function (target, source)
 var ReactPropTypesSecret$3 = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
 var ReactPropTypesSecret_1 = ReactPropTypesSecret$3;
 
+var has$2 = Function.call.bind(Object.prototype.hasOwnProperty);
+
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -822,7 +824,8 @@ if (process.env.NODE_ENV !== 'production') {
   var ReactPropTypesSecret$2 = ReactPropTypesSecret_1;
 
   var loggedTypeFailures = {};
-  var has$1 = Function.call.bind(Object.prototype.hasOwnProperty);
+
+  var has$1 = has$2;
 
   printWarning$1 = function (text) {
     var message = 'Warning: ' + text;
@@ -836,7 +839,9 @@ if (process.env.NODE_ENV !== 'production') {
       // This error was thrown as a convenience so that you can use this stack
       // to find the callsite that caused this warning to fire.
       throw new Error(message);
-    } catch (x) {}
+    } catch (x) {
+      /**/
+    }
   };
 }
 /**
@@ -864,7 +869,7 @@ function checkPropTypes$1(typeSpecs, values, location, componentName, getStack) 
           // This is intentionally an invariant that gets caught. It's the same
           // behavior as without this statement except with a better message.
           if (typeof typeSpecs[typeSpecName] !== 'function') {
-            var err = Error((componentName || 'React class') + ': ' + location + ' type `' + typeSpecName + '` is invalid; ' + 'it must be a function, usually from the `prop-types` package, but received `' + typeof typeSpecs[typeSpecName] + '`.');
+            var err = Error((componentName || 'React class') + ': ' + location + ' type `' + typeSpecName + '` is invalid; ' + 'it must be a function, usually from the `prop-types` package, but received `' + typeof typeSpecs[typeSpecName] + '`.' + 'This often happens because of typos such as `PropTypes.function` instead of `PropTypes.func`.');
             err.name = 'Invariant Violation';
             throw err;
           }
@@ -917,9 +922,9 @@ var assign = objectAssign;
 
 var ReactPropTypesSecret$1 = ReactPropTypesSecret_1;
 
-var checkPropTypes = checkPropTypes_1;
+var has = has$2;
 
-var has = Function.call.bind(Object.prototype.hasOwnProperty);
+var checkPropTypes = checkPropTypes_1;
 
 var printWarning = function () {};
 
@@ -1024,6 +1029,7 @@ var factoryWithTypeCheckers = function (isValidElement, throwOnDirectAccess) {
 
   var ReactPropTypes = {
     array: createPrimitiveTypeChecker('array'),
+    bigint: createPrimitiveTypeChecker('bigint'),
     bool: createPrimitiveTypeChecker('boolean'),
     func: createPrimitiveTypeChecker('function'),
     number: createPrimitiveTypeChecker('number'),
@@ -1071,8 +1077,9 @@ var factoryWithTypeCheckers = function (isValidElement, throwOnDirectAccess) {
    */
 
 
-  function PropTypeError(message) {
+  function PropTypeError(message, data) {
     this.message = message;
+    this.data = data && typeof data === 'object' ? data : {};
     this.stack = '';
   } // Make `instanceof Error` still work for returned errors.
 
@@ -1138,7 +1145,9 @@ var factoryWithTypeCheckers = function (isValidElement, throwOnDirectAccess) {
         // check, but we can offer a more precise error message here rather than
         // 'of type `object`'.
         var preciseType = getPreciseType(propValue);
-        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + preciseType + '` supplied to `' + componentName + '`, expected ') + ('`' + expectedType + '`.'));
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + preciseType + '` supplied to `' + componentName + '`, expected ') + ('`' + expectedType + '`.'), {
+          expectedType: expectedType
+        });
       }
 
       return null;
@@ -1304,15 +1313,23 @@ var factoryWithTypeCheckers = function (isValidElement, throwOnDirectAccess) {
     }
 
     function validate(props, propName, componentName, location, propFullName) {
+      var expectedTypes = [];
+
       for (var i = 0; i < arrayOfTypeCheckers.length; i++) {
         var checker = arrayOfTypeCheckers[i];
+        var checkerResult = checker(props, propName, componentName, location, propFullName, ReactPropTypesSecret$1);
 
-        if (checker(props, propName, componentName, location, propFullName, ReactPropTypesSecret$1) == null) {
+        if (checkerResult == null) {
           return null;
+        }
+
+        if (checkerResult.data && has(checkerResult.data, 'expectedType')) {
+          expectedTypes.push(checkerResult.data.expectedType);
         }
       }
 
-      return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` supplied to ' + ('`' + componentName + '`.'));
+      var expectedTypesMessage = expectedTypes.length > 0 ? ', expected one of type [' + expectedTypes.join(', ') + ']' : '';
+      return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` supplied to ' + ('`' + componentName + '`' + expectedTypesMessage + '.'));
     }
 
     return createChainableTypeChecker(validate);
@@ -1330,6 +1347,10 @@ var factoryWithTypeCheckers = function (isValidElement, throwOnDirectAccess) {
     return createChainableTypeChecker(validate);
   }
 
+  function invalidValidatorError(componentName, location, propFullName, key, type) {
+    return new PropTypeError((componentName || 'React class') + ': ' + location + ' type `' + propFullName + '.' + key + '` is invalid; ' + 'it must be a function, usually from the `prop-types` package, but received `' + type + '`.');
+  }
+
   function createShapeTypeChecker(shapeTypes) {
     function validate(props, propName, componentName, location, propFullName) {
       var propValue = props[propName];
@@ -1342,8 +1363,8 @@ var factoryWithTypeCheckers = function (isValidElement, throwOnDirectAccess) {
       for (var key in shapeTypes) {
         var checker = shapeTypes[key];
 
-        if (!checker) {
-          continue;
+        if (typeof checker !== 'function') {
+          return invalidValidatorError(componentName, location, propFullName, key, getPreciseType(checker));
         }
 
         var error = checker(propValue, key, componentName, location, propFullName + '.' + key, ReactPropTypesSecret$1);
@@ -1366,14 +1387,17 @@ var factoryWithTypeCheckers = function (isValidElement, throwOnDirectAccess) {
 
       if (propType !== 'object') {
         return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type `' + propType + '` ' + ('supplied to `' + componentName + '`, expected `object`.'));
-      } // We need to check all keys in case some are required but missing from
-      // props.
+      } // We need to check all keys in case some are required but missing from props.
 
 
       var allKeys = assign({}, props[propName], shapeTypes);
 
       for (var key in allKeys) {
         var checker = shapeTypes[key];
+
+        if (has(shapeTypes, key) && typeof checker !== 'function') {
+          return invalidValidatorError(componentName, location, propFullName, key, getPreciseType(checker));
+        }
 
         if (!checker) {
           return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` key `' + key + '` supplied to `' + componentName + '`.' + '\nBad object: ' + JSON.stringify(props[propName], null, '  ') + '\nValid keys: ' + JSON.stringify(Object.keys(shapeTypes), null, '  '));
@@ -1582,6 +1606,7 @@ var factoryWithThrowingShims = function () {
 
   var ReactPropTypes = {
     array: shim,
+    bigint: shim,
     bool: shim,
     func: shim,
     number: shim,
@@ -1965,9 +1990,13 @@ function ownKeys$4(object, enumerableOnly) {
 
   if (Object.getOwnPropertySymbols) {
     var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
+
+    if (enumerableOnly) {
+      symbols = symbols.filter(function (sym) {
+        return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+      });
+    }
+
     keys.push.apply(keys, symbols);
   }
 
@@ -1980,7 +2009,7 @@ function _objectSpread$4(target) {
 
     if (i % 2) {
       ownKeys$4(Object(source), true).forEach(function (key) {
-        _defineProperty$i(target, key, source[key]);
+        _defineProperty$l(target, key, source[key]);
       });
     } else if (Object.getOwnPropertyDescriptors) {
       Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
@@ -1994,7 +2023,7 @@ function _objectSpread$4(target) {
   return target;
 }
 
-function _defineProperty$i(obj, key, value) {
+function _defineProperty$l(obj, key, value) {
   if (key in obj) {
     Object.defineProperty(obj, key, {
       value: value,
@@ -2110,15 +2139,36 @@ function _createClass$g(Constructor, protoProps, staticProps) {
   if (staticProps) _defineProperties$g(Constructor, staticProps);
   return Constructor;
 }
+
+function _defineProperty$k(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
 var DragDropManagerImpl = /*#__PURE__*/function () {
   function DragDropManagerImpl(store, monitor) {
     var _this = this;
 
     _classCallCheck$g(this, DragDropManagerImpl);
 
-    this.isSetUp = false;
+    _defineProperty$k(this, "store", void 0);
 
-    this.handleRefCountChange = function () {
+    _defineProperty$k(this, "monitor", void 0);
+
+    _defineProperty$k(this, "backend", void 0);
+
+    _defineProperty$k(this, "isSetUp", false);
+
+    _defineProperty$k(this, "handleRefCountChange", function () {
       var shouldSetUp = _this.store.getState().refCount > 0;
 
       if (_this.backend) {
@@ -2132,7 +2182,7 @@ var DragDropManagerImpl = /*#__PURE__*/function () {
           _this.isSetUp = false;
         }
       }
-    };
+    });
 
     this.store = store;
     this.monitor = monitor;
@@ -2661,9 +2711,13 @@ function ownKeys$3(object, enumerableOnly) {
 
   if (Object.getOwnPropertySymbols) {
     var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
+
+    if (enumerableOnly) {
+      symbols = symbols.filter(function (sym) {
+        return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+      });
+    }
+
     keys.push.apply(keys, symbols);
   }
 
@@ -2676,7 +2730,7 @@ function _objectSpread$3(target) {
 
     if (i % 2) {
       ownKeys$3(Object(source), true).forEach(function (key) {
-        _defineProperty$h(target, key, source[key]);
+        _defineProperty$j(target, key, source[key]);
       });
     } else if (Object.getOwnPropertyDescriptors) {
       Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
@@ -2690,7 +2744,7 @@ function _objectSpread$3(target) {
   return target;
 }
 
-function _defineProperty$h(obj, key, value) {
+function _defineProperty$j(obj, key, value) {
   if (key in obj) {
     Object.defineProperty(obj, key, {
       value: value,
@@ -2783,9 +2837,13 @@ function ownKeys$2(object, enumerableOnly) {
 
   if (Object.getOwnPropertySymbols) {
     var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
+
+    if (enumerableOnly) {
+      symbols = symbols.filter(function (sym) {
+        return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+      });
+    }
+
     keys.push.apply(keys, symbols);
   }
 
@@ -2798,7 +2856,7 @@ function _objectSpread$2(target) {
 
     if (i % 2) {
       ownKeys$2(Object(source), true).forEach(function (key) {
-        _defineProperty$g(target, key, source[key]);
+        _defineProperty$i(target, key, source[key]);
       });
     } else if (Object.getOwnPropertyDescriptors) {
       Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
@@ -2812,7 +2870,7 @@ function _objectSpread$2(target) {
   return target;
 }
 
-function _defineProperty$g(obj, key, value) {
+function _defineProperty$i(obj, key, value) {
   if (key in obj) {
     Object.defineProperty(obj, key, {
       value: value,
@@ -2997,9 +3055,13 @@ function ownKeys$1(object, enumerableOnly) {
 
   if (Object.getOwnPropertySymbols) {
     var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
+
+    if (enumerableOnly) {
+      symbols = symbols.filter(function (sym) {
+        return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+      });
+    }
+
     keys.push.apply(keys, symbols);
   }
 
@@ -3012,7 +3074,7 @@ function _objectSpread$1(target) {
 
     if (i % 2) {
       ownKeys$1(Object(source), true).forEach(function (key) {
-        _defineProperty$f(target, key, source[key]);
+        _defineProperty$h(target, key, source[key]);
       });
     } else if (Object.getOwnPropertyDescriptors) {
       Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
@@ -3026,7 +3088,7 @@ function _objectSpread$1(target) {
   return target;
 }
 
-function _defineProperty$f(obj, key, value) {
+function _defineProperty$h(obj, key, value) {
   if (key in obj) {
     Object.defineProperty(obj, key, {
       value: value,
@@ -3138,9 +3200,28 @@ function _createClass$f(Constructor, protoProps, staticProps) {
   if (staticProps) _defineProperties$f(Constructor, staticProps);
   return Constructor;
 }
+
+function _defineProperty$g(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
 var DragDropMonitorImpl = /*#__PURE__*/function () {
   function DragDropMonitorImpl(store, registry) {
     _classCallCheck$f(this, DragDropMonitorImpl);
+
+    _defineProperty$g(this, "store", void 0);
+
+    _defineProperty$g(this, "registry", void 0);
 
     this.store = store;
     this.registry = registry;
@@ -3698,6 +3779,21 @@ function _createClass$e(Constructor, protoProps, staticProps) {
   return Constructor;
 }
 
+function _defineProperty$f(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
 function _slicedToArray$5(arr, i) {
   return _arrayWithHoles$5(arr) || _iterableToArrayLimit$5(arr, i) || _unsupportedIterableToArray$6(arr, i) || _nonIterableRest$5();
 }
@@ -3726,14 +3822,17 @@ function _arrayLikeToArray$6(arr, len) {
 }
 
 function _iterableToArrayLimit$5(arr, i) {
-  if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return;
+  var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"];
+
+  if (_i == null) return;
   var _arr = [];
   var _n = true;
   var _d = false;
-  var _e = undefined;
+
+  var _s, _e;
 
   try {
-    for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+    for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) {
       _arr.push(_s.value);
 
       if (i && _arr.length === i) break;
@@ -3808,11 +3907,18 @@ var HandlerRegistryImpl = /*#__PURE__*/function () {
   function HandlerRegistryImpl(store) {
     _classCallCheck$e(this, HandlerRegistryImpl);
 
-    this.types = new Map();
-    this.dragSources = new Map();
-    this.dropTargets = new Map();
-    this.pinnedSourceId = null;
-    this.pinnedSource = null;
+    _defineProperty$f(this, "types", new Map());
+
+    _defineProperty$f(this, "dragSources", new Map());
+
+    _defineProperty$f(this, "dropTargets", new Map());
+
+    _defineProperty$f(this, "pinnedSourceId", null);
+
+    _defineProperty$f(this, "pinnedSource", null);
+
+    _defineProperty$f(this, "store", void 0);
+
     this.store = store;
   }
 
@@ -6749,6 +6855,9 @@ var nativeTypesConfig = (_nativeTypesConfig = {}, _defineProperty$5(_nativeTypes
     },
     items: function items(dataTransfer) {
       return dataTransfer.items;
+    },
+    dataTransfer: function dataTransfer(_dataTransfer) {
+      return _dataTransfer;
     }
   },
   matchesTypes: ['Files']
@@ -6756,6 +6865,9 @@ var nativeTypesConfig = (_nativeTypesConfig = {}, _defineProperty$5(_nativeTypes
   exposeProperties: {
     html: function html(dataTransfer, matchesTypes) {
       return getDataFromDataTransfer(dataTransfer, matchesTypes, '');
+    },
+    dataTransfer: function dataTransfer(_dataTransfer2) {
+      return _dataTransfer2;
     }
   },
   matchesTypes: ['Html', 'text/html']
@@ -6763,6 +6875,9 @@ var nativeTypesConfig = (_nativeTypesConfig = {}, _defineProperty$5(_nativeTypes
   exposeProperties: {
     urls: function urls(dataTransfer, matchesTypes) {
       return getDataFromDataTransfer(dataTransfer, matchesTypes, '').split('\n');
+    },
+    dataTransfer: function dataTransfer(_dataTransfer3) {
+      return _dataTransfer3;
     }
   },
   matchesTypes: ['Url', 'text/uri-list']
@@ -6770,6 +6885,9 @@ var nativeTypesConfig = (_nativeTypesConfig = {}, _defineProperty$5(_nativeTypes
   exposeProperties: {
     text: function text(dataTransfer, matchesTypes) {
       return getDataFromDataTransfer(dataTransfer, matchesTypes, '');
+    },
+    dataTransfer: function dataTransfer(_dataTransfer4) {
+      return _dataTransfer4;
     }
   },
   matchesTypes: ['Text', 'text/plain']
@@ -7109,6 +7227,10 @@ var HTML5BackendImpl = /*#__PURE__*/function () {
 
     _defineProperty$2(this, "dragOverTargetIds", null);
 
+    _defineProperty$2(this, "lastClientOffset", null);
+
+    _defineProperty$2(this, "hoverRafId", null);
+
     _defineProperty$2(this, "getSourceClientOffset", function (sourceId) {
       var source = _this.sourceNodes.get(sourceId);
 
@@ -7338,10 +7460,19 @@ var HTML5BackendImpl = /*#__PURE__*/function () {
       }
 
       _this.altKeyPressed = e.altKey;
+      _this.lastClientOffset = getEventClientOffset$1(e);
 
-      _this.actions.hover(dragOverTargetIds || [], {
-        clientOffset: getEventClientOffset$1(e)
-      });
+      if (_this.hoverRafId === null && typeof requestAnimationFrame !== 'undefined') {
+        _this.hoverRafId = requestAnimationFrame(function () {
+          if (_this.monitor.isDragging()) {
+            _this.actions.hover(dragOverTargetIds || [], {
+              clientOffset: _this.lastClientOffset
+            });
+          }
+
+          _this.hoverRafId = null;
+        });
+      }
 
       var canDrop = (dragOverTargetIds || []).some(function (targetId) {
         return _this.monitor.canDropOnTarget(targetId);

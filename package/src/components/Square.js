@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useDrop } from 'react-dnd';
 
 import { useChessboard } from '../context/chessboard-context';
