@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { Fragment, useState, useRef, useEffect } from 'react';
 
 import { getRelativeCoords } from '../functions';
 import { Notation } from './Notation';
@@ -69,7 +69,7 @@ export function Board() {
           const to = getRelativeCoords(boardOrientation, boardWidth, arrow[1]);
 
           return (
-            <>
+            <Fragment key={i}>
               <defs>
                 <marker id="arrowhead" markerWidth="2" markerHeight="2.5" refX="1.25" refY="1.25" orient="auto">
                   <polygon points="0 0, 2 1.25, 0 2.5" style={{ fill: customArrowColor }} />
@@ -80,11 +80,10 @@ export function Board() {
                 y1={from.y}
                 x2={to.x}
                 y2={to.y}
-                key={i}
                 style={{ stroke: customArrowColor, strokeWidth: boardWidth / 36 }}
                 markerEnd="url(#arrowhead)"
               />
-            </>
+            </Fragment>
           );
         })}
       </svg>
