@@ -93,11 +93,6 @@ export const ChessboardProvider = forwardRef(
       }
     }));
 
-    // handle external arrows change
-    useEffect(() => {
-      setArrows(customArrows);
-    }, [customArrows]);
-
     // handle custom pieces change
     useEffect(() => {
       setChessPieces({ ...defaultPieces, ...customPieces });
@@ -161,6 +156,11 @@ export const ChessboardProvider = forwardRef(
         clearTimeout(previousTimeout);
       };
     }, [position]);
+
+    // handle external arrows change
+    useEffect(() => {
+      setArrows(customArrows);
+    }, [customArrows]);
 
     // handle drop position change
     function handleSetPosition(sourceSq, targetSq, piece) {
