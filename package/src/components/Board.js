@@ -64,12 +64,12 @@ export function Board() {
         height={boardWidth}
         style={{ position: 'absolute', top: '0', left: '0', pointerEvents: 'none', zIndex: '10' }}
       >
-        {arrows.map((arrow, i) => {
+        {arrows.map(arrow => {
           const from = getRelativeCoords(boardOrientation, boardWidth, arrow[0]);
           const to = getRelativeCoords(boardOrientation, boardWidth, arrow[1]);
 
           return (
-            <Fragment key={i}>
+            <Fragment key={`${arrow[0]}-${arrow[1]}`}>
               <defs>
                 <marker id="arrowhead" markerWidth="2" markerHeight="2.5" refX="1.25" refY="1.25" orient="auto">
                   <polygon points="0 0, 2 1.25, 0 2.5" style={{ fill: customArrowColor }} />
