@@ -26,7 +26,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "rollup -c",
+    "build": "cp ../README.md . && rollup -c",
     "start": "rollup -c -w"
   },
   "dependencies": {
