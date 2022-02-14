@@ -9797,11 +9797,7 @@ const ChessboardProvider = /*#__PURE__*/React.forwardRef(({
       clearPremoves();
     }
 
-  })); // handle external arrows change
-
-  React.useEffect(() => {
-    setArrows(customArrows);
-  }, [customArrows]); // handle custom pieces change
+  })); // handle custom pieces change
 
   React.useEffect(() => {
     setChessPieces({ ...defaultPieces,
@@ -9864,7 +9860,11 @@ const ChessboardProvider = /*#__PURE__*/React.forwardRef(({
     return () => {
       clearTimeout(previousTimeout);
     };
-  }, [position]); // handle drop position change
+  }, [position]); // handle external arrows change
+
+  React.useEffect(() => {
+    setArrows(customArrows);
+  }, [customArrows]); // handle drop position change
 
   function handleSetPosition(sourceSq, targetSq, piece) {
     // if dropped back down, don't do anything
@@ -10614,10 +10614,10 @@ function Board() {
         pointerEvents: 'none',
         zIndex: '10'
       },
-      children: arrows.map((arrow, i) => {
+      children: arrows.map(arrow => {
         const from = getRelativeCoords(boardOrientation, boardWidth, arrow[0]);
         const to = getRelativeCoords(boardOrientation, boardWidth, arrow[1]);
-        return /*#__PURE__*/jsxRuntime.jsxs(jsxRuntime.Fragment, {
+        return /*#__PURE__*/jsxRuntime.jsxs(React.Fragment, {
           children: [/*#__PURE__*/jsxRuntime.jsx("defs", {
             children: /*#__PURE__*/jsxRuntime.jsx("marker", {
               id: "arrowhead",
@@ -10643,8 +10643,8 @@ function Board() {
               strokeWidth: boardWidth / 36
             },
             markerEnd: "url(#arrowhead)"
-          }, i)]
-        });
+          })]
+        }, `${arrow[0]}-${arrow[1]}`);
       })
     })]
   }) : /*#__PURE__*/jsxRuntime.jsx(WhiteKing, {});

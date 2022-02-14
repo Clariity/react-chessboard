@@ -1,4 +1,4 @@
-import React, { createContext, memo, useEffect, isValidElement, cloneElement, createRef, Component, useLayoutEffect, useMemo, useContext, useState, useCallback, useRef, forwardRef, useImperativeHandle } from 'react';
+import React, { createContext, memo, useEffect, isValidElement, cloneElement, createRef, Component, useLayoutEffect, useMemo, useContext, useState, useCallback, useRef, forwardRef, useImperativeHandle, Fragment as Fragment$1 } from 'react';
 import { jsx, jsxs, Fragment } from 'react/jsx-runtime';
 import 'react-dom';
 
@@ -9789,11 +9789,7 @@ const ChessboardProvider = /*#__PURE__*/forwardRef(({
       clearPremoves();
     }
 
-  })); // handle external arrows change
-
-  useEffect(() => {
-    setArrows(customArrows);
-  }, [customArrows]); // handle custom pieces change
+  })); // handle custom pieces change
 
   useEffect(() => {
     setChessPieces({ ...defaultPieces,
@@ -9856,7 +9852,11 @@ const ChessboardProvider = /*#__PURE__*/forwardRef(({
     return () => {
       clearTimeout(previousTimeout);
     };
-  }, [position]); // handle drop position change
+  }, [position]); // handle external arrows change
+
+  useEffect(() => {
+    setArrows(customArrows);
+  }, [customArrows]); // handle drop position change
 
   function handleSetPosition(sourceSq, targetSq, piece) {
     // if dropped back down, don't do anything
@@ -10606,10 +10606,10 @@ function Board() {
         pointerEvents: 'none',
         zIndex: '10'
       },
-      children: arrows.map((arrow, i) => {
+      children: arrows.map(arrow => {
         const from = getRelativeCoords(boardOrientation, boardWidth, arrow[0]);
         const to = getRelativeCoords(boardOrientation, boardWidth, arrow[1]);
-        return /*#__PURE__*/jsxs(Fragment, {
+        return /*#__PURE__*/jsxs(Fragment$1, {
           children: [/*#__PURE__*/jsx("defs", {
             children: /*#__PURE__*/jsx("marker", {
               id: "arrowhead",
@@ -10635,8 +10635,8 @@ function Board() {
               strokeWidth: boardWidth / 36
             },
             markerEnd: "url(#arrowhead)"
-          }, i)]
-        });
+          })]
+        }, `${arrow[0]}-${arrow[1]}`);
       })
     })]
   }) : /*#__PURE__*/jsx(WhiteKing, {});
