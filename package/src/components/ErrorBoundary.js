@@ -1,3 +1,5 @@
+import React from 'react';
+
 import { errorImage } from '../media/error';
 
 export function ErrorBoundary({ children }) {

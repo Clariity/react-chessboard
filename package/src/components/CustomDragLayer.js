@@ -1,3 +1,4 @@
+import React from 'react';
 import { DragLayer } from 'react-dnd';
 
 import { useChessboard } from '../context/chessboard-context';

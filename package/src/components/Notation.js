@@ -1,3 +1,5 @@
+import React from 'react';
+
 import { COLUMNS } from '../consts';
 import { useChessboard } from '../context/chessboard-context';
 
