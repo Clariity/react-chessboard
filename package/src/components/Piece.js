@@ -13,6 +13,8 @@ export function Piece({ piece, square, squares, isPremovedPiece = false }) {
     id,
     isDraggablePiece,
     onPieceClick,
+    onPieceDragBegin,
+    onPieceDragEnd,
     premoves,
     chessPieces,
     dropTarget,
@@ -31,7 +33,11 @@ export function Piece({ piece, square, squares, isPremovedPiece = false }) {
   const [{ canDrag, isDragging }, drag, dragPreview] = useDrag(
     () => ({
       type: 'piece',
-      item: { piece, square, id },
+      item: () => {
+        onPieceDragBegin(piece, square);
+        return { piece, square, id };
+      },
+      end: () => onPieceDragEnd(piece, square),
       collect: (monitor) => ({
         canDrag: isDraggablePiece({ piece, sourceSquare: square }),
         isDragging: !!monitor.isDragging()

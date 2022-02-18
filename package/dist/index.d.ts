@@ -188,6 +188,14 @@ interface ChessBoardProps {
    */
   onPieceClick?: (piece: Pieces) => any;
   /**
+   * User function that is run when piece is grabbed to start dragging.
+   */
+  onPieceDragBegin?: (piece: Pieces, sourceSquare: Square) => any;
+  /**
+   * User function that is run when piece is let go after dragging.
+   */
+  onPieceDragEnd?: (piece: Pieces, sourceSquare: Square) => any;
+  /**
    * User function that is run when piece is dropped on a square. Must return whether the move was successful or not.
    */
   onPieceDrop?: (sourceSquare: Square, targetSquare: Square, piece: Pieces) => boolean;

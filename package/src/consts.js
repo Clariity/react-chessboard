@@ -78,7 +78,13 @@ export const chessboardPropTypes = {
   // user function that is run when piece is clicked (piece: string) => void
   onPieceClick: PropTypes.func,
 
-  // user function that is run when piece is dropped on a square ({ sourceSquare: string, targetSquare: string, piece: string }) => void
+  // user function that is run when piece is grabbed to start dragging (piece: string, sourceSquare: string) => void
+  onPieceDragBegin: PropTypes.func,
+
+  // user function that is run when piece is let go after dragging (piece: string, sourceSquare: string) => void
+  onPieceDragEnd: PropTypes.func,
+
+  // user function that is run when piece is dropped on a square (sourceSquare: string, targetSquare: string, piece: string) => boolean
   onPieceDrop: PropTypes.func,
 
   // user function that is run when a square is clicked (square: string) => void
@@ -123,6 +129,8 @@ export const chessboardDefaultProps = {
   onMouseOutSquare: () => {},
   onMouseOverSquare: () => {},
   onPieceClick: () => {},
+  onPieceDragBegin: () => {},
+  onPieceDragEnd: () => {},
   onPieceDrop: () => true,
   onSquareClick: () => {},
   onSquareRightClick: () => {},
