@@ -54,6 +54,7 @@ export const ChessboardProvider = forwardRef(
       position,
       showBoardNotation,
       showSparePieces,
+      snapToCursor,
       children
     },
     ref
@@ -321,6 +322,7 @@ export const ChessboardProvider = forwardRef(
           onSquareRightClick,
           showBoardNotation,
           showSparePieces,
+          snapToCursor,
 
           arrows,
           chessPieces,

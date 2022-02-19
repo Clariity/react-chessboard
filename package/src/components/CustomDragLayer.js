@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { DragLayer } from 'react-dnd';
 
 import { useChessboard } from '../context/chessboard-context';
 
 function CDragLayer(props) {
-  const { boardWidth, chessPieces, id } = useChessboard();
-  const { isDragging, item, currentOffset } = props;
+  const { boardWidth, chessPieces, id, snapToCursor } = useChessboard();
+  const { isDragging, item, clientOffset, sourceClientOffset } = props;
 
   const layerStyles = {
     position: 'fixed',
@@ -15,22 +15,30 @@ function CDragLayer(props) {
     top: 0
   };
 
-  const getItemStyle = (currentOffset) => {
-    if (!currentOffset) return { display: 'none' };
+  const getItemStyle = useCallback(
+    (clientOffset, sourceClientOffset) => {
+      if (!clientOffset || !sourceClientOffset) return { display: 'none' };
 
-    const { x, y } = currentOffset;
-    const transform = `translate(${x}px, ${y}px)`;
+      let { x, y } = snapToCursor ? clientOffset : sourceClientOffset;
+      if (snapToCursor) {
+        const halfSquareWidth = boardWidth / 8 / 2;
+        x -= halfSquareWidth;
+        y -= halfSquareWidth;
+      }
+      const transform = `translate(${x}px, ${y}px)`;
 
-    return {
-      transform,
-      WebkitTransform: transform,
-      touchAction: 'none'
-    };
-  };
+      return {
+        transform,
+        WebkitTransform: transform,
+        touchAction: 'none'
+      };
+    },
+    [boardWidth, snapToCursor]
+  );
 
   return isDragging && item.id === id ? (
     <div style={layerStyles}>
-      <div style={getItemStyle(currentOffset)}>
+      <div style={getItemStyle(clientOffset, sourceClientOffset)}>
         {typeof chessPieces[item.piece] === 'function' ? (
           chessPieces[item.piece]({
             squareWidth: boardWidth / 8,
@@ -49,7 +57,8 @@ function CDragLayer(props) {
 function collect(monitor) {
   return {
     item: monitor.getItem(),
-    currentOffset: monitor.getSourceClientOffset(),
+    clientOffset: monitor.getClientOffset(),
+    sourceClientOffset: monitor.getSourceClientOffset(),
     isDragging: monitor.isDragging()
   };
 }

@@ -97,10 +97,13 @@ export const chessboardPropTypes = {
   position: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
 
   // show file character and rank numbers (a..h, 1..8)
-  showBoardNotation: PropTypes.bool
+  showBoardNotation: PropTypes.bool,
 
   // show spare pieces above and below board.
-  // showSparePieces: PropTypes.bool
+  // showSparePieces: PropTypes.bool,
+
+  // center dragged pieces on the mouse cursor
+  snapToCursor: PropTypes.bool
 };
 
 export const chessboardDefaultProps = {
@@ -135,6 +138,7 @@ export const chessboardDefaultProps = {
   onSquareClick: () => {},
   onSquareRightClick: () => {},
   position: 'start',
-  showBoardNotation: true
-  // showSparePieces: false
+  showBoardNotation: true,
+  // showSparePieces: false,
+  snapToCursor: false
 };
