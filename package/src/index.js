@@ -7,7 +7,7 @@ import { CustomDragLayer } from './components/CustomDragLayer';
 import { ErrorBoundary } from './components/ErrorBoundary';
 // import SparePieces from './components/SparePieces';
 
-import { chessboardDefaultProps, chessboardPropTypes } from './consts';
+import { chessboardDefaultProps } from './consts';
 import { ChessboardProvider } from './context/chessboard-context';
 
 export const Chessboard = forwardRef((props, ref) => {
@@ -27,5 +27,4 @@ export const Chessboard = forwardRef((props, ref) => {
   );
 });
 
-Chessboard.propTypes = chessboardPropTypes;
 Chessboard.defaultProps = chessboardDefaultProps;
