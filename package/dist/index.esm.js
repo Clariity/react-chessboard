@@ -10246,7 +10246,8 @@ function Piece({
       if (sourceSq && targetSq) {
         setPieceStyle(oldPieceStyle => ({ ...oldPieceStyle,
           transform: `translate(${targetSq.x - sourceSq.x}px, ${targetSq.y - sourceSq.y}px)`,
-          transition: `transform ${animationDuration}ms`
+          transition: `transform ${animationDuration}ms`,
+          zIndex: 6
         }));
       }
     }
