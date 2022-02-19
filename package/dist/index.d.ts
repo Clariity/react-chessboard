@@ -211,6 +211,10 @@ interface ChessBoardProps {
    * Whether or not to show the file and rank co-ordinates (a..h, 1..8).
    */
   showBoardNotation?: boolean;
+  /**
+   * Whether or not to center dragged pieces on the mouse cursor.
+   */
+  snapToCursor?: boolean;
 }
 declare function Chessboard(props: ChessBoardProps): ReactElement;
 

@@ -8869,9 +8869,11 @@ const chessboardPropTypes = {
   // FEN string or a position object ({ e5: 'wK', e4: 'wP', e7: 'bK' })
   position: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   // show file character and rank numbers (a..h, 1..8)
-  showBoardNotation: PropTypes.bool // show spare pieces above and below board.
-  // showSparePieces: PropTypes.bool
-
+  showBoardNotation: PropTypes.bool,
+  // show spare pieces above and below board.
+  // showSparePieces: PropTypes.bool,
+  // center dragged pieces on the mouse cursor
+  snapToCursor: PropTypes.bool
 };
 const chessboardDefaultProps = {
   animationDuration: 300,
@@ -8913,8 +8915,9 @@ const chessboardDefaultProps = {
   onSquareClick: () => {},
   onSquareRightClick: () => {},
   position: 'start',
-  showBoardNotation: true // showSparePieces: false
-
+  showBoardNotation: true,
+  // showSparePieces: false,
+  snapToCursor: false
 };
 
 const startPositionObject = {
@@ -9765,6 +9768,7 @@ const ChessboardProvider = /*#__PURE__*/React.forwardRef(({
   position,
   showBoardNotation,
   showSparePieces,
+  snapToCursor,
   children
 }, ref) => {
   // position stored and displayed on board
@@ -10015,6 +10019,7 @@ const ChessboardProvider = /*#__PURE__*/React.forwardRef(({
       onSquareRightClick,
       showBoardNotation,
       showSparePieces,
+      snapToCursor,
       arrows,
       chessPieces,
       clearArrows,
@@ -10654,12 +10659,14 @@ function CDragLayer(props) {
   const {
     boardWidth,
     chessPieces,
-    id
+    id,
+    snapToCursor
   } = useChessboard();
   const {
     isDragging,
     item,
-    currentOffset
+    clientOffset,
+    sourceClientOffset
   } = props;
   const layerStyles = {
     position: 'fixed',
@@ -10668,27 +10675,32 @@ function CDragLayer(props) {
     left: 0,
     top: 0
   };
-
-  const getItemStyle = currentOffset => {
-    if (!currentOffset) return {
+  const getItemStyle = React.useCallback((clientOffset, sourceClientOffset) => {
+    if (!clientOffset || !sourceClientOffset) return {
       display: 'none'
     };
-    const {
+    let {
       x,
       y
-    } = currentOffset;
+    } = snapToCursor ? clientOffset : sourceClientOffset;
+
+    if (snapToCursor) {
+      const halfSquareWidth = boardWidth / 8 / 2;
+      x -= halfSquareWidth;
+      y -= halfSquareWidth;
+    }
+
     const transform = `translate(${x}px, ${y}px)`;
     return {
       transform,
       WebkitTransform: transform,
       touchAction: 'none'
     };
-  };
-
+  }, [boardWidth, snapToCursor]);
   return isDragging && item.id === id ? /*#__PURE__*/jsxRuntime.jsx("div", {
     style: layerStyles,
     children: /*#__PURE__*/jsxRuntime.jsx("div", {
-      style: getItemStyle(currentOffset),
+      style: getItemStyle(clientOffset, sourceClientOffset),
       children: typeof chessPieces[item.piece] === 'function' ? chessPieces[item.piece]({
         squareWidth: boardWidth / 8,
         isDragging: true
@@ -10707,7 +10719,8 @@ function CDragLayer(props) {
 function collect(monitor) {
   return {
     item: monitor.getItem(),
-    currentOffset: monitor.getSourceClientOffset(),
+    clientOffset: monitor.getClientOffset(),
+    sourceClientOffset: monitor.getSourceClientOffset(),
     isDragging: monitor.isDragging()
   };
 }
