@@ -8852,7 +8852,11 @@ const chessboardPropTypes = {
   onMouseOverSquare: PropTypes.func,
   // user function that is run when piece is clicked (piece: string) => void
   onPieceClick: PropTypes.func,
-  // user function that is run when piece is dropped on a square ({ sourceSquare: string, targetSquare: string, piece: string }) => void
+  // user function that is run when piece is grabbed to start dragging (piece: string, sourceSquare: string) => void
+  onPieceDragBegin: PropTypes.func,
+  // user function that is run when piece is let go after dragging (piece: string, sourceSquare: string) => void
+  onPieceDragEnd: PropTypes.func,
+  // user function that is run when piece is dropped on a square (sourceSquare: string, targetSquare: string, piece: string) => boolean
   onPieceDrop: PropTypes.func,
   // user function that is run when a square is clicked (square: string) => void
   onSquareClick: PropTypes.func,
@@ -8901,6 +8905,8 @@ const chessboardDefaultProps = {
   onMouseOutSquare: () => {},
   onMouseOverSquare: () => {},
   onPieceClick: () => {},
+  onPieceDragBegin: () => {},
+  onPieceDragEnd: () => {},
   onPieceDrop: () => true,
   onSquareClick: () => {},
   onSquareRightClick: () => {},
@@ -9751,6 +9757,8 @@ const ChessboardProvider = /*#__PURE__*/forwardRef(({
   onMouseOutSquare,
   onMouseOverSquare,
   onPieceClick,
+  onPieceDragBegin,
+  onPieceDragEnd,
   onPieceDrop,
   onSquareClick,
   onSquareRightClick,
@@ -10002,6 +10010,8 @@ const ChessboardProvider = /*#__PURE__*/forwardRef(({
       onMouseOutSquare,
       onMouseOverSquare,
       onPieceClick,
+      onPieceDragBegin,
+      onPieceDragEnd,
       onPieceDrop,
       onSquareClick,
       onSquareRightClick,
@@ -10148,6 +10158,8 @@ function Piece({
     id,
     isDraggablePiece,
     onPieceClick,
+    onPieceDragBegin,
+    onPieceDragEnd,
     premoves,
     chessPieces,
     dropTarget,
@@ -10169,11 +10181,15 @@ function Piece({
     isDragging
   }, drag, dragPreview] = useDrag(() => ({
     type: 'piece',
-    item: {
-      piece,
-      square,
-      id
+    item: () => {
+      onPieceDragBegin(piece, square);
+      return {
+        piece,
+        square,
+        id
+      };
     },
+    end: () => onPieceDragEnd(piece, square),
     collect: monitor => ({
       canDrag: isDraggablePiece({
         piece,
