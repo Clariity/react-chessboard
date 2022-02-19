@@ -12,6 +12,8 @@ export const chessboardDefaultProps = {
   customArrowColor: 'rgb(255,170,0)',
   customBoardStyle: {},
   customDarkSquareStyle: { backgroundColor: '#B58863' },
+  customDndBackend: undefined,
+  customDndBackendOptions: undefined,
   customDropSquareStyle: { boxShadow: 'inset 0 0 1px 6px rgba(255,255,255,0.75)' },
   customLightSquareStyle: { backgroundColor: '#F0D9B5' },
   customPieces: {},

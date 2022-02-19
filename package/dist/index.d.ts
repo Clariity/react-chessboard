@@ -1,4 +1,5 @@
 import { ReactElement, CSSProperties, RefObject } from 'react';
+import { BackendFactory } from 'dnd-core';
 
 type Square =
   | 'a8'
@@ -135,6 +136,14 @@ interface ChessBoardProps {
    * Custom dark square style object.
    */
   customDarkSquareStyle?: CSSProperties;
+  /**
+   * Custom react-dnd backend to use instead of the one provided by react-chessboard.
+   */
+  customDndBackend?: BackendFactory;
+  /**
+   * Options to use for the given custom react-dnd backend. See customDndBackend.
+   */
+  customDndBackendOptions?: unknown;
   /**
    * Custom drop square style object (Square being hovered over with dragged piece).
    */
