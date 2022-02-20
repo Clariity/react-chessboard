@@ -31,7 +31,14 @@ export default function StyledBoard({ boardWidth }) {
     const returnPieces = {};
     pieces.map((p) => {
       returnPieces[p] = ({ squareWidth }) => (
-        <img style={{ width: squareWidth, height: squareWidth }} src={`/media/${p}.png`} alt={p} />
+        <div
+          style={{
+            width: squareWidth,
+            height: squareWidth,
+            backgroundImage: `url(/media/${p}.png)`,
+            backgroundSize: '100%',
+          }}
+        />
       );
       return null;
     });
