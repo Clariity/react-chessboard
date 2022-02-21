@@ -9856,8 +9856,9 @@ const ChessboardProvider = /*#__PURE__*/React.forwardRef(({
     }
   }
 
-  function clearPremoves() {
-    setLastPieceColour(undefined);
+  function clearPremoves(clearLastPieceColour = true) {
+    // don't clear when right clicking to clear, otherwise you won't be able to premove again before next go
+    if (clearLastPieceColour) setLastPieceColour(undefined);
     premovesRef.current = [];
     setPremoves([]);
   }
@@ -9873,7 +9874,7 @@ const ChessboardProvider = /*#__PURE__*/React.forwardRef(({
       // same square, don't draw an arrow, but do clear premoves and run onSquareRightClick
       if (currentRightClickDown === square) {
         setCurrentRightClickDown(null);
-        clearPremovesOnRightClick && clearPremoves();
+        clearPremovesOnRightClick && clearPremoves(false);
         onSquareRightClick(square);
         return;
       } // if arrow already exists then it needs to be removed
