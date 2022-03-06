@@ -104,7 +104,6 @@ const numericStyle = (width) => ({
 });
 
 const notationStyle = {
-  fontFamily: 'Helvetica Neue',
   zIndex: 3,
   position: 'absolute'
 };
