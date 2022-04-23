@@ -1,7 +1,7 @@
 import { ReactElement, CSSProperties, RefObject } from 'react';
 import { BackendFactory } from 'dnd-core';
 
-export type Square =
+type Square =
   | 'a8'
   | 'b8'
   | 'c8'
@@ -67,9 +67,9 @@ export type Square =
   | 'g1'
   | 'h1';
 
-export type Pieces = 'wP' | 'wB' | 'wN' | 'wR' | 'wQ' | 'wK' | 'bP' | 'bB' | 'bN' | 'bR' | 'bQ' | 'bK';
+type Pieces = 'wP' | 'wB' | 'wN' | 'wR' | 'wQ' | 'wK' | 'bP' | 'bB' | 'bN' | 'bR' | 'bQ' | 'bK';
 
-export interface CustomPieceFnArgs {
+interface CustomPieceFnArgs {
   isDragging: boolean;
   squareWidth: number;
   droppedPiece: Pieces;
@@ -77,13 +77,13 @@ export interface CustomPieceFnArgs {
   sourceSquare: Square;
 }
 
-export type CustomPieceFn = (args: CustomPieceFnArgs) => ReactElement;
+type CustomPieceFn = (args: CustomPieceFnArgs) => ReactElement;
 
-export type CustomPieces = {
+type CustomPieces = {
   [key in Pieces]?: CustomPieceFn;
 };
 
-export type CustomSquareStyles = {
+type CustomSquareStyles = {
   [key in Square]?: CSSProperties;
 };
 
@@ -91,7 +91,7 @@ type CurrentPosition = {
   [key in Square]: Pieces;
 };
 
-export interface ChessBoardProps {
+interface ChessBoardProps {
   /**
    * Time in milliseconds for piece to slide to target square. Only used when the position is programmatically changed. If a new position is set before the animation is complete, the board will cancel the current animation and snap to the new position.
    */
@@ -235,4 +235,4 @@ export interface ChessBoardProps {
 }
 declare function Chessboard(props: ChessBoardProps): ReactElement;
 
-export { Chessboard };
+export { ChessBoardProps, Chessboard, CurrentPosition, CustomPieceFn, CustomPieceFnArgs, CustomPieces, CustomSquareStyles, Pieces, Square };

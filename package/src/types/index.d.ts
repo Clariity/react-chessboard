@@ -1,8 +1,75 @@
 import { CSSProperties, ReactElement, RefObject } from 'react';
 import { BackendFactory } from 'dnd-core';
-import { Pieces, Square } from './options';
 
-interface CustomPieceFnArgs {
+export type Square =
+  | 'a8'
+  | 'b8'
+  | 'c8'
+  | 'd8'
+  | 'e8'
+  | 'f8'
+  | 'g8'
+  | 'h8'
+  | 'a7'
+  | 'b7'
+  | 'c7'
+  | 'd7'
+  | 'e7'
+  | 'f7'
+  | 'g7'
+  | 'h7'
+  | 'a6'
+  | 'b6'
+  | 'c6'
+  | 'd6'
+  | 'e6'
+  | 'f6'
+  | 'g6'
+  | 'h6'
+  | 'a5'
+  | 'b5'
+  | 'c5'
+  | 'd5'
+  | 'e5'
+  | 'f5'
+  | 'g5'
+  | 'h5'
+  | 'a4'
+  | 'b4'
+  | 'c4'
+  | 'd4'
+  | 'e4'
+  | 'f4'
+  | 'g4'
+  | 'h4'
+  | 'a3'
+  | 'b3'
+  | 'c3'
+  | 'd3'
+  | 'e3'
+  | 'f3'
+  | 'g3'
+  | 'h3'
+  | 'a2'
+  | 'b2'
+  | 'c2'
+  | 'd2'
+  | 'e2'
+  | 'f2'
+  | 'g2'
+  | 'h2'
+  | 'a1'
+  | 'b1'
+  | 'c1'
+  | 'd1'
+  | 'e1'
+  | 'f1'
+  | 'g1'
+  | 'h1';
+
+export type Pieces = 'wP' | 'wB' | 'wN' | 'wR' | 'wQ' | 'wK' | 'bP' | 'bB' | 'bN' | 'bR' | 'bQ' | 'bK';
+
+export interface CustomPieceFnArgs {
   isDragging: boolean;
   squareWidth: number;
   droppedPiece: Pieces;
@@ -10,21 +77,21 @@ interface CustomPieceFnArgs {
   sourceSquare: Square;
 }
 
-type CustomPieceFn = (args: CustomPieceFnArgs) => ReactElement;
+export type CustomPieceFn = (args: CustomPieceFnArgs) => ReactElement;
 
-type CustomPieces = {
+export type CustomPieces = {
   [key in Pieces]?: CustomPieceFn;
 };
 
-type CustomSquareStyles = {
+export type CustomSquareStyles = {
   [key in Square]?: CSSProperties;
 };
 
-type CurrentPosition = {
+export type CurrentPosition = {
   [key in Square]: Pieces;
 };
 
-interface ChessBoardProps {
+export interface ChessBoardProps {
   /**
    * Time in milliseconds for piece to slide to target square. Only used when the position is programmatically changed. If a new position is set before the animation is complete, the board will cancel the current animation and snap to the new position.
    */
