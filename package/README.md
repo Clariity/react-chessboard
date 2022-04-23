@@ -53,7 +53,7 @@ npm i react-chessboard
 - Position Control
 - Premoves
 - Responsive Board Width
-- Typescript Support
+- TypeScript Support
 
 ### Planned
 
