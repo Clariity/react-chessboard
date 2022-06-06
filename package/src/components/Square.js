@@ -58,8 +58,16 @@ export function Square({ square, squareColor, setSquares, squareHasPremove, chil
       style={defaultSquareStyle}
       data-square-color={squareColor}
       data-square={square}
-      onMouseOver={() => onMouseOverSquare(square)}
-      onMouseOut={() => onMouseOutSquare(square)}
+      onMouseOver={(e) => {
+        // noop if moving from child of square into square.
+        if (e.relatedTarget && e.currentTarget.contains(e.relatedTarget)) return;
+        onMouseOverSquare(square);
+      }}
+      onMouseOut={(e) => {
+        // noop if moving from square into a child of square.
+        if (e.relatedTarget && e.currentTarget.contains(e.relatedTarget)) return;
+        onMouseOutSquare(square);
+      }}
       onMouseDown={(e) => {
         if (e.button === 2) onRightClickDown(square);
       }}
