@@ -91,8 +91,8 @@ export const ChessboardProvider = forwardRef(
 
     // open clearPremoves() to allow user to call on undo/reset/whenever
     useImperativeHandle(ref, () => ({
-      clearPremoves() {
-        clearPremoves();
+      clearPremoves(clearLastPieceColour = true) {
+        clearPremoves(clearLastPieceColour);
       }
     }));
 
