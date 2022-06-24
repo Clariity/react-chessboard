@@ -9701,8 +9701,8 @@ const ChessboardProvider = /*#__PURE__*/forwardRef(({
   const [waitingForAnimation, setWaitingForAnimation] = useState(false); // open clearPremoves() to allow user to call on undo/reset/whenever
 
   useImperativeHandle(ref, () => ({
-    clearPremoves() {
-      clearPremoves();
+    clearPremoves(clearLastPieceColour = true) {
+      clearPremoves(clearLastPieceColour);
     }
 
   })); // handle custom pieces change

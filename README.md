@@ -29,7 +29,7 @@ npm i react-chessboard
 ### Current
 
 - Accessible Functions
-  - `chessboardRef.current.clearPremoves();`
+  - `chessboardRef.current.clearPremoves();`, takes optional boolean parameter `clearLastPieceColour` to allow/disallow further premoves of the last moved piece color. `Default: true`
 - Board Orientation Choice
 - Custom Actions
   - getPositionObject
