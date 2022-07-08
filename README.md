@@ -92,12 +92,11 @@ import { Chessboard } from "react-chessboard";
 export default function PlayRandomMoveEngine() {
   const [game, setGame] = useState(new Chess());
 
-  function safeGameMutate(modify) {
-    setGame((g) => {
-      const update = { ...g };
-      modify(update);
-      return update;
-    });
+  function makeAMove(move){
+    const gameCopy = { ...game };
+    const result = gameCopy.move(move);
+    setGame(gameCopy);
+    return result; // null if the move was illegal, the move object if the move was legal
   }
 
   function makeRandomMove() {
@@ -105,21 +104,20 @@ export default function PlayRandomMoveEngine() {
     if (game.game_over() || game.in_draw() || possibleMoves.length === 0)
       return; // exit if the game is over
     const randomIndex = Math.floor(Math.random() * possibleMoves.length);
-    safeGameMutate((game) => {
-      game.move(possibleMoves[randomIndex]);
-    });
+    makeAMove(possibleMoves[randomIndex]);
   }
 
   function onDrop(sourceSquare, targetSquare) {
-    let move = null;
-    safeGameMutate((game) => {
-      move = game.move({
-        from: sourceSquare,
-        to: targetSquare,
-        promotion: "q", // always promote to a queen for example simplicity
-      });
+
+    const move = makeAMove({
+      from: sourceSquare,
+      to: targetSquare,
+      promotion: 'q' // always promote to a queen for example simplicity
     });
-    if (move === null) return false; // illegal move
+
+    // illegal move
+    if (move === null) return false;
+    
     setTimeout(makeRandomMove, 200);
     return true;
   }
