@@ -1,7 +1,8 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useEffect, useState } from 'react';
 import { DndProvider } from 'react-dnd';
-import MultiBackend from 'react-dnd-multi-backend';
-import HTML5toTouch from 'react-dnd-multi-backend/dist/esm/HTML5toTouch';
+
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import { TouchBackend } from 'react-dnd-touch-backend';
 
 import { Board } from './components/Board';
 import { CustomDragLayer } from './components/CustomDragLayer';
@@ -12,24 +13,28 @@ import { chessboardDefaultProps } from './consts';
 import { ChessboardProvider } from './context/chessboard-context';
 
 export const Chessboard = forwardRef((props, ref) => {
+  const [backendSet, setBackendSet] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const { customDndBackend, customDndBackendOptions, ...otherProps } = props;
 
+  useEffect(() => {
+    setIsMobile('ontouchstart' in window);
+    setBackendSet(true);
+  }, []);
+
+  const backend = customDndBackend || (isMobile ? TouchBackend : HTML5Backend);
+
   return (
-    <ErrorBoundary>
-      <DndProvider
-        backend={customDndBackend || MultiBackend}
-        options={customDndBackend ? customDndBackendOptions : HTML5toTouch}
-      >
-        <ChessboardProvider ref={ref} {...otherProps}>
-          <CustomDragLayer />
-          <div>
-            {/* {props.showSparePieces && <SparePieces.Top />} */}
+    backendSet && (
+      <ErrorBoundary>
+        <DndProvider backend={backend}>
+          <ChessboardProvider ref={ref} {...otherProps}>
+            <CustomDragLayer />
             <Board />
-            {/* {props.showSparePieces && <SparePieces.Bottom />} */}
-          </div>
-        </ChessboardProvider>
-      </DndProvider>
-    </ErrorBoundary>
+          </ChessboardProvider>
+        </DndProvider>
+      </ErrorBoundary>
+    )
   );
 });
 
