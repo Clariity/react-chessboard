@@ -9,10 +9,10 @@
   },
   "dependencies": {
     "chess.js": "^0.12.0",
-    "react": "^17.0.2",
+    "react": "^18.2.0",
     "react-chessboard": "file:../package",
-    "react-dom": "^17.0.2",
-    "react-scripts": "^4.0.3"
+    "react-dom": "^18.2.0",
+    "react-scripts": "^5.0.1"
   },
   "devDependencies": {
     "eslint": "^7.32.0",
