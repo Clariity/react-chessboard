@@ -42,6 +42,7 @@ export const ChessboardProvider = forwardRef(
       id,
       isDraggablePiece,
       getPositionObject,
+      onArrowsChange,
       onDragOverSquare,
       onMouseOutSquare,
       onMouseOverSquare,
@@ -164,6 +165,11 @@ export const ChessboardProvider = forwardRef(
     useEffect(() => {
       setArrows(customArrows);
     }, [customArrows]);
+
+    // callback when new arrows are set
+    useEffect(() => {
+      onArrowsChange(arrows);
+    }, [arrows]);
 
     // handle drop position change
     function handleSetPosition(sourceSq, targetSq, piece) {

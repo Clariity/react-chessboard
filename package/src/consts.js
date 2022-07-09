@@ -24,6 +24,7 @@ export const chessboardDefaultProps = {
   id: 0,
   isDraggablePiece: () => true,
   getPositionObject: () => {},
+  onArrowsChange: () => {},
   onDragOverSquare: () => {},
   onMouseOutSquare: () => {},
   onMouseOverSquare: () => {},
