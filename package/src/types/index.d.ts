@@ -181,6 +181,10 @@ export interface ChessBoardProps {
    */
   getPositionObject?: (currentPosition: CurrentPosition) => any;
   /**
+   * User function is run when arrows are set on the board.
+   */
+  onArrowsChange?: (squares: Square[][]) => void;
+  /**
    * User function that is run when piece is dragged over a square.
    */
   onDragOverSquare?: (square: Square) => any;
