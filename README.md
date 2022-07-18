@@ -109,7 +109,6 @@ export default function PlayRandomMoveEngine() {
   }
 
   function onDrop(sourceSquare, targetSquare) {
-
     const move = makeAMove({
       from: sourceSquare,
       to: targetSquare,
