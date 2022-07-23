@@ -26,24 +26,27 @@ export default function ClickToMove({ boardWidth }) {
       square,
       verbose: true
     });
-    if (moves.length === 0) {
-      return;
-    }
 
     const newSquares = {};
-    moves.map((move) => {
-      newSquares[move.to] = {
-        background:
-          game.get(move.to) && game.get(move.to).color !== game.get(square).color
-            ? 'radial-gradient(circle, rgba(0,0,0,.1) 85%, transparent 85%)'
-            : 'radial-gradient(circle, rgba(0,0,0,.1) 25%, transparent 25%)',
-        borderRadius: '50%'
-      };
-      return move;
-    });
+
+    if(game.get(square) !== null) // If the square isn't empty
     newSquares[square] = {
       background: 'rgba(255, 255, 0, 0.4)'
     };
+
+    if (moves.length !== 0) {
+      moves.map((move) => {
+        newSquares[move.to] = {
+          background:
+            game.get(move.to) && game.get(move.to).color !== game.get(square).color
+              ? 'radial-gradient(circle, rgba(0,0,0,.1) 85%, transparent 85%)'
+              : 'radial-gradient(circle, rgba(0,0,0,.1) 25%, transparent 25%)',
+          borderRadius: '50%'
+        };
+        return move;
+      });
+    }
+
     setOptionSquares(newSquares);
   }
 
