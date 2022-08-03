@@ -47,9 +47,7 @@ export function Piece({ piece, square, squares, isPremovedPiece = false }) {
   );
 
   // hide the default preview
-  useEffect(() => {
-    dragPreview(getEmptyImage(), { captureDraggingState: true });
-  }, []);
+  dragPreview(getEmptyImage(), { captureDraggingState: true });
 
   // hide piece on drag
   useEffect(() => {

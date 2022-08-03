@@ -1,11 +1,19 @@
 import React, { useCallback } from 'react';
-import { DragLayer } from 'react-dnd';
+import { useDragLayer } from 'react-dnd';
 
 import { useChessboard } from '../context/chessboard-context';
 
-function CDragLayer(props) {
+export function CustomDragLayer() {
   const { boardWidth, chessPieces, id, snapToCursor } = useChessboard();
-  const { isDragging, item, clientOffset, sourceClientOffset } = props;
+
+  const collectedProps = useDragLayer((monitor) => ({
+    item: monitor.getItem(),
+    clientOffset: monitor.getClientOffset(),
+    sourceClientOffset: monitor.getSourceClientOffset(),
+    isDragging: monitor.isDragging()
+  }));
+
+  const { isDragging, item, clientOffset, sourceClientOffset } = collectedProps;
 
   const layerStyles = {
     position: 'fixed',
@@ -53,14 +61,3 @@ function CDragLayer(props) {
     </div>
   ) : null;
 }
-
-function collect(monitor) {
-  return {
-    item: monitor.getItem(),
-    clientOffset: monitor.getClientOffset(),
-    sourceClientOffset: monitor.getSourceClientOffset(),
-    isDragging: monitor.isDragging()
-  };
-}
-
-export const CustomDragLayer = DragLayer(collect)(CDragLayer);
