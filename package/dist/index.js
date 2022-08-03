@@ -5014,6 +5014,7 @@ const chessboardDefaultProps = {
   id: 0,
   isDraggablePiece: () => true,
   getPositionObject: () => {},
+  onArrowsChange: () => {},
   onDragOverSquare: () => {},
   onMouseOutSquare: () => {},
   onMouseOverSquare: () => {},
@@ -5867,6 +5868,7 @@ const ChessboardProvider = /*#__PURE__*/React.forwardRef(({
   id,
   isDraggablePiece,
   getPositionObject,
+  onArrowsChange,
   onDragOverSquare,
   onMouseOutSquare,
   onMouseOverSquare,
@@ -5979,7 +5981,11 @@ const ChessboardProvider = /*#__PURE__*/React.forwardRef(({
 
   React.useEffect(() => {
     setArrows(customArrows);
-  }, [customArrows]); // handle drop position change
+  }, [customArrows]); // callback when new arrows are set
+
+  React.useEffect(() => {
+    onArrowsChange(arrows);
+  }, [arrows]); // handle drop position change
 
   function handleSetPosition(sourceSq, targetSq, piece) {
     // if dropped back down, don't do anything

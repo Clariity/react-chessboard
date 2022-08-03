@@ -33,6 +33,7 @@ npm i react-chessboard
 - Board Orientation Choice
 - Custom Actions
   - getPositionObject
+  - onArrowsChange
   - onDragOverSquare
   - onMouseOutSquare
   - onMouseOverSquare
@@ -92,12 +93,11 @@ import { Chessboard } from "react-chessboard";
 export default function PlayRandomMoveEngine() {
   const [game, setGame] = useState(new Chess());
 
-  function safeGameMutate(modify) {
-    setGame((g) => {
-      const update = { ...g };
-      modify(update);
-      return update;
-    });
+  function makeAMove(move) {
+    const gameCopy = { ...game };
+    const result = gameCopy.move(move);
+    setGame(gameCopy);
+    return result; // null if the move was illegal, the move object if the move was legal
   }
 
   function makeRandomMove() {
@@ -105,21 +105,19 @@ export default function PlayRandomMoveEngine() {
     if (game.game_over() || game.in_draw() || possibleMoves.length === 0)
       return; // exit if the game is over
     const randomIndex = Math.floor(Math.random() * possibleMoves.length);
-    safeGameMutate((game) => {
-      game.move(possibleMoves[randomIndex]);
-    });
+    makeAMove(possibleMoves[randomIndex]);
   }
 
   function onDrop(sourceSquare, targetSquare) {
-    let move = null;
-    safeGameMutate((game) => {
-      move = game.move({
-        from: sourceSquare,
-        to: targetSquare,
-        promotion: "q", // always promote to a queen for example simplicity
-      });
+    const move = makeAMove({
+      from: sourceSquare,
+      to: targetSquare,
+      promotion: 'q' // always promote to a queen for example simplicity
     });
-    if (move === null) return false; // illegal move
+
+    // illegal move
+    if (move === null) return false;
+    
     setTimeout(makeRandomMove, 200);
     return true;
   }
@@ -157,7 +155,8 @@ For more advanced code usage examples, please see example boards shown in [`exam
 | customSquareStyles            | object: {}                                                        | inline CSS styling                                 | Custom styles for all squares.                                                                                                                                                                                                                                                                                                                                                       |
 | id                            | number: 0                                                         | [string, number]                                   | Board identifier, necessary if more than one board is mounted for drag and drop.                                                                                                                                                                                                                                                                                                     |
 | isDraggablePiece              | function: ({ piece, sourceSquare }) => true                       | returns [true, false]                              | Function called when a piece drag is attempted. Returns if piece is draggable.                                                                                                                                                                                                                                                                                                       |
-| getPositionObject             | function: (currentPosition) => {}                                 |                                                    | User function that receives current position object when position changes.                                                                                                                                                                                                                                                                                                           |
+| getPositionObject             | function: (currentPosition) => {}                                         |                                                    | User function that receives current position object when position changes.                                                                                                  |
+| onArrowsChange                | function: (squares) => {}                                         |                                                    | User function is run when arrows are set on the board.                                                                                                    |
 | onDragOverSquare              | function: (square) => {}                                          |                                                    | User function that is run when piece is dragged over a square.                                                                                                                                                                                                                                                                                                                       |
 | onMouseOutSquare              | function: (square) => {}                                          |                                                    | User function that is run when mouse leaves a square.                                                                                                                                                                                                                                                                                                                                |
 | onMouseOverSquare             | function: (square) => {}                                          |                                                    | User function that is run when mouse is over a square.                                                                                                                                                                                                                                                                                                                               |
