@@ -6847,6 +6847,7 @@ function CustomDragLayer() {
 }
 
 const Chessboard = /*#__PURE__*/forwardRef((props, ref) => {
+  const [clientWindow, setClientWindow] = useState();
   const [backendSet, setBackendSet] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const {
@@ -6857,11 +6858,13 @@ const Chessboard = /*#__PURE__*/forwardRef((props, ref) => {
   useEffect(() => {
     setIsMobile('ontouchstart' in window);
     setBackendSet(true);
+    setClientWindow(window);
   }, []);
   const backend = customDndBackend || (isMobile ? TouchBackend : HTML5Backend);
-  return backendSet && /*#__PURE__*/jsx(ErrorBoundary, {
+  return backendSet && clientWindow && /*#__PURE__*/jsx(ErrorBoundary, {
     children: /*#__PURE__*/jsx(DndProvider, {
       backend: backend,
+      context: clientWindow,
       children: /*#__PURE__*/jsxs(ChessboardProvider, {
         ref: ref,
         ...otherProps,

@@ -13,6 +13,7 @@ import { chessboardDefaultProps } from './consts';
 import { ChessboardProvider } from './context/chessboard-context';
 
 export const Chessboard = forwardRef((props, ref) => {
+  const [clientWindow, setClientWindow] = useState();
   const [backendSet, setBackendSet] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const { customDndBackend, customDndBackendOptions, ...otherProps } = props;
@@ -20,14 +21,16 @@ export const Chessboard = forwardRef((props, ref) => {
   useEffect(() => {
     setIsMobile('ontouchstart' in window);
     setBackendSet(true);
+    setClientWindow(window);
   }, []);
 
   const backend = customDndBackend || (isMobile ? TouchBackend : HTML5Backend);
 
   return (
-    backendSet && (
+    backendSet &&
+    clientWindow && (
       <ErrorBoundary>
-        <DndProvider backend={backend}>
+        <DndProvider backend={backend} context={clientWindow}>
           <ChessboardProvider ref={ref} {...otherProps}>
             <CustomDragLayer />
             <Board />
