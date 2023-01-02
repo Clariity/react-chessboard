@@ -176,26 +176,36 @@ For more advanced code usage examples, please see example boards shown in [`Stor
 
 1. Fork this repository
 2. Clone your forked repository onto your development machine
-   `git clone https://github.com/yourUsernameHere/react-chessboard.git`
-   `cd react-chessboard`
+   ```
+   git clone https://github.com/yourUsernameHere/react-chessboard.git
+   cd react-chessboard
+   ```
 3. Create a branch for your PR
-   `git checkout -b your-branch-name`
+   ```
+   git checkout -b your-branch-name
+   ```
 4. Set upstream remote
-   `git remote add upstream https://github.com/Clariity/react-chessboard.git`
+   ```
+   git remote add upstream https://github.com/Clariity/react-chessboard.git
+   ```
 5. Make your changes
-6. Test your changes using the example folder
-   `npm run build`
-   `cd example`
-   `npm start`
+6. Test your changes by running storybook
+   ```
+   npm run storybook
+   ```
 7. Push your changes
-   `git add .`
-   `git commit -m "feature/cool-new-feature"`
-   `git push --set-upstream origin your-branch-name`
+   ```
+   git add .
+   git commit -m "feature/cool-new-feature"
+   git push --set-upstream origin your-branch-name
+   ```
 8. Create pull request on GitHub
 9. Contribute again
-   `git checkout main`
-   `git pull upstream main`
-   `git checkout -b your-new-branch-name`
+   ```
+   git checkout main
+   git pull upstream main
+   git checkout -b your-new-branch-name
+   ```
 
 ## LICENSE
 
