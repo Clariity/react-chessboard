@@ -6,6 +6,7 @@
   "repository": "https://github.com/Clariity/react-chessboard",
   "license": "MIT",
   "main": "dist/index.js",
+  "type": "module",
   "files": [
     "dist"
   ],
