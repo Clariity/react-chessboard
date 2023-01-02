@@ -5,3 +5,4 @@ src
 stories
 .gitignore
 package-lock.json
+rollup.config.js
