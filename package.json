@@ -1,19 +1,16 @@
 {
   "name": "react-chessboard",
-  "version": "2.0.0",
+  "version": "2.0.2",
   "description": "The React Chessboard Library used at ChessOpenings.co.uk. Inspired and adapted from the unmaintained Chessboard.jsx.",
   "author": "Ryan Gregory <ryangregory.dev@outlook.com>",
   "repository": "https://github.com/Clariity/react-chessboard",
   "license": "MIT",
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
+  "main": "dist/index.js",
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "rm -rf /dist && npm run build:esm && npm run build:cjs",
-    "build:esm": "tsc",
-    "build:cjs": "tsc --module CommonJS --outDir dist/cjs",
+    "build": "rm -rf /dist && tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook"
