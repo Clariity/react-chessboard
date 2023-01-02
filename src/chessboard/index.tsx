@@ -9,18 +9,9 @@ import { ChessboardProvider } from "./context/chessboard-context";
 import { CustomDragLayer } from "./components/CustomDragLayer";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 
-// v1
-// need to create a v1 branch so I can continue to support that
-
-// v2
-// responsive
 // spare pieces component
-// typescript
-// storybook
 // semantic release with github actions
 // improved arrows
-// rewritten squares structure
-// commented -> jsdoc all functions
 
 // npm publish --tag alpha
 // npm publish --dry-run
