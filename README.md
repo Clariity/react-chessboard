@@ -26,7 +26,7 @@ npm i react-chessboard
 
 ## Examples
 
-[`Storybook`](https://react-chessboard.com)
+[Storybook](https://react-chessboard.com)
 
 ## Features
 
