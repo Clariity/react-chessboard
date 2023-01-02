@@ -3,6 +3,8 @@ media
 node_modules
 src
 stories
+storybook-static
 .gitignore
 package-lock.json
 rollup.config.js
+vercel.json
