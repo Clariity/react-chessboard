@@ -2,7 +2,6 @@ import peerDepsExternal from "rollup-plugin-peer-deps-external";
 import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
 import typescript from "rollup-plugin-typescript2";
-import dts from "rollup-plugin-dts";
 
 import pkg from "./package.json" assert { type: "json" };
 
@@ -27,13 +26,5 @@ export default [
       typescript({ useTsconfigDeclarationDir: true }),
     ],
     external: ["react", "react-dom"],
-  },
-  {
-    input: "src/chessboard/types/index.ts",
-    plugins: [dts()],
-    output: {
-      file: "dist/index.d.ts",
-    },
-    external: ["react"],
   },
 ];
