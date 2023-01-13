@@ -5,7 +5,7 @@ import { useChessboard } from "../context/chessboard-context";
 import { CustomPieceFn, Piece, Square } from "../types";
 
 export function CustomDragLayer() {
-  const { boardWidth, chessPieces, id, snapToCursor } = useChessboard();
+  const { boardWidth, chessPieces, customChessPieces, customChessPiecesPosition, id, snapToCursor } = useChessboard();
 
   const collectedProps = useDragLayer((monitor) => ({
     item: monitor.getItem(),
@@ -47,6 +47,30 @@ export function CustomDragLayer() {
     [boardWidth, snapToCursor]
   );
 
+  const renderPiece = () => {
+    if (
+      customChessPiecesPosition?.[item.piece] &&
+      customChessPiecesPosition[item.piece]?.[item.square] &&
+      typeof customChessPiecesPosition[item.piece]?.[item.square] === 'function'
+    ) {
+      return (customChessPiecesPosition[item.piece]?.[item.square] as CustomPieceFn)({
+        squareWidth: boardWidth / 8,
+        isDragging: true,
+      })
+    }
+    if (typeof customChessPieces[item.piece] === 'function') {
+      return (customChessPieces[item.piece] as CustomPieceFn)({
+        squareWidth: boardWidth / 8,
+        isDragging: true,
+      })
+    }
+    return (
+      <svg viewBox={"1 1 43 43"} width={boardWidth / 8} height={boardWidth / 8}>
+        <g>{chessPieces[item.piece] as ReactNode}</g>
+      </svg>
+    );
+  };
+
   return isDragging && item.id === id ? (
     <div
       style={{
@@ -58,16 +82,7 @@ export function CustomDragLayer() {
       }}
     >
       <div style={getItemStyle(clientOffset, sourceClientOffset)}>
-        {typeof chessPieces[item.piece] === "function" ? (
-          (chessPieces[item.piece] as CustomPieceFn)({
-            squareWidth: boardWidth / 8,
-            isDragging: true,
-          })
-        ) : (
-          <svg viewBox={"1 1 43 43"} width={boardWidth / 8} height={boardWidth / 8}>
-            <g>{chessPieces[item.piece] as ReactNode}</g>
-          </svg>
-        )}
+        {renderPiece()}
       </div>
     </div>
   ) : null;

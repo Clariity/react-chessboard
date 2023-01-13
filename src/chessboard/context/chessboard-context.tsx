@@ -15,7 +15,7 @@ import {
   getPositionDifferences,
   isDifferentFromStart,
 } from "../functions";
-import { BoardPosition, ChessboardProps, CustomPieces, Piece, Square } from "../types";
+import { BoardPosition, ChessboardProps, CustomPieces, CustomPiecesPosition, Piece, Square } from "../types";
 
 interface ChessboardProviderProps extends ChessboardProps {
   boardWidth: number;
@@ -61,6 +61,8 @@ interface ChessboardProviderContext {
   // Exported by context
   arrows: Square[][];
   chessPieces: CustomPieces | Record<string, ReactNode>;
+  customChessPieces: CustomPieces;
+  customChessPiecesPosition: CustomPiecesPosition | undefined;
   clearArrows: () => void;
   clearCurrentRightClickDown: () => void;
   currentPosition: BoardPosition;
@@ -97,6 +99,7 @@ export const ChessboardProvider = forwardRef(
       },
       customLightSquareStyle = { backgroundColor: "#F0D9B5" },
       customPieces,
+      customPiecesPosition,
       customPremoveDarkSquareStyle = { backgroundColor: "#A42323" },
       customPremoveLightSquareStyle = { backgroundColor: "#BD2828" },
       customSquareStyles,
@@ -147,11 +150,15 @@ export const ChessboardProvider = forwardRef(
     // current arrows
     const [arrows, setArrows] = useState<Square[][]>([]);
 
-    // chess pieces/styling
-    const [chessPieces, setChessPieces] = useState({
-      ...defaultPieces,
-      ...customPieces,
-    });
+    // chess pieces/styling default
+    const chessPieces = { ...defaultPieces };
+
+    // custom chess pieces/styling
+    const [customChessPieces, setCustomChessPieces] = useState({ ...customPieces });
+
+    // custom chess pieces/styling based on position
+    const [customChessPiecesPosition, setCustomChessPiecesPosition] =
+      useState<CustomPiecesPosition | undefined>(customPiecesPosition);
 
     // whether the last move was a manual drop or not
     const [wasManualDrop, setWasManualDrop] = useState(false);
@@ -171,7 +178,7 @@ export const ChessboardProvider = forwardRef(
 
     // handle custom pieces change
     useEffect(() => {
-      setChessPieces({ ...defaultPieces, ...customPieces });
+      setCustomChessPieces({ ...customPieces });
     }, [customPieces]);
 
     // handle external position change
@@ -182,6 +189,28 @@ export const ChessboardProvider = forwardRef(
         Object.keys(differences.added)?.length <= 2
           ? Object.entries(differences.added)?.[0]?.[1][0]
           : undefined;
+
+      const removedPiece = Object.entries(differences.removed);
+      const addedPosition = Object.entries(differences.added);
+
+      if (removedPiece.length) {
+        const newPositionChessPieces: CustomPiecesPosition = {
+          ...customChessPiecesPosition,
+        };
+        removedPiece.forEach(obj => {
+          if (newPositionChessPieces[obj[1]]?.[obj[0]]) {
+            const newAddPosition = addedPosition.find(ele => ele[1] === obj[1]);
+            if (newAddPosition) {
+              newPositionChessPieces[obj[1]] = {
+                ...newPositionChessPieces[obj[1]],
+                [newAddPosition[0]]: newPositionChessPieces[obj[1]]?.[obj[0]],
+              };
+            }
+            delete newPositionChessPieces[obj[1]]?.[obj[0]];
+          }
+        });
+        setCustomChessPiecesPosition(newPositionChessPieces);
+      }
 
       // external move has come in before animation is over
       // cancel animation and immediately update position
@@ -411,6 +440,8 @@ export const ChessboardProvider = forwardRef(
 
       arrows,
       chessPieces,
+      customChessPieces,
+      customChessPiecesPosition,
       clearArrows,
       clearCurrentRightClickDown,
       currentPosition,

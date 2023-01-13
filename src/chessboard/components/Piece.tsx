@@ -30,6 +30,8 @@ export function Piece({
     onPieceDragEnd,
     premoves,
     chessPieces,
+    customChessPieces,
+    customChessPiecesPosition,
     positionDifferences,
     isWaitingForAnimation,
     currentPosition,
@@ -166,26 +168,41 @@ export function Piece({
     };
   }
 
+  const renderPiece = () => {
+    if (
+      customChessPiecesPosition?.[piece] &&
+      customChessPiecesPosition[piece]?.[square] &&
+      typeof customChessPiecesPosition[piece]?.[square] === 'function'
+    ) {
+      return (customChessPiecesPosition[piece]?.[square] as CustomPieceFn)({
+        squareWidth: boardWidth / 8,
+        isDragging,
+      })
+    }
+    if (typeof customChessPieces[piece] === 'function') {
+      return (customChessPieces[piece] as CustomPieceFn)({
+        squareWidth: boardWidth / 8,
+        isDragging,
+      })
+    }
+    return (
+      <svg
+      viewBox={"1 1 43 43"}
+      width={boardWidth / 8}
+      height={boardWidth / 8}
+    >
+      <g>{chessPieces[piece] as ReactNode}</g>
+    </svg>
+    );
+  };
+
   return (
     <div
       ref={arePiecesDraggable ? (canDrag ? drag : null) : null}
       onClick={() => onPieceClick(piece)}
       style={pieceStyle}
     >
-      {typeof chessPieces[piece] === "function" ? (
-        (chessPieces[piece] as CustomPieceFn)({
-          squareWidth: boardWidth / 8,
-          isDragging,
-        })
-      ) : (
-        <svg
-          viewBox={"1 1 43 43"}
-          width={boardWidth / 8}
-          height={boardWidth / 8}
-        >
-          <g>{chessPieces[piece] as ReactNode}</g>
-        </svg>
-      )}
+      {renderPiece()}
     </div>
   );
 }

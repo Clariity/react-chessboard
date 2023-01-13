@@ -94,6 +94,14 @@ export type CustomPieces = {
   [key in Piece]?: CustomPieceFn;
 };
 
+export type CustomPiecesPositionObject = {
+  [key in Square | string]?: CustomPieceFn;
+};
+
+export type CustomPiecesPosition = {
+  [key in Piece]?: CustomPiecesPositionObject;
+};
+
 export type CustomSquareStyles = {
   [key in Square]?: CSSProperties;
 };
@@ -182,6 +190,11 @@ export type ChessboardProps = {
    * @default {}
    */
   customPieces?: CustomPieces;
+   /**
+   * Custom pieces position object where each key must match a corresponding chess piece (wP, wB, wN, wR, wQ, wK, bP, bB, bN, bR, bQ, bK). The value of each piece is again a object where each key must match a corresponding chess board position (a1,a2,...,a8,b1,...,h7,h8). The value of each position is a function that takes in some optional arguments to use and must return JSX to render. e.g. { wK: ({ isDragging: boolean, squareWidth: number, droppedPiece: string, targetSquare: string, sourceSquare: string }) => jsx }.
+   * @default {}
+   */
+   customPiecesPosition?: CustomPiecesPosition;
   /**
    * Custom premove dark square style object.
    * @default { backgroundColor: "#A42323" }

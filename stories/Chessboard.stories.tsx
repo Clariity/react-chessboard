@@ -408,6 +408,56 @@ export const StyledBoard = () => {
     return returnPieces;
   };
 
+  const piecesPosition = [
+    {
+      piece: 'bP',
+      positionURL: {
+        h7: `url(/custom/bP.png)`
+      }
+    },
+    {
+      piece: 'wP',
+      positionURL: {
+        b2: `url(/custom/wP.png)`,
+        f2: `url(/custom/wP_1.png)`
+      }
+    },
+    {
+      piece: 'wB',
+      positionURL: {
+        c1: `url(/custom/wB.png)`
+      }
+    }
+  ]
+
+  const renderPiece = positionURL => {
+    const renderObject = {}
+    Object.keys(positionURL).map(ele => {
+      renderObject[ele] = ({ squareWidth }) => (
+        <div
+          style={{
+            width: squareWidth,
+            height: squareWidth,
+            backgroundImage: positionURL[ele],
+            backgroundSize: '100%',
+          }}
+        ></div>
+      )
+      return null
+    })
+    return renderObject
+  }
+
+  const customPiecesPosition = () => {
+    const returnPieces = {}
+    piecesPosition.forEach(p => {
+      returnPieces[p.piece] = renderPiece(p.positionURL)
+    })
+    console.log('returnPieces', returnPieces)
+    return returnPieces
+  }
+
+
   return (
     <div style={boardWrapper}>
       <Chessboard
@@ -422,6 +472,7 @@ export const StyledBoard = () => {
         customDarkSquareStyle={{ backgroundColor: "#779952" }}
         customLightSquareStyle={{ backgroundColor: "#edeed1" }}
         customPieces={customPieces()}
+        customPiecesPosition={customPiecesPosition()}
       />
       <button
         style={buttonStyle}
