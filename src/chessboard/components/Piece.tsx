@@ -170,6 +170,7 @@ export function Piece({
     <div
       ref={arePiecesDraggable ? (canDrag ? drag : null) : null}
       onClick={() => onPieceClick(piece)}
+      data-piece={piece}
       style={pieceStyle}
     >
       {typeof chessPieces[piece] === "function" ? (
