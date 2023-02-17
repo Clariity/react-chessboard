@@ -1,4 +1,4 @@
-import { CSSProperties, ReactElement, RefObject } from "react";
+import type { CSSProperties, FC, ReactElement, ReactNode, RefObject } from "react";
 import { BackendFactory } from "dnd-core";
 
 export type Square =
@@ -82,6 +82,16 @@ export type Piece =
   | "bK";
 
 export type BoardPosition = { [square in Square]?: Piece };
+
+export type CustomSquareProps = {
+  children: ReactNode;
+  ref: RefObject<HTMLElement>;
+  square: Square;
+  squareColor: "white" | "black";
+  style: CSSProperties;
+};
+
+export type CustomSquareRenderer = FC<CustomSquareProps> | keyof JSX.IntrinsicElements;
 
 export type CustomPieceFnArgs = {
   isDragging: boolean;
@@ -192,6 +202,11 @@ export type ChessboardProps = {
    * @default { backgroundColor: "#BD2828" }
    */
   customPremoveLightSquareStyle?: CSSProperties;
+  /**
+   * Custom square renderer for all squares.
+   * @default "div"
+   */
+  customSquare?: CustomSquareRenderer;
   /**
    * Custom styles for all squares.
    * @default {}

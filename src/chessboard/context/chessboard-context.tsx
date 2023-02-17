@@ -44,6 +44,7 @@ interface ChessboardProviderContext {
   customLightSquareStyle: RequiredChessboardProps["customLightSquareStyle"];
   customPremoveDarkSquareStyle: RequiredChessboardProps["customPremoveDarkSquareStyle"];
   customPremoveLightSquareStyle: RequiredChessboardProps["customPremoveLightSquareStyle"];
+  customSquare: NonNullable<ChessboardProps["customSquare"]>;
   customSquareStyles: ChessboardProps["customSquareStyles"];
   id: RequiredChessboardProps["id"];
   isDraggablePiece: RequiredChessboardProps["isDraggablePiece"];
@@ -99,6 +100,7 @@ export const ChessboardProvider = forwardRef(
       customPieces,
       customPremoveDarkSquareStyle = { backgroundColor: "#A42323" },
       customPremoveLightSquareStyle = { backgroundColor: "#BD2828" },
+      customSquare = "div",
       customSquareStyles,
       dropOffBoardAction = "snapback",
       id = 0,
@@ -395,6 +397,7 @@ export const ChessboardProvider = forwardRef(
       customLightSquareStyle,
       customPremoveDarkSquareStyle,
       customPremoveLightSquareStyle,
+      customSquare,
       customSquareStyles,
       id,
       isDraggablePiece,
