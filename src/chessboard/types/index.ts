@@ -1,4 +1,4 @@
-import type { CSSProperties, FC, ReactElement, ReactNode, RefObject } from "react";
+import type { CSSProperties, FC, ReactElement, ReactNode, Ref, RefObject } from "react";
 import { BackendFactory } from "dnd-core";
 
 export type Square =
@@ -85,7 +85,9 @@ export type BoardPosition = { [square in Square]?: Piece };
 
 export type CustomSquareProps = {
   children: ReactNode;
-  ref: RefObject<HTMLElement>;
+  // Allow user to specify their outer element
+  // Opting not to use generics for simplicity
+  ref: Ref<any>;
   square: Square;
   squareColor: "white" | "black";
   style: CSSProperties;
