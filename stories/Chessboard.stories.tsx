@@ -479,8 +479,40 @@ const CustomSquareRenderer = forwardRef<HTMLDivElement, CustomSquareProps>((prop
   );
 });
 
-export const CustomSquare = Template.bind({});
-CustomSquare.args = {
-  id: "Custom Square",
-  customSquare: CustomSquareRenderer
+export const CustomSquare = () => {
+  // Defined outside
+
+  // const CustomSquareRenderer = forwardRef<HTMLDivElement, CustomSquareProps>((props, ref) => {
+  //   const { children, square, squareColor, style } = props;
+  
+  //   return (
+  //     <div ref={ref} style={{ ...style, position: "relative" }}>
+  //       {children}
+  //       <div
+  //         style={{
+  //           position: "absolute",
+  //           right: 0,
+  //           bottom: 0,
+  //           display: "flex",
+  //           alignItems: "center",
+  //           justifyContent: "center",
+  //           height: 16,
+  //           width: 16,
+  //           borderTopLeftRadius: 6,
+  //           backgroundColor: squareColor === "black" ? "#064e3b" : "#312e81",
+  //           color: "#fff",
+  //           fontSize: 14,
+  //         }}
+  //       >
+  //         {square}
+  //       </div>
+  //     </div>
+  //   );
+  // });
+
+  return (
+    <div style={boardWrapper}>
+      <Chessboard id="CustomSquare" customSquare={CustomSquareRenderer} />
+    </div>
+  );
 };
