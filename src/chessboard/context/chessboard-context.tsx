@@ -44,7 +44,7 @@ interface ChessboardProviderContext {
   customLightSquareStyle: RequiredChessboardProps["customLightSquareStyle"];
   customPremoveDarkSquareStyle: RequiredChessboardProps["customPremoveDarkSquareStyle"];
   customPremoveLightSquareStyle: RequiredChessboardProps["customPremoveLightSquareStyle"];
-  customSquare: NonNullable<ChessboardProps["customSquare"]>;
+  customSquare: RequiredChessboardProps["customSquare"];
   customSquareStyles: ChessboardProps["customSquareStyles"];
   id: RequiredChessboardProps["id"];
   isDraggablePiece: RequiredChessboardProps["isDraggablePiece"];
