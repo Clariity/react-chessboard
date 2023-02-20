@@ -1,8 +1,9 @@
-import React, { useRef, useState } from "react";
+import React, { forwardRef, useRef, useState } from "react";
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 import Chess from "chess.js";
 
 import { Chessboard, ClearPremoves } from "../src";
+import { CustomSquareProps } from "../src/chessboard/types";
 
 // examples
 // multiboard example https://storybook.js.org/docs/react/writing-stories/stories-for-multiple-components
@@ -443,6 +444,75 @@ export const StyledBoard = () => {
       >
         undo
       </button>
+    </div>
+  );
+};
+
+///////////////////////////////////
+////////// Custom Square ///////////
+///////////////////////////////////
+const CustomSquareRenderer = forwardRef<HTMLDivElement, CustomSquareProps>((props, ref) => {
+  const { children, square, squareColor, style } = props;
+
+  return (
+    <div ref={ref} style={{ ...style, position: "relative" }}>
+      {children}
+      <div
+        style={{
+          position: "absolute",
+          right: 0,
+          bottom: 0,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          height: 16,
+          width: 16,
+          borderTopLeftRadius: 6,
+          backgroundColor: squareColor === "black" ? "#064e3b" : "#312e81",
+          color: "#fff",
+          fontSize: 14,
+        }}
+      >
+        {square}
+      </div>
+    </div>
+  );
+});
+
+export const CustomSquare = () => {
+  // Defined outside
+
+  // const CustomSquareRenderer = forwardRef<HTMLDivElement, CustomSquareProps>((props, ref) => {
+  //   const { children, square, squareColor, style } = props;
+  
+  //   return (
+  //     <div ref={ref} style={{ ...style, position: "relative" }}>
+  //       {children}
+  //       <div
+  //         style={{
+  //           position: "absolute",
+  //           right: 0,
+  //           bottom: 0,
+  //           display: "flex",
+  //           alignItems: "center",
+  //           justifyContent: "center",
+  //           height: 16,
+  //           width: 16,
+  //           borderTopLeftRadius: 6,
+  //           backgroundColor: squareColor === "black" ? "#064e3b" : "#312e81",
+  //           color: "#fff",
+  //           fontSize: 14,
+  //         }}
+  //       >
+  //         {square}
+  //       </div>
+  //     </div>
+  //   );
+  // });
+
+  return (
+    <div style={boardWrapper}>
+      <Chessboard id="CustomSquare" customSquare={CustomSquareRenderer} />
     </div>
   );
 };

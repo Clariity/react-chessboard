@@ -19,7 +19,7 @@ export function Square({
   squareHasPremove,
   children,
 }: SquareProps) {
-  const squareRef = useRef<HTMLDivElement>(null);
+  const squareRef = useRef<HTMLElement>(null);
   const {
     boardWidth,
     boardOrientation,
@@ -31,6 +31,7 @@ export function Square({
     customLightSquareStyle,
     customPremoveDarkSquareStyle,
     customPremoveLightSquareStyle,
+    customSquare: CustomSquare,
     customSquareStyles,
     handleSetPosition,
     lastPieceColour,
@@ -120,16 +121,33 @@ export function Square({
         e.preventDefault();
       }}
     >
-      <div
-        ref={squareRef}
-        style={{
-          ...size(boardWidth),
-          ...center,
-          ...(!squareHasPremove && customSquareStyles?.[square]),
-        }}
-      >
-        {children}
-      </div>
+      {typeof CustomSquare === "string" ? (
+        <CustomSquare
+          // Type is too complex to properly evaluate, so ignore this line.
+          // @ts-ignore
+          ref={squareRef as any}
+          style={{
+            ...size(boardWidth),
+            ...center,
+            ...(!squareHasPremove && customSquareStyles?.[square]),
+          }}
+        >
+          {children}
+        </CustomSquare>
+      ) : (
+        <CustomSquare
+          ref={squareRef}
+          square={square}
+          squareColor={squareColor}
+          style={{
+            ...size(boardWidth),
+            ...center,
+            ...(!squareHasPremove && customSquareStyles?.[square]),
+          }}
+        >
+          {children}
+        </CustomSquare>
+      )}
     </div>
   );
 }
