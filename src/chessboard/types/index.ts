@@ -83,6 +83,15 @@ export type Piece =
 
 export type BoardPosition = { [square in Square]?: Piece };
 
+type promotionOption = "q" | "r" | "b" | "n";
+export type Promotion = {
+  isDialogOpen: boolean;
+  targetSquare?: Square;
+  color: "w" | "b";
+  onPromotionSelect: (piece: promotionOption) => void;
+  closePromotionDialog: () => void;
+};
+
 export type CustomSquareProps = {
   children: ReactNode;
   // Allow user to specify their outer element
@@ -303,4 +312,6 @@ export type ChessboardProps = {
    * @default true
    */
   snapToCursor?: boolean;
+
+  promotion?: Promotion;
 };

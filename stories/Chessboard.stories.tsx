@@ -1,10 +1,10 @@
-import React, { forwardRef, useRef, useState } from "react";
+import React, { forwardRef, useRef, useState, useEffect } from "react";
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 import Chess from "chess.js";
 
 import { Chessboard, ClearPremoves } from "../src";
 import { CustomSquareProps } from "../src/chessboard/types";
-
+import { useChessGame } from "../src/chessboard/hooks/useChessGame";
 // examples
 // multiboard example https://storybook.js.org/docs/react/writing-stories/stories-for-multiple-components
 
@@ -44,16 +44,10 @@ ConfigurableBoard.args = {
 ////////// PlayVsRandom ///////////
 ///////////////////////////////////
 export const PlayVsRandom = () => {
-  const [game, setGame] = useState(new Chess());
+  const { game, onMakeMove, safeGameMutate, promotion } = useChessGame(
+    new Chess("8/PPP5/2KP4/8/8/4p1k1/5ppp/8 w - - 0 1")
+  );
   const [currentTimeout, setCurrentTimeout] = useState<NodeJS.Timeout>();
-
-  function safeGameMutate(modify) {
-    setGame((g) => {
-      const update = { ...g };
-      modify(update);
-      return update;
-    });
-  }
 
   function makeRandomMove() {
     const possibleMoves = game.moves();
@@ -68,22 +62,21 @@ export const PlayVsRandom = () => {
   }
 
   function onDrop(sourceSquare, targetSquare) {
-    const gameCopy = { ...game };
-    const move = gameCopy.move({
-      from: sourceSquare,
-      to: targetSquare,
-      promotion: "q", // always promote to a queen for example simplicity
-    });
-    setGame(gameCopy);
+    const { status } = onMakeMove({ from: sourceSquare, to: targetSquare });
 
     // illegal move
-    if (move === null) return false;
+    if (status === "illegal move") return false;
 
-    // store timeout so it can be cleared on undo/reset so computer doesn't execute move
-    const newTimeout = setTimeout(makeRandomMove, 200);
-    setCurrentTimeout(newTimeout);
     return true;
   }
+
+  useEffect(() => {
+    if (game.turn() === "b") {
+      // store timeout so it can be cleared on undo/reset so computer doesn't execute move
+      const newTimeout = setTimeout(makeRandomMove, 200);
+      setCurrentTimeout(newTimeout);
+    }
+  }, [game.turn()]);
 
   return (
     <div style={boardWrapper}>
@@ -95,6 +88,7 @@ export const PlayVsRandom = () => {
           borderRadius: "4px",
           boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
         }}
+        promotion={promotion}
       />
       <button
         style={buttonStyle}
@@ -126,26 +120,21 @@ export const PlayVsRandom = () => {
 ////////// ClickToMove ///////////
 //////////////////////////////////
 export const ClickToMove = () => {
-  const [game, setGame] = useState(new Chess());
+  const { game, onMakeMove, safeGameMutate, promotion } = useChessGame(
+    new Chess("8/PPP5/2KP4/8/8/4p1k1/5ppp/8 w - - 0 1")
+  );
+
   const [moveFrom, setMoveFrom] = useState("");
   const [rightClickedSquares, setRightClickedSquares] = useState({});
   const [moveSquares, setMoveSquares] = useState({});
   const [optionSquares, setOptionSquares] = useState({});
-
-  function safeGameMutate(modify) {
-    setGame((g) => {
-      const update = { ...g };
-      modify(update);
-      return update;
-    });
-  }
-
   function getMoveOptions(square) {
     const moves = game.moves({
       square,
       verbose: true,
     });
     if (moves.length === 0) {
+      setOptionSquares({});
       return;
     }
 
@@ -193,24 +182,24 @@ export const ClickToMove = () => {
     }
 
     // attempt to make move
-    const gameCopy = { ...game };
-    const move = gameCopy.move({
+    const { status } = onMakeMove({
       from: moveFrom,
       to: square,
-      promotion: "q", // always promote to a queen for example simplicity
     });
-    setGame(gameCopy);
 
-    // if invalid, setMoveFrom and getMoveOptions
-    if (move === null) {
+    if (status === "illegal move") {
       resetFirstMove(square);
       return;
     }
-
-    setTimeout(makeRandomMove, 300);
-    setMoveFrom("");
-    setOptionSquares({});
   }
+
+  useEffect(() => {
+    if (game.turn() === "b") {
+      setTimeout(makeRandomMove, 300);
+      setMoveFrom("");
+      setOptionSquares({});
+    }
+  }, [game.turn()]);
 
   function onSquareRightClick(square) {
     const colour = "rgba(0, 0, 255, 0.4)";
@@ -233,6 +222,7 @@ export const ClickToMove = () => {
         position={game.fen()}
         onSquareClick={onSquareClick}
         onSquareRightClick={onSquareRightClick}
+        promotion={promotion}
         customBoardStyle={{
           borderRadius: "4px",
           boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
@@ -275,17 +265,12 @@ export const ClickToMove = () => {
 ////////// PremovesEnabled ///////////
 //////////////////////////////////////
 export const PremovesEnabled = () => {
-  const [game, setGame] = useState(new Chess());
+  const { game, onMakeMove, safeGameMutate, promotion } = useChessGame(
+    new Chess("8/PPP5/2KP4/8/8/4p1k1/5ppp/8 w - - 0 1")
+  );
+
   const [currentTimeout, setCurrentTimeout] = useState<NodeJS.Timeout>();
   const chessboardRef = useRef<ClearPremoves>(null);
-
-  function safeGameMutate(modify) {
-    setGame((g) => {
-      const update = { ...g };
-      modify(update);
-      return update;
-    });
-  }
 
   function makeRandomMove() {
     const possibleMoves = game.moves();
@@ -300,22 +285,22 @@ export const PremovesEnabled = () => {
   }
 
   function onDrop(sourceSquare, targetSquare) {
-    const gameCopy = { ...game };
-    const move = gameCopy.move({
-      from: sourceSquare,
-      to: targetSquare,
-      promotion: "q", // always promote to a queen for example simplicity
-    });
-    setGame(gameCopy);
+    const { status } = onMakeMove({ from: sourceSquare, to: targetSquare });
 
     // illegal move
-    if (move === null) return false;
+    if (status === "illegal move") return false;
 
     // store timeout so it can be cleared on undo/reset so computer doesn't execute move
-    const newTimeout = setTimeout(makeRandomMove, 2000);
-    setCurrentTimeout(newTimeout);
+
     return true;
   }
+
+  useEffect(() => {
+    if (game.turn() === "b") {
+      const newTimeout = setTimeout(makeRandomMove, 2000);
+      setCurrentTimeout(newTimeout);
+    }
+  }, [game.turn()]);
 
   return (
     <div style={boardWrapper}>
@@ -330,6 +315,7 @@ export const PremovesEnabled = () => {
           boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
         }}
         ref={chessboardRef}
+        promotion={promotion}
       />
       <button
         style={buttonStyle}
@@ -451,40 +437,42 @@ export const StyledBoard = () => {
 ///////////////////////////////////
 ////////// Custom Square ///////////
 ///////////////////////////////////
-const CustomSquareRenderer = forwardRef<HTMLDivElement, CustomSquareProps>((props, ref) => {
-  const { children, square, squareColor, style } = props;
+const CustomSquareRenderer = forwardRef<HTMLDivElement, CustomSquareProps>(
+  (props, ref) => {
+    const { children, square, squareColor, style } = props;
 
-  return (
-    <div ref={ref} style={{ ...style, position: "relative" }}>
-      {children}
-      <div
-        style={{
-          position: "absolute",
-          right: 0,
-          bottom: 0,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          height: 16,
-          width: 16,
-          borderTopLeftRadius: 6,
-          backgroundColor: squareColor === "black" ? "#064e3b" : "#312e81",
-          color: "#fff",
-          fontSize: 14,
-        }}
-      >
-        {square}
+    return (
+      <div ref={ref} style={{ ...style, position: "relative" }}>
+        {children}
+        <div
+          style={{
+            position: "absolute",
+            right: 0,
+            bottom: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            height: 16,
+            width: 16,
+            borderTopLeftRadius: 6,
+            backgroundColor: squareColor === "black" ? "#064e3b" : "#312e81",
+            color: "#fff",
+            fontSize: 14,
+          }}
+        >
+          {square}
+        </div>
       </div>
-    </div>
-  );
-});
+    );
+  }
+);
 
 export const CustomSquare = () => {
   // Defined outside
 
   // const CustomSquareRenderer = forwardRef<HTMLDivElement, CustomSquareProps>((props, ref) => {
   //   const { children, square, squareColor, style } = props;
-  
+
   //   return (
   //     <div ref={ref} style={{ ...style, position: "relative" }}>
   //       {children}

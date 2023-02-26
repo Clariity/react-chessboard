@@ -43,6 +43,7 @@ export function Square({
     onRightClickUp,
     onSquareClick,
     isWaitingForAnimation,
+    promotion,
   } = useChessboard();
 
   const [{ isOver }, drop] = useDrop(
@@ -54,13 +55,7 @@ export function Square({
         isOver: !!monitor.isOver(),
       }),
     }),
-    [
-      square,
-      currentPosition,
-      onPieceDrop,
-      isWaitingForAnimation,
-      lastPieceColour,
-    ]
+    [square, currentPosition, onPieceDrop, isWaitingForAnimation, lastPieceColour]
   );
 
   useEffect(() => {
@@ -72,9 +67,7 @@ export function Square({
 
   const defaultSquareStyle = {
     ...borderRadius(square, boardOrientation, customBoardStyle),
-    ...(squareColor === "black"
-      ? customDarkSquareStyle
-      : customLightSquareStyle),
+    ...(squareColor === "black" ? customDarkSquareStyle : customLightSquareStyle),
     ...(squareHasPremove &&
       (squareColor === "black"
         ? customPremoveDarkSquareStyle
@@ -90,20 +83,12 @@ export function Square({
       data-square={square}
       onMouseOver={(e) => {
         // noop if moving from child of square into square.
-        if (
-          e.relatedTarget &&
-          e.currentTarget.contains(e.relatedTarget as Node)
-        )
-          return;
+        if (e.relatedTarget && e.currentTarget.contains(e.relatedTarget as Node)) return;
         onMouseOverSquare(square);
       }}
       onMouseOut={(e) => {
         // noop if moving from square into a child of square.
-        if (
-          e.relatedTarget &&
-          e.currentTarget.contains(e.relatedTarget as Node)
-        )
-          return;
+        if (e.relatedTarget && e.currentTarget.contains(e.relatedTarget as Node)) return;
         onMouseOutSquare(square);
       }}
       onMouseDown={(e) => {
@@ -116,6 +101,9 @@ export function Square({
       onClick={() => {
         onSquareClick(square);
         clearArrows();
+        if (promotion.isDialogOpen) {
+          promotion.closePromotionDialog();
+        }
       }}
       onContextMenu={(e) => {
         e.preventDefault();

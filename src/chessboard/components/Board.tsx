@@ -4,6 +4,7 @@ import { getRelativeCoords } from "../functions";
 import { Squares } from "./Squares";
 import { useChessboard } from "../context/chessboard-context";
 import { WhiteKing } from "./ErrorBoundary";
+import { SelectPromotionDialog } from "./SelectPromotionDialog";
 
 export function Board() {
   const boardRef = useRef<HTMLDivElement>(null);
@@ -14,14 +15,12 @@ export function Board() {
     boardWidth,
     clearCurrentRightClickDown,
     customArrowColor,
+    promotion,
   } = useChessboard();
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (
-        boardRef.current &&
-        !boardRef.current.contains(event.target as Node)
-      ) {
+      if (boardRef.current && !boardRef.current.contains(event.target as Node)) {
         clearCurrentRightClickDown();
       }
     }
@@ -47,11 +46,7 @@ export function Board() {
         }}
       >
         {arrows.map((arrow) => {
-          const from = getRelativeCoords(
-            boardOrientation,
-            boardWidth,
-            arrow[0]
-          );
+          const from = getRelativeCoords(boardOrientation, boardWidth, arrow[0]);
           const to = getRelativeCoords(boardOrientation, boardWidth, arrow[1]);
 
           return (
@@ -86,6 +81,19 @@ export function Board() {
           );
         })}
       </svg>
+      {promotion.isDialogOpen && (
+        <SelectPromotionDialog
+          onChange={(option: any) => {
+            if (promotion) {
+              promotion.onPromotionSelect(option);
+            }
+          }}
+          popupCoords={
+            promotion.targetSquare &&
+            getRelativeCoords(boardOrientation, boardWidth, promotion.targetSquare)
+          }
+        />
+      )}
     </div>
   ) : (
     <WhiteKing />

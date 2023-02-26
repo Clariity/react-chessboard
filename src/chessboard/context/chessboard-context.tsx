@@ -58,6 +58,7 @@ interface ChessboardProviderContext {
   onSquareClick: RequiredChessboardProps["onSquareClick"];
   showBoardNotation: RequiredChessboardProps["showBoardNotation"];
   snapToCursor: RequiredChessboardProps["snapToCursor"];
+  promotion: RequiredChessboardProps["promotion"];
 
   // Exported by context
   arrows: Square[][];
@@ -119,6 +120,12 @@ export const ChessboardProvider = forwardRef(
       position = "start",
       showBoardNotation = true,
       snapToCursor = true,
+      promotion = {
+        isDialogOpen: false,
+        onPromotionSelect: () => {},
+        closePromotionDialog: () => {},
+        color: "w",
+      },
     }: ChessboardProviderProps,
     ref
   ) => {
@@ -424,6 +431,7 @@ export const ChessboardProvider = forwardRef(
       positionDifferences,
       premoves,
       isWaitingForAnimation,
+      promotion,
     };
 
     return (
