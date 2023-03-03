@@ -146,7 +146,7 @@ export const ClickToMove = () => {
       verbose: true,
     });
     if (moves.length === 0) {
-      return;
+      return false;
     }
 
     const newSquares = {};
@@ -164,6 +164,7 @@ export const ClickToMove = () => {
       background: "rgba(255, 255, 0, 0.4)",
     };
     setOptionSquares(newSquares);
+    return true;
   }
 
   function makeRandomMove() {
@@ -182,8 +183,8 @@ export const ClickToMove = () => {
     setRightClickedSquares({});
 
     function resetFirstMove(square) {
-      setMoveFrom(square);
-      getMoveOptions(square);
+      const hasOptions = getMoveOptions(square);
+      if (hasOptions) setMoveFrom(square);
     }
 
     // from square
