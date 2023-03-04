@@ -5,6 +5,9 @@ import Chess from "chess.js";
 import { Chessboard, ClearPremoves } from "../src";
 import { CustomSquareProps } from "../src/chessboard/types";
 import { useChessGame } from "../src/chessboard/hooks/useChessGame";
+import { usePromotion, Move } from "../src/chessboard/hooks/usePromotion";
+import { Piece, Square } from "../src/chessboard/types";
+
 // examples
 // multiboard example https://storybook.js.org/docs/react/writing-stories/stories-for-multiple-components
 
@@ -22,6 +25,13 @@ const boardWrapper = {
   width: `70vw`,
   maxWidth: "70vh",
   margin: "3rem auto",
+};
+const pieceObjectToPieceNotation = (pieceObject: {
+  type: string;
+  color: "w" | "b";
+}): Piece => {
+  if (!pieceObject) return;
+  return (pieceObject.color + pieceObject.type.toUpperCase()) as Piece;
 };
 
 export default {
@@ -43,11 +53,34 @@ ConfigurableBoard.args = {
 ///////////////////////////////////
 ////////// PlayVsRandom ///////////
 ///////////////////////////////////
+
 export const PlayVsRandom = () => {
-  const { game, onMakeMove, safeGameMutate, promotion } = useChessGame(
-    new Chess("8/PPP5/2KP4/8/8/4p1k1/5ppp/8 w - - 0 1")
-  );
+  const [game, setGame] = useState(new Chess("8/PPP5/2KP4/8/8/4p1k1/5ppp/8 w - - 0 1"));
+  function onMakeMove({ from, to, promotion }: Move): boolean {
+    const gameCopy = { ...game };
+    const move = gameCopy.move({ from, to, promotion });
+    setGame(gameCopy);
+
+    // illegal move
+    if (move === null) return false;
+
+    // legal move
+    return true;
+  }
+
+  const { handleMoveWithPossiblePromotion, promotion } = usePromotion({
+    onMakeMove,
+  });
+
   const [currentTimeout, setCurrentTimeout] = useState<NodeJS.Timeout>();
+
+  function safeGameMutate(modify) {
+    setGame((g) => {
+      const update = { ...g };
+      modify(update);
+      return update;
+    });
+  }
 
   function makeRandomMove() {
     const possibleMoves = game.moves();
@@ -62,12 +95,14 @@ export const PlayVsRandom = () => {
   }
 
   function onDrop(sourceSquare, targetSquare) {
-    const { status } = onMakeMove({ from: sourceSquare, to: targetSquare });
+    const pieceObject = game.get(sourceSquare);
+    const { status: moveStatus } = handleMoveWithPossiblePromotion({
+      from: sourceSquare,
+      to: targetSquare,
+      piece: pieceObjectToPieceNotation(pieceObject),
+    });
 
-    // illegal move
-    if (status === "illegal move") return false;
-
-    return true;
+    return moveStatus === "success";
   }
 
   useEffect(() => {
@@ -120,11 +155,24 @@ export const PlayVsRandom = () => {
 ////////// ClickToMove ///////////
 //////////////////////////////////
 export const ClickToMove = () => {
-  const { game, onMakeMove, safeGameMutate, promotion } = useChessGame(
-    new Chess("8/PPP5/2KP4/8/8/4p1k1/5ppp/8 w - - 0 1")
-  );
+  const [game, setGame] = useState(new Chess("8/PPP5/2KP4/8/8/4p1k1/5ppp/8 b - - 0 1"));
+  function onMakeMove({ from, to, promotion }: Move): boolean {
+    const gameCopy = { ...game };
+    const move = gameCopy.move({ from, to, promotion });
+    setGame(gameCopy);
 
-  const [moveFrom, setMoveFrom] = useState("");
+    // illegal move
+    if (move === null) return false;
+
+    // legal move
+    return true;
+  }
+
+  const { handleMoveWithPossiblePromotion, promotion } = usePromotion({
+    onMakeMove,
+  });
+
+  const [moveFrom, setMoveFrom] = useState<Square | undefined>(undefined);
   const [rightClickedSquares, setRightClickedSquares] = useState({});
   const [moveSquares, setMoveSquares] = useState({});
   const [optionSquares, setOptionSquares] = useState({});
@@ -155,6 +203,14 @@ export const ClickToMove = () => {
     setOptionSquares(newSquares);
   }
 
+  function safeGameMutate(modify) {
+    setGame((g) => {
+      const update = { ...g };
+      modify(update);
+      return update;
+    });
+  }
+
   function makeRandomMove() {
     const possibleMoves = game.moves();
 
@@ -181,10 +237,17 @@ export const ClickToMove = () => {
       return;
     }
 
+    if (moveFrom === square) {
+      setMoveFrom(undefined);
+      setOptionSquares({});
+      return;
+    }
     // attempt to make move
-    const { status } = onMakeMove({
+    const pieceObject = game.get(moveFrom);
+    const { status } = handleMoveWithPossiblePromotion({
       from: moveFrom,
       to: square,
+      piece: pieceObjectToPieceNotation(pieceObject),
     });
 
     if (status === "illegal move") {
@@ -194,9 +257,9 @@ export const ClickToMove = () => {
   }
 
   useEffect(() => {
-    if (game.turn() === "b") {
+    if (game.turn() === "w") {
       setTimeout(makeRandomMove, 300);
-      setMoveFrom("");
+      setMoveFrom(undefined);
       setOptionSquares({});
     }
   }, [game.turn()]);
@@ -265,12 +328,32 @@ export const ClickToMove = () => {
 ////////// PremovesEnabled ///////////
 //////////////////////////////////////
 export const PremovesEnabled = () => {
-  const { game, onMakeMove, safeGameMutate, promotion } = useChessGame(
-    new Chess("8/PPP5/2KP4/8/8/4p1k1/5ppp/8 w - - 0 1")
-  );
-
+  const [game, setGame] = useState(new Chess("8/PPP5/2KP4/8/8/4p1k1/5ppp/8 w - - 0 1"));
   const [currentTimeout, setCurrentTimeout] = useState<NodeJS.Timeout>();
   const chessboardRef = useRef<ClearPremoves>(null);
+
+  function onMakeMove({ from, to, promotion }: Move): boolean {
+    const gameCopy = { ...game };
+    const move = gameCopy.move({ from, to, promotion });
+    setGame(gameCopy);
+
+    // illegal move
+    if (move === null) return false;
+
+    // legal move
+    return true;
+  }
+
+  const { handleMoveWithPossiblePromotion, promotion } = usePromotion({
+    onMakeMove,
+  });
+  function safeGameMutate(modify) {
+    setGame((g) => {
+      const update = { ...g };
+      modify(update);
+      return update;
+    });
+  }
 
   function makeRandomMove() {
     const possibleMoves = game.moves();
@@ -285,7 +368,12 @@ export const PremovesEnabled = () => {
   }
 
   function onDrop(sourceSquare, targetSquare) {
-    const { status } = onMakeMove({ from: sourceSquare, to: targetSquare });
+    const pieceObject = game.get(sourceSquare);
+    const { status } = handleMoveWithPossiblePromotion({
+      from: sourceSquare,
+      to: targetSquare,
+      piece: pieceObjectToPieceNotation(pieceObject),
+    });
 
     // illegal move
     if (status === "illegal move") return false;

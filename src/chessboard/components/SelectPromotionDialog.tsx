@@ -1,47 +1,105 @@
-import React from "react";
+import { useState } from "react";
 import { useChessboard } from "../context/chessboard-context";
+import { PromotionOption } from "../types";
+
+const PromotionOptionSquare = ({
+  style,
+  onClick,
+  width,
+  pieceIcon,
+  option,
+}: {
+  style: any;
+  width: number;
+  pieceIcon: any;
+  option: PromotionOption;
+  onClick: (option: PromotionOption) => void;
+}) => {
+  const [hoverStyle, setStyleOnHoverEvent] = useState({
+    ...style,
+    backgroundColor: `${style.backgroundColor}50`,
+    transition: "all 0.3s ease-out",
+  });
+
+  const handleMouseEnter = () => {
+    setStyleOnHoverEvent({
+      ...hoverStyle,
+      transform: "scale(1.05)",
+      backgroundColor: `${style.backgroundColor}`,
+    });
+  };
+  const handleMouseLeave = () => {
+    setStyleOnHoverEvent({
+      ...hoverStyle,
+      transform: "scale(1)",
+      backgroundColor: `${style.backgroundColor}50`,
+    });
+  };
+
+  return (
+    <div
+      style={hoverStyle}
+      onClick={() => onClick(option)}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      <svg viewBox={"1 1 43 43"} width={width} height={width}>
+        {/* @ts-ignore */}
+        <g>{pieceIcon}</g>
+      </svg>
+    </div>
+  );
+};
 
 export const SelectPromotionDialog = ({
-  onChange,
+  handlePromotion,
   popupCoords,
 }: {
-  onChange: any;
-  popupCoords: any;
+  handlePromotion: (piece: PromotionOption) => void;
+  popupCoords: { x: number; y: number } | undefined;
 }) => {
-  const promotionoptions = ["q", "r", "n", "b"];
+  const promotionOptions: PromotionOption[] = ["q", "r", "n", "b"];
   const {
     boardWidth,
-
     chessPieces,
-    promotion: { color = "w" },
+    promotion: { piece },
+    customDarkSquareStyle,
+    customLightSquareStyle,
   } = useChessboard();
-  console.log({ color });
+
   return (
     <div
       style={{
         position: "absolute",
         display: "grid",
-        width: "100px",
-        height: "100px",
-        top: `${popupCoords.y}px`,
-        left: `${popupCoords.x}px`,
+        width: boardWidth / 4,
+        height: boardWidth / 4,
+        top: `${popupCoords?.y}px`,
+        left: `${popupCoords?.x}px`,
         zIndex: 100,
         gridTemplateColumns: "1fr 1fr",
         transform: "translate(-50px, -50px)",
       }}
     >
-      {promotionoptions.map((option) => (
-        <div
-          style={optionStyles(boardWidth)}
-          key={option}
-          onClick={() => onChange(option)}
-        >
-          <svg viewBox={"1 1 43 43"} width={boardWidth / 8} height={boardWidth / 8}>
-            {/* @ts-ignore */}
-            <g>{chessPieces[color + option.toUpperCase()]}</g>
-          </svg>
-        </div>
-      ))}
+      {promotionOptions.map((option, i) => {
+        const { backgroundColor } =
+          i === 0 || i === 3 ? customDarkSquareStyle : customLightSquareStyle;
+
+        return (
+          <PromotionOptionSquare
+            style={{
+              ...optionStyles(boardWidth),
+              backgroundColor,
+            }}
+            key={option}
+            option={option}
+            width={boardWidth / 8}
+            onClick={() => handlePromotion(option)}
+            //  @ts-ignore
+            pieceIcon={chessPieces[piece[0] + option.toUpperCase()]}
+          />
+        );
+      })}
     </div>
   );
 };
@@ -50,5 +108,5 @@ const optionStyles = (width: number) => ({
   cursor: "pointer",
   height: width / 8,
   width: width / 8,
-  background: "rgb(89 210 80 / 54%)",
+  boxShadow: "2px 2px 10px 0px rgba(34, 60, 80, 0.2)",
 });

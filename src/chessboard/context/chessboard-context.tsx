@@ -124,7 +124,6 @@ export const ChessboardProvider = forwardRef(
         isDialogOpen: false,
         onPromotionSelect: () => {},
         closePromotionDialog: () => {},
-        color: "w",
       },
     }: ChessboardProviderProps,
     ref

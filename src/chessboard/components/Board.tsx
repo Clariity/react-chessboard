@@ -2,6 +2,7 @@ import { Fragment, useRef, useEffect } from "react";
 
 import { getRelativeCoords } from "../functions";
 import { Squares } from "./Squares";
+import { PromotionOption } from "../types";
 import { useChessboard } from "../context/chessboard-context";
 import { WhiteKing } from "./ErrorBoundary";
 import { SelectPromotionDialog } from "./SelectPromotionDialog";
@@ -83,7 +84,7 @@ export function Board() {
       </svg>
       {promotion.isDialogOpen && (
         <SelectPromotionDialog
-          onChange={(option: any) => {
+          handlePromotion={(option: PromotionOption) => {
             if (promotion) {
               promotion.onPromotionSelect(option);
             }
