@@ -4,7 +4,6 @@ import Chess from "chess.js";
 
 import { Chessboard, ClearPremoves } from "../src";
 import { CustomSquareProps } from "../src/chessboard/types";
-import { useChessGame } from "../src/chessboard/hooks/useChessGame";
 import { usePromotion, Move } from "../src/chessboard/hooks/usePromotion";
 import { Piece, Square } from "../src/chessboard/types";
 
@@ -55,7 +54,7 @@ ConfigurableBoard.args = {
 ///////////////////////////////////
 
 export const PlayVsRandom = () => {
-  const [game, setGame] = useState(new Chess("8/PPP5/2KP4/8/8/4p1k1/5ppp/8 w - - 0 1"));
+  const [game, setGame] = useState(new Chess());
   function onMakeMove({ from, to, promotion }: Move): boolean {
     const gameCopy = { ...game };
     const move = gameCopy.move({ from, to, promotion });
@@ -140,6 +139,7 @@ export const PlayVsRandom = () => {
         style={buttonStyle}
         onClick={() => {
           safeGameMutate((game) => {
+            game.undo();
             game.undo();
           });
           clearTimeout(currentTimeout);
@@ -376,7 +376,7 @@ export const PremovesEnabled = () => {
     });
 
     // illegal move
-    if (status === "illegal move") return false;
+    if (status === "illegal move" || status === "need promotion") return false;
 
     // store timeout so it can be cleared on undo/reset so computer doesn't execute move
 
