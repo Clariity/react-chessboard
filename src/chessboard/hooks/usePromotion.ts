@@ -31,10 +31,21 @@ const possiblePromotionFilesFromFile = new Map<string, Array<string>>([
   ["h", ["g", "h"]],
 ]);
 
+const getValidPawnMovesDefault = (square: Square): Array<Square> => {
+  const [squareFile, squareLine] = square;
+  const possibleFiles = possiblePromotionFilesFromFile.get(squareFile);
+  const possibleLine = Number(squareLine) === 7 ? 8 : 1;
+  if (!possibleFiles) return [];
+
+  return possibleFiles.map((file: string) => (file + possibleLine) as Square);
+};
+
 export const usePromotion = ({
   onMakeMove,
+  getValidPawnMoves = getValidPawnMovesDefault,
 }: {
   onMakeMove: (move: Move) => boolean;
+  getValidPawnMoves?: (square: Square) => Array<Square>;
 }): {
   handleMoveWithPossiblePromotion: HandleMoveWithPossiblePromotion;
   promotion: Promotion;
@@ -50,10 +61,11 @@ export const usePromotion = ({
     const [pieceColor, pieceType] = piece;
     if (pieceType !== "P") return false;
 
-    const [targetFile, targetLine] = targetSquare;
-    const [fromFile, fromLine] = fromSquare;
+    const [, targetLine] = targetSquare;
+    const [, fromLine] = fromSquare;
+    const isPromotionValidMove = getValidPawnMoves?.(fromSquare).includes(targetSquare);
 
-    if (!possiblePromotionFilesFromFile.get(fromFile)?.includes(targetFile)) {
+    if (!isPromotionValidMove) {
       return false;
     }
 
@@ -67,6 +79,7 @@ export const usePromotion = ({
     return false;
   };
 
+  // function closes promotion dialog
   const closePromotionDialog = () => setPromotion({ isDialogOpen: false });
 
   //function for handling user's promotion choice
@@ -93,6 +106,8 @@ export const usePromotion = ({
         promotion: newPiece,
         piece,
       });
+
+      setPromotion({ isDialogOpen: false });
     }
   }, [promotion.newPiece]);
 
@@ -128,6 +143,7 @@ export const usePromotion = ({
       closePromotionDialog,
       isDialogOpen: Boolean(promotion.isDialogOpen),
       targetSquare: promotion.targetSquare,
+      fromSquare: promotion.fromSquare,
       piece: promotion.piece,
     },
   };

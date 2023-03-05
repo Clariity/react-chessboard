@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, ReactNode, CSSProperties } from "react";
 import { useChessboard } from "../context/chessboard-context";
-import { PromotionOption } from "../types";
+import { PromotionOption, CustomPieces } from "../types";
 
 const PromotionOptionSquare = ({
   style,
@@ -9,9 +9,9 @@ const PromotionOptionSquare = ({
   pieceIcon,
   option,
 }: {
-  style: any;
+  style: CSSProperties;
   width: number;
-  pieceIcon: any;
+  pieceIcon: CustomPieces | Record<string, ReactNode>;
   option: PromotionOption;
   onClick: (option: PromotionOption) => void;
 }) => {
@@ -78,7 +78,7 @@ export const SelectPromotionDialog = ({
         left: `${popupCoords?.x}px`,
         zIndex: 100,
         gridTemplateColumns: "1fr 1fr",
-        transform: "translate(-50px, -50px)",
+        transform: `translate(${-boardWidth / 8}px, ${-boardWidth / 8}px)`,
       }}
     >
       {promotionOptions.map((option, i) => {

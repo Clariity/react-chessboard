@@ -54,7 +54,9 @@ ConfigurableBoard.args = {
 ///////////////////////////////////
 
 export const PlayVsRandom = () => {
-  const [game, setGame] = useState(new Chess());
+  const [game, setGame] = useState(
+    new Chess("3nN3/PPP1PP2/2KP4/8/8/4p1k1/5ppp/8 w - - 0 1")
+  );
   function onMakeMove({ from, to, promotion }: Move): boolean {
     const gameCopy = { ...game };
     const move = gameCopy.move({ from, to, promotion });
@@ -69,6 +71,8 @@ export const PlayVsRandom = () => {
 
   const { handleMoveWithPossiblePromotion, promotion } = usePromotion({
     onMakeMove,
+    getValidPawnMoves: (square) =>
+      game.moves({ square, verbose: true }).map((move) => move.to),
   });
 
   const [currentTimeout, setCurrentTimeout] = useState<NodeJS.Timeout>();
@@ -156,6 +160,19 @@ export const PlayVsRandom = () => {
 //////////////////////////////////
 export const ClickToMove = () => {
   const [game, setGame] = useState(new Chess("8/PPP5/2KP4/8/8/4p1k1/5ppp/8 b - - 0 1"));
+  const [moveFrom, setMoveFrom] = useState<Square | undefined>(undefined);
+  const [rightClickedSquares, setRightClickedSquares] = useState({});
+  const [moveSquares, setMoveSquares] = useState({});
+  const [optionSquares, setOptionSquares] = useState({});
+
+  function safeGameMutate(modify) {
+    setGame((g) => {
+      const update = { ...g };
+      modify(update);
+      return update;
+    });
+  }
+
   function onMakeMove({ from, to, promotion }: Move): boolean {
     const gameCopy = { ...game };
     const move = gameCopy.move({ from, to, promotion });
@@ -170,12 +187,10 @@ export const ClickToMove = () => {
 
   const { handleMoveWithPossiblePromotion, promotion } = usePromotion({
     onMakeMove,
+    getValidPawnMoves: (square) =>
+      game.moves({ square, verbose: true }).map((move) => move.to),
   });
 
-  const [moveFrom, setMoveFrom] = useState<Square | undefined>(undefined);
-  const [rightClickedSquares, setRightClickedSquares] = useState({});
-  const [moveSquares, setMoveSquares] = useState({});
-  const [optionSquares, setOptionSquares] = useState({});
   function getMoveOptions(square) {
     const moves = game.moves({
       square,
@@ -201,14 +216,6 @@ export const ClickToMove = () => {
       background: "rgba(255, 255, 0, 0.4)",
     };
     setOptionSquares(newSquares);
-  }
-
-  function safeGameMutate(modify) {
-    setGame((g) => {
-      const update = { ...g };
-      modify(update);
-      return update;
-    });
   }
 
   function makeRandomMove() {
@@ -283,6 +290,7 @@ export const ClickToMove = () => {
         animationDuration={200}
         arePiecesDraggable={false}
         position={game.fen()}
+        boardOrientation={"black"}
         onSquareClick={onSquareClick}
         onSquareRightClick={onSquareRightClick}
         promotion={promotion}
@@ -375,16 +383,12 @@ export const PremovesEnabled = () => {
       piece: pieceObjectToPieceNotation(pieceObject),
     });
 
-    // illegal move
-    if (status === "illegal move" || status === "need promotion") return false;
-
-    // store timeout so it can be cleared on undo/reset so computer doesn't execute move
-
-    return true;
+    return status !== "illegal move";
   }
 
   useEffect(() => {
     if (game.turn() === "b") {
+      // store timeout so it can be cleared on undo/reset so computer doesn't execute move
       const newTimeout = setTimeout(makeRandomMove, 2000);
       setCurrentTimeout(newTimeout);
     }

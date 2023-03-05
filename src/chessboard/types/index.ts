@@ -86,6 +86,7 @@ export type BoardPosition = { [square in Square]?: Piece };
 export type PromotionOption = "q" | "r" | "b" | "n";
 export type Promotion = {
   isDialogOpen: boolean;
+  fromSquare?: Square;
   targetSquare?: Square;
   piece?: Piece;
   onPromotionSelect: (piece: PromotionOption) => void;

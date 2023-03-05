@@ -75,6 +75,9 @@ export function Square({
     ...(isOver && customDropSquareStyle),
   };
 
+  const isSquarePawnWaitingForPromotion = promotion?.fromSquare === square;
+  const isSquarePawnsPromotionDestination = promotion?.targetSquare === square;
+
   return (
     <div
       ref={drop}
@@ -118,9 +121,12 @@ export function Square({
             ...size(boardWidth),
             ...center,
             ...(!squareHasPremove && customSquareStyles?.[square]),
+            //TODO make styles customizable
+            ...((isSquarePawnWaitingForPromotion ||
+              isSquarePawnsPromotionDestination) && { background: "#d790d5a8" }),
           }}
         >
-          {children}
+          {!isSquarePawnWaitingForPromotion && children}
         </CustomSquare>
       ) : (
         <CustomSquare
@@ -133,7 +139,7 @@ export function Square({
             ...(!squareHasPremove && customSquareStyles?.[square]),
           }}
         >
-          {children}
+          {!isSquarePawnWaitingForPromotion && children}
         </CustomSquare>
       )}
     </div>
