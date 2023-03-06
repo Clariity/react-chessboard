@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useState, useEffect } from "react";
+import React, { forwardRef, useRef, useState, useEffect, useCallback } from "react";
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 import Chess from "chess.js";
 
@@ -57,7 +57,9 @@ export const PlayVsRandom = () => {
   const [game, setGame] = useState(
     new Chess("3nN3/PPP1PP2/2KP4/8/8/4p1k1/5ppp/8 w - - 0 1")
   );
-  function onMakeMove({ from, to, promotion }: Move): boolean {
+  const [autoPromoteToQueen, setAutoPromoteToQuenn] = useState(false);
+
+  const onMakeMove = useCallback(({ from, to, promotion }: Move): boolean => {
     const gameCopy = { ...game };
     const move = gameCopy.move({ from, to, promotion });
     setGame(gameCopy);
@@ -67,12 +69,13 @@ export const PlayVsRandom = () => {
 
     // legal move
     return true;
-  }
+  }, []);
 
   const { handleMoveWithPossiblePromotion, promotion } = usePromotion({
     onMakeMove,
     getValidPawnMoves: (square) =>
       game.moves({ square, verbose: true }).map((move) => move.to),
+    autoPromoteToQueen,
   });
 
   const [currentTimeout, setCurrentTimeout] = useState<NodeJS.Timeout>();
@@ -151,6 +154,17 @@ export const PlayVsRandom = () => {
       >
         undo
       </button>
+      <button
+        style={{
+          ...buttonStyle,
+          ...(autoPromoteToQueen && { backgroundColor: "#b58863" }),
+        }}
+        onClick={() => {
+          setAutoPromoteToQuenn(!autoPromoteToQueen);
+        }}
+      >
+        Auto-promote to Queen: {autoPromoteToQueen ? "On" : "Off"}
+      </button>
     </div>
   );
 };
@@ -164,6 +178,7 @@ export const ClickToMove = () => {
   const [rightClickedSquares, setRightClickedSquares] = useState({});
   const [moveSquares, setMoveSquares] = useState({});
   const [optionSquares, setOptionSquares] = useState({});
+  const [autoPromoteToQueen, setAutoPromoteToQuenn] = useState(false);
 
   function safeGameMutate(modify) {
     setGame((g) => {
@@ -189,6 +204,7 @@ export const ClickToMove = () => {
     onMakeMove,
     getValidPawnMoves: (square) =>
       game.moves({ square, verbose: true }).map((move) => move.to),
+    autoPromoteToQueen,
   });
 
   function getMoveOptions(square) {
@@ -328,6 +344,17 @@ export const ClickToMove = () => {
       >
         undo
       </button>
+      <button
+        style={{
+          ...buttonStyle,
+          ...(autoPromoteToQueen && { backgroundColor: "#b58863" }),
+        }}
+        onClick={() => {
+          setAutoPromoteToQuenn(!autoPromoteToQueen);
+        }}
+      >
+        Auto-promote to Queen: {autoPromoteToQueen ? "On" : "Off"}
+      </button>
     </div>
   );
 };
@@ -339,6 +366,7 @@ export const PremovesEnabled = () => {
   const [game, setGame] = useState(new Chess("8/PPP5/2KP4/8/8/4p1k1/5ppp/8 w - - 0 1"));
   const [currentTimeout, setCurrentTimeout] = useState<NodeJS.Timeout>();
   const chessboardRef = useRef<ClearPremoves>(null);
+  const [autoPromoteToQueen, setAutoPromoteToQuenn] = useState(false);
 
   function onMakeMove({ from, to, promotion }: Move): boolean {
     const gameCopy = { ...game };
@@ -354,6 +382,7 @@ export const PremovesEnabled = () => {
 
   const { handleMoveWithPossiblePromotion, promotion } = usePromotion({
     onMakeMove,
+    autoPromoteToQueen,
   });
   function safeGameMutate(modify) {
     setGame((g) => {
@@ -439,6 +468,17 @@ export const PremovesEnabled = () => {
       >
         undo
       </button>
+      <button
+        style={{
+          ...buttonStyle,
+          ...(autoPromoteToQueen && { backgroundColor: "#b58863" }),
+        }}
+        onClick={() => {
+          setAutoPromoteToQuenn(!autoPromoteToQueen);
+        }}
+      >
+        Auto-promote to Queen: {autoPromoteToQueen ? "On" : "Off"}
+      </button>
     </div>
   );
 };
@@ -447,7 +487,28 @@ export const PremovesEnabled = () => {
 ////////// Styled Board ///////////
 ///////////////////////////////////
 export const StyledBoard = () => {
-  const [game, setGame] = useState(new Chess());
+  const [game, setGame] = useState(
+    new Chess("3nN3/PPP1PP2/2KP4/8/8/4p1k1/5ppp/8 w - - 0 1")
+  );
+
+  const onMakeMove = useCallback(({ from, to, promotion }: Move): boolean => {
+    const gameCopy = { ...game };
+    const move = gameCopy.move({ from, to, promotion });
+    setGame(gameCopy);
+
+    // illegal move
+    if (move === null) return false;
+
+    // legal move
+    return true;
+  }, []);
+
+  const { handleMoveWithPossiblePromotion, promotion } = usePromotion({
+    onMakeMove,
+    getValidPawnMoves: (square) =>
+      game.moves({ square, verbose: true }).map((move) => move.to),
+  });
+  // const [game, setGame] = useState(new Chess());
 
   function safeGameMutate(modify) {
     setGame((g) => {
@@ -458,14 +519,14 @@ export const StyledBoard = () => {
   }
 
   function onDrop(sourceSquare, targetSquare) {
-    const gameCopy = { ...game };
-    const move = gameCopy.move({
+    const pieceObject = game.get(sourceSquare);
+    const { status: moveStatus } = handleMoveWithPossiblePromotion({
       from: sourceSquare,
       to: targetSquare,
-      promotion: "q", // always promote to a queen for example simplicity
+      piece: pieceObjectToPieceNotation(pieceObject),
     });
-    setGame(gameCopy);
-    return move;
+
+    return moveStatus === "success";
   }
 
   const pieces = ["wP", "wN", "wB", "wR", "wQ", "wK", "bP", "bN", "bB", "bR", "bQ", "bK"];
@@ -501,6 +562,7 @@ export const StyledBoard = () => {
         customDarkSquareStyle={{ backgroundColor: "#779952" }}
         customLightSquareStyle={{ backgroundColor: "#edeed1" }}
         customPieces={customPieces()}
+        promotion={promotion}
       />
       <button
         style={buttonStyle}

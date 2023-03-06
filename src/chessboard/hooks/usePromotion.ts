@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Square, PromotionOption, Piece, Promotion } from "../types";
 
 export type Move = {
@@ -43,9 +43,11 @@ const getValidPawnMovesDefault = (square: Square): Array<Square> => {
 export const usePromotion = ({
   onMakeMove,
   getValidPawnMoves = getValidPawnMovesDefault,
+  autoPromoteToQueen = false,
 }: {
   onMakeMove: (move: Move) => boolean;
   getValidPawnMoves?: (square: Square) => Array<Square>;
+  autoPromoteToQueen?: boolean;
 }): {
   handleMoveWithPossiblePromotion: HandleMoveWithPossiblePromotion;
   promotion: Promotion;
@@ -112,29 +114,35 @@ export const usePromotion = ({
   }, [promotion.newPiece]);
 
   // function for handling user's game moves
-  const handleMoveWithPossiblePromotion: HandleMoveWithPossiblePromotion = (move) => {
-    const { from, to, promotion, piece } = move;
+  const handleMoveWithPossiblePromotion: HandleMoveWithPossiblePromotion = useCallback(
+    (move) => {
+      const { from, to, promotion, piece } = move;
 
-    if (!piece) {
-      return { status: "illegal move" };
-    }
+      if (!piece) {
+        return { status: "illegal move" };
+      }
 
-    // open promotion dialog if pawn can be promoted
-    if (!promotion && canPromotePawn(move)) {
-      setPromotion({
-        isDialogOpen: true,
-        fromSquare: from,
-        targetSquare: to,
-        piece,
-      });
+      // open promotion dialog if pawn can be promoted
+      if (!autoPromoteToQueen && !promotion && canPromotePawn(move)) {
+        setPromotion({
+          isDialogOpen: true,
+          fromSquare: from,
+          targetSquare: to,
+          piece,
+        });
 
-      return { status: "need promotion" };
-    } else {
-      const isMoveCompletedSuccessfully = onMakeMove(move);
+        return { status: "need promotion" };
+      } else {
+        if (autoPromoteToQueen && !move.promotion) {
+          move.promotion = "q";
+        }
+        const isMoveCompletedSuccessfully = onMakeMove(move);
 
-      return { status: isMoveCompletedSuccessfully ? "success" : "illegal move" };
-    }
-  };
+        return { status: isMoveCompletedSuccessfully ? "success" : "illegal move" };
+      }
+    },
+    [autoPromoteToQueen, onMakeMove]
+  );
 
   return {
     handleMoveWithPossiblePromotion,

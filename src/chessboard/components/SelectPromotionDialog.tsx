@@ -1,6 +1,6 @@
-import { useState, ReactNode, CSSProperties } from "react";
+import React, { useState, ReactNode, CSSProperties } from "react";
 import { useChessboard } from "../context/chessboard-context";
-import { PromotionOption, CustomPieces } from "../types";
+import { PromotionOption, CustomPieceFn, Piece } from "../types";
 
 const PromotionOptionSquare = ({
   style,
@@ -11,42 +11,57 @@ const PromotionOptionSquare = ({
 }: {
   style: CSSProperties;
   width: number;
-  pieceIcon: CustomPieces | Record<string, ReactNode>;
+  pieceIcon: CustomPieceFn | ReactNode;
   option: PromotionOption;
   onClick: (option: PromotionOption) => void;
 }) => {
-  const [hoverStyle, setStyleOnHoverEvent] = useState({
-    ...style,
-    backgroundColor: `${style.backgroundColor}50`,
-    transition: "all 0.3s ease-out",
-  });
+  const [isHover, setIsHover] = useState(false);
 
   const handleMouseEnter = () => {
-    setStyleOnHoverEvent({
-      ...hoverStyle,
-      transform: "scale(1.05)",
-      backgroundColor: `${style.backgroundColor}`,
-    });
+    setIsHover(true);
   };
   const handleMouseLeave = () => {
-    setStyleOnHoverEvent({
-      ...hoverStyle,
-      transform: "scale(1)",
-      backgroundColor: `${style.backgroundColor}50`,
-    });
+    setIsHover(false);
   };
+
+  let SquareContent;
+  if (typeof pieceIcon === "function") {
+    const CustomIcon = pieceIcon({ squareWidth: width * 0.8, isDragging: false });
+
+    SquareContent = React.cloneElement(CustomIcon, {
+      style: {
+        ...CustomIcon.props.style,
+        transition: "all 0.3s ease-out",
+        transform: isHover ? "scale(1.2)" : "scale(1)",
+      },
+    });
+  } else {
+    SquareContent = (
+      <svg
+        style={{
+          transition: "all 0.3s ease-out",
+          transform: isHover ? "scale(1.2)" : "scale(1)",
+        }}
+        viewBox={"1 1 43 43"}
+        width={width * 0.8}
+        height={width * 0.8}
+      >
+        <g>{pieceIcon}</g>
+      </svg>
+    );
+  }
 
   return (
     <div
-      style={hoverStyle}
+      style={{
+        ...style,
+        backgroundColor: isHover ? style.backgroundColor : `${style.backgroundColor}aa`,
+      }}
       onClick={() => onClick(option)}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <svg viewBox={"1 1 43 43"} width={width} height={width}>
-        {/* @ts-ignore */}
-        <g>{pieceIcon}</g>
-      </svg>
+      {SquareContent}
     </div>
   );
 };
@@ -54,11 +69,22 @@ const PromotionOptionSquare = ({
 export const SelectPromotionDialog = ({
   handlePromotion,
   popupCoords,
+  style,
 }: {
   handlePromotion: (piece: PromotionOption) => void;
   popupCoords: { x: number; y: number } | undefined;
+  style: CSSProperties;
 }) => {
-  const promotionOptions: PromotionOption[] = ["q", "r", "n", "b"];
+  const promotionOptions: Array<{
+    option: PromotionOption;
+    getOptionPiece: (color: "w" | "b") => Piece;
+  }> = [
+    { option: "q", getOptionPiece: (color) => `${color}Q` },
+    { option: "r", getOptionPiece: (color) => `${color}R` },
+    { option: "n", getOptionPiece: (color) => `${color}N` },
+    { option: "b", getOptionPiece: (color) => `${color}B` },
+  ];
+
   const {
     boardWidth,
     chessPieces,
@@ -67,9 +93,12 @@ export const SelectPromotionDialog = ({
     customLightSquareStyle,
   } = useChessboard();
 
+  const pieceColor = piece?.[0] as "b" | "w";
+
   return (
     <div
       style={{
+        ...style,
         position: "absolute",
         display: "grid",
         width: boardWidth / 4,
@@ -78,10 +107,13 @@ export const SelectPromotionDialog = ({
         left: `${popupCoords?.x}px`,
         zIndex: 100,
         gridTemplateColumns: "1fr 1fr",
-        transform: `translate(${-boardWidth / 8}px, ${-boardWidth / 8}px)`,
+        transform: `translate(${-boardWidth / 8}px, ${-boardWidth / 8}px) ${
+          style.transform
+        }`,
       }}
+      title="Choose promotion piece"
     >
-      {promotionOptions.map((option, i) => {
+      {promotionOptions.map(({ option, getOptionPiece }, i) => {
         const { backgroundColor } =
           i === 0 || i === 3 ? customDarkSquareStyle : customLightSquareStyle;
 
@@ -95,8 +127,7 @@ export const SelectPromotionDialog = ({
             option={option}
             width={boardWidth / 8}
             onClick={() => handlePromotion(option)}
-            //  @ts-ignore
-            pieceIcon={chessPieces[piece[0] + option.toUpperCase()]}
+            pieceIcon={chessPieces[getOptionPiece(pieceColor)]}
           />
         );
       })}
@@ -108,5 +139,9 @@ const optionStyles = (width: number) => ({
   cursor: "pointer",
   height: width / 8,
   width: width / 8,
-  boxShadow: "2px 2px 10px 0px rgba(34, 60, 80, 0.2)",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  transition: "all 0.3s ease-out",
+  borderRadius: "4px",
 });

@@ -6,6 +6,7 @@ import { PromotionOption } from "../types";
 import { useChessboard } from "../context/chessboard-context";
 import { WhiteKing } from "./ErrorBoundary";
 import { SelectPromotionDialog } from "./SelectPromotionDialog";
+import { useDelayUnmount } from "../hooks/useAnimatedUnmount";
 
 export function Board() {
   const boardRef = useRef<HTMLDivElement>(null);
@@ -31,6 +32,8 @@ export function Board() {
       document.removeEventListener("mouseup", handleClickOutside);
     };
   }, []);
+
+  const { showComponent, style } = useDelayUnmount(promotion.isDialogOpen, 200);
 
   return boardWidth ? (
     <div ref={boardRef} style={{ position: "relative" }}>
@@ -82,13 +85,14 @@ export function Board() {
           );
         })}
       </svg>
-      {promotion.isDialogOpen && (
+      {showComponent && (
         <SelectPromotionDialog
           handlePromotion={(option: PromotionOption) => {
             if (promotion) {
               promotion.onPromotionSelect(option);
             }
           }}
+          style={style}
           popupCoords={
             promotion.targetSquare &&
             getRelativeCoords(boardOrientation, boardWidth, promotion.targetSquare)

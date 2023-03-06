@@ -123,7 +123,7 @@ export function Square({
             ...(!squareHasPremove && customSquareStyles?.[square]),
             //TODO make styles customizable
             ...((isSquarePawnWaitingForPromotion ||
-              isSquarePawnsPromotionDestination) && { background: "#d790d5a8" }),
+              isSquarePawnsPromotionDestination) && { background: "lightgreen" }),
           }}
         >
           {!isSquarePawnWaitingForPromotion && children}
