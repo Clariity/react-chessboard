@@ -6,7 +6,7 @@ import { PromotionOption } from "../types";
 import { useChessboard } from "../context/chessboard-context";
 import { WhiteKing } from "./ErrorBoundary";
 import { SelectPromotionDialog } from "./SelectPromotionDialog";
-import { useDelayUnmount } from "../hooks/useAnimatedUnmount";
+import { useAnimatedUnmount } from "../hooks/useAnimatedUnmount";
 
 export function Board() {
   const boardRef = useRef<HTMLDivElement>(null);
@@ -33,7 +33,7 @@ export function Board() {
     };
   }, []);
 
-  const { showComponent, style } = useDelayUnmount(promotion.isDialogOpen, 200);
+  const { showComponent, style } = useAnimatedUnmount(promotion.isDialogOpen, 200);
 
   return boardWidth ? (
     <div ref={boardRef} style={{ position: "relative" }}>

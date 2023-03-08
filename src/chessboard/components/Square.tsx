@@ -104,9 +104,7 @@ export function Square({
       onClick={() => {
         onSquareClick(square);
         clearArrows();
-        if (promotion.isDialogOpen) {
-          promotion.closePromotionDialog();
-        }
+        promotion.closePromotionDialog();
       }}
       onContextMenu={(e) => {
         e.preventDefault();

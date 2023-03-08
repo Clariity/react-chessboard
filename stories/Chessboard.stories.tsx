@@ -101,6 +101,7 @@ export const PlayVsRandom = () => {
   }
 
   function onDrop(sourceSquare, targetSquare) {
+    promotion.closePromotionDialog();
     const pieceObject = game.get(sourceSquare);
     const { status: moveStatus } = handleMoveWithPossiblePromotion({
       from: sourceSquare,
@@ -108,7 +109,7 @@ export const PlayVsRandom = () => {
       piece: pieceObjectToPieceNotation(pieceObject),
     });
 
-    return moveStatus === "success";
+    return moveStatus == "success";
   }
 
   useEffect(() => {
@@ -216,7 +217,6 @@ export const ClickToMove = () => {
       setOptionSquares({});
 
       return false;
-
     }
 
     const newSquares = {};
@@ -408,6 +408,7 @@ export const PremovesEnabled = () => {
   }
 
   function onDrop(sourceSquare, targetSquare) {
+    promotion.closePromotionDialog();
     const pieceObject = game.get(sourceSquare);
     const { status } = handleMoveWithPossiblePromotion({
       from: sourceSquare,
@@ -415,7 +416,7 @@ export const PremovesEnabled = () => {
       piece: pieceObjectToPieceNotation(pieceObject),
     });
 
-    return status !== "illegal move";
+    return status === "success";
   }
 
   useEffect(() => {

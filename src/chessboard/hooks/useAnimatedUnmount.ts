@@ -1,6 +1,6 @@
 import { useState, useEffect, CSSProperties } from "react";
 
-export function useDelayUnmount(isMounted: boolean, delayTime: number) {
+export function useAnimatedUnmount(isMounted: boolean, delayTime: number) {
   const mountedStyle: CSSProperties = {
     opacity: 1,
     transform: "scale(1)",
@@ -9,7 +9,7 @@ export function useDelayUnmount(isMounted: boolean, delayTime: number) {
   const unmountedStyle: CSSProperties = {
     opacity: 0,
     transform: "scale(0)",
-    transition: `all ${delayTime}ms ease-out`,
+    transition: `all ${delayTime}ms ease-in`,
   };
 
   const [style, setStyle] = useState(isMounted ? mountedStyle : unmountedStyle);
