@@ -89,6 +89,8 @@ export default function App() {
 
 ### Basic Example
 
+#### IMPORTANT: Examples use the current stable release of chess.js. As of writing this, chess.js v1.0.0 is still in beta. These examples use chess.js ^0.12.0
+
 ```jsx
 import { useState } from "react";
 import Chess from "chess.js";
