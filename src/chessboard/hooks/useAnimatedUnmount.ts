@@ -3,12 +3,10 @@ import { useState, useEffect, CSSProperties } from "react";
 export function useAnimatedUnmount(isMounted: boolean, delayTime: number) {
   const mountedStyle: CSSProperties = {
     opacity: 1,
-    transform: "scale(1)",
     transition: `all ${delayTime}ms ease-out`,
   };
   const unmountedStyle: CSSProperties = {
     opacity: 0,
-    transform: "scale(0)",
     transition: `all ${delayTime}ms ease-in`,
   };
 

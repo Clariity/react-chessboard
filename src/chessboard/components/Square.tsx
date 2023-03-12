@@ -75,8 +75,10 @@ export function Square({
     ...(isOver && customDropSquareStyle),
   };
 
-  const isSquarePawnWaitingForPromotion = promotion?.fromSquare === square;
-  const isSquarePawnsPromotionDestination = promotion?.targetSquare === square;
+  const isSquarePawnWaitingForPromotion =
+    promotion.isDialogOpen && promotion?.fromSquare === square;
+  const isSquarePawnsPromotionDestination =
+    promotion.isDialogOpen && promotion?.targetSquare === square;
 
   return (
     <div
@@ -124,7 +126,7 @@ export function Square({
               isSquarePawnsPromotionDestination) && { background: "lightgreen" }),
           }}
         >
-          {!isSquarePawnWaitingForPromotion && children}
+          {!isSquarePawnsPromotionDestination && children}
         </CustomSquare>
       ) : (
         <CustomSquare
@@ -137,7 +139,7 @@ export function Square({
             ...(!squareHasPremove && customSquareStyles?.[square]),
           }}
         >
-          {!isSquarePawnWaitingForPromotion && children}
+          {!isSquarePawnsPromotionDestination && children}
         </CustomSquare>
       )}
     </div>

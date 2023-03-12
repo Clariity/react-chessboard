@@ -91,6 +91,10 @@ export type Promotion = {
   piece?: Piece;
   onPromotionSelect: (piece: PromotionOption) => void;
   closePromotionDialog: () => void;
+  variant?: "vertical" | "grid" | "horizontal";
+  customDialogStyles?: CSSProperties;
+  customOptionStyles?: CSSProperties;
+  customOptionStylesOnHover?: CSSProperties;
 };
 
 export type CustomSquareProps = {

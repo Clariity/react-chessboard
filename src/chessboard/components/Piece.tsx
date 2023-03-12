@@ -12,12 +12,7 @@ type PieceProps = {
   squares: { [square in Square]?: Coords };
 };
 
-export function Piece({
-  isPremovedPiece = false,
-  piece,
-  square,
-  squares,
-}: PieceProps) {
+export function Piece({ isPremovedPiece = false, piece, square, squares }: PieceProps) {
   const {
     animationDuration,
     arePiecesDraggable,
@@ -33,6 +28,8 @@ export function Piece({
     positionDifferences,
     isWaitingForAnimation,
     currentPosition,
+    promotion,
+    wasManualDrop,
   } = useChessboard();
 
   const [pieceStyle, setPieceStyle] = useState({
@@ -81,8 +78,7 @@ export function Piece({
     // side effect: if piece moves into pre-moved square, its hidden
 
     // if there are any premove targets on this square, hide the piece underneath
-    if (!isPremovedPiece && premoves.find((p) => p.targetSq === square))
-      hidePiece = true;
+    if (!isPremovedPiece && premoves.find((p) => p.targetSq === square)) hidePiece = true;
 
     // if sourceSq === sq and piece matches then this piece has been pre-moved elsewhere?
     if (premoves.find((p) => p.sourceSq === square && p.piece === piece))
@@ -104,20 +100,13 @@ export function Piece({
     // return as null and not loaded yet
     if (!positionDifferences.added) return;
     // check if piece matches or if removed piece was a pawn and new square is on 1st or 8th rank (promotion)
-    const newSquare = (
-      Object.entries(positionDifferences.added) as [Square, Pc][]
-    ).find(
+    const newSquare = (Object.entries(positionDifferences.added) as [Square, Pc][]).find(
       ([s, p]) =>
         p === removedPiece ||
         (removedPiece?.[1] === "P" && (s[1] === "1" || s[1] === "8"))
     );
     // we can perform animation if our square was in removed, AND the matching piece is in added AND this isn't a premoved piece
-    if (
-      isWaitingForAnimation &&
-      removedPiece &&
-      newSquare &&
-      !isPremovedPiece
-    ) {
+    if (isWaitingForAnimation && removedPiece && newSquare && !isPremovedPiece) {
       const { sourceSq, targetSq } = getSquareCoordinates(square, newSquare[0]);
       if (sourceSq && targetSq) {
         setPieceStyle((oldPieceStyle) => ({
@@ -131,6 +120,34 @@ export function Piece({
       }
     }
   }, [positionDifferences]);
+
+  // pawn promotion move and promotion cancelation animation
+  useEffect(() => {
+    const { fromSquare, targetSquare, isDialogOpen } = promotion;
+    if (!fromSquare || !targetSquare) return;
+    let sourceSq: Coords, targetSq: Coords;
+    if (isDialogOpen) {
+      sourceSq = getSquareCoordinates(fromSquare, targetSquare).sourceSq as Coords;
+      targetSq = getSquareCoordinates(fromSquare, targetSquare).targetSq as Coords;
+    } else {
+      targetSq = { x: 0, y: 0 };
+      sourceSq = { x: 0, y: 0 };
+    }
+
+    if (sourceSq && targetSq && fromSquare === square) {
+      setPieceStyle((oldPieceStyle) => ({
+        ...oldPieceStyle,
+
+        transform: `translate(${targetSq.x - sourceSq.x}px, ${
+          targetSq.y - sourceSq.y
+        }px)`,
+        transition: `transform ${
+          wasManualDrop && isDialogOpen ? 0 : animationDuration
+        }ms`,
+        zIndex: 6,
+      }));
+    }
+  }, [promotion.isDialogOpen]);
 
   // translate to their own positions (repaint on undo)
   useEffect(() => {
@@ -168,7 +185,8 @@ export function Piece({
 
   return (
     <div
-      ref={arePiecesDraggable ? (canDrag ? drag : null) : null}
+      // disabling the dragging  of pieces while promotion dialog is open helps to avoid a ton of little annoying bugs
+      ref={arePiecesDraggable && !promotion.isDialogOpen ? (canDrag ? drag : null) : null}
       onClick={() => onPieceClick(piece)}
       data-piece={piece}
       style={pieceStyle}
@@ -179,11 +197,7 @@ export function Piece({
           isDragging,
         })
       ) : (
-        <svg
-          viewBox={"1 1 43 43"}
-          width={boardWidth / 8}
-          height={boardWidth / 8}
-        >
+        <svg viewBox={"1 1 43 43"} width={boardWidth / 8} height={boardWidth / 8}>
           <g>{chessPieces[piece] as ReactNode}</g>
         </svg>
       )}

@@ -13,6 +13,7 @@ export function Board() {
 
   const {
     arrows,
+    animationDuration,
     boardOrientation,
     boardWidth,
     clearCurrentRightClickDown,
@@ -33,11 +34,33 @@ export function Board() {
     };
   }, []);
 
-  const { showComponent, style } = useAnimatedUnmount(promotion.isDialogOpen, 200);
+  const { showComponent: showPromotionDialog, style } = useAnimatedUnmount(
+    promotion.isDialogOpen,
+    animationDuration
+  );
 
   return boardWidth ? (
     <div ref={boardRef} style={{ position: "relative" }}>
       <Squares />
+      {/* cover board with semi-transparent div while choosing promotion piece */}
+      {promotion.isDialogOpen && (
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+            promotion.closePromotionDialog();
+          }}
+          style={{
+            position: "absolute",
+            top: "0",
+            left: "0",
+            pointerEvents: "none",
+            zIndex: "100",
+            backgroundColor: "rgba(22,21,18,.7)",
+            width: boardWidth,
+            height: boardWidth,
+          }}
+        />
+      )}
       <svg
         width={boardWidth}
         height={boardWidth}
@@ -85,7 +108,7 @@ export function Board() {
           );
         })}
       </svg>
-      {showComponent && (
+      {showPromotionDialog && (
         <SelectPromotionDialog
           handlePromotion={(option: PromotionOption) => {
             if (promotion) {
@@ -93,7 +116,7 @@ export function Board() {
             }
           }}
           style={style}
-          popupCoords={
+          dialogCoords={
             promotion.targetSquare &&
             getRelativeCoords(boardOrientation, boardWidth, promotion.targetSquare)
           }

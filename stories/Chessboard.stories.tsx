@@ -130,7 +130,19 @@ export const PlayVsRandom = () => {
           borderRadius: "4px",
           boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
         }}
-        promotion={promotion}
+        promotion={{
+          ...promotion,
+          variant: "vertical",
+          customOptionStyles: {
+            borderRadius: "50%",
+            backgroundColor: "#b0b0b0",
+            boxShadow: "inset 0 0 25px 3px grey",
+          },
+          customOptionStylesOnHover: {
+            boxShadow: "inset 0 0 48px 8px #d64f00",
+            borderRadius: "0%",
+          },
+        }}
       />
       <button
         style={buttonStyle}
@@ -174,7 +186,7 @@ export const PlayVsRandom = () => {
 ////////// ClickToMove ///////////
 //////////////////////////////////
 export const ClickToMove = () => {
-  const [game, setGame] = useState(new Chess("8/PPP5/2KP4/8/8/4p1k1/5ppp/8 b - - 0 1"));
+  const [game, setGame] = useState(new Chess("8/8/8/8/8/8/1pk5/7K b - - 0 1"));
   const [moveFrom, setMoveFrom] = useState<Square | undefined>(undefined);
   const [rightClickedSquares, setRightClickedSquares] = useState({});
   const [moveSquares, setMoveSquares] = useState({});
@@ -278,6 +290,7 @@ export const ClickToMove = () => {
 
     if (status === "illegal move") {
       resetFirstMove(square);
+      setMoveFrom(undefined);
       return;
     }
   }
@@ -312,7 +325,7 @@ export const ClickToMove = () => {
         boardOrientation={"black"}
         onSquareClick={onSquareClick}
         onSquareRightClick={onSquareRightClick}
-        promotion={promotion}
+        promotion={{ ...promotion, variant: "horizontal" }}
         customBoardStyle={{
           borderRadius: "4px",
           boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
@@ -512,7 +525,6 @@ export const StyledBoard = () => {
     getValidPawnMoves: (square) =>
       game.moves({ square, verbose: true }).map((move) => move.to),
   });
-  // const [game, setGame] = useState(new Chess());
 
   function safeGameMutate(modify) {
     setGame((g) => {

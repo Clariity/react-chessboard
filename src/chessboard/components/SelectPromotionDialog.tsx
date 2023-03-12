@@ -17,6 +17,9 @@ const PromotionOptionSquare = ({
 }) => {
   const [isHover, setIsHover] = useState(false);
 
+  const {
+    promotion: { customOptionStyles, customOptionStylesOnHover },
+  } = useChessboard();
   const handleMouseEnter = () => {
     setIsHover(true);
   };
@@ -56,9 +59,10 @@ const PromotionOptionSquare = ({
       style={{
         ...style,
         backgroundColor: isHover ? style.backgroundColor : `${style.backgroundColor}aa`,
+        ...(isHover ? customOptionStylesOnHover : customOptionStyles),
       }}
       onClick={() => onClick(option)}
-      onMouseEnter={handleMouseEnter}
+      onMouseOver={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
       {SquareContent}
@@ -68,11 +72,11 @@ const PromotionOptionSquare = ({
 
 export const SelectPromotionDialog = ({
   handlePromotion,
-  popupCoords,
+  dialogCoords,
   style,
 }: {
   handlePromotion: (piece: PromotionOption) => void;
-  popupCoords: { x: number; y: number } | undefined;
+  dialogCoords: { x: number; y: number } | undefined;
   style: CSSProperties;
 }) => {
   const promotionOptions: Array<{
@@ -88,7 +92,7 @@ export const SelectPromotionDialog = ({
   const {
     boardWidth,
     chessPieces,
-    promotion: { piece },
+    promotion: { piece, variant = "grid", customDialogStyles },
     customDarkSquareStyle,
     customLightSquareStyle,
   } = useChessboard();
@@ -98,24 +102,18 @@ export const SelectPromotionDialog = ({
   return (
     <div
       style={{
-        ...style,
-        position: "absolute",
-        display: "grid",
-        width: boardWidth / 4,
-        height: boardWidth / 4,
-        top: `${popupCoords?.y}px`,
-        left: `${popupCoords?.x}px`,
-        zIndex: 100,
-        gridTemplateColumns: "1fr 1fr",
-        transform: `translate(${-boardWidth / 8}px, ${-boardWidth / 8}px) ${
-          style.transform
-        }`,
+        ...dialogStyles(boardWidth, dialogCoords, style, variant),
+        ...customDialogStyles,
       }}
       title="Choose promotion piece"
     >
       {promotionOptions.map(({ option, getOptionPiece }, i) => {
         const { backgroundColor } =
-          i === 0 || i === 3 ? customDarkSquareStyle : customLightSquareStyle;
+          variant === "grid"
+            ? i === 0 || i === 3
+              ? customDarkSquareStyle
+              : customLightSquareStyle
+            : { backgroundColor: "auto" };
 
         return (
           <PromotionOptionSquare
@@ -134,6 +132,48 @@ export const SelectPromotionDialog = ({
     </div>
   );
 };
+
+const mapVariantToVariantStyle = {
+  grid: (width: number, userCustomStyles: CSSProperties) => ({
+    ...userCustomStyles,
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",
+    transform: `translate(${-width / 8}px, ${-width / 8}px) ${
+      userCustomStyles.transform ?? ""
+    }`,
+  }),
+  vertical: (width: number, userCustomStyles: CSSProperties) => ({
+    ...userCustomStyles,
+    transform: `translate(${-width / 16}px, ${-width / 16}px) ${
+      userCustomStyles.transform ?? ""
+    }`,
+  }),
+  horizontal: (width: number, userCustomStyles: CSSProperties) => ({
+    ...userCustomStyles,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    transform: `translate(0px, ${(3 * width) / 8}px) ${userCustomStyles.transform ?? ""}`,
+    width: "100%",
+    height: `${width / 4}px`,
+    top: 0,
+    backgroundColor: "white",
+    left: 0,
+  }),
+};
+
+const dialogStyles = (
+  boardWidth: number,
+  dialogCoords: { x: number; y: number } | undefined,
+  userCustomStyles: CSSProperties,
+  variant: "grid" | "vertical" | "horizontal"
+): CSSProperties => ({
+  position: "absolute",
+  top: `${dialogCoords?.y}px`,
+  left: `${dialogCoords?.x}px`,
+  zIndex: 1000,
+  ...mapVariantToVariantStyle[variant ?? "grid"](boardWidth, userCustomStyles),
+});
 
 const optionStyles = (width: number) => ({
   cursor: "pointer",

@@ -73,6 +73,7 @@ interface ChessboardProviderContext {
   positionDifferences: { added: BoardPosition; removed: BoardPosition };
   premoves: Premove[];
   isWaitingForAnimation: boolean;
+  wasManualDrop: boolean;
 }
 
 export const ChessboardContext = createContext({} as ChessboardProviderContext);
@@ -431,6 +432,7 @@ export const ChessboardProvider = forwardRef(
       premoves,
       isWaitingForAnimation,
       promotion,
+      wasManualDrop,
     };
 
     return (

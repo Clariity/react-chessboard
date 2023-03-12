@@ -84,7 +84,7 @@ export const usePromotion = ({
   // function closes promotion dialog
   const closePromotionDialog = () => {
     if (promotion.isDialogOpen) {
-      setPromotion({ isDialogOpen: false });
+      setPromotion({ ...promotion, isDialogOpen: false, newPiece: undefined });
     }
   };
 
