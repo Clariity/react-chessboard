@@ -206,7 +206,7 @@ export type ChessboardProps = {
   customPremoveLightSquareStyle?: CSSProperties;
   /**
    * Custom square renderer for all squares.
-   * @default "div"
+   * @default div
    */
   customSquare?: CustomSquareRenderer;
   /**
