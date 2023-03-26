@@ -15,7 +15,14 @@ import {
   getPositionDifferences,
   isDifferentFromStart,
 } from "../functions";
-import { BoardPosition, ChessboardProps, CustomPieces, Piece, Square } from "../types";
+import {
+  BoardPosition,
+  ChessboardProps,
+  CustomPieces,
+  Piece,
+  PromotionOption,
+  Square,
+} from "../types";
 
 interface ChessboardProviderProps extends ChessboardProps {
   boardWidth: number;
@@ -26,6 +33,7 @@ type Premove = {
   sourceSq: Square;
   targetSq: Square;
   piece: Piece;
+  promotion?: PromotionOption;
 };
 
 type RequiredChessboardProps = Required<ChessboardProps>;
@@ -125,6 +133,7 @@ export const ChessboardProvider = forwardRef(
         isDialogOpen: false,
         onPromotionSelect: () => {},
         closePromotionDialog: () => {},
+        handlePremoveWithPossiblePromotion: () => true,
       },
     }: ChessboardProviderProps,
     ref
@@ -256,6 +265,23 @@ export const ChessboardProvider = forwardRef(
       onArrowsChange(arrows);
     }, [arrows]);
 
+    // callback which adds premove with promotion to premoves queue
+    useEffect(() => {
+      if (promotion.isPremove && promotion.newPiece) {
+        const { fromSquare, targetSquare, piece } = promotion;
+        const oldPremoves: Premove[] = [...premovesRef.current];
+        if (!fromSquare || !targetSquare || !piece) return;
+        oldPremoves.push({
+          sourceSq: fromSquare,
+          targetSq: targetSquare,
+          piece,
+          promotion: promotion.newPiece,
+        });
+        premovesRef.current = oldPremoves;
+        setPremoves([...oldPremoves]);
+      }
+    }, [promotion.newPiece]);
+
     // handle drop position change
     function handleSetPosition(sourceSq: Square, targetSq: Square, piece: Piece) {
       // if dropped back down, don't do anything
@@ -275,6 +301,18 @@ export const ChessboardProvider = forwardRef(
               0))
       ) {
         const oldPremoves: Premove[] = [...premovesRef.current];
+
+        //if premove needs promotion piece manual select open promotion dialog
+        const needsPromotion = promotion.handlePremoveWithPossiblePromotion({
+          from: sourceSq,
+          to: targetSq,
+          piece,
+        });
+
+        if (needsPromotion) {
+          return;
+        }
+
         oldPremoves.push({ sourceSq, targetSq, piece });
         premovesRef.current = oldPremoves;
         setPremoves([...oldPremoves]);
@@ -328,7 +366,8 @@ export const ChessboardProvider = forwardRef(
         const isValidMove = onPieceDrop(
           premove.sourceSq,
           premove.targetSq,
-          premove.piece
+          premove.piece,
+          premove.promotion ?? "q"
         );
 
         // premove was successful and can be removed from queue

@@ -18,6 +18,7 @@ type PromotionState = {
   targetSquare: Square;
   newPiece: PromotionOption;
   piece: Piece;
+  isPremove?: boolean;
 };
 
 const possiblePromotionFilesFromFile = new Map<string, Array<string>>([
@@ -57,7 +58,10 @@ export const usePromotion = ({
   });
 
   // function  checking if pawn promotion could be legal move
-  const canPromotePawn = (move: Move): boolean => {
+  const canPromotePawn = (
+    move: Move,
+    promotionValidator: (square: Square) => Array<Square> = getValidPawnMoves
+  ): boolean => {
     const { to: targetSquare, from: fromSquare, piece } = move;
     if (!piece || !targetSquare || !fromSquare) return false;
     const [pieceColor, pieceType] = piece;
@@ -65,7 +69,7 @@ export const usePromotion = ({
 
     const [, targetLine] = targetSquare;
     const [, fromLine] = fromSquare;
-    const isPromotionValidMove = getValidPawnMoves?.(fromSquare).includes(targetSquare);
+    const isPromotionValidMove = promotionValidator(fromSquare).includes(targetSquare);
 
     if (!isPromotionValidMove) {
       return false;
@@ -95,7 +99,13 @@ export const usePromotion = ({
 
   // this useEffect makes move automatically when user choose promotion piece
   useEffect(() => {
-    const { fromSquare, targetSquare, piece, newPiece } = promotion;
+    const { fromSquare, targetSquare, piece, newPiece, isPremove } = promotion;
+
+    if (isPremove) {
+      // setPremovePromotionPieces([...premovedPromotionPieces, promotion.newPiece]);
+      return;
+    }
+
     if (
       fromSquare &&
       targetSquare &&
@@ -148,15 +158,31 @@ export const usePromotion = ({
     [autoPromoteToQueen, onMakeMove]
   );
 
+  const handlePremoveWithPossiblePromotion = (premove: Move) => {
+    const { from, to, piece } = premove;
+    if (!autoPromoteToQueen && canPromotePawn(premove, getValidPawnMovesDefault)) {
+      setPromotion({
+        isDialogOpen: true,
+        fromSquare: from,
+        targetSquare: to,
+        piece,
+        isPremove: true,
+      });
+
+      return true;
+    }
+
+    return false;
+  };
+
   return {
     handleMoveWithPossiblePromotion,
     promotion: {
+      ...promotion,
+      isDialogOpen: Boolean(promotion.isDialogOpen),
       onPromotionSelect,
       closePromotionDialog,
-      isDialogOpen: Boolean(promotion.isDialogOpen),
-      targetSquare: promotion.targetSquare,
-      fromSquare: promotion.fromSquare,
-      piece: promotion.piece,
+      handlePremoveWithPossiblePromotion,
     },
   };
 };

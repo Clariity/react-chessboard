@@ -379,7 +379,7 @@ export const ClickToMove = () => {
 ////////// PremovesEnabled ///////////
 //////////////////////////////////////
 export const PremovesEnabled = () => {
-  const [game, setGame] = useState(new Chess("8/PPP5/2KP4/8/8/4p1k1/5ppp/8 w - - 0 1"));
+  const [game, setGame] = useState(new Chess("8/8/PPK5/8/6n1/6k1/8/8 w - - 0 1"));
   const [currentTimeout, setCurrentTimeout] = useState<NodeJS.Timeout>();
   const chessboardRef = useRef<ClearPremoves>(null);
   const [autoPromoteToQueen, setAutoPromoteToQuenn] = useState(false);
@@ -420,13 +420,13 @@ export const PremovesEnabled = () => {
     });
   }
 
-  function onDrop(sourceSquare, targetSquare) {
-    promotion.closePromotionDialog();
+  function onDrop(sourceSquare, targetSquare, piece, promotion) {
     const pieceObject = game.get(sourceSquare);
     const { status } = handleMoveWithPossiblePromotion({
       from: sourceSquare,
       to: targetSquare,
-      piece: pieceObjectToPieceNotation(pieceObject),
+      piece: piece ?? pieceObjectToPieceNotation(pieceObject),
+      promotion,
     });
 
     return status === "success";

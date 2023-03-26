@@ -83,6 +83,13 @@ export type Piece =
 
 export type BoardPosition = { [square in Square]?: Piece };
 
+export type Move = {
+  from: Square;
+  to: Square;
+  piece: Piece;
+  promotion?: PromotionOption;
+};
+
 export type PromotionOption = "q" | "r" | "b" | "n";
 export type Promotion = {
   isDialogOpen: boolean;
@@ -95,6 +102,9 @@ export type Promotion = {
   customDialogStyles?: CSSProperties;
   customOptionStyles?: CSSProperties;
   customOptionStylesOnHover?: CSSProperties;
+  isPremove?: boolean;
+  newPiece?: PromotionOption;
+  handlePremoveWithPossiblePromotion: (premove: Move) => boolean;
 };
 
 export type CustomSquareProps = {
@@ -287,7 +297,12 @@ export type ChessboardProps = {
    * User function that is run when piece is dropped on a square. Must return whether the move was successful or not.
    * @default () => true
    */
-  onPieceDrop?: (sourceSquare: Square, targetSquare: Square, piece: Piece) => boolean;
+  onPieceDrop?: (
+    sourceSquare: Square,
+    targetSquare: Square,
+    piece: Piece,
+    promotion?: PromotionOption
+  ) => boolean;
   /**
    * User function that is run when a square is clicked.
    * @default () => {}
