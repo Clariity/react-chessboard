@@ -8,6 +8,8 @@ import {
   WHITE_ROWS,
 } from "./consts";
 
+import { Move } from "./types";
+
 /**
  * Retrieves the coordinates at the centre of the requested square, relative to the top left of the board (0, 0).
  */
@@ -179,3 +181,51 @@ function fenToPieceCode(piece: string): Piece {
   // white piece
   return ("w" + piece.toUpperCase()) as Piece;
 }
+
+const possiblePromotionFilesFromFile = new Map<string, Array<string>>([
+  ["a", ["a", "b"]],
+  ["b", ["a", "b", "c"]],
+  ["c", ["b", "c", "d"]],
+  ["d", ["c", "d", "e"]],
+  ["e", ["d", "e", "f"]],
+  ["f", ["e", "f", "g"]],
+  ["g", ["f", "g", "h"]],
+  ["h", ["g", "h"]],
+]);
+
+export const getValidPawnMovesDefault = (square: Square): Array<Square> => {
+  const [squareFile, squareLine] = square;
+  const possibleFiles = possiblePromotionFilesFromFile.get(squareFile);
+  const possibleLine = Number(squareLine) === 7 ? 8 : 1;
+  if (!possibleFiles) return [];
+
+  return possibleFiles.map((file: string) => (file + possibleLine) as Square);
+};
+
+// function  checking if pawn promotion could be legal move
+export const canPromotePawn = (
+  move: Move,
+  promotionValidator: (square: Square) => Array<Square> = getValidPawnMovesDefault
+): boolean => {
+  const { to: targetSquare, from: fromSquare, piece } = move;
+  if (!piece || !targetSquare || !fromSquare) return false;
+  const [pieceColor, pieceType] = piece;
+  if (pieceType !== "P") return false;
+
+  const [, targetLine] = targetSquare;
+  const [, fromLine] = fromSquare;
+  const isPromotionValidMove = promotionValidator(fromSquare).includes(targetSquare);
+
+  if (!isPromotionValidMove) {
+    return false;
+  }
+
+  if (
+    (pieceColor === "w" && targetLine === "8" && fromLine === "7") ||
+    (pieceColor === "b" && targetLine === "1" && fromLine === "2")
+  ) {
+    return true;
+  }
+
+  return false;
+};

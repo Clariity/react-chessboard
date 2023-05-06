@@ -2,7 +2,6 @@ import { Fragment, useRef, useEffect } from "react";
 
 import { getRelativeCoords } from "../functions";
 import { Squares } from "./Squares";
-import { PromotionOption } from "../types";
 import { useChessboard } from "../context/chessboard-context";
 import { WhiteKing } from "./ErrorBoundary";
 import { SelectPromotionDialog } from "./SelectPromotionDialog";
@@ -19,6 +18,7 @@ export function Board() {
     clearCurrentRightClickDown,
     customArrowColor,
     promotion,
+    setPromotionState,
   } = useChessboard();
 
   useEffect(() => {
@@ -46,14 +46,18 @@ export function Board() {
       {promotion.isDialogOpen && (
         <div
           onClick={(e) => {
-            e.stopPropagation();
-            promotion.closePromotionDialog();
+            if (promotion.isDialogOpen) {
+              setPromotionState({
+                ...promotion,
+                isDialogOpen: false,
+                piece: undefined,
+              });
+            }
           }}
           style={{
             position: "absolute",
             top: "0",
             left: "0",
-            pointerEvents: "none",
             zIndex: "100",
             backgroundColor: "rgba(22,21,18,.7)",
             width: boardWidth,
@@ -110,11 +114,7 @@ export function Board() {
       </svg>
       {showPromotionDialog && (
         <SelectPromotionDialog
-          handlePromotion={(option: PromotionOption) => {
-            if (promotion) {
-              promotion.onPromotionSelect(option);
-            }
-          }}
+          handlePromotion={promotion.onPromotionSelect}
           style={style}
           dialogCoords={
             promotion.targetSquare &&

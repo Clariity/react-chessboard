@@ -1,6 +1,16 @@
 import { useState, useEffect, useCallback } from "react";
 import { Square, PromotionOption, Piece, Promotion } from "../types";
+import { getValidPawnMovesDefault } from "../functions";
 
+const SUCCESS_MOVE = "success move";
+const ILLEGAL_MOVE = "illegal move";
+const MOVE_NEEDS_PROMOTION = "move needs promotion";
+
+export const MOVE_STATUSES = {
+  SUCCESS_MOVE,
+  ILLEGAL_MOVE,
+  MOVE_NEEDS_PROMOTION,
+};
 export type Move = {
   from: Square;
   to: Square;
@@ -9,53 +19,45 @@ export type Move = {
 };
 
 type HandleMoveWithPossiblePromotion = (move: Move) => {
-  status: "success" | "illegal move" | "need promotion";
+  status: typeof SUCCESS_MOVE | typeof ILLEGAL_MOVE | typeof MOVE_NEEDS_PROMOTION;
 };
 
-type PromotionState = {
-  isDialogOpen: boolean;
-  fromSquare: Square;
-  targetSquare: Square;
-  newPiece: PromotionOption;
-  piece: Piece;
-  isPremove?: boolean;
-};
+interface UsePromotionHookProps {
+  /**
+   * User function which makes chess move and changes position of the game. Returns `false` if move is illegal, and `true` otherwise
+   * */
+  onMakeMove: (move: Move) => boolean;
+  /**
+   * User function which returns list of squares where the piece from given square can move to. We need this function to
+   * properly determine when to open promotion dialog
+   */
+  getValidPawnMoves?: (square: Square) => Array<Square>;
+  /** Wheter or not promote pawns to queen automatically */
+  autoPromoteToQueen?: boolean;
+}
 
-const possiblePromotionFilesFromFile = new Map<string, Array<string>>([
-  ["a", ["a", "b"]],
-  ["b", ["a", "b", "c"]],
-  ["c", ["b", "c", "d"]],
-  ["d", ["c", "d", "e"]],
-  ["e", ["d", "e", "f"]],
-  ["f", ["e", "f", "g"]],
-  ["g", ["f", "g", "h"]],
-  ["h", ["g", "h"]],
-]);
-
-const getValidPawnMovesDefault = (square: Square): Array<Square> => {
-  const [squareFile, squareLine] = square;
-  const possibleFiles = possiblePromotionFilesFromFile.get(squareFile);
-  const possibleLine = Number(squareLine) === 7 ? 8 : 1;
-  if (!possibleFiles) return [];
-
-  return possibleFiles.map((file: string) => (file + possibleLine) as Square);
-};
+interface UsePromotionHookState {
+  /** Function determines possible pawn promotions and opens promotion dialog */
+  handleMoveWithPossiblePromotion: HandleMoveWithPossiblePromotion;
+  /** Function closes promotion dialog and resets its state to initial */
+  closePromotionDialog: () => void;
+  /** Basic data for rendering promotion dialog */
+  promotionState: Promotion;
+}
 
 export const usePromotion = ({
   onMakeMove,
   getValidPawnMoves = getValidPawnMovesDefault,
   autoPromoteToQueen = false,
-}: {
-  onMakeMove: (move: Move) => boolean;
-  getValidPawnMoves?: (square: Square) => Array<Square>;
-  autoPromoteToQueen?: boolean;
-}): {
-  handleMoveWithPossiblePromotion: HandleMoveWithPossiblePromotion;
-  promotion: Promotion;
-} => {
-  const [promotion, setPromotion] = useState<Partial<PromotionState>>({
+}: UsePromotionHookProps): UsePromotionHookState => {
+  const [promotion, setPromotion] = useState<Partial<Promotion>>({
     isDialogOpen: false,
+    autoPromoteToQueen,
   });
+
+  useEffect(() => {
+    setPromotion((p) => ({ ...p, autoPromoteToQueen }));
+  }, [autoPromoteToQueen]);
 
   // function  checking if pawn promotion could be legal move
   const canPromotePawn = (
@@ -85,47 +87,33 @@ export const usePromotion = ({
     return false;
   };
 
-  // function closes promotion dialog
-  const closePromotionDialog = () => {
-    if (promotion.isDialogOpen) {
-      setPromotion({ ...promotion, isDialogOpen: false, newPiece: undefined });
-    }
-  };
-
   //function for handling user's promotion choice
-  const onPromotionSelect = (newPiece: PromotionOption): void => {
-    setPromotion({ ...promotion, isDialogOpen: false, newPiece });
-  };
+  const onPromotionSelect = useCallback(
+    (newPiece: PromotionOption): void => {
+      const { fromSquare, targetSquare, piece } = promotion;
 
-  // this useEffect makes move automatically when user choose promotion piece
-  useEffect(() => {
-    const { fromSquare, targetSquare, piece, newPiece, isPremove } = promotion;
+      if (
+        fromSquare &&
+        targetSquare &&
+        (piece === "wP" || piece === "bP") &&
+        canPromotePawn({
+          from: fromSquare,
+          to: targetSquare,
+          piece,
+        })
+      ) {
+        onMakeMove({
+          from: fromSquare,
+          to: targetSquare,
+          promotion: newPiece,
+          piece,
+        });
 
-    if (isPremove) {
-      // setPremovePromotionPieces([...premovedPromotionPieces, promotion.newPiece]);
-      return;
-    }
-
-    if (
-      fromSquare &&
-      targetSquare &&
-      (piece === "wP" || piece === "bP") &&
-      canPromotePawn({
-        from: fromSquare,
-        to: targetSquare,
-        piece,
-      })
-    ) {
-      onMakeMove({
-        from: fromSquare,
-        to: targetSquare,
-        promotion: newPiece,
-        piece,
-      });
-
-      setPromotion({ isDialogOpen: false });
-    }
-  }, [promotion.newPiece]);
+        setPromotion((p) => ({ ...p, isDialogOpen: false, piece: undefined }));
+      }
+    },
+    [onMakeMove, autoPromoteToQueen]
+  );
 
   // function for handling user's game moves
   const handleMoveWithPossiblePromotion: HandleMoveWithPossiblePromotion = useCallback(
@@ -133,7 +121,7 @@ export const usePromotion = ({
       const { from, to, promotion, piece } = move;
 
       if (!piece) {
-        return { status: "illegal move" };
+        return { status: ILLEGAL_MOVE };
       }
 
       // open promotion dialog if pawn can be promoted
@@ -145,44 +133,39 @@ export const usePromotion = ({
           piece,
         });
 
-        return { status: "need promotion" };
+        return { status: MOVE_NEEDS_PROMOTION };
       } else {
         if (autoPromoteToQueen && !move.promotion) {
           move.promotion = "q";
         }
         const isMoveCompletedSuccessfully = onMakeMove(move);
+        closePromotionDialog();
 
-        return { status: isMoveCompletedSuccessfully ? "success" : "illegal move" };
+        return { status: isMoveCompletedSuccessfully ? SUCCESS_MOVE : ILLEGAL_MOVE };
       }
     },
-    [autoPromoteToQueen, onMakeMove]
+    [onMakeMove, autoPromoteToQueen]
   );
 
-  const handlePremoveWithPossiblePromotion = (premove: Move) => {
-    const { from, to, piece } = premove;
-    if (!autoPromoteToQueen && canPromotePawn(premove, getValidPawnMovesDefault)) {
+  // function which closes promotion dialog and resets promotion state
+  const closePromotionDialog = () => {
+    if (promotion.isDialogOpen) {
       setPromotion({
-        isDialogOpen: true,
-        fromSquare: from,
-        targetSquare: to,
-        piece,
-        isPremove: true,
+        ...promotion,
+        isDialogOpen: false,
+        piece: undefined,
+        targetSquare: undefined,
       });
-
-      return true;
     }
-
-    return false;
   };
 
   return {
     handleMoveWithPossiblePromotion,
-    promotion: {
+    closePromotionDialog,
+    promotionState: {
       ...promotion,
       isDialogOpen: Boolean(promotion.isDialogOpen),
       onPromotionSelect,
-      closePromotionDialog,
-      handlePremoveWithPossiblePromotion,
     },
   };
 };

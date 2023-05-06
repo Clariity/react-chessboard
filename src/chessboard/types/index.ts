@@ -1,5 +1,15 @@
 import type { CSSProperties, FC, ReactElement, ReactNode, Ref, RefObject } from "react";
 import { BackendFactory } from "dnd-core";
+import {
+  DEFAULT_PROMOTION_STYLE,
+  LICHESS_PROMOTION_STYLE,
+  MODAL_PROMOTION_STYLE,
+} from "../consts";
+
+export type PromotionStyle =
+  | typeof DEFAULT_PROMOTION_STYLE
+  | typeof LICHESS_PROMOTION_STYLE
+  | typeof MODAL_PROMOTION_STYLE;
 
 export type Square =
   | "a8"
@@ -91,20 +101,22 @@ export type Move = {
 };
 
 export type PromotionOption = "q" | "r" | "b" | "n";
+
 export type Promotion = {
+  /** Is Promotion select dialog open or not */
   isDialogOpen: boolean;
+  /** Chessboard square from where pawn has started its move */
   fromSquare?: Square;
+  /** Chessboard square where pawn have to be promoted */
   targetSquare?: Square;
+  /** Chess piece at the moment.
+   * Firstly it is `wP` (white pawn) or `bP` (blac pawn),
+   * after promotion selects it becames ('wQ'|'wR'|'wB'|'wN') or for blacks ('bQ'|'bR'|'bB'|'bN') */
   piece?: Piece;
+  /** Callback function which calls after user selects promotion piece  */
   onPromotionSelect: (piece: PromotionOption) => void;
-  closePromotionDialog: () => void;
-  variant?: "vertical" | "grid" | "horizontal";
-  customDialogStyles?: CSSProperties;
-  customOptionStyles?: CSSProperties;
-  customOptionStylesOnHover?: CSSProperties;
-  isPremove?: boolean;
-  newPiece?: PromotionOption;
-  handlePremoveWithPossiblePromotion: (premove: Move) => boolean;
+  promotionDialogStyle?: PromotionStyle;
+  autoPromoteToQueen?: boolean;
 };
 
 export type CustomSquareProps = {

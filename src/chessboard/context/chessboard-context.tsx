@@ -14,6 +14,7 @@ import {
   convertPositionToObject,
   getPositionDifferences,
   isDifferentFromStart,
+  canPromotePawn,
 } from "../functions";
 import {
   BoardPosition,
@@ -22,7 +23,11 @@ import {
   Piece,
   PromotionOption,
   Square,
+  Promotion,
+  Move,
 } from "../types";
+
+import { DEFAULT_PROMOTION_STYLE } from "../consts";
 
 interface ChessboardProviderProps extends ChessboardProps {
   boardWidth: number;
@@ -82,6 +87,7 @@ interface ChessboardProviderContext {
   premoves: Premove[];
   isWaitingForAnimation: boolean;
   wasManualDrop: boolean;
+  setPromotionState: (p: Promotion) => void;
 }
 
 export const ChessboardContext = createContext({} as ChessboardProviderContext);
@@ -132,8 +138,8 @@ export const ChessboardProvider = forwardRef(
       promotion = {
         isDialogOpen: false,
         onPromotionSelect: () => {},
-        closePromotionDialog: () => {},
-        handlePremoveWithPossiblePromotion: () => true,
+        autoPromoteToQueen: true,
+        promotionDialogStyle: DEFAULT_PROMOTION_STYLE,
       },
     }: ChessboardProviderProps,
     ref
@@ -165,6 +171,9 @@ export const ChessboardProvider = forwardRef(
     // current arrows
     const [arrows, setArrows] = useState<Square[][]>([]);
 
+    // current promotion state
+    const [promotionState, setPromotionState] = useState<Promotion>(promotion);
+
     // chess pieces/styling
     const [chessPieces, setChessPieces] = useState({
       ...defaultPieces,
@@ -191,6 +200,11 @@ export const ChessboardProvider = forwardRef(
     useEffect(() => {
       setChessPieces({ ...defaultPieces, ...customPieces });
     }, [customPieces]);
+
+    // handle promotion state changes from user
+    useEffect(() => {
+      setPromotionState(promotion);
+    }, [promotion]);
 
     // handle external position change
     useEffect(() => {
@@ -265,22 +279,39 @@ export const ChessboardProvider = forwardRef(
       onArrowsChange(arrows);
     }, [arrows]);
 
-    // callback which adds premove with promotion to premoves queue
-    useEffect(() => {
-      if (promotion.isPremove && promotion.newPiece) {
-        const { fromSquare, targetSquare, piece } = promotion;
-        const oldPremoves: Premove[] = [...premovesRef.current];
-        if (!fromSquare || !targetSquare || !piece) return;
-        oldPremoves.push({
-          sourceSq: fromSquare,
-          targetSq: targetSquare,
-          piece,
-          promotion: promotion.newPiece,
+    const handlePremoveWithPossiblePromotion = (premove: Move) => {
+      const { from, to, piece } = premove;
+      if (!from || !to || !piece) return false;
+
+      if (canPromotePawn(premove)) {
+        setPromotionState({
+          ...promotionState,
+          isDialogOpen: true,
+          fromSquare: from,
+          targetSquare: to,
+          piece: piece,
+          onPromotionSelect: (newpiece) => {
+            if (piece) {
+              const oldPremoves: Premove[] = [...premovesRef.current];
+
+              oldPremoves.push({
+                sourceSq: from,
+                targetSq: to,
+                piece,
+                promotion: newpiece ?? "q",
+              });
+              premovesRef.current = oldPremoves;
+              setPremoves([...oldPremoves]);
+              setPromotionState((p) => ({ ...p, isDialogOpen: false }));
+            }
+          },
         });
-        premovesRef.current = oldPremoves;
-        setPremoves([...oldPremoves]);
+
+        return true;
       }
-    }, [promotion.newPiece]);
+
+      return false;
+    };
 
     // handle drop position change
     function handleSetPosition(sourceSq: Square, targetSq: Square, piece: Piece) {
@@ -302,20 +333,21 @@ export const ChessboardProvider = forwardRef(
       ) {
         const oldPremoves: Premove[] = [...premovesRef.current];
 
-        //if premove needs promotion piece manual select open promotion dialog
-        const needsPromotion = promotion.handlePremoveWithPossiblePromotion({
+        // if premove needs promotion piece manual select open promotion dialog
+        const needsPromotion = handlePremoveWithPossiblePromotion({
           from: sourceSq,
           to: targetSq,
           piece,
         });
 
-        if (needsPromotion) {
+        if (!promotionState.autoPromoteToQueen && needsPromotion) {
           return;
         }
 
         oldPremoves.push({ sourceSq, targetSq, piece });
         premovesRef.current = oldPremoves;
         setPremoves([...oldPremoves]);
+        setPromotionState({ ...promotionState, isDialogOpen: false });
         return;
       }
 
@@ -470,7 +502,8 @@ export const ChessboardProvider = forwardRef(
       positionDifferences,
       premoves,
       isWaitingForAnimation,
-      promotion,
+      promotion: promotionState,
+      setPromotionState,
       wasManualDrop,
     };
 
