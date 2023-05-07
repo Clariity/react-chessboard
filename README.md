@@ -172,6 +172,84 @@ For more advanced code usage examples, please see example boards shown in [`Stor
 | position                      | string: 'start'                                                   | ['start', FEN string, { e5: 'wK', e4: 'wP', ... }] | FEN string or position object notating where the chess pieces are on the board. Start position can also be notated with the string: 'start'.                                                                                                                                                                                                                                         |
 | showBoardNotation             | boolean: true                                                     | [true, false]                                      | Whether or not to show the file and rank co-ordinates (a..h, 1..8).                                                                                                                                                                                                                                                                                                                  |
 | snapToCursor                  | boolean: true                                                     | [true, false]                                      | Whether or not to center dragged pieces on the mouse cursor.                                                                                                                                                                                                                                                                                                                         |
+|promotion|object:<pre>{<br>  isDialogOpen: false,<br>  onPromotionSelect: () => {},<br>  autoPromoteToQueen: true,<br>  promotionDialogStyle: 'default'<br>}</pre>|See [promotion state description](https://github.com/Clariity/react-chessboard#promotion_options)|Data for rendering pawn promotion dialog|
+
+## Promotion Type
+
+`Promotion` prop represents the properties and methods that can be used in a pawn promotion dialog for a chess game.
+
+Here's a breakdown of the properties and their descriptions:
+
+```typescript
+type Promotion = {
+  isDialogOpen: boolean;
+  fromSquare?: Square;
+  targetSquare?: Square;
+  piece?: Piece;
+  onPromotionSelect: (piece: PromotionOption) => void;
+  promotionDialogStyle?: PromotionStyle;
+  autoPromoteToQueen?: boolean;
+};
+```
+
+-   `isDialogOpen`: A boolean value that indicates whether the promotion dialog is currently open or closed.
+-   `fromSquare`: An optional property that represents the chessboard square from where the pawn has started its move.
+-   `targetSquare`: An optional property that represents the chessboard square where the pawn has to be promoted.
+-   `piece`: An optional property that represents the current chess piece. It is initially set to 'wP' for white pawn or 'bP' for black pawn. After the user selects a promotion piece, it becomes 'wQ', 'wR', 'wB', or 'wN' for white, or 'bQ', 'bR', 'bB', or 'bN' for black.
+-   `onPromotionSelect`: A required callback function that is called when the user selects a promotion piece. This function takes a single argument of type PromotionOption and does not return anything.
+-   `promotionDialogStyle`: An optional property that represents the style choice for the promotion dialog.
+-   `autoPromoteToQueen`: An optional property that indicates whether pawns should be automatically promoted to queens. If this property is not provided, the default value is assumed to be false.
+
+
+## `usePromotion` hook
+
+To easily implement pawn promotion logic, you can use the usePromotion hook, which accepts the following three props:
+-   `onMakeMove`: A required function that makes a chess move and changes the position of the game. It takes a `Move` object as an argument and returns a boolean value. If the move is illegal, it should return `false`. Otherwise, it should return `true`. If move contains pawn promotion it opens promotion dialog on chessboard. 
+    
+-   `getValidPawnMoves`: An optional function that returns a list of squares where the piece from a given square can move to. This function is used to properly determine when to open the promotion dialog. If this function is not provided, the promotion dialog will always be opened when a pawn reaches his neighbour squares of the 8th rank.
+    
+-   `autoPromoteToQueen`: An optional boolean value that indicates whether pawns should be automatically promoted to queens. If this value is set to `true`, the `handleMoveWithPossiblePromotion` function will automatically promote pawns to queens without opening promotion dialog. If this value is set to `false`, the user will be prompted to select the promotion piece.
+
+Basic usage example of `usePromotion` hook
+```jsx
+export const BasicPromotionImplementation = () => {
+  // store your chess game in React.state
+  const [game, setGame] = useState(new Chess("8/PPP5/2KP4/8/8/4p1k1/5ppp/8 w - - 0 1"));
+
+  // create `onMakeMove` function which will change game state after user or computer makes move
+  function onMakeMove({ from, to, promotion }) {
+    const gameCopy = { ...game };
+    const move = gameCopy.move({ from, to, promotion });
+    setGame(gameCopy);
+    if (move === null) return false; // return `false` if move is illegal
+
+    return true; // return `true` if move is legal
+  }
+
+  // pass `onMakeMove` function to `usePromotion` hook
+  const { handleMoveWithPossiblePromotion, promotionState } = usePromotion({
+    onMakeMove,
+  });
+
+  return (
+    <Chessboard
+      id="promotionExample"
+      position={game.fen()}
+      // now you can use `handleMoveWithPossiblePromotion` while interacting with chessboard
+      onPieceDrop={(sourceSquare, targetSquare, piece) => {
+        const { status: moveStatus } = handleMoveWithPossiblePromotion({
+          from: sourceSquare,
+          to: targetSquare,
+          piece,
+        });
+
+        return moveStatus === "success move";
+      }}
+      promotion={promotionState}
+    />
+  );
+};
+```
 
 ## Contributing
 

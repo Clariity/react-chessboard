@@ -145,7 +145,7 @@ const PawnPromotionExample = (args: PawnPromotionExampleProps) => {
   );
 };
 
-export const PromotionStory = {
+export const AdvancedPromotionExampleWithPremoves = {
   render: PawnPromotionExample,
   argTypes: {
     promotionVariant: {
@@ -163,3 +163,43 @@ export default {
   title: "Example/Chessboard Pawn promotion",
   component: PawnPromotionExample,
 } as ComponentMeta<typeof Chessboard>;
+
+export const BasicPromotionImplementation = () => {
+  // store your chess game in React.state
+  const [game, setGame] = useState(new Chess("8/PPP5/2KP4/8/8/4p1k1/5ppp/8 w - - 0 1"));
+
+  // create `onMakeMove` function which will change game state after user or computer move
+  function onMakeMove({ from, to, promotion }) {
+    const gameCopy = { ...game };
+    const move = gameCopy.move({ from, to, promotion });
+    setGame(gameCopy);
+    if (move === null) return false; // return `false` if move is illegal
+
+    return true; // return `true` if move is legal
+  }
+
+  // pass `onMakeMove` function to `usePromotion` hook
+  const { handleMoveWithPossiblePromotion, promotionState } = usePromotion({
+    onMakeMove,
+  });
+
+  return (
+    <div style={boardWrapper}>
+      <Chessboard
+        id="promotionExample"
+        position={game.fen()}
+        // now you can use `handleMoveWithPossiblePromotion` while interacting with chessboard
+        onPieceDrop={(sourceSquare, targetSquare, piece) => {
+          const { status: moveStatus } = handleMoveWithPossiblePromotion({
+            from: sourceSquare,
+            to: targetSquare,
+            piece,
+          });
+
+          return moveStatus === "success move";
+        }}
+        promotion={promotionState}
+      />
+    </div>
+  );
+};

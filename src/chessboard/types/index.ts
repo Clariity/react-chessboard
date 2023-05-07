@@ -115,7 +115,9 @@ export type Promotion = {
   piece?: Piece;
   /** Callback function which calls after user selects promotion piece  */
   onPromotionSelect: (piece: PromotionOption) => void;
+  /** Promotion dialog style choice  */
   promotionDialogStyle?: PromotionStyle;
+  /** Auto-promote pawns to queen or not  */
   autoPromoteToQueen?: boolean;
 };
 

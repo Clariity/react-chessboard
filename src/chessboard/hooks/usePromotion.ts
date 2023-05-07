@@ -36,11 +36,9 @@ interface UsePromotionHookProps {
   autoPromoteToQueen?: boolean;
 }
 
-interface UsePromotionHookState {
+interface UsePromotionHookResponse {
   /** Function determines possible pawn promotions and opens promotion dialog */
   handleMoveWithPossiblePromotion: HandleMoveWithPossiblePromotion;
-  /** Function closes promotion dialog and resets its state to initial */
-  closePromotionDialog: () => void;
   /** Basic data for rendering promotion dialog */
   promotionState: Promotion;
 }
@@ -49,7 +47,7 @@ export const usePromotion = ({
   onMakeMove,
   getValidPawnMoves = getValidPawnMovesDefault,
   autoPromoteToQueen = false,
-}: UsePromotionHookProps): UsePromotionHookState => {
+}: UsePromotionHookProps): UsePromotionHookResponse => {
   const [promotion, setPromotion] = useState<Partial<Promotion>>({
     isDialogOpen: false,
     autoPromoteToQueen,
@@ -161,7 +159,6 @@ export const usePromotion = ({
 
   return {
     handleMoveWithPossiblePromotion,
-    closePromotionDialog,
     promotionState: {
       ...promotion,
       isDialogOpen: Boolean(promotion.isDialogOpen),
