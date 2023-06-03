@@ -296,7 +296,7 @@ export type ChessboardProps = {
    * User function that is run when a promotion piece is selected. Must return whether the move was successful or not.
    * @default () => true
    */
-  onPromotionPieceSelect?: (piece: PromotionPieceOption) => boolean;
+  onPromotionPieceSelect?: (piece?: PromotionPieceOption) => boolean;
   /**
    * User function that is run when a square is clicked.
    * @default () => {}

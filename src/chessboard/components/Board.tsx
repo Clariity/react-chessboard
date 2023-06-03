@@ -15,6 +15,7 @@ export function Board() {
     boardWidth,
     clearCurrentRightClickDown,
     customArrowColor,
+    onPromotionPieceSelect,
     setShowPromoteDialog,
     showPromoteDialog,
   } = useChessboard();
@@ -96,7 +97,10 @@ export function Board() {
       {showPromoteDialog && (
         <>
           <div
-            onClick={() => setShowPromoteDialog(false)}
+            onClick={() => {
+              setShowPromoteDialog(false);
+              onPromotionPieceSelect?.();
+            }}
             style={{
               position: "absolute",
               top: "0",

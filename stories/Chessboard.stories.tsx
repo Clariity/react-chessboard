@@ -260,15 +260,18 @@ export const ClickToMove = () => {
   }
 
   function onPromotionPieceSelect(piece) {
-    const gameCopy = { ...game };
-    gameCopy.move({
-      from: moveFrom,
-      to: moveTo,
-      promotion: piece[1].toLowerCase() ?? "q",
-    });
-    setGame(gameCopy);
+    // if no piece passed then user has cancelled dialog, don't make move and reset
+    if (piece) {
+      const gameCopy = { ...game };
+      gameCopy.move({
+        from: moveFrom,
+        to: moveTo,
+        promotion: piece[1].toLowerCase() ?? "q",
+      });
+      setGame(gameCopy);
+      setTimeout(makeRandomMove, 300);
+    }
 
-    setTimeout(makeRandomMove, 300);
     setMoveFrom("");
     setMoveTo(null);
     setShowPromotionDialog(false);
