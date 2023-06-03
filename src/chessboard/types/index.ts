@@ -93,7 +93,7 @@ export type PromotionPieceOption =
   | "bR"
   | "bN"
   | "bB";
-export type PromotionStyle = "default" | "lichess" | "modal";
+export type PromotionStyle = "default" | "vertical" | "modal";
 
 export type CustomSquareProps = {
   children: ReactNode;
