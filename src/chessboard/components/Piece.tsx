@@ -168,7 +168,6 @@ export function Piece({
 
   return (
     <div
-      // disabling the dragging  of pieces while promotion dialog is open helps to avoid a ton of little annoying bugs
       ref={arePiecesDraggable ? (canDrag ? drag : null) : null}
       onClick={() => onPieceClick(piece)}
       data-piece={piece}

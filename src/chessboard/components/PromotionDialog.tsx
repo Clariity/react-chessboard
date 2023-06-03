@@ -26,7 +26,7 @@ export function PromotionDialog() {
       gridTemplateColumns: "1fr 1fr",
       transform: `translate(${-boardWidth / 8}px, ${-boardWidth / 8}px)`,
     },
-    lichess: {
+    vertical: {
       transform: `translate(${-boardWidth / 16}px, ${-boardWidth / 16}px)`,
     },
     modal: {
