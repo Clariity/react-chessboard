@@ -1,4 +1,4 @@
-import { useState, ReactNode, cloneElement } from "react";
+import { useState, ReactNode } from "react";
 
 import { useChessboard } from "../context/chessboard-context";
 import { CustomPieceFn, PromotionPieceOption } from "../types";
