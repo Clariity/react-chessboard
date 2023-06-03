@@ -1,15 +1,5 @@
-import type { CSSProperties, FC, ReactElement, ReactNode, Ref, RefObject } from "react";
+import type { FC, ReactElement, ReactNode, Ref, RefObject } from "react";
 import { BackendFactory } from "dnd-core";
-import {
-  DEFAULT_PROMOTION_STYLE,
-  LICHESS_PROMOTION_STYLE,
-  MODAL_PROMOTION_STYLE,
-} from "../consts";
-
-export type PromotionStyle =
-  | typeof DEFAULT_PROMOTION_STYLE
-  | typeof LICHESS_PROMOTION_STYLE
-  | typeof MODAL_PROMOTION_STYLE;
 
 export type Square =
   | "a8"
@@ -93,33 +83,17 @@ export type Piece =
 
 export type BoardPosition = { [square in Square]?: Piece };
 
-export type Move = {
-  from: Square;
-  to: Square;
-  piece: Piece;
-  promotion?: PromotionOption;
-};
-
-export type PromotionOption = "q" | "r" | "b" | "n";
-
-export type Promotion = {
-  /** Is Promotion select dialog open or not */
-  isDialogOpen: boolean;
-  /** Chessboard square from where pawn has started its move */
-  fromSquare?: Square;
-  /** Chessboard square where pawn have to be promoted */
-  targetSquare?: Square;
-  /** Chess piece at the moment.
-   * Firstly it is `wP` (white pawn) or `bP` (blac pawn),
-   * after promotion selects it becames ('wQ'|'wR'|'wB'|'wN') or for blacks ('bQ'|'bR'|'bB'|'bN') */
-  piece?: Piece;
-  /** Callback function which calls after user selects promotion piece  */
-  onPromotionSelect: (piece: PromotionOption) => void;
-  /** Promotion dialog style choice  */
-  promotionDialogStyle?: PromotionStyle;
-  /** Auto-promote pawns to queen or not  */
-  autoPromoteToQueen?: boolean;
-};
+export type PromotionPieceColor = "w" | "b" | null;
+export type PromotionPieceOption =
+  | "wQ"
+  | "wR"
+  | "wN"
+  | "wB"
+  | "bQ"
+  | "bR"
+  | "bN"
+  | "bB";
+export type PromotionStyle = "default" | "lichess" | "modal";
 
 export type CustomSquareProps = {
   children: ReactNode;
@@ -128,10 +102,12 @@ export type CustomSquareProps = {
   ref: Ref<any>;
   square: Square;
   squareColor: "white" | "black";
-  style: CSSProperties;
+  style: Record<string, string | number>;
 };
 
-export type CustomSquareRenderer = FC<CustomSquareProps> | keyof JSX.IntrinsicElements;
+export type CustomSquareRenderer =
+  | FC<CustomSquareProps>
+  | keyof JSX.IntrinsicElements;
 
 export type CustomPieceFnArgs = {
   isDragging: boolean;
@@ -145,7 +121,7 @@ export type CustomPieces = {
 };
 
 export type CustomSquareStyles = {
-  [key in Square]?: CSSProperties;
+  [key in Square]?: Record<string, string | number>;
 };
 
 export type BoardOrientation = "white" | "black";
@@ -203,12 +179,12 @@ export type ChessboardProps = {
    * Custom board style object e.g. { borderRadius: '5px', boxShadow: '0 5px 15px rgba(0, 0, 0, 0.5 '}.
    * @default {}
    */
-  customBoardStyle?: CSSProperties;
+  customBoardStyle?: Record<string, string | number>;
   /**
    * Custom dark square style object.
    * @default { backgroundColor: "#B58863" }
    */
-  customDarkSquareStyle?: CSSProperties;
+  customDarkSquareStyle?: Record<string, string | number>;
   /**
    * Custom react-dnd backend to use instead of the one provided by react-chessboard.
    */
@@ -221,12 +197,12 @@ export type ChessboardProps = {
    * Custom drop square style object (Square being hovered over with dragged piece).
    * @default { boxShadow: "inset 0 0 1px 6px rgba(255,255,255,0.75)" }
    */
-  customDropSquareStyle?: CSSProperties;
+  customDropSquareStyle?: Record<string, string | number>;
   /**
    * Custom light square style object.
    * @default { backgroundColor: "#F0D9B5" }
    */
-  customLightSquareStyle?: CSSProperties;
+  customLightSquareStyle?: Record<string, string | number>;
   /**
    * Custom pieces object where each key must match a corresponding chess piece (wP, wB, wN, wR, wQ, wK, bP, bB, bN, bR, bQ, bK). The value of each piece is a function that takes in some optional arguments to use and must return JSX to render. e.g. { wK: ({ isDragging: boolean, squareWidth: number }) => jsx }.
    * @default {}
@@ -236,12 +212,12 @@ export type ChessboardProps = {
    * Custom premove dark square style object.
    * @default { backgroundColor: "#A42323" }
    */
-  customPremoveDarkSquareStyle?: CSSProperties;
+  customPremoveDarkSquareStyle?: Record<string, string | number>;
   /**
    * Custom premove light square style object.
    * @default { backgroundColor: "#BD2828" }
    */
-  customPremoveLightSquareStyle?: CSSProperties;
+  customPremoveLightSquareStyle?: Record<string, string | number>;
   /**
    * Custom square renderer for all squares.
    * @default "div"
@@ -314,9 +290,13 @@ export type ChessboardProps = {
   onPieceDrop?: (
     sourceSquare: Square,
     targetSquare: Square,
-    piece: Piece,
-    promotion?: PromotionOption
+    piece: Piece
   ) => boolean;
+  /**
+   * User function that is run when a promotion piece is selected. Must return whether the move was successful or not.
+   * @default () => true
+   */
+  onPromotionPieceSelect?: (piece: PromotionPieceOption) => boolean;
   /**
    * User function that is run when a square is clicked.
    * @default () => {}
@@ -333,7 +313,22 @@ export type ChessboardProps = {
    */
   position?: string | BoardPosition;
   /**
-   * RefObject that is sent as forwardRef to chessboard
+   * Style of promotion dialog.
+   * @default default
+   */
+  promotionDialogVariant?: PromotionStyle;
+  /**
+   * Color of the piece being promoted. Must be passed when promotion dialog is manually shown.
+   * @default null
+   */
+  promotionPieceColor?: PromotionPieceColor;
+  /**
+   * The square to promote a piece to.
+   * @default null
+   */
+  promotionToSquare?: Square | null;
+  /**
+   * RefObject that is sent as forwardRef to chessboard.
    */
   ref?: RefObject<HTMLDivElement>;
   /**
@@ -342,10 +337,13 @@ export type ChessboardProps = {
    */
   showBoardNotation?: boolean;
   /**
+   * Whether or not to show the promotion dialog.
+   * @default false
+   */
+  showPromotionDialog?: boolean;
+  /**
    * Whether or not to center dragged pieces on the mouse cursor.
    * @default true
    */
   snapToCursor?: boolean;
-
-  promotion?: Promotion;
 };

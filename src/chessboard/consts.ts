@@ -60,13 +60,3 @@ export const BLACK_COLUMN_VALUES: { [col in string]: number } = {
 
 export const WHITE_ROWS = [7, 6, 5, 4, 3, 2, 1, 0];
 export const BLACK_ROWS = [0, 1, 2, 3, 4, 5, 6, 7];
-
-export const DEFAULT_PROMOTION_STYLE = "default";
-export const LICHESS_PROMOTION_STYLE = "lichess";
-export const MODAL_PROMOTION_STYLE = "modal";
-
-export const PROMOTION_STYLES_ENUM = [
-  DEFAULT_PROMOTION_STYLE,
-  LICHESS_PROMOTION_STYLE,
-  MODAL_PROMOTION_STYLE,
-];

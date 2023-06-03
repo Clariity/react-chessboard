@@ -1,8 +1,14 @@
-import { CSSProperties, ReactNode, useEffect, useRef } from "react";
+import { ReactNode, useEffect, useRef } from "react";
 import { useDrop } from "react-dnd";
 
 import { useChessboard } from "../context/chessboard-context";
-import { BoardOrientation, Coords, Piece, Square as Sq } from "../types";
+import {
+  BoardOrientation,
+  Coords,
+  Piece,
+  PromotionPieceColor,
+  Square as Sq,
+} from "../types";
 
 type SquareProps = {
   children: ReactNode;
@@ -34,6 +40,7 @@ export function Square({
     customSquare: CustomSquare,
     customSquareStyles,
     handleSetPosition,
+    isWaitingForAnimation,
     lastPieceColour,
     onDragOverSquare,
     onMouseOutSquare,
@@ -42,21 +49,42 @@ export function Square({
     onRightClickDown,
     onRightClickUp,
     onSquareClick,
-    isWaitingForAnimation,
-    promotion,
+    setPromotePieceColor,
+    setPromoteFromSquare,
+    setPromoteToSquare,
+    setShowPromoteDialog,
   } = useChessboard();
 
   const [{ isOver }, drop] = useDrop(
     () => ({
       accept: "piece",
-      drop: (item: { piece: Piece; square: Sq; id: number }) =>
-        handleSetPosition(item.square, square, item.piece),
+      drop: handleDrop,
       collect: (monitor) => ({
         isOver: !!monitor.isOver(),
       }),
     }),
-    [square, currentPosition, onPieceDrop, isWaitingForAnimation, lastPieceColour]
+    [
+      square,
+      currentPosition,
+      onPieceDrop,
+      isWaitingForAnimation,
+      lastPieceColour,
+    ]
   );
+
+  function handleDrop(item: { piece: Piece; square: Sq; id: number }) {
+    if (
+      (item.piece === "wP" && square[1] === "8") ||
+      (item.piece === "bP" && square[1] === "1")
+    ) {
+      setPromotePieceColor(item.piece[0] as PromotionPieceColor);
+      setPromoteFromSquare(item.square);
+      setPromoteToSquare(square);
+      setShowPromoteDialog(true);
+    } else {
+      handleSetPosition(item.square, square, item.piece, true);
+    }
+  }
 
   useEffect(() => {
     if (squareRef.current) {
@@ -67,18 +95,15 @@ export function Square({
 
   const defaultSquareStyle = {
     ...borderRadius(square, boardOrientation, customBoardStyle),
-    ...(squareColor === "black" ? customDarkSquareStyle : customLightSquareStyle),
+    ...(squareColor === "black"
+      ? customDarkSquareStyle
+      : customLightSquareStyle),
     ...(squareHasPremove &&
       (squareColor === "black"
         ? customPremoveDarkSquareStyle
         : customPremoveLightSquareStyle)),
     ...(isOver && customDropSquareStyle),
   };
-
-  const isSquarePawnWaitingForPromotion =
-    promotion.isDialogOpen && promotion?.fromSquare === square;
-  const isSquarePawnsPromotionDestination =
-    promotion.isDialogOpen && promotion?.targetSquare === square;
 
   return (
     <div
@@ -88,12 +113,20 @@ export function Square({
       data-square={square}
       onMouseOver={(e) => {
         // noop if moving from child of square into square.
-        if (e.relatedTarget && e.currentTarget.contains(e.relatedTarget as Node)) return;
+        if (
+          e.relatedTarget &&
+          e.currentTarget.contains(e.relatedTarget as Node)
+        )
+          return;
         onMouseOverSquare(square);
       }}
       onMouseOut={(e) => {
         // noop if moving from square into a child of square.
-        if (e.relatedTarget && e.currentTarget.contains(e.relatedTarget as Node)) return;
+        if (
+          e.relatedTarget &&
+          e.currentTarget.contains(e.relatedTarget as Node)
+        )
+          return;
         onMouseOutSquare(square);
       }}
       onMouseDown={(e) => {
@@ -120,12 +153,9 @@ export function Square({
             ...size(boardWidth),
             ...center,
             ...(!squareHasPremove && customSquareStyles?.[square]),
-            //TODO make styles customizable
-            ...((isSquarePawnWaitingForPromotion ||
-              isSquarePawnsPromotionDestination) && { background: "lightgreen" }),
           }}
         >
-          {!isSquarePawnsPromotionDestination && children}
+          {children}
         </CustomSquare>
       ) : (
         <CustomSquare
@@ -138,7 +168,7 @@ export function Square({
             ...(!squareHasPremove && customSquareStyles?.[square]),
           }}
         >
-          {!isSquarePawnsPromotionDestination && children}
+          {children}
         </CustomSquare>
       )}
     </div>
@@ -158,7 +188,7 @@ const size = (width: number) => ({
 const borderRadius = (
   square: Sq,
   boardOrientation: BoardOrientation,
-  customBoardStyle?: CSSProperties
+  customBoardStyle?: Record<string, string | number>
 ) => {
   if (!customBoardStyle?.borderRadius) return {};
 

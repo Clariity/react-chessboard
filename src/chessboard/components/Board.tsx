@@ -1,29 +1,30 @@
 import { Fragment, useRef, useEffect } from "react";
 
 import { getRelativeCoords } from "../functions";
-import { Squares } from "./Squares";
 import { useChessboard } from "../context/chessboard-context";
+import { PromotionDialog } from "./PromotionDialog";
+import { Squares } from "./Squares";
 import { WhiteKing } from "./ErrorBoundary";
-import { SelectPromotionDialog } from "./SelectPromotionDialog";
-import { useAnimatedUnmount } from "../hooks/useAnimatedUnmount";
 
 export function Board() {
   const boardRef = useRef<HTMLDivElement>(null);
 
   const {
     arrows,
-    animationDuration,
     boardOrientation,
     boardWidth,
     clearCurrentRightClickDown,
     customArrowColor,
-    promotion,
-    setPromotionState,
+    setShowPromoteDialog,
+    showPromoteDialog,
   } = useChessboard();
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (boardRef.current && !boardRef.current.contains(event.target as Node)) {
+      if (
+        boardRef.current &&
+        !boardRef.current.contains(event.target as Node)
+      ) {
         clearCurrentRightClickDown();
       }
     }
@@ -34,37 +35,11 @@ export function Board() {
     };
   }, []);
 
-  const { showComponent: showPromotionDialog, style } = useAnimatedUnmount(
-    promotion.isDialogOpen,
-    animationDuration
-  );
-
   return boardWidth ? (
     <div ref={boardRef} style={{ position: "relative" }}>
       <Squares />
-      {/* cover board with semi-transparent div while choosing promotion piece */}
-      {promotion.isDialogOpen && (
-        <div
-          onClick={(e) => {
-            if (promotion.isDialogOpen) {
-              setPromotionState({
-                ...promotion,
-                isDialogOpen: false,
-                piece: undefined,
-              });
-            }
-          }}
-          style={{
-            position: "absolute",
-            top: "0",
-            left: "0",
-            zIndex: "100",
-            backgroundColor: "rgba(22,21,18,.7)",
-            width: boardWidth,
-            height: boardWidth,
-          }}
-        />
-      )}
+
+      {/* draw arrows */}
       <svg
         width={boardWidth}
         height={boardWidth}
@@ -77,7 +52,11 @@ export function Board() {
         }}
       >
         {arrows.map((arrow) => {
-          const from = getRelativeCoords(boardOrientation, boardWidth, arrow[0]);
+          const from = getRelativeCoords(
+            boardOrientation,
+            boardWidth,
+            arrow[0]
+          );
           const to = getRelativeCoords(boardOrientation, boardWidth, arrow[1]);
 
           return (
@@ -112,15 +91,24 @@ export function Board() {
           );
         })}
       </svg>
-      {showPromotionDialog && (
-        <SelectPromotionDialog
-          handlePromotion={promotion.onPromotionSelect}
-          style={style}
-          dialogCoords={
-            promotion.targetSquare &&
-            getRelativeCoords(boardOrientation, boardWidth, promotion.targetSquare)
-          }
-        />
+
+      {/* promotion dialog with background */}
+      {showPromoteDialog && (
+        <>
+          <div
+            onClick={() => setShowPromoteDialog(false)}
+            style={{
+              position: "absolute",
+              top: "0",
+              left: "0",
+              zIndex: "100",
+              backgroundColor: "rgba(22,21,18,.7)",
+              width: boardWidth,
+              height: boardWidth,
+            }}
+          />
+          <PromotionDialog />
+        </>
       )}
     </div>
   ) : (

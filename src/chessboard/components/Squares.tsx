@@ -20,7 +20,10 @@ export function Squares() {
   } = useChessboard();
 
   return (
-    <div data-boardid={id} style={{ ...boardStyles(boardWidth), ...customBoardStyle }}>
+    <div
+      data-boardid={id}
+      style={{ ...boardStyles(boardWidth), ...customBoardStyle }}
+    >
       {[...Array(8)].map((_, r) => {
         return (
           <div
@@ -40,12 +43,9 @@ export function Squares() {
               const squareHasPremove = premoves.find(
                 (p) => p.sourceSq === square || p.targetSq === square
               );
-              const squareHasPremoveTarget = premoves.find((p) => p.targetSq === square);
-
-              const squareHasPremovePromotionTarget =
-                squareHasPremoveTarget?.promotion &&
-                ((squareHasPremoveTarget?.piece[0] +
-                  squareHasPremoveTarget?.promotion?.toUpperCase()) as Pc);
+              const squareHasPremoveTarget = premoves.find(
+                (p) => p.targetSq === square
+              );
 
               return (
                 <Square
@@ -65,9 +65,7 @@ export function Squares() {
                   {squareHasPremoveTarget && (
                     <Piece
                       isPremovedPiece={true}
-                      piece={
-                        squareHasPremovePromotionTarget ?? squareHasPremoveTarget.piece
-                      }
+                      piece={squareHasPremoveTarget.piece}
                       square={square}
                       squares={squares}
                     />

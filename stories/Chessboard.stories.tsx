@@ -3,7 +3,7 @@ import { ComponentMeta, ComponentStory } from "@storybook/react";
 import Chess from "chess.js";
 
 import { Chessboard, ClearPremoves } from "../src";
-import { CustomSquareProps } from "../src/chessboard/types";
+import { CustomSquareProps, Square } from "../src/chessboard/types";
 
 // examples
 // multiboard example https://storybook.js.org/docs/react/writing-stories/stories-for-multiple-components
@@ -59,7 +59,8 @@ export const PlayVsRandom = () => {
     const possibleMoves = game.moves();
 
     // exit if the game is over
-    if (game.game_over() || game.in_draw() || possibleMoves.length === 0) return;
+    if (game.game_over() || game.in_draw() || possibleMoves.length === 0)
+      return;
 
     const randomIndex = Math.floor(Math.random() * possibleMoves.length);
     safeGameMutate((game) => {
@@ -67,12 +68,12 @@ export const PlayVsRandom = () => {
     });
   }
 
-  function onDrop(sourceSquare, targetSquare) {
+  function onDrop(sourceSquare, targetSquare, piece) {
     const gameCopy = { ...game };
     const move = gameCopy.move({
       from: sourceSquare,
       to: targetSquare,
-      promotion: "q", // always promote to a queen for example simplicity
+      promotion: piece[1].toLowerCase() ?? "q",
     });
     setGame(gameCopy);
 
@@ -128,6 +129,11 @@ export const PlayVsRandom = () => {
 export const ClickToMove = () => {
   const [game, setGame] = useState(new Chess());
   const [moveFrom, setMoveFrom] = useState("");
+  const [moveTo, setMoveTo] = useState<Square | null>(null);
+
+  const [showPromotionDialog, setShowPromotionDialog] = useState(false);
+  const [promotionPieceColor, setPromotionPieceColor] = useState(null);
+
   const [rightClickedSquares, setRightClickedSquares] = useState({});
   const [moveSquares, setMoveSquares] = useState({});
   const [optionSquares, setOptionSquares] = useState({});
@@ -146,6 +152,7 @@ export const ClickToMove = () => {
       verbose: true,
     });
     if (moves.length === 0) {
+      setOptionSquares({});
       return false;
     }
 
@@ -153,7 +160,8 @@ export const ClickToMove = () => {
     moves.map((move) => {
       newSquares[move.to] = {
         background:
-          game.get(move.to) && game.get(move.to).color !== game.get(square).color
+          game.get(move.to) &&
+          game.get(move.to).color !== game.get(square).color
             ? "radial-gradient(circle, rgba(0,0,0,.1) 85%, transparent 85%)"
             : "radial-gradient(circle, rgba(0,0,0,.1) 25%, transparent 25%)",
         borderRadius: "50%",
@@ -171,7 +179,8 @@ export const ClickToMove = () => {
     const possibleMoves = game.moves();
 
     // exit if the game is over
-    if (game.game_over() || game.in_draw() || possibleMoves.length === 0) return;
+    if (game.game_over() || game.in_draw() || possibleMoves.length === 0)
+      return;
 
     const randomIndex = Math.floor(Math.random() * possibleMoves.length);
     safeGameMutate((game) => {
@@ -182,35 +191,90 @@ export const ClickToMove = () => {
   function onSquareClick(square) {
     setRightClickedSquares({});
 
-    function resetFirstMove(square) {
-      const hasOptions = getMoveOptions(square);
-      if (hasOptions) setMoveFrom(square);
-    }
-
     // from square
     if (!moveFrom) {
-      resetFirstMove(square);
+      const hasMoveOptions = getMoveOptions(square);
+      if (hasMoveOptions) setMoveFrom(square);
       return;
     }
 
-    // attempt to make move
+    // to square
+    if (!moveTo) {
+      // check if valid move before showing dialog
+      const moves = game.moves({
+        moveFrom,
+        verbose: true,
+      });
+      const foundMove = moves.find(
+        (m) => m.from === moveFrom && m.to === square
+      );
+      // not a valid move
+      if (!foundMove) {
+        // check if clicked on new piece
+        const hasMoveOptions = getMoveOptions(square);
+        // if new piece, setMoveFrom, otherwise clear moveFrom
+        setMoveFrom(hasMoveOptions ? square : "");
+        return;
+      }
+
+      // valid move
+      setMoveTo(square);
+
+      // if promotion move
+      if (
+        (foundMove.color === "w" &&
+          foundMove.piece === "p" &&
+          square[1] === "8") ||
+        (foundMove.color === "b" &&
+          foundMove.piece === "p" &&
+          square[1] === "1")
+      ) {
+        setShowPromotionDialog(true);
+        setPromotionPieceColor(foundMove.color);
+        return;
+      }
+
+      // is normal move
+      const gameCopy = { ...game };
+      const move = gameCopy.move({
+        from: moveFrom,
+        to: square,
+        promotion: "q",
+      });
+
+      // if invalid, setMoveFrom and getMoveOptions
+      if (move === null) {
+        const hasMoveOptions = getMoveOptions(square);
+        if (hasMoveOptions) setMoveFrom(square);
+        return;
+      }
+
+      setGame(gameCopy);
+
+      setTimeout(makeRandomMove, 300);
+      setMoveFrom("");
+      setMoveTo(null);
+      setOptionSquares({});
+      return;
+    }
+  }
+
+  function onPromotionPieceSelect(piece) {
     const gameCopy = { ...game };
-    const move = gameCopy.move({
+    gameCopy.move({
       from: moveFrom,
-      to: square,
-      promotion: "q", // always promote to a queen for example simplicity
+      to: moveTo,
+      promotion: piece[1].toLowerCase() ?? "q",
     });
     setGame(gameCopy);
 
-    // if invalid, setMoveFrom and getMoveOptions
-    if (move === null) {
-      resetFirstMove(square);
-      return;
-    }
-
     setTimeout(makeRandomMove, 300);
     setMoveFrom("");
+    setMoveTo(null);
+    setShowPromotionDialog(false);
+    setPromotionPieceColor(null);
     setOptionSquares({});
+    return true;
   }
 
   function onSquareRightClick(square) {
@@ -234,6 +298,7 @@ export const ClickToMove = () => {
         position={game.fen()}
         onSquareClick={onSquareClick}
         onSquareRightClick={onSquareRightClick}
+        onPromotionPieceSelect={onPromotionPieceSelect}
         customBoardStyle={{
           borderRadius: "4px",
           boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
@@ -243,6 +308,9 @@ export const ClickToMove = () => {
           ...optionSquares,
           ...rightClickedSquares,
         }}
+        promotionPieceColor={promotionPieceColor}
+        promotionToSquare={moveTo}
+        showPromotionDialog={showPromotionDialog}
       />
       <button
         style={buttonStyle}
@@ -251,6 +319,7 @@ export const ClickToMove = () => {
             game.reset();
           });
           setMoveSquares({});
+          setOptionSquares({});
           setRightClickedSquares({});
         }}
       >
@@ -263,6 +332,7 @@ export const ClickToMove = () => {
             game.undo();
           });
           setMoveSquares({});
+          setOptionSquares({});
           setRightClickedSquares({});
         }}
       >
@@ -292,7 +362,8 @@ export const PremovesEnabled = () => {
     const possibleMoves = game.moves();
 
     // exit if the game is over
-    if (game.game_over() || game.in_draw() || possibleMoves.length === 0) return;
+    if (game.game_over() || game.in_draw() || possibleMoves.length === 0)
+      return;
 
     const randomIndex = Math.floor(Math.random() * possibleMoves.length);
     safeGameMutate((game) => {
@@ -300,12 +371,12 @@ export const PremovesEnabled = () => {
     });
   }
 
-  function onDrop(sourceSquare, targetSquare) {
+  function onDrop(sourceSquare, targetSquare, piece) {
     const gameCopy = { ...game };
     const move = gameCopy.move({
       from: sourceSquare,
       to: targetSquare,
-      promotion: "q", // always promote to a queen for example simplicity
+      promotion: piece[1].toLowerCase() ?? "q",
     });
     setGame(gameCopy);
 
@@ -380,18 +451,31 @@ export const StyledBoard = () => {
     });
   }
 
-  function onDrop(sourceSquare, targetSquare) {
+  function onDrop(sourceSquare, targetSquare, piece) {
     const gameCopy = { ...game };
     const move = gameCopy.move({
       from: sourceSquare,
       to: targetSquare,
-      promotion: "q", // always promote to a queen for example simplicity
+      promotion: piece[1].toLowerCase() ?? "q",
     });
     setGame(gameCopy);
     return move;
   }
 
-  const pieces = ["wP", "wN", "wB", "wR", "wQ", "wK", "bP", "bN", "bB", "bR", "bQ", "bK"];
+  const pieces = [
+    "wP",
+    "wN",
+    "wB",
+    "wR",
+    "wQ",
+    "wK",
+    "bP",
+    "bN",
+    "bB",
+    "bR",
+    "bQ",
+    "bK",
+  ];
   const customPieces = () => {
     const returnPieces = {};
     pieces.map((p) => {
