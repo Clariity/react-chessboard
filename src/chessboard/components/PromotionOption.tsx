@@ -1,4 +1,4 @@
-import { useState, ReactNode } from "react";
+import { useState, ReactNode, cloneElement } from "react";
 
 import { useChessboard } from "../context/chessboard-context";
 import { CustomPieceFn, PromotionPieceOption } from "../types";
@@ -57,15 +57,26 @@ export function PromotionOption({ option }: Props) {
       }}
     >
       {typeof chessPieces[option] === "function" ? (
-        (chessPieces[option] as CustomPieceFn)({
-          squareWidth: boardWidth / 8,
-          isDragging: false,
-        })
+        <div
+          style={{
+            transition: "all 0.3s ease-out",
+            transform: isHover ? "scale(1)" : "scale(0.85)",
+          }}
+        >
+          {(chessPieces[option] as CustomPieceFn)({
+            squareWidth: boardWidth / 8,
+            isDragging: false,
+          })}
+        </div>
       ) : (
         <svg
           viewBox={"1 1 43 43"}
           width={boardWidth / 8}
           height={boardWidth / 8}
+          style={{
+            transition: "all 0.3s ease-out",
+            transform: isHover ? "scale(1)" : "scale(0.85)",
+          }}
         >
           <g>{chessPieces[option] as ReactNode}</g>
         </svg>

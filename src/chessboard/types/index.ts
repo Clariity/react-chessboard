@@ -83,7 +83,6 @@ export type Piece =
 
 export type BoardPosition = { [square in Square]?: Piece };
 
-export type PromotionPieceColor = "w" | "b" | null;
 export type PromotionPieceOption =
   | "wQ"
   | "wR"
@@ -184,7 +183,7 @@ export type ChessboardProps = {
    * Custom dark square style object.
    * @default { backgroundColor: "#B58863" }
    */
-  customDarkSquareStyle?: Record<string, string | number>;
+  customDarkSquareStyle?: Record<string, string>;
   /**
    * Custom react-dnd backend to use instead of the one provided by react-chessboard.
    */
@@ -202,7 +201,7 @@ export type ChessboardProps = {
    * Custom light square style object.
    * @default { backgroundColor: "#F0D9B5" }
    */
-  customLightSquareStyle?: Record<string, string | number>;
+  customLightSquareStyle?: Record<string, string>;
   /**
    * Custom pieces object where each key must match a corresponding chess piece (wP, wB, wN, wR, wQ, wK, bP, bB, bN, bR, bQ, bK). The value of each piece is a function that takes in some optional arguments to use and must return JSX to render. e.g. { wK: ({ isDragging: boolean, squareWidth: number }) => jsx }.
    * @default {}
@@ -317,11 +316,6 @@ export type ChessboardProps = {
    * @default default
    */
   promotionDialogVariant?: PromotionStyle;
-  /**
-   * Color of the piece being promoted. Must be passed when promotion dialog is manually shown.
-   * @default null
-   */
-  promotionPieceColor?: PromotionPieceColor;
   /**
    * The square to promote a piece to.
    * @default null

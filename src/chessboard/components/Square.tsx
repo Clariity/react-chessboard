@@ -2,13 +2,7 @@ import { ReactNode, useEffect, useRef } from "react";
 import { useDrop } from "react-dnd";
 
 import { useChessboard } from "../context/chessboard-context";
-import {
-  BoardOrientation,
-  Coords,
-  Piece,
-  PromotionPieceColor,
-  Square as Sq,
-} from "../types";
+import { BoardOrientation, Coords, Piece, Square as Sq } from "../types";
 
 type SquareProps = {
   children: ReactNode;
@@ -49,7 +43,6 @@ export function Square({
     onRightClickDown,
     onRightClickUp,
     onSquareClick,
-    setPromotePieceColor,
     setPromoteFromSquare,
     setPromoteToSquare,
     setShowPromoteDialog,
@@ -77,7 +70,6 @@ export function Square({
       (item.piece === "wP" && square[1] === "8") ||
       (item.piece === "bP" && square[1] === "1")
     ) {
-      setPromotePieceColor(item.piece[0] as PromotionPieceColor);
       setPromoteFromSquare(item.square);
       setPromoteToSquare(square);
       setShowPromoteDialog(true);

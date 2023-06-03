@@ -20,7 +20,6 @@ import {
   ChessboardProps,
   CustomPieces,
   Piece,
-  PromotionPieceColor,
   Square,
 } from "../types";
 
@@ -87,12 +86,8 @@ interface ChessboardProviderContext {
   positionDifferences: { added: BoardPosition; removed: BoardPosition };
   premoves: Premove[];
   promoteFromSquare: Square | null;
-  promotePieceColor: PromotionPieceColor;
   promoteToSquare: Square | null;
   setPromoteFromSquare: React.Dispatch<React.SetStateAction<Square | null>>;
-  setPromotePieceColor: React.Dispatch<
-    React.SetStateAction<PromotionPieceColor | null>
-  >;
   setPromoteToSquare: React.Dispatch<React.SetStateAction<Square | null>>;
   setShowPromoteDialog: React.Dispatch<React.SetStateAction<boolean>>;
   showPromoteDialog: boolean;
@@ -143,7 +138,6 @@ export const ChessboardProvider = forwardRef(
       onSquareRightClick = () => {},
       position = "start",
       promotionDialogVariant = "default",
-      promotionPieceColor = null,
       promotionToSquare = null,
       showBoardNotation = true,
       showPromotionDialog = false,
@@ -169,10 +163,6 @@ export const ChessboardProvider = forwardRef(
     // show / hide promotion dialog
     const [showPromoteDialog, setShowPromoteDialog] =
       useState(showPromotionDialog);
-
-    // whether a white or black pawn is being promoted currently
-    const [promotePieceColor, setPromotePieceColor] =
-      useState<PromotionPieceColor>(promotionPieceColor);
 
     // which square a pawn is being promoted to
     const [promoteFromSquare, setPromoteFromSquare] =
@@ -223,9 +213,8 @@ export const ChessboardProvider = forwardRef(
     // handle promote changes
     useEffect(() => {
       setShowPromoteDialog(showPromotionDialog);
-      setPromotePieceColor(promotionPieceColor);
       setPromoteToSquare(promotionToSquare);
-    }, [promotionPieceColor, promotionToSquare, showPromotionDialog]);
+    }, [promotionToSquare, showPromotionDialog]);
 
     // handle external position change
     useEffect(() => {
@@ -504,11 +493,9 @@ export const ChessboardProvider = forwardRef(
       onRightClickUp,
       positionDifferences,
       promoteFromSquare,
-      promotePieceColor,
       promoteToSquare,
       premoves,
       setPromoteFromSquare,
-      setPromotePieceColor,
       setPromoteToSquare,
       setShowPromoteDialog,
       showPromoteDialog,

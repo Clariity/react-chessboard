@@ -8,10 +8,11 @@ export function PromotionDialog() {
     boardOrientation,
     boardWidth,
     promotionDialogVariant,
-    promotePieceColor,
+
     promoteToSquare,
   } = useChessboard();
 
+  const promotePieceColor = promoteToSquare?.[1] === "1" ? "b" : "w";
   const promotionOptions: PromotionPieceOption[] = [
     `${promotePieceColor ?? "w"}Q`,
     `${promotePieceColor ?? "w"}R`,

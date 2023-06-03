@@ -130,10 +130,7 @@ export const ClickToMove = () => {
   const [game, setGame] = useState(new Chess());
   const [moveFrom, setMoveFrom] = useState("");
   const [moveTo, setMoveTo] = useState<Square | null>(null);
-
   const [showPromotionDialog, setShowPromotionDialog] = useState(false);
-  const [promotionPieceColor, setPromotionPieceColor] = useState(null);
-
   const [rightClickedSquares, setRightClickedSquares] = useState({});
   const [moveSquares, setMoveSquares] = useState({});
   const [optionSquares, setOptionSquares] = useState({});
@@ -230,7 +227,6 @@ export const ClickToMove = () => {
           square[1] === "1")
       ) {
         setShowPromotionDialog(true);
-        setPromotionPieceColor(foundMove.color);
         return;
       }
 
@@ -275,7 +271,6 @@ export const ClickToMove = () => {
     setMoveFrom("");
     setMoveTo(null);
     setShowPromotionDialog(false);
-    setPromotionPieceColor(null);
     setOptionSquares({});
     return true;
   }
@@ -311,7 +306,6 @@ export const ClickToMove = () => {
           ...optionSquares,
           ...rightClickedSquares,
         }}
-        promotionPieceColor={promotionPieceColor}
         promotionToSquare={moveTo}
         showPromotionDialog={showPromotionDialog}
       />
