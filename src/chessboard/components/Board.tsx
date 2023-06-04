@@ -56,6 +56,16 @@ export function Board() {
           );
           const to = getRelativeCoords(boardOrientation, boardWidth, arrow[1]);
 
+          const dx = to.x - from.x;
+          const dy = to.y - from.y;
+
+          const r = Math.hypot(dy, dx);
+
+          const end = {
+            x: from.x + (dx * (r - boardWidth / 16)) / r,
+            y: from.y + (dy * (r - boardWidth / 16)) / r,
+          };
+
           return (
             <Fragment
               key={`${arrow[0]}-${arrow[1]}${i === arrows.length ? "new" : ""}`}
@@ -68,16 +78,18 @@ export function Board() {
                   refX="0"
                   refY="1.25"
                   orient="auto"
-                  fill={customArrowColor}
                 >
-                  <polygon points="0 0, 2 1.25, 0 2.5" />
+                  <polygon
+                    points="0 0, 2 1.25, 0 2.5"
+                    style={{ fill: customArrowColor }}
+                  />
                 </marker>
               </defs>
               <line
                 x1={from.x}
                 y1={from.y}
-                x2={to.x}
-                y2={to.y}
+                x2={end.x}
+                y2={end.y}
                 style={{
                   stroke: customArrowColor,
                   strokeWidth: boardWidth / 36,
