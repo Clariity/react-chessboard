@@ -43,6 +43,9 @@ export function Square({
     onRightClickUp,
     onSquareClick,
     isWaitingForAnimation,
+    currentRightClickDown,
+    drawNewArrow,
+    onArrowDrawEnd,
   } = useChessboard();
 
   const [{ isOver }, drop] = useDrop(
@@ -54,13 +57,7 @@ export function Square({
         isOver: !!monitor.isOver(),
       }),
     }),
-    [
-      square,
-      currentPosition,
-      onPieceDrop,
-      isWaitingForAnimation,
-      lastPieceColour,
-    ]
+    [square, currentPosition, onPieceDrop, isWaitingForAnimation, lastPieceColour]
   );
 
   useEffect(() => {
@@ -72,9 +69,7 @@ export function Square({
 
   const defaultSquareStyle = {
     ...borderRadius(square, boardOrientation, customBoardStyle),
-    ...(squareColor === "black"
-      ? customDarkSquareStyle
-      : customLightSquareStyle),
+    ...(squareColor === "black" ? customDarkSquareStyle : customLightSquareStyle),
     ...(squareHasPremove &&
       (squareColor === "black"
         ? customPremoveDarkSquareStyle
@@ -90,27 +85,30 @@ export function Square({
       data-square={square}
       onMouseOver={(e) => {
         // noop if moving from child of square into square.
-        if (
-          e.relatedTarget &&
-          e.currentTarget.contains(e.relatedTarget as Node)
-        )
+
+        if (e.buttons === 2 && currentRightClickDown) {
+          drawNewArrow(currentRightClickDown, square);
+        }
+
+        if (e.relatedTarget && e.currentTarget.contains(e.relatedTarget as Node)) {
           return;
+        }
+
         onMouseOverSquare(square);
       }}
       onMouseOut={(e) => {
         // noop if moving from square into a child of square.
-        if (
-          e.relatedTarget &&
-          e.currentTarget.contains(e.relatedTarget as Node)
-        )
-          return;
+        if (e.relatedTarget && e.currentTarget.contains(e.relatedTarget as Node)) return;
         onMouseOutSquare(square);
       }}
       onMouseDown={(e) => {
         if (e.button === 2) onRightClickDown(square);
       }}
       onMouseUp={(e) => {
-        if (e.button === 2) onRightClickUp(square);
+        if (e.button === 2) {
+          if (currentRightClickDown) onArrowDrawEnd(currentRightClickDown, square);
+          onRightClickUp(square);
+        }
       }}
       onDragEnter={() => onDragOverSquare(square)}
       onClick={() => {

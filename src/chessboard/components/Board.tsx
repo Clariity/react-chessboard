@@ -10,6 +10,7 @@ export function Board() {
 
   const {
     arrows,
+    newArrow,
     boardOrientation,
     boardWidth,
     clearCurrentRightClickDown,
@@ -18,10 +19,7 @@ export function Board() {
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (
-        boardRef.current &&
-        !boardRef.current.contains(event.target as Node)
-      ) {
+      if (boardRef.current && !boardRef.current.contains(event.target as Node)) {
         clearCurrentRightClickDown();
       }
     }
@@ -46,29 +44,24 @@ export function Board() {
           zIndex: "10",
         }}
       >
-        {arrows.map((arrow) => {
-          const from = getRelativeCoords(
-            boardOrientation,
-            boardWidth,
-            arrow[0]
-          );
+        {[...arrows, newArrow].map((arrow, i) => {
+          if (!arrow) return;
+          const from = getRelativeCoords(boardOrientation, boardWidth, arrow[0]);
           const to = getRelativeCoords(boardOrientation, boardWidth, arrow[1]);
 
           return (
-            <Fragment key={`${arrow[0]}-${arrow[1]}`}>
+            <Fragment key={`${arrow[0]}-${arrow[1]}${i === arrows.length ? "new" : ""}`}>
               <defs>
                 <marker
                   id="arrowhead"
                   markerWidth="2"
                   markerHeight="2.5"
-                  refX="1.25"
+                  refX="0"
                   refY="1.25"
                   orient="auto"
+                  fill={customArrowColor}
                 >
-                  <polygon
-                    points="0 0, 2 1.25, 0 2.5"
-                    style={{ fill: customArrowColor }}
-                  />
+                  <polygon points="0 0, 2 1.25, 0 2.5" />
                 </marker>
               </defs>
               <line
