@@ -15,7 +15,13 @@ import {
   getPositionDifferences,
   isDifferentFromStart,
 } from "../functions";
-import { BoardPosition, ChessboardProps, CustomPieces, Piece, Square } from "../types";
+import {
+  BoardPosition,
+  ChessboardProps,
+  CustomPieces,
+  Piece,
+  Square,
+} from "../types";
 import { useArrows } from "../hooks/useArrows";
 
 interface ChessboardProviderProps extends ChessboardProps {
@@ -139,7 +145,8 @@ export const ChessboardProvider = forwardRef(
     }>({ removed: {}, added: {} });
 
     // colour of last piece moved to determine if premoving
-    const [lastPieceColour, setLastPieceColour] = useState<string | undefined>(undefined);
+    const [lastPieceColour, setLastPieceColour] =
+      useState<string | undefined>(undefined);
 
     // current premoves
     const [premoves, setPremoves] = useState<Premove[]>([]);
@@ -207,7 +214,10 @@ export const ChessboardProvider = forwardRef(
 
           // if position === start then don't override newPieceColour
           // needs isDifferentFromStart in scenario where premoves have been cleared upon board reset but first move is made by computer, the last move colour would need to be updated
-          if (isDifferentFromStart(newPosition) && lastPieceColour !== undefined) {
+          if (
+            isDifferentFromStart(newPosition) &&
+            lastPieceColour !== undefined
+          ) {
             setLastPieceColour(newPieceColour);
           } else {
             // position === start, likely a board reset
@@ -239,14 +249,15 @@ export const ChessboardProvider = forwardRef(
       };
     }, [position]);
 
-    const { arrows, newArrow, clearArrows, drawNewArrow, onArrowDrawEnd } = useArrows(
-      customArrows,
-      areArrowsAllowed,
-      onArrowsChange
-    );
+    const { arrows, newArrow, clearArrows, drawNewArrow, onArrowDrawEnd } =
+      useArrows(customArrows, areArrowsAllowed, onArrowsChange);
 
     // handle drop position change
-    function handleSetPosition(sourceSq: Square, targetSq: Square, piece: Piece) {
+    function handleSetPosition(
+      sourceSq: Square,
+      targetSq: Square,
+      piece: Piece
+    ) {
       // if dropped back down, don't do anything
       if (sourceSq === targetSq) {
         return;
@@ -260,8 +271,8 @@ export const ChessboardProvider = forwardRef(
         (arePremovesAllowed && isWaitingForAnimation) ||
         (arePremovesAllowed &&
           (lastPieceColour === piece[0] ||
-            premovesRef.current.filter((p: Premove) => p.piece[0] === piece[0]).length >
-              0))
+            premovesRef.current.filter((p: Premove) => p.piece[0] === piece[0])
+              .length > 0))
       ) {
         const oldPremoves: Premove[] = [...premovesRef.current];
         oldPremoves.push({ sourceSq, targetSq, piece });

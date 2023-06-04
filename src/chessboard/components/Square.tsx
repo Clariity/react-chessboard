@@ -57,7 +57,13 @@ export function Square({
         isOver: !!monitor.isOver(),
       }),
     }),
-    [square, currentPosition, onPieceDrop, isWaitingForAnimation, lastPieceColour]
+    [
+      square,
+      currentPosition,
+      onPieceDrop,
+      isWaitingForAnimation,
+      lastPieceColour,
+    ]
   );
 
   useEffect(() => {
@@ -69,7 +75,9 @@ export function Square({
 
   const defaultSquareStyle = {
     ...borderRadius(square, boardOrientation, customBoardStyle),
-    ...(squareColor === "black" ? customDarkSquareStyle : customLightSquareStyle),
+    ...(squareColor === "black"
+      ? customDarkSquareStyle
+      : customLightSquareStyle),
     ...(squareHasPremove &&
       (squareColor === "black"
         ? customPremoveDarkSquareStyle
@@ -90,7 +98,10 @@ export function Square({
           drawNewArrow(currentRightClickDown, square);
         }
 
-        if (e.relatedTarget && e.currentTarget.contains(e.relatedTarget as Node)) {
+        if (
+          e.relatedTarget &&
+          e.currentTarget.contains(e.relatedTarget as Node)
+        ) {
           return;
         }
 
@@ -98,7 +109,11 @@ export function Square({
       }}
       onMouseOut={(e) => {
         // noop if moving from square into a child of square.
-        if (e.relatedTarget && e.currentTarget.contains(e.relatedTarget as Node)) return;
+        if (
+          e.relatedTarget &&
+          e.currentTarget.contains(e.relatedTarget as Node)
+        )
+          return;
         onMouseOutSquare(square);
       }}
       onMouseDown={(e) => {
@@ -106,7 +121,8 @@ export function Square({
       }}
       onMouseUp={(e) => {
         if (e.button === 2) {
-          if (currentRightClickDown) onArrowDrawEnd(currentRightClickDown, square);
+          if (currentRightClickDown)
+            onArrowDrawEnd(currentRightClickDown, square);
           onRightClickUp(square);
         }
       }}

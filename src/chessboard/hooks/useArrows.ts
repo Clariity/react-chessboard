@@ -4,7 +4,8 @@ import { Square } from "../types";
 type Arrow = Square[];
 type Arrows = Arrow[];
 
-const toSet = (arrows: Arrows) => new Set(arrows?.map((arrow) => arrow.join(",")));
+const toSet = (arrows: Arrows) =>
+  new Set(arrows?.map((arrow) => arrow.join(",")));
 const toArray = (arrowsSet: Set<string>): Arrows =>
   Array.from(arrowsSet).map((arrow) => arrow.split(",")) as Arrows;
 
@@ -33,6 +34,7 @@ export const useArrows = (
 
   function clearArrows() {
     setArrows(new Set());
+    setNewArrow(undefined);
   }
 
   const removeArrow = (fromSquare: Square, toSquare: Square) => {

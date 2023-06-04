@@ -19,7 +19,10 @@ export function Board() {
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (boardRef.current && !boardRef.current.contains(event.target as Node)) {
+      if (
+        boardRef.current &&
+        !boardRef.current.contains(event.target as Node)
+      ) {
         clearCurrentRightClickDown();
       }
     }
@@ -46,11 +49,17 @@ export function Board() {
       >
         {[...arrows, newArrow].map((arrow, i) => {
           if (!arrow) return;
-          const from = getRelativeCoords(boardOrientation, boardWidth, arrow[0]);
+          const from = getRelativeCoords(
+            boardOrientation,
+            boardWidth,
+            arrow[0]
+          );
           const to = getRelativeCoords(boardOrientation, boardWidth, arrow[1]);
 
           return (
-            <Fragment key={`${arrow[0]}-${arrow[1]}${i === arrows.length ? "new" : ""}`}>
+            <Fragment
+              key={`${arrow[0]}-${arrow[1]}${i === arrows.length ? "new" : ""}`}
+            >
               <defs>
                 <marker
                   id="arrowhead"
