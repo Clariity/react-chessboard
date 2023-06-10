@@ -101,7 +101,7 @@ export const ChessboardProvider = forwardRef(
       children,
       clearPremovesOnRightClick = true,
       customArrows,
-      customArrowColor = "rgb(255,170,0, 0.75)",
+      customArrowColor = "rgb(255,170,0)",
       customBoardStyle,
       customDarkSquareStyle = { backgroundColor: "#B58863" },
       customDropSquareStyle = {
