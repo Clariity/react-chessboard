@@ -59,7 +59,7 @@ export function PromotionOption({ option }: Props) {
       {typeof chessPieces[option] === "function" ? (
         <div
           style={{
-            transition: "all 0.3s ease-out",
+            transition: "all 0.1s ease-out",
             transform: isHover ? "scale(1)" : "scale(0.85)",
           }}
         >
@@ -74,7 +74,7 @@ export function PromotionOption({ option }: Props) {
           width={boardWidth / 8}
           height={boardWidth / 8}
           style={{
-            transition: "all 0.3s ease-out",
+            transition: "all 0.1s ease-out",
             transform: isHover ? "scale(1)" : "scale(0.85)",
           }}
         >
