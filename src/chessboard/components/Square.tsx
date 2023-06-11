@@ -46,6 +46,7 @@ export function Square({
     setPromoteFromSquare,
     setPromoteToSquare,
     setShowPromoteDialog,
+    autoPromoteToQueen,
   } = useChessboard();
 
   const [{ isOver }, drop] = useDrop(
@@ -67,12 +68,17 @@ export function Square({
 
   function handleDrop(item: { piece: Piece; square: Sq; id: number }) {
     if (
-      (item.piece === "wP" && square[1] === "8") ||
-      (item.piece === "bP" && square[1] === "1")
+      Math.abs(item.square[0].charCodeAt(0) - square[0].charCodeAt(0)) <= 1 &&
+      ((item.piece === "wP" && square[1] === "8") ||
+        (item.piece === "bP" && square[1] === "1"))
     ) {
-      setPromoteFromSquare(item.square);
-      setPromoteToSquare(square);
-      setShowPromoteDialog(true);
+      if (autoPromoteToQueen) {
+        handleSetPosition(item.square, square, square[1] === "8" ? "wQ" : "bQ");
+      } else {
+        setPromoteFromSquare(item.square);
+        setPromoteToSquare(square);
+        setShowPromoteDialog(true);
+      }
     } else {
       handleSetPosition(item.square, square, item.piece, true);
     }

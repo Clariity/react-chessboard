@@ -66,6 +66,7 @@ interface ChessboardProviderContext {
   promotionDialogVariant: RequiredChessboardProps["promotionDialogVariant"];
   showBoardNotation: RequiredChessboardProps["showBoardNotation"];
   snapToCursor: RequiredChessboardProps["snapToCursor"];
+  autoPromoteToQueen: RequiredChessboardProps["autoPromoteToQueen"];
 
   // Exported by context
   arrows: Square[][];
@@ -142,6 +143,7 @@ export const ChessboardProvider = forwardRef(
       showBoardNotation = true,
       showPromotionDialog = false,
       snapToCursor = true,
+      autoPromoteToQueen = false,
     }: ChessboardProviderProps,
     ref
   ) => {
@@ -161,8 +163,9 @@ export const ChessboardProvider = forwardRef(
       useState<string | undefined>(undefined);
 
     // show / hide promotion dialog
-    const [showPromoteDialog, setShowPromoteDialog] =
-      useState(showPromotionDialog);
+    const [showPromoteDialog, setShowPromoteDialog] = useState(
+      showPromotionDialog && !autoPromoteToQueen
+    );
 
     // which square a pawn is being promoted to
     const [promoteFromSquare, setPromoteFromSquare] =
@@ -499,6 +502,7 @@ export const ChessboardProvider = forwardRef(
       setPromoteToSquare,
       setShowPromoteDialog,
       showPromoteDialog,
+      autoPromoteToQueen,
     };
 
     return (
