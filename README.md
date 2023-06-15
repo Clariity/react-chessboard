@@ -57,19 +57,9 @@ npm i react-chessboard
 - Optional Square Coordinates Notation
 - Position Control
 - Premoves
+- Promotion Piece Select
 - Responsive Board Width
 - TypeScript Support
-
-### Planned
-
-- Promotion Piece Select
-- Spare Pieces
-
-### Notes
-
-- Between version 0.0.3 and 0.0.4, onPieceDrop was changed to allow you to return a value of `true` or `false` depending on whether the move was successful or not.
-- If more than one board is rendered and draggable on a low end device, performance will struggle due to performance issues with react-dnd.
-- In the rare case that react-chessboard component is hot swapped out for another in its place, this will cause an issue with the CustomDragLayer. To prevent this, the react-chessboard component needs to be completely unmounted before being replaced.
 
 ## Usage
 
@@ -108,7 +98,8 @@ export default function PlayRandomMoveEngine() {
 
   function makeRandomMove() {
     const possibleMoves = game.moves();
-    if (game.game_over() || game.in_draw() || possibleMoves.length === 0) return; // exit if the game is over
+    if (game.game_over() || game.in_draw() || possibleMoves.length === 0)
+      return; // exit if the game is over
     const randomIndex = Math.floor(Math.random() * possibleMoves.length);
     makeAMove(possibleMoves[randomIndex]);
   }
@@ -172,8 +163,12 @@ For more advanced code usage examples, please see example boards shown in [`Stor
 | onSquareClick                 | function: (square) => {}                                          |                                                    | User function that is run when a square is clicked.                                                                                                                                                                                                                                                                                                                                  |
 | onSquareRightClick            | function: (square) => {}                                          |                                                    | User function that is run when a square is right clicked.                                                                                                                                                                                                                                                                                                                            |
 | position                      | string: 'start'                                                   | ['start', FEN string, { e5: 'wK', e4: 'wP', ... }] | FEN string or position object notating where the chess pieces are on the board. Start position can also be notated with the string: 'start'.                                                                                                                                                                                                                                         |
+| promotionDialogVariant        | string: 'default':                                                | ['default', 'vertical', 'modal']                   | Style of promotion dialog.                                                                                                                                                                                                                                                                                                                                                           |
+| promotionToSquare             | string or null                                                    | ['a1', 'a2', ..., 'h8', null]                      | The square to promote a piece to. Must be passed when promotion dialog is manually shown.                                                                                                                                                                                                                                                                                            |
 | showBoardNotation             | boolean: true                                                     | [true, false]                                      | Whether or not to show the file and rank co-ordinates (a..h, 1..8).                                                                                                                                                                                                                                                                                                                  |
+| showPromotionDialog           | boolean: false                                                    | [true, false]                                      | Whether or not to manually show the promotion dialog.                                                                                                                                                                                                                                                                                                                                |
 | snapToCursor                  | boolean: true                                                     | [true, false]                                      | Whether or not to center dragged pieces on the mouse cursor.                                                                                                                                                                                                                                                                                                                         |
+| autoPromoteToQueen            | boolean: true                                                     | [true, false]                                      | Whether or not to automatically promote pawn to queen.                                                                                                                                                                                                                                                                                                                               |
 
 ## Contributing
 

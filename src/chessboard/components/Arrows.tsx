@@ -77,7 +77,7 @@ export const Arrows = () => {
               y2={end.y}
               opacity={isArrowActive ? "0.5" : "0.65"}
               stroke={customArrowColor}
-              stroke-width={
+              strokeWidth={
                 isArrowActive ? (0.9 * boardWidth) / 36 : boardWidth / 36
               }
               markerEnd="url(#arrowhead)"

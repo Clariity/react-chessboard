@@ -36,14 +36,20 @@ export function isDifferentFromStart(newPosition: BoardPosition): boolean {
   let isDifferent = false;
 
   (
-    Object.keys(START_POSITION_OBJECT) as Array<keyof typeof START_POSITION_OBJECT>
+    Object.keys(START_POSITION_OBJECT) as Array<
+      keyof typeof START_POSITION_OBJECT
+    >
   ).forEach((square) => {
-    if (newPosition[square] !== START_POSITION_OBJECT[square]) isDifferent = true;
+    if (newPosition[square] !== START_POSITION_OBJECT[square])
+      isDifferent = true;
   });
 
-  (Object.keys(newPosition) as Array<keyof typeof newPosition>).forEach((square) => {
-    if (START_POSITION_OBJECT[square] !== newPosition[square]) isDifferent = true;
-  });
+  (Object.keys(newPosition) as Array<keyof typeof newPosition>).forEach(
+    (square) => {
+      if (START_POSITION_OBJECT[square] !== newPosition[square])
+        isDifferent = true;
+    }
+  );
 
   return isDifferent;
 }
@@ -72,10 +78,12 @@ export function getPositionDifferences(
   );
 
   // added from new
-  (Object.keys(newPosition) as Array<keyof typeof newPosition>).forEach((square) => {
-    if (currentPosition[square] !== newPosition[square])
-      difference.added[square] = newPosition[square];
-  });
+  (Object.keys(newPosition) as Array<keyof typeof newPosition>).forEach(
+    (square) => {
+      if (currentPosition[square] !== newPosition[square])
+        difference.added[square] = newPosition[square];
+    }
+  );
 
   return difference;
 }
@@ -83,7 +91,9 @@ export function getPositionDifferences(
 /**
  * Converts a fen string or existing position object to a position object.
  */
-export function convertPositionToObject(position: string | BoardPosition): BoardPosition {
+export function convertPositionToObject(
+  position: string | BoardPosition
+): BoardPosition {
   if (position === "start") {
     return START_POSITION_OBJECT;
   }

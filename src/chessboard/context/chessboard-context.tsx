@@ -22,6 +22,7 @@ import {
   Piece,
   Square,
 } from "../types";
+
 import { useArrows } from "../hooks/useArrows";
 
 interface ChessboardProviderProps extends ChessboardProps {
@@ -62,9 +63,12 @@ interface ChessboardProviderContext {
   onPieceDragBegin: RequiredChessboardProps["onPieceDragBegin"];
   onPieceDragEnd: RequiredChessboardProps["onPieceDragEnd"];
   onPieceDrop: RequiredChessboardProps["onPieceDrop"];
+  onPromotionPieceSelect: ChessboardProps["onPromotionPieceSelect"];
   onSquareClick: RequiredChessboardProps["onSquareClick"];
+  promotionDialogVariant: RequiredChessboardProps["promotionDialogVariant"];
   showBoardNotation: RequiredChessboardProps["showBoardNotation"];
   snapToCursor: RequiredChessboardProps["snapToCursor"];
+  autoPromoteToQueen: RequiredChessboardProps["autoPromoteToQueen"];
 
   // Exported by context
   arrows: Square[][];
@@ -72,13 +76,24 @@ interface ChessboardProviderContext {
   clearArrows: () => void;
   clearCurrentRightClickDown: () => void;
   currentPosition: BoardPosition;
-  handleSetPosition: (sourceSq: Square, targetSq: Square, piece: Piece) => void;
+  handleSetPosition: (
+    sourceSq: Square,
+    targetSq: Square,
+    piece: Piece,
+    wasManualDropOverride?: boolean
+  ) => void;
+  isWaitingForAnimation: boolean;
   lastPieceColour: string | undefined;
   onRightClickDown: (square: Square) => void;
   onRightClickUp: (square: Square) => void;
   positionDifferences: { added: BoardPosition; removed: BoardPosition };
   premoves: Premove[];
-  isWaitingForAnimation: boolean;
+  promoteFromSquare: Square | null;
+  promoteToSquare: Square | null;
+  setPromoteFromSquare: React.Dispatch<React.SetStateAction<Square | null>>;
+  setPromoteToSquare: React.Dispatch<React.SetStateAction<Square | null>>;
+  setShowPromoteDialog: React.Dispatch<React.SetStateAction<boolean>>;
+  showPromoteDialog: boolean;
   newArrow?: Square[];
   onArrowDrawEnd: (from: Square, to: Square) => void;
   drawNewArrow: (from: Square, to: Square) => void;
@@ -125,11 +140,16 @@ export const ChessboardProvider = forwardRef(
       onPieceDragBegin = () => {},
       onPieceDragEnd = () => {},
       onPieceDrop = () => true,
+      onPromotionPieceSelect,
       onSquareClick = () => {},
       onSquareRightClick = () => {},
       position = "start",
+      promotionDialogVariant = "default",
+      promotionToSquare = null,
       showBoardNotation = true,
+      showPromotionDialog = false,
       snapToCursor = true,
+      autoPromoteToQueen = false,
     }: ChessboardProviderProps,
     ref
   ) => {
@@ -147,6 +167,17 @@ export const ChessboardProvider = forwardRef(
     // colour of last piece moved to determine if premoving
     const [lastPieceColour, setLastPieceColour] =
       useState<string | undefined>(undefined);
+
+    // show / hide promotion dialog
+    const [showPromoteDialog, setShowPromoteDialog] = useState(
+      showPromotionDialog && !autoPromoteToQueen
+    );
+
+    // which square a pawn is being promoted to
+    const [promoteFromSquare, setPromoteFromSquare] =
+      useState<Square | null>(null);
+    const [promoteToSquare, setPromoteToSquare] =
+      useState<Square | null>(promotionToSquare);
 
     // current premoves
     const [premoves, setPremoves] = useState<Premove[]>([]);
@@ -185,8 +216,17 @@ export const ChessboardProvider = forwardRef(
       setChessPieces({ ...defaultPieces, ...customPieces });
     }, [customPieces]);
 
+    // handle promote changes
+    useEffect(() => {
+      setShowPromoteDialog(showPromotionDialog);
+      setPromoteToSquare(promotionToSquare);
+    }, [promotionToSquare, showPromotionDialog]);
+
     // handle external position change
     useEffect(() => {
+      // clear any open promotion dialogs
+      clearPromotion();
+
       const newPosition = convertPositionToObject(position);
       const differences = getPositionDifferences(currentPosition, newPosition);
       const newPieceColour =
@@ -256,7 +296,8 @@ export const ChessboardProvider = forwardRef(
     function handleSetPosition(
       sourceSq: Square,
       targetSq: Square,
-      piece: Piece
+      piece: Piece,
+      wasManualDropOverride?: boolean
     ) {
       // if dropped back down, don't do anything
       if (sourceSq === targetSq) {
@@ -275,9 +316,11 @@ export const ChessboardProvider = forwardRef(
               .length > 0))
       ) {
         const oldPremoves: Premove[] = [...premovesRef.current];
+
         oldPremoves.push({ sourceSq, targetSq, piece });
         premovesRef.current = oldPremoves;
         setPremoves([...oldPremoves]);
+        clearPromotion();
         return;
       }
 
@@ -286,7 +329,7 @@ export const ChessboardProvider = forwardRef(
 
       const newOnDropPosition = { ...currentPosition };
 
-      setWasManualDrop(true);
+      setWasManualDrop(!!wasManualDropOverride);
       setLastPieceColour(piece[0]);
 
       // if onPieceDrop function provided, execute it, position must be updated externally and captured by useEffect above for this move to show on board
@@ -306,6 +349,8 @@ export const ChessboardProvider = forwardRef(
         newOnDropPosition[targetSq] = piece;
         setCurrentPosition(newOnDropPosition);
       }
+
+      clearPromotion();
 
       // inform latest position information
       getPositionObject(newOnDropPosition);
@@ -349,6 +394,12 @@ export const ChessboardProvider = forwardRef(
       if (clearLastPieceColour) setLastPieceColour(undefined);
       premovesRef.current = [];
       setPremoves([]);
+    }
+
+    function clearPromotion() {
+      setPromoteFromSquare(null);
+      setPromoteToSquare(null);
+      setShowPromoteDialog(false);
     }
 
     function onRightClickDown(square: Square) {
@@ -395,9 +446,11 @@ export const ChessboardProvider = forwardRef(
       onPieceDragBegin,
       onPieceDragEnd,
       onPieceDrop,
+      onPromotionPieceSelect,
       onSquareClick,
       showBoardNotation,
       snapToCursor,
+      promotionDialogVariant,
 
       arrows,
       newArrow,
@@ -408,12 +461,19 @@ export const ChessboardProvider = forwardRef(
       clearCurrentRightClickDown,
       currentPosition,
       handleSetPosition,
+      isWaitingForAnimation,
       lastPieceColour,
       onRightClickDown,
       onRightClickUp,
       positionDifferences,
+      promoteFromSquare,
+      promoteToSquare,
       premoves,
-      isWaitingForAnimation,
+      setPromoteFromSquare,
+      setPromoteToSquare,
+      setShowPromoteDialog,
+      showPromoteDialog,
+      autoPromoteToQueen,
       currentRightClickDown,
     };
 

@@ -1,4 +1,4 @@
-import { CSSProperties, ReactNode, useEffect, useRef } from "react";
+import { ReactNode, useEffect, useRef } from "react";
 import { useDrop } from "react-dnd";
 
 import { useChessboard } from "../context/chessboard-context";
@@ -34,6 +34,7 @@ export function Square({
     customSquare: CustomSquare,
     customSquareStyles,
     handleSetPosition,
+    isWaitingForAnimation,
     lastPieceColour,
     onDragOverSquare,
     onMouseOutSquare,
@@ -42,7 +43,10 @@ export function Square({
     onRightClickDown,
     onRightClickUp,
     onSquareClick,
-    isWaitingForAnimation,
+    setPromoteFromSquare,
+    setPromoteToSquare,
+    setShowPromoteDialog,
+    autoPromoteToQueen,
     currentRightClickDown,
     drawNewArrow,
     onArrowDrawEnd,
@@ -51,8 +55,7 @@ export function Square({
   const [{ isOver }, drop] = useDrop(
     () => ({
       accept: "piece",
-      drop: (item: { piece: Piece; square: Sq; id: number }) =>
-        handleSetPosition(item.square, square, item.piece),
+      drop: handleDrop,
       collect: (monitor) => ({
         isOver: !!monitor.isOver(),
       }),
@@ -65,6 +68,24 @@ export function Square({
       lastPieceColour,
     ]
   );
+
+  function handleDrop(item: { piece: Piece; square: Sq; id: number }) {
+    if (
+      Math.abs(item.square[0].charCodeAt(0) - square[0].charCodeAt(0)) <= 1 &&
+      ((item.piece === "wP" && square[1] === "8") ||
+        (item.piece === "bP" && square[1] === "1"))
+    ) {
+      if (autoPromoteToQueen) {
+        handleSetPosition(item.square, square, square[1] === "8" ? "wQ" : "bQ");
+      } else {
+        setPromoteFromSquare(item.square);
+        setPromoteToSquare(square);
+        setShowPromoteDialog(true);
+      }
+    } else {
+      handleSetPosition(item.square, square, item.piece, true);
+    }
+  }
 
   useEffect(() => {
     if (squareRef.current) {
@@ -179,7 +200,7 @@ const size = (width: number) => ({
 const borderRadius = (
   square: Sq,
   boardOrientation: BoardOrientation,
-  customBoardStyle?: CSSProperties
+  customBoardStyle?: Record<string, string | number>
 ) => {
   if (!customBoardStyle?.borderRadius) return {};
 

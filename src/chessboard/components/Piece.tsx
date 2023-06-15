@@ -23,16 +23,16 @@ export function Piece({
     arePiecesDraggable,
     arePremovesAllowed,
     boardWidth,
+    chessPieces,
+    currentPosition,
     id,
     isDraggablePiece,
+    isWaitingForAnimation,
     onPieceClick,
     onPieceDragBegin,
     onPieceDragEnd,
-    premoves,
-    chessPieces,
     positionDifferences,
-    isWaitingForAnimation,
-    currentPosition,
+    premoves,
   } = useChessboard();
 
   const [pieceStyle, setPieceStyle] = useState({
