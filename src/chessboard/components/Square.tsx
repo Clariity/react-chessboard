@@ -43,6 +43,9 @@ export function Square({
     onRightClickUp,
     onSquareClick,
     isWaitingForAnimation,
+    currentRightClickDown,
+    drawNewArrow,
+    onArrowDrawEnd,
   } = useChessboard();
 
   const [{ isOver }, drop] = useDrop(
@@ -90,11 +93,18 @@ export function Square({
       data-square={square}
       onMouseOver={(e) => {
         // noop if moving from child of square into square.
+
+        if (e.buttons === 2 && currentRightClickDown) {
+          drawNewArrow(currentRightClickDown, square);
+        }
+
         if (
           e.relatedTarget &&
           e.currentTarget.contains(e.relatedTarget as Node)
-        )
+        ) {
           return;
+        }
+
         onMouseOverSquare(square);
       }}
       onMouseOut={(e) => {
@@ -110,7 +120,11 @@ export function Square({
         if (e.button === 2) onRightClickDown(square);
       }}
       onMouseUp={(e) => {
-        if (e.button === 2) onRightClickUp(square);
+        if (e.button === 2) {
+          if (currentRightClickDown)
+            onArrowDrawEnd(currentRightClickDown, square);
+          onRightClickUp(square);
+        }
       }}
       onDragEnter={() => onDragOverSquare(square)}
       onClick={() => {
