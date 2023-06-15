@@ -342,7 +342,7 @@ export type ChessboardProps = {
   snapToCursor?: boolean;
   /**
    * Whether or not to automatically promote pawn to queen
-   * @default true
+   * @default false
    */
   autoPromoteToQueen?: boolean;
 };
