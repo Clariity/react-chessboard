@@ -1,20 +1,16 @@
-import { Fragment, useRef, useEffect } from "react";
-
-import { getRelativeCoords } from "../functions";
+import { useRef, useEffect } from "react";
+import { Squares } from "./Squares";
+import { Arrows } from "./Arrows";
 import { useChessboard } from "../context/chessboard-context";
 import { PromotionDialog } from "./PromotionDialog";
-import { Squares } from "./Squares";
 import { WhiteKing } from "./ErrorBoundary";
 
 export function Board() {
   const boardRef = useRef<HTMLDivElement>(null);
 
   const {
-    arrows,
-    boardOrientation,
     boardWidth,
     clearCurrentRightClickDown,
-    customArrowColor,
     onPromotionPieceSelect,
     setShowPromoteDialog,
     showPromoteDialog,
@@ -39,60 +35,7 @@ export function Board() {
   return boardWidth ? (
     <div ref={boardRef} style={{ position: "relative" }}>
       <Squares />
-
-      {/* draw arrows */}
-      <svg
-        width={boardWidth}
-        height={boardWidth}
-        style={{
-          position: "absolute",
-          top: "0",
-          left: "0",
-          pointerEvents: "none",
-          zIndex: "10",
-        }}
-      >
-        {arrows.map((arrow) => {
-          const from = getRelativeCoords(
-            boardOrientation,
-            boardWidth,
-            arrow[0]
-          );
-          const to = getRelativeCoords(boardOrientation, boardWidth, arrow[1]);
-
-          return (
-            <Fragment key={`${arrow[0]}-${arrow[1]}`}>
-              <defs>
-                <marker
-                  id="arrowhead"
-                  markerWidth="2"
-                  markerHeight="2.5"
-                  refX="1.25"
-                  refY="1.25"
-                  orient="auto"
-                >
-                  <polygon
-                    points="0 0, 2 1.25, 0 2.5"
-                    style={{ fill: customArrowColor }}
-                  />
-                </marker>
-              </defs>
-              <line
-                x1={from.x}
-                y1={from.y}
-                x2={to.x}
-                y2={to.y}
-                style={{
-                  stroke: customArrowColor,
-                  strokeWidth: boardWidth / 36,
-                }}
-                markerEnd="url(#arrowhead)"
-              />
-            </Fragment>
-          );
-        })}
-      </svg>
-
+      <Arrows />
       {/* promotion dialog with background */}
       {showPromoteDialog && (
         <>

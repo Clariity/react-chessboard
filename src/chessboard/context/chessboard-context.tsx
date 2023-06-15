@@ -23,6 +23,8 @@ import {
   Square,
 } from "../types";
 
+import { useArrows } from "../hooks/useArrows";
+
 interface ChessboardProviderProps extends ChessboardProps {
   boardWidth: number;
   children: ReactNode;
@@ -92,6 +94,10 @@ interface ChessboardProviderContext {
   setPromoteToSquare: React.Dispatch<React.SetStateAction<Square | null>>;
   setShowPromoteDialog: React.Dispatch<React.SetStateAction<boolean>>;
   showPromoteDialog: boolean;
+  newArrow?: Square[];
+  onArrowDrawEnd: (from: Square, to: Square) => void;
+  drawNewArrow: (from: Square, to: Square) => void;
+  currentRightClickDown?: Square;
 }
 
 export const ChessboardContext = createContext({} as ChessboardProviderContext);
@@ -182,9 +188,6 @@ export const ChessboardProvider = forwardRef(
     // current right mouse down square
     const [currentRightClickDown, setCurrentRightClickDown] =
       useState<Square | undefined>();
-
-    // current arrows
-    const [arrows, setArrows] = useState<Square[][]>([]);
 
     // chess pieces/styling
     const [chessPieces, setChessPieces] = useState({
@@ -286,17 +289,8 @@ export const ChessboardProvider = forwardRef(
       };
     }, [position]);
 
-    // handle external arrows change
-    useEffect(() => {
-      if (customArrows && (customArrows.length !== 0 || arrows.length > 0)) {
-        setArrows(customArrows);
-      }
-    }, [customArrows]);
-
-    // callback when new arrows are set
-    useEffect(() => {
-      onArrowsChange(arrows);
-    }, [arrows]);
+    const { arrows, newArrow, clearArrows, drawNewArrow, onArrowDrawEnd } =
+      useArrows(customArrows, areArrowsAllowed, onArrowsChange);
 
     // handle drop position change
     function handleSetPosition(
@@ -413,7 +407,6 @@ export const ChessboardProvider = forwardRef(
     }
 
     function onRightClickUp(square: Square) {
-      if (!areArrowsAllowed) return;
       if (currentRightClickDown) {
         // same square, don't draw an arrow, but do clear premoves and run onSquareRightClick
         if (currentRightClickDown === square) {
@@ -422,36 +415,11 @@ export const ChessboardProvider = forwardRef(
           onSquareRightClick(square);
           return;
         }
-
-        // if arrow already exists then it needs to be removed
-        for (const [i] of arrows.entries()) {
-          if (
-            arrows[i][0] === currentRightClickDown &&
-            arrows[i][1] === square
-          ) {
-            setArrows((oldArrows) => {
-              const newArrows = [...oldArrows];
-              newArrows.splice(i, 1);
-              return newArrows;
-            });
-            return;
-          }
-        }
-
-        // different square, draw an arrow
-        setArrows((oldArrows) => [
-          ...oldArrows,
-          [currentRightClickDown, square],
-        ]);
       } else setCurrentRightClickDown(undefined);
     }
 
     function clearCurrentRightClickDown() {
       setCurrentRightClickDown(undefined);
-    }
-
-    function clearArrows() {
-      setArrows([]);
     }
 
     const ChessboardProviderContextValue: ChessboardProviderContext = {
@@ -485,8 +453,11 @@ export const ChessboardProvider = forwardRef(
       promotionDialogVariant,
 
       arrows,
+      newArrow,
+      onArrowDrawEnd,
       chessPieces,
       clearArrows,
+      drawNewArrow,
       clearCurrentRightClickDown,
       currentPosition,
       handleSetPosition,
@@ -503,6 +474,7 @@ export const ChessboardProvider = forwardRef(
       setShowPromoteDialog,
       showPromoteDialog,
       autoPromoteToQueen,
+      currentRightClickDown,
     };
 
     return (
