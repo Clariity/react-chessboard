@@ -57,19 +57,21 @@ export const Chessboard = forwardRef<ClearPremoves, ChessboardProps>((props, ref
 
   return backendSet && clientWindow ? (
     <ErrorBoundary>
-      <div ref={boardRef} style={{ width: "100%" }} />
-      <DndProvider
-        backend={backend}
-        context={clientWindow}
-        options={customDndBackend ? customDndBackendOptions : undefined}
-      >
-        {boardWidth && (
-          <ChessboardProvider boardWidth={boardWidth} {...otherProps} ref={ref}>
-            <CustomDragLayer />
-            <Board />
-          </ChessboardProvider>
-        )}
-      </DndProvider>
+      <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
+        <div ref={boardRef} style={{ width: "100%" }} />
+        <DndProvider
+          backend={backend}
+          context={clientWindow}
+          options={customDndBackend ? customDndBackendOptions : undefined}
+        >
+          {boardWidth && (
+            <ChessboardProvider boardWidth={boardWidth} {...otherProps} ref={ref}>
+              <CustomDragLayer />
+              <Board />
+            </ChessboardProvider>
+          )}
+        </DndProvider>
+      </div>
     </ErrorBoundary>
   ) : null;
 });

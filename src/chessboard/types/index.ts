@@ -219,7 +219,7 @@ export type ChessboardProps = {
   customPremoveLightSquareStyle?: Record<string, string | number>;
   /**
    * Custom square renderer for all squares.
-   * @default "div"
+   * @default div
    */
   customSquare?: CustomSquareRenderer;
   /**
