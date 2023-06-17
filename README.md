@@ -1,6 +1,6 @@
 <div align="center" markdown="1">
 
-# [react-chessboard](https://react-chessboard.com)
+# [react-chessboard](https://react-chessboard.vercel.app/)
 
 <img src="./media/chessboard.png" alt="react chessboard" width="300">
 
@@ -14,7 +14,7 @@
 
 ## What is react-chessboard?
 
-react-chessboard is a React component that provides chessboard functionality to your application. The Chess game logic that controls the board should be independent to the board, using a library such as [Chess.js](https://github.com/jhlywa/chess.js). An example of these two working together is shown [in the example below](#basic-example). For interactive examples visit [react-chessboard.com](https://react-chessboard.com).
+react-chessboard is a React component that provides chessboard functionality to your application. The Chess game logic that controls the board should be independent to the board, using a library such as [Chess.js](https://github.com/jhlywa/chess.js). An example of these two working together is shown [in the example below](#basic-example). For interactive examples visit [https://react-chessboard.vercel.app/](https://react-chessboard.vercel.app/).
 
 [ChessOpenings.co.uk](https://chessopenings.co.uk) was originally built utilising the [chessboardjsx](https://github.com/willb335/chessboardjsx) library. With [chessboardjsx](https://github.com/willb335/chessboardjsx) being unmaintained, it made it difficult to add functionality or optimise performance, so react-chessboard was made.
 
@@ -26,7 +26,7 @@ npm i react-chessboard
 
 ## Examples
 
-[Storybook](https://react-chessboard.com)
+[Storybook](https://react-chessboard.vercel.app/)
 
 ## Features
 
@@ -123,7 +123,7 @@ export default function PlayRandomMoveEngine() {
 
 ### Advanced Examples
 
-For more advanced code usage examples, please see example boards shown in [`Storybook`](https://react-chessboard.com).
+For more advanced code usage examples, please see example boards shown in [`Storybook`](https://react-chessboard.vercel.app/).
 
 ### Props
 
