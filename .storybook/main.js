@@ -6,5 +6,5 @@ module.exports = {
     "@storybook/addon-interactions",
   ],
   framework: "@storybook/react",
-  staticDirs: ["../stories/media"],
+  staticDirs: ["../stories/media", "../stories/stockfish"],
 };
