@@ -1,42 +1,63 @@
+/*!
+ * Stockfish.js (http://github.com/nmrugg/stockfish.js)
+ * License: GPL
+ */
+
 const stockfish = new Worker("./stockfish.js");
+
+type EngineMessage = {
+  /** stockfish engine message in UCI format*/
+  uciMessage: string;
+  /** founded best move for current position in format `e2e4`*/
+  bestMove?: string;
+  /** founded best move for opponent in format `e7e5` */
+  ponder?: string;
+  /**  material balance's difference in centipawns(IMPORTANT! stockfish gives the cp score in terms of whose turn it is)*/
+  positionEvaluation?: string;
+  /** count of moves until mate */
+  possibleMate?: string;
+};
 
 export default class Engine {
   stockfish: Worker;
-  sendMessage: (message: string) => void;
-  onMessage: (callback: (message: string) => void) => void;
+  onMessage: (callback: (messageData: EngineMessage) => void) => void;
 
   constructor() {
     this.stockfish = stockfish;
-    this.sendMessage = (message) => {
-      this.stockfish.postMessage(message);
-    };
+
     this.onMessage = (callback) => {
       this.stockfish.addEventListener("message", (e) => {
-        callback(e.data);
+        callback(this.transformSFMessageData(e));
       });
     };
   }
 
+  private transformSFMessageData(e) {
+    const uciMessage = e?.data ?? e;
+
+    return {
+      uciMessage,
+      bestMove: uciMessage.match(/bestmove\s+(\S+)/)?.[1],
+      ponder: uciMessage.match(/ponder\s+(\S+)/)?.[1],
+      positionEvaluation: uciMessage.match(/cp\s+(\S+)/)?.[1],
+      possibleMate: uciMessage.match(/mate\s+(\S+)/)?.[1],
+    };
+  }
   init() {
-    this.sendMessage("uci");
-    this.sendMessage("isready");
+    this.stockfish.postMessage("uci");
+    this.stockfish.postMessage("isready");
   }
 
-  // Common sendMessage commands.
-  setPosition(fenString) {
-    this.sendMessage(`position fen ${fenString}`);
-  }
-
-  evaluatePosition(fenString, depth = 16) {
+  evaluatePosition(fen, depth = 16) {
     if (depth > 24) depth = 24;
 
-    this.setPosition(fenString);
-    this.sendMessage(`go depth ${depth}`);
+    this.stockfish.postMessage(`position fen ${fen}`);
+    this.stockfish.postMessage(`go depth ${depth}`);
   }
   stop() {
-    this.sendMessage("stop"); // Run when changing positions
+    this.stockfish.postMessage("stop"); // Run when searching takes too long time and stockfish will return you the bestmove of the deep it has reached
   }
   terminate() {
-    this.sendMessage("quit"); // Good to run this before chessboard unmounting.
+    this.stockfish.postMessage("quit"); // Run this before chessboard unmounting.
   }
 }

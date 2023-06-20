@@ -128,15 +128,17 @@ export const PlayVsRandom = () => {
 ////////// PlayVsStockfish ////////
 ///////////////////////////////////
 
-// 1. Place `stockfish.js` file into React's `publick` folder
-// 2. Then use it as a Web Worker: ``` const stockfish = new Worker("./stockfish.js"); ``` like in `engine.ts`
-
 export const PlayVsStockfish = () => {
+  // 1. Place `stockfish.js` file into React's `publick` folder
+  // 2. Then use it as a Web Worker: ``` const stockfish = new Worker("./stockfish.js"); ``` like in `engine.ts`
+
+  // import Engine from "./stockfish/engine";
   const engine = useMemo(() => new Engine(), []);
 
   const [game, setGame] = useState(new Chess());
-  const [engineMessage, setEngineMessage] = useState("");
   const [ponderArrow, setPonderArrow] = useState([]);
+  const [positionEvaluation, setPositionEvaluation] = useState("");
+  const [possibleMate, setPossibleMate] = useState("");
 
   function safeGameMutate(modify) {
     setGame((g) => {
@@ -152,23 +154,24 @@ export const PlayVsStockfish = () => {
 
     engine.evaluatePosition(game.fen());
 
-    engine.onMessage((message) => {
-      setEngineMessage(message);
+    engine.onMessage(
+      ({ bestMove, ponder, positionEvaluation, possibleMate }) => {
+        positionEvaluation && setPositionEvaluation(positionEvaluation);
+        possibleMate && setPossibleMate(possibleMate);
+        ponder &&
+          setPonderArrow([[ponder.substring(0, 2), ponder.substring(2, 4)]]);
 
-      if (message.startsWith("bestmove")) {
-        const bestMove = message.split(" ")[1];
-        const ponder = message.split(" ")[3];
-        setPonderArrow([[ponder.substring(0, 2), ponder.substring(2, 4)]]);
-
-        safeGameMutate((game) => {
-          // TODO: in latest chess.js version you can just write ```game.move(bestMove)```
-          game.move({
-            from: bestMove.substring(0, 2),
-            to: bestMove.substring(2, 4),
+        if (bestMove) {
+          safeGameMutate((game) => {
+            // TODO: in latest chess.js version you can just write ```game.move(bestMove)```
+            game.move({
+              from: bestMove.substring(0, 2),
+              to: bestMove.substring(2, 4),
+            });
           });
-        });
+        }
       }
-    });
+    );
   }
 
   function onDrop(sourceSquare, targetSquare, piece) {
@@ -197,6 +200,10 @@ export const PlayVsStockfish = () => {
 
   return (
     <div style={boardWrapper}>
+      <h4>
+        Position Evaluation:{" "}
+        {possibleMate ? `#${possibleMate}` : -Number(positionEvaluation) / 100}
+      </h4>
       <Chessboard
         id="PlayVsStockfish"
         position={game.fen()}
@@ -210,6 +217,7 @@ export const PlayVsStockfish = () => {
       <button
         style={buttonStyle}
         onClick={() => {
+          setPossibleMate(undefined);
           safeGameMutate((game) => {
             game.reset();
           });
@@ -220,6 +228,7 @@ export const PlayVsStockfish = () => {
       <button
         style={buttonStyle}
         onClick={() => {
+          setPossibleMate(undefined);
           safeGameMutate((game) => {
             game.undo();
             game.undo();
@@ -228,7 +237,6 @@ export const PlayVsStockfish = () => {
       >
         undo
       </button>
-      <p style={{ height: "100px" }}>{engineMessage}</p>
     </div>
   );
 };
@@ -673,8 +681,40 @@ const CustomSquareRenderer = forwardRef<HTMLDivElement, CustomSquareProps>(
   }
 );
 
-export const CustomSquare = () => (
-  <div style={boardWrapper}>
-    <Chessboard id="CustomSquare" customSquare={CustomSquareRenderer} />
-  </div>
-);
+export const CustomSquare = () => {
+  // Defined outside
+
+  // const CustomSquareRenderer = forwardRef<HTMLDivElement, CustomSquareProps>((props, ref) => {
+  //   const { children, square, squareColor, style } = props;
+
+  //   return (
+  //     <div ref={ref} style={{ ...style, position: "relative" }}>
+  //       {children}
+  //       <div
+  //         style={{
+  //           position: "absolute",
+  //           right: 0,
+  //           bottom: 0,
+  //           display: "flex",
+  //           alignItems: "center",
+  //           justifyContent: "center",
+  //           height: 16,
+  //           width: 16,
+  //           borderTopLeftRadius: 6,
+  //           backgroundColor: squareColor === "black" ? "#064e3b" : "#312e81",
+  //           color: "#fff",
+  //           fontSize: 14,
+  //         }}
+  //       >
+  //         {square}
+  //       </div>
+  //     </div>
+  //   );
+  // });
+
+  return (
+    <div style={boardWrapper}>
+      <Chessboard id="CustomSquare" customSquare={CustomSquareRenderer} />
+    </div>
+  );
+};
