@@ -129,16 +129,18 @@ export const PlayVsRandom = () => {
 ///////////////////////////////////
 
 export const PlayVsStockfish = () => {
-  // 1. Place `stockfish.js` file into React's `publick` folder
-  // 2. Then use it as a Web Worker: ``` const stockfish = new Worker("./stockfish.js"); ``` like in `engine.ts`
+  // 1. Download `stockfish.js` file from https://github.com/Clariity/react-chessboard/stories/stockfish/stockfish.js
+  // 1. Place `stockfish.js` file into your React app's `public` folder
+  // 3. Run it as a web worker like in engine.ts implementation: https://github.com/Clariity/react-chessboard/stories/stockfish/engine.ts
+  // 4. Import Engine from "./stockfish/engine";
 
-  // import Engine from "./stockfish/engine";
   const engine = useMemo(() => new Engine(), []);
 
   const [game, setGame] = useState(new Chess());
   const [ponderArrow, setPonderArrow] = useState([]);
   const [positionEvaluation, setPositionEvaluation] = useState("");
   const [possibleMate, setPossibleMate] = useState("");
+  const [showPonderHint, setShowPonderHint] = useState(false);
 
   function safeGameMutate(modify) {
     setGame((g) => {
@@ -212,7 +214,7 @@ export const PlayVsStockfish = () => {
           borderRadius: "4px",
           boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
         }}
-        customArrows={ponderArrow}
+        customArrows={showPonderHint ? ponderArrow : []}
       />
       <button
         style={buttonStyle}
@@ -236,6 +238,17 @@ export const PlayVsStockfish = () => {
         }}
       >
         undo
+      </button>
+      <button
+        style={{
+          ...buttonStyle,
+          backgroundColor: showPonderHint ? "#B58863" : "#f0d9b5",
+        }}
+        onClick={() => {
+          setShowPonderHint(!showPonderHint);
+        }}
+      >
+        {showPonderHint ? "Hide my best move" : "Show my best move"}
       </button>
     </div>
   );
