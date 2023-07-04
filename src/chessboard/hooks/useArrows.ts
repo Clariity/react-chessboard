@@ -20,6 +20,8 @@ export const useArrows = (
   // arrow which we draw while user dragging mouse
   const [newArrow, setNewArrow] = useState<Arrow>();
 
+  const [hasDrawnArrowOnDrag, setHasDrawnArrowOnDrag] = useState(false);
+
   // handle external arrows change
   useEffect(() => {
     if (customArrows && (customArrows.length !== 0 || arrows.size > 0)) {
@@ -55,12 +57,17 @@ export const useArrows = (
   };
 
   const drawNewArrow = (fromSquare: Square, toSquare: Square) => {
-    if (!areArrowsAllowed || fromSquare === toSquare) return;
-
-    setNewArrow([fromSquare, toSquare]);
+    if (!areArrowsAllowed) return;
+    if (fromSquare === toSquare) {
+      setNewArrow(undefined)
+    } else {
+      setHasDrawnArrowOnDrag(true)
+      setNewArrow([fromSquare, toSquare]);
+    }
   };
 
   const onArrowDrawEnd = (fromSquare: Square, toSquare: Square) => {
+    setHasDrawnArrowOnDrag(false)
     if (fromSquare === toSquare) return;
     // remove it if we already have same arrow in arrows set
     const newArrow = `${fromSquare},${toSquare}`;
@@ -79,6 +86,7 @@ export const useArrows = (
   return {
     arrows: toArray(arrows),
     newArrow,
+    hasDrawnArrowOnDrag,
     clearArrows,
     removeArrow,
     drawNewArrow,
