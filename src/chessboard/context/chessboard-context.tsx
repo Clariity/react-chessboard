@@ -289,7 +289,7 @@ export const ChessboardProvider = forwardRef(
       };
     }, [position]);
 
-    const { arrows, newArrow, clearArrows, drawNewArrow, onArrowDrawEnd, hasDrawnArrowOnDrag } =
+    const { arrows, newArrow, clearArrows, drawNewArrow, onArrowDrawEnd, isCurrentlyDrawingArrow } =
       useArrows(customArrows, areArrowsAllowed, onArrowsChange);
 
     // handle drop position change
@@ -408,7 +408,7 @@ export const ChessboardProvider = forwardRef(
 
     function onRightClickUp(square: Square) {
       if (currentRightClickDown
-        && !hasDrawnArrowOnDrag) {
+        && !isCurrentlyDrawingArrow) {
         // same square, don't draw an arrow, but do clear premoves and run onSquareRightClick
         if (currentRightClickDown === square) {
           setCurrentRightClickDown(undefined);
