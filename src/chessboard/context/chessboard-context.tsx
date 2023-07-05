@@ -131,18 +131,18 @@ export const ChessboardProvider = forwardRef(
       dropOffBoardAction = "snapback",
       id = 0,
       isDraggablePiece = () => true,
-      getPositionObject = () => {},
-      onArrowsChange = () => {},
-      onDragOverSquare = () => {},
-      onMouseOutSquare = () => {},
-      onMouseOverSquare = () => {},
-      onPieceClick = () => {},
-      onPieceDragBegin = () => {},
-      onPieceDragEnd = () => {},
+      getPositionObject = () => { },
+      onArrowsChange = () => { },
+      onDragOverSquare = () => { },
+      onMouseOutSquare = () => { },
+      onMouseOverSquare = () => { },
+      onPieceClick = () => { },
+      onPieceDragBegin = () => { },
+      onPieceDragEnd = () => { },
       onPieceDrop = () => true,
       onPromotionPieceSelect,
-      onSquareClick = () => {},
-      onSquareRightClick = () => {},
+      onSquareClick = () => { },
+      onSquareRightClick = () => { },
       position = "start",
       promotionDialogVariant = "default",
       promotionToSquare = null,
@@ -289,7 +289,7 @@ export const ChessboardProvider = forwardRef(
       };
     }, [position]);
 
-    const { arrows, newArrow, clearArrows, drawNewArrow, onArrowDrawEnd, isCurrentlyDrawingArrow } =
+    const { arrows, newArrow, clearArrows, drawNewArrow, onArrowDrawEnd } =
       useArrows(customArrows, areArrowsAllowed, onArrowsChange);
 
     // handle drop position change
@@ -408,7 +408,7 @@ export const ChessboardProvider = forwardRef(
 
     function onRightClickUp(square: Square) {
       if (currentRightClickDown
-        && !isCurrentlyDrawingArrow) {
+        && !Boolean(newArrow)) {
         // same square, don't draw an arrow, but do clear premoves and run onSquareRightClick
         if (currentRightClickDown === square) {
           setCurrentRightClickDown(undefined);

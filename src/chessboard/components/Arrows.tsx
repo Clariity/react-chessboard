@@ -30,6 +30,7 @@ export const Arrows = () => {
       {arrowsList.map((arrow, i) => {
         const from = getRelativeCoords(boardOrientation, boardWidth, arrow[0]);
         const to = getRelativeCoords(boardOrientation, boardWidth, arrow[1]);
+        if(arrow[0] == arrow[1]) return undefined;
         let ARROW_LENGTH_REDUCER = boardWidth / 32;
 
         const isArrowActive = i === arrows.length;
