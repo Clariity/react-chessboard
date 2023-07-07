@@ -1,9 +1,10 @@
-import React, { forwardRef, useRef, useState } from "react";
+import React, { forwardRef, useEffect, useRef, useState, useMemo } from "react";
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 import Chess from "chess.js";
 
 import { Chessboard, ClearPremoves } from "../src";
 import { CustomSquareProps, Square } from "../src/chessboard/types";
+import Engine from "./stockfish/engine";
 
 // examples
 // multiboard example https://storybook.js.org/docs/react/writing-stories/stories-for-multiple-components
@@ -118,6 +119,136 @@ export const PlayVsRandom = () => {
         }}
       >
         undo
+      </button>
+    </div>
+  );
+};
+
+///////////////////////////////////
+////////// PlayVsStockfish ////////
+///////////////////////////////////
+
+export const PlayVsStockfish = () => {
+  // 1. Download `stockfish.js` file from https://github.com/Clariity/react-chessboard/stories/stockfish/stockfish.js
+  // 1. Place `stockfish.js` file into your React app's `public` folder
+  // 3. Run it as a web worker like in engine.ts implementation: https://github.com/Clariity/react-chessboard/stories/stockfish/engine.ts
+  // 4. Import Engine from "./stockfish/engine";
+
+  const engine = useMemo(() => new Engine(), []);
+
+  const [game, setGame] = useState(new Chess());
+  const [ponderArrow, setPonderArrow] = useState([]);
+  const [positionEvaluation, setPositionEvaluation] = useState("");
+  const [possibleMate, setPossibleMate] = useState("");
+  const [showPonderHint, setShowPonderHint] = useState(false);
+
+  function safeGameMutate(modify) {
+    setGame((g) => {
+      const update = { ...g };
+      modify(update);
+      return update;
+    });
+  }
+
+  function findBestMove() {
+    // exit if the game is over
+    if (game.game_over() || game.in_draw()) return;
+
+    engine.evaluatePosition(game.fen());
+
+    engine.onMessage(
+      ({ bestMove, ponder, positionEvaluation, possibleMate }) => {
+        positionEvaluation && setPositionEvaluation(positionEvaluation);
+        possibleMate && setPossibleMate(possibleMate);
+        ponder &&
+          setPonderArrow([[ponder.substring(0, 2), ponder.substring(2, 4)]]);
+
+        if (bestMove) {
+          safeGameMutate((game) => {
+            // TODO: in latest chess.js version you can just write ```game.move(bestMove)```
+            game.move({
+              from: bestMove.substring(0, 2),
+              to: bestMove.substring(2, 4),
+            });
+          });
+        }
+      }
+    );
+  }
+
+  function onDrop(sourceSquare, targetSquare, piece) {
+    const gameCopy = { ...game };
+    const move = gameCopy.move({
+      from: sourceSquare,
+      to: targetSquare,
+      promotion: piece[1].toLowerCase() ?? "q",
+    });
+    setGame(gameCopy);
+
+    // illegal move
+    if (move === null) return false;
+
+    findBestMove();
+
+    return true;
+  }
+
+  useEffect(() => {
+    engine.init();
+
+    // Don't forget to terminate  Engine after unmount!
+    return () => engine.terminate();
+  }, []);
+
+  return (
+    <div style={boardWrapper}>
+      <h4>
+        Position Evaluation:{" "}
+        {possibleMate ? `#${possibleMate}` : -Number(positionEvaluation) / 100}
+      </h4>
+      <Chessboard
+        id="PlayVsStockfish"
+        position={game.fen()}
+        onPieceDrop={onDrop}
+        customBoardStyle={{
+          borderRadius: "4px",
+          boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
+        }}
+        customArrows={showPonderHint ? ponderArrow : []}
+      />
+      <button
+        style={buttonStyle}
+        onClick={() => {
+          setPossibleMate(undefined);
+          safeGameMutate((game) => {
+            game.reset();
+          });
+        }}
+      >
+        reset
+      </button>
+      <button
+        style={buttonStyle}
+        onClick={() => {
+          setPossibleMate(undefined);
+          safeGameMutate((game) => {
+            game.undo();
+            game.undo();
+          });
+        }}
+      >
+        undo
+      </button>
+      <button
+        style={{
+          ...buttonStyle,
+          backgroundColor: showPonderHint ? "#B58863" : "#f0d9b5",
+        }}
+        onClick={() => {
+          setShowPonderHint(!showPonderHint);
+        }}
+      >
+        {showPonderHint ? "Hide my best move" : "Show my best move"}
       </button>
     </div>
   );
