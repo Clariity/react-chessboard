@@ -8,7 +8,7 @@ const stockfish = new Worker("./stockfish.js");
 type EngineMessage = {
   /** stockfish engine message in UCI format*/
   uciMessage: string;
-  /** founded best move for current position in format `e2e4`*/
+  /** found best move for current position in format `e2e4`*/
   bestMove?: string;
   /** founded best move for opponent in format `e7e5` */
   ponder?: string;
