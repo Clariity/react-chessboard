@@ -37,7 +37,7 @@ export function PromotionDialog() {
       width: "100%",
       height: `${boardWidth / 4}px`,
       top: 0,
-      backgroundColor: "white",
+      backgroundColor: "transparent",
       left: 0,
     },
   };

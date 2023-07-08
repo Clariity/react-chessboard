@@ -438,6 +438,7 @@ export const ClickToMove = () => {
           ...rightClickedSquares,
         }}
         promotionToSquare={moveTo}
+        promotionDialogVariant={'modal'}
         showPromotionDialog={showPromotionDialog}
       />
       <button
