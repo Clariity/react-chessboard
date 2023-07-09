@@ -21,10 +21,12 @@ export function Square({
 }: SquareProps) {
   const squareRef = useRef<HTMLElement>(null);
   const {
+    autoPromoteToQueen,
     boardWidth,
     boardOrientation,
     clearArrows,
     currentPosition,
+    currentRightClickDown,
     customBoardStyle,
     customDarkSquareStyle,
     customDropSquareStyle,
@@ -33,23 +35,22 @@ export function Square({
     customPremoveLightSquareStyle,
     customSquare: CustomSquare,
     customSquareStyles,
+    drawNewArrow,
     handleSetPosition,
     isWaitingForAnimation,
     lastPieceColour,
+    onArrowDrawEnd,
     onDragOverSquare,
     onMouseOutSquare,
     onMouseOverSquare,
     onPieceDrop,
+    onPromotionDialogOpen,
     onRightClickDown,
     onRightClickUp,
     onSquareClick,
     setPromoteFromSquare,
     setPromoteToSquare,
     setShowPromoteDialog,
-    autoPromoteToQueen,
-    currentRightClickDown,
-    drawNewArrow,
-    onArrowDrawEnd,
   } = useChessboard();
 
   const [{ isOver }, drop] = useDrop(
@@ -78,9 +79,12 @@ export function Square({
       if (autoPromoteToQueen) {
         handleSetPosition(item.square, square, square[1] === "8" ? "wQ" : "bQ");
       } else {
-        setPromoteFromSquare(item.square);
-        setPromoteToSquare(square);
-        setShowPromoteDialog(true);
+        const isValidPromotion = onPromotionDialogOpen(item.square, square);
+        if (isValidPromotion) {
+          setPromoteFromSquare(item.square);
+          setPromoteToSquare(square);
+          setShowPromoteDialog(true);
+        }
       }
     } else {
       handleSetPosition(item.square, square, item.piece, true);

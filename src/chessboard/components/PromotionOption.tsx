@@ -44,7 +44,12 @@ export function PromotionOption({ option }: Props) {
       onClick={() => {
         onPromotionPieceSelect?.length
           ? onPromotionPieceSelect(option)
-          : handleSetPosition(promoteFromSquare!, promoteToSquare!, option);
+          : handleSetPosition(
+              promoteFromSquare!,
+              promoteToSquare!,
+              option,
+              true
+            );
       }}
       onMouseOver={() => setIsHover(true)}
       onMouseOut={() => setIsHover(false)}

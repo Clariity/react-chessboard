@@ -137,7 +137,7 @@ export const PlayVsStockfish = () => {
   const engine = useMemo(() => new Engine(), []);
 
   const [game, setGame] = useState(new Chess());
-  const [ponderArrow, setPonderArrow] = useState([]);
+  const [ponderArrow, setPonderArrow] = useState<Square[][]>([]);
   const [positionEvaluation, setPositionEvaluation] = useState("");
   const [possibleMate, setPossibleMate] = useState("");
   const [showPonderHint, setShowPonderHint] = useState(false);
@@ -161,7 +161,12 @@ export const PlayVsStockfish = () => {
         positionEvaluation && setPositionEvaluation(positionEvaluation);
         possibleMate && setPossibleMate(possibleMate);
         ponder &&
-          setPonderArrow([[ponder.substring(0, 2), ponder.substring(2, 4)]]);
+          setPonderArrow([
+            [
+              ponder.substring(0, 2) as Square,
+              ponder.substring(2, 4) as Square,
+            ],
+          ]);
 
         if (bestMove) {
           safeGameMutate((game) => {
@@ -219,7 +224,7 @@ export const PlayVsStockfish = () => {
       <button
         style={buttonStyle}
         onClick={() => {
-          setPossibleMate(undefined);
+          setPossibleMate("");
           safeGameMutate((game) => {
             game.reset();
           });
@@ -230,7 +235,7 @@ export const PlayVsStockfish = () => {
       <button
         style={buttonStyle}
         onClick={() => {
-          setPossibleMate(undefined);
+          setPossibleMate("");
           safeGameMutate((game) => {
             game.undo();
             game.undo();
