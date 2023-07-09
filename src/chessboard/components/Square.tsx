@@ -72,8 +72,8 @@ export function Square({
   function handleDrop(item: { piece: Piece; square: Sq; id: number }) {
     if (
       Math.abs(item.square[0].charCodeAt(0) - square[0].charCodeAt(0)) <= 1 &&
-      ((item.piece === "wP" && square[1] === "8") ||
-        (item.piece === "bP" && square[1] === "1"))
+      ((item.piece === "wP" && item.square[1] === "7" && square[1] === "8") ||
+        (item.piece === "bP" && item.square[1] === "2" && square[1] === "1"))
     ) {
       if (autoPromoteToQueen) {
         handleSetPosition(item.square, square, square[1] === "8" ? "wQ" : "bQ");
