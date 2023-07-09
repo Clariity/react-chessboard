@@ -36,7 +36,7 @@ export function Board() {
     <div ref={boardRef} style={{ position: "relative" }}>
       <Squares />
       <Arrows />
-      {/* promotion dialog with background */}
+
       {showPromoteDialog && (
         <>
           <div
