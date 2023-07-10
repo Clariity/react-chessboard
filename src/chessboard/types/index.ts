@@ -258,7 +258,9 @@ export type ChessboardProps = {
    */
   onCheckForPromotion?: (
     sourceSquare: Square,
-    targetSquare: Square
+    targetSquare: Square,
+    piece: Piece,
+    targetPiece: Piece | undefined
   ) => boolean;
   /**
    * User function that is run when piece is dragged over a square.

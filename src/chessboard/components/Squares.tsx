@@ -52,6 +52,7 @@ export function Squares() {
                   key={`${c}${r}`}
                   square={square}
                   squareColor={squareColor}
+                  piece={currentPosition[square]}
                   setSquares={setSquares}
                   squareHasPremove={!!squareHasPremove}
                 >

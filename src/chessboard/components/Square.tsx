@@ -9,12 +9,14 @@ type SquareProps = {
   setSquares: React.Dispatch<React.SetStateAction<{ [square in Sq]?: Coords }>>;
   square: Sq;
   squareColor: "white" | "black";
+  piece: Piece | undefined;
   squareHasPremove: boolean;
 };
 
 export function Square({
   square,
   squareColor,
+  piece,
   setSquares,
   squareHasPremove,
   children,
@@ -71,7 +73,7 @@ export function Square({
   );
 
   function handleDrop(item: { piece: Piece; square: Sq; id: number }) {
-    if (onCheckForPromotion(item.square, square)) {
+    if (onCheckForPromotion(item.square, square, item.piece, piece)) {
       if (autoPromoteToQueen) {
         handleSetPosition(item.square, square, item.piece[0] === "w" ? "wQ" : "bQ");
       } else {
