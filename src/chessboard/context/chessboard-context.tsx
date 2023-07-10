@@ -56,6 +56,7 @@ interface ChessboardProviderContext {
   customSquareStyles: ChessboardProps["customSquareStyles"];
   id: RequiredChessboardProps["id"];
   isDraggablePiece: RequiredChessboardProps["isDraggablePiece"];
+  onCheckForPromotion: RequiredChessboardProps["onCheckForPromotion"];
   onDragOverSquare: RequiredChessboardProps["onDragOverSquare"];
   onMouseOutSquare: RequiredChessboardProps["onMouseOutSquare"];
   onMouseOverSquare: RequiredChessboardProps["onMouseOverSquare"];
@@ -134,6 +135,7 @@ export const ChessboardProvider = forwardRef(
       isDraggablePiece = () => true,
       getPositionObject = () => {},
       onArrowsChange = () => {},
+      onCheckForPromotion = () => false,
       onDragOverSquare = () => {},
       onMouseOutSquare = () => {},
       onMouseOverSquare = () => {},
@@ -441,6 +443,7 @@ export const ChessboardProvider = forwardRef(
       customSquareStyles,
       id,
       isDraggablePiece,
+      onCheckForPromotion,
       onDragOverSquare,
       onMouseOutSquare,
       onMouseOverSquare,
