@@ -300,14 +300,6 @@ export type ChessboardProps = {
     piece: Piece
   ) => boolean;
   /**
-   * User function that is run when pawn is dropped on a promotion square. Must return whether the move was valid or not.
-   * @default () => true
-   */
-  onPromotionDialogOpen?: (
-    sourceSquare: Square,
-    targetSquare: Square
-  ) => boolean;
-  /**
    * User function that is run when a promotion piece is selected. Must return whether the move was successful or not.
    * @default () => true
    */

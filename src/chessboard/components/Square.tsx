@@ -45,7 +45,6 @@ export function Square({
     onMouseOutSquare,
     onMouseOverSquare,
     onPieceDrop,
-    onPromotionDialogOpen,
     onRightClickDown,
     onRightClickUp,
     onSquareClick,
@@ -76,12 +75,9 @@ export function Square({
       if (autoPromoteToQueen) {
         handleSetPosition(item.square, square, item.piece[0] === "w" ? "wQ" : "bQ");
       } else {
-        const isValidPromotion = onPromotionDialogOpen(item.square, square);
-        if (isValidPromotion) {
-          setPromoteFromSquare(item.square);
-          setPromoteToSquare(square);
-          setShowPromoteDialog(true);
-        }
+        setPromoteFromSquare(item.square);
+        setPromoteToSquare(square);
+        setShowPromoteDialog(true);
       }
     } else {
       handleSetPosition(item.square, square, item.piece, true);
