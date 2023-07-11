@@ -40,7 +40,7 @@ export function Square({
     isWaitingForAnimation,
     lastPieceColour,
     onArrowDrawEnd,
-    onCheckForPromotion,
+    onPromotionCheck,
     onDragOverSquare,
     onMouseOutSquare,
     onMouseOverSquare,
@@ -71,7 +71,7 @@ export function Square({
   );
 
   function handleDrop(item: { piece: Piece; square: Sq; id: number }) {
-    if (onCheckForPromotion(item.square, square, item.piece)) {
+    if (onPromotionCheck(item.square, square, item.piece)) {
       if (autoPromoteToQueen) {
         handleSetPosition(item.square, square, item.piece[0] === "w" ? "wQ" : "bQ");
       } else {

@@ -253,15 +253,6 @@ export type ChessboardProps = {
    */
   onArrowsChange?: (squares: Square[][]) => void;
   /**
-   * User function that is run when piece is dropped. Must return whether the move results in a promotion or not.
-   * @default () => false
-   */
-  onCheckForPromotion?: (
-    sourceSquare: Square,
-    targetSquare: Square,
-    piece: Piece
-  ) => boolean;
-  /**
    * User function that is run when piece is dragged over a square.
    * @default () => {}
    */
@@ -296,6 +287,15 @@ export type ChessboardProps = {
    * @default () => true
    */
   onPieceDrop?: (
+    sourceSquare: Square,
+    targetSquare: Square,
+    piece: Piece
+  ) => boolean;
+  /**
+   * User function that is run when piece is dropped. Must return whether the move results in a promotion or not.
+   * @default () => false
+   */
+  onPromotionCheck?: (
     sourceSquare: Square,
     targetSquare: Square,
     piece: Piece

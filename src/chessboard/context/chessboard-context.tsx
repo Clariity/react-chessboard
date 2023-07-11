@@ -56,7 +56,6 @@ interface ChessboardProviderContext {
   customSquareStyles: ChessboardProps["customSquareStyles"];
   id: RequiredChessboardProps["id"];
   isDraggablePiece: RequiredChessboardProps["isDraggablePiece"];
-  onCheckForPromotion: RequiredChessboardProps["onCheckForPromotion"];
   onDragOverSquare: RequiredChessboardProps["onDragOverSquare"];
   onMouseOutSquare: RequiredChessboardProps["onMouseOutSquare"];
   onMouseOverSquare: RequiredChessboardProps["onMouseOverSquare"];
@@ -64,6 +63,7 @@ interface ChessboardProviderContext {
   onPieceDragBegin: RequiredChessboardProps["onPieceDragBegin"];
   onPieceDragEnd: RequiredChessboardProps["onPieceDragEnd"];
   onPieceDrop: RequiredChessboardProps["onPieceDrop"];
+  onPromotionCheck: RequiredChessboardProps["onPromotionCheck"];
   onPromotionPieceSelect: ChessboardProps["onPromotionPieceSelect"];
   onSquareClick: RequiredChessboardProps["onSquareClick"];
   promotionDialogVariant: RequiredChessboardProps["promotionDialogVariant"];
@@ -134,7 +134,7 @@ export const ChessboardProvider = forwardRef(
       isDraggablePiece = () => true,
       getPositionObject = () => {},
       onArrowsChange = () => {},
-      onCheckForPromotion = (sourceSquare, targetSquare, piece) => {
+      onPromotionCheck = (sourceSquare, targetSquare, piece) => {
         return (((piece === "wP" && sourceSquare[1] === "7" && targetSquare[1] === "8") ||
                 (piece === "bP" && sourceSquare[1] === "2" && targetSquare[1] === "1")) &&
                 Math.abs(sourceSquare.charCodeAt(0) - targetSquare.charCodeAt(0)) <= 1)
@@ -445,7 +445,7 @@ export const ChessboardProvider = forwardRef(
       customSquareStyles,
       id,
       isDraggablePiece,
-      onCheckForPromotion,
+      onPromotionCheck,
       onDragOverSquare,
       onMouseOutSquare,
       onMouseOverSquare,
