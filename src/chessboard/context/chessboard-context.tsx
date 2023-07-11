@@ -134,12 +134,10 @@ export const ChessboardProvider = forwardRef(
       isDraggablePiece = () => true,
       getPositionObject = () => {},
       onArrowsChange = () => {},
-      onCheckForPromotion = (sourceSquare, targetSquare, piece, targetPiece) => {
-        const columnDifference = Math.abs(sourceSquare.charCodeAt(0) - targetSquare.charCodeAt(0))
-        return ((piece[0] === "w" && sourceSquare[1] === "7" && targetSquare[1] === "8" && 
-                ((!columnDifference && !targetPiece) || (columnDifference === 1 && targetPiece?.charAt(0) === "b"))) ||
-                (piece[0] === "b" && sourceSquare[1] === "2" && targetSquare[1] === "1" && 
-                ((!columnDifference && !targetPiece) || (columnDifference === 1 && targetPiece?.charAt(0) === "w"))))
+      onCheckForPromotion = (sourceSquare, targetSquare, piece) => {
+        return (((piece === "wP" && sourceSquare[1] === "7" && targetSquare[1] === "8") ||
+                (piece === "bP" && sourceSquare[1] === "2" && targetSquare[1] === "1")) &&
+                Math.abs(sourceSquare.charCodeAt(0) - targetSquare.charCodeAt(0)) <= 1)
       },
       onDragOverSquare = () => {},
       onMouseOutSquare = () => {},
