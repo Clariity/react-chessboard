@@ -51,6 +51,7 @@ export function Square({
     setPromoteFromSquare,
     setPromoteToSquare,
     setShowPromoteDialog,
+    onSparePieceDrop = () => {},
   } = useChessboard();
 
   const [{ isOver }, drop] = useDrop(
@@ -70,7 +71,16 @@ export function Square({
     ]
   );
 
-  function handleDrop(item: { piece: Piece; square: Sq; id: number }) {
+  function handleDrop(item: {
+    piece: Piece;
+    isSpare?: boolean;
+    square: Sq;
+    id: number;
+  }) {
+    if (item.isSpare) {
+      onSparePieceDrop(item.piece, square);
+      return;
+    }
     if (
       Math.abs(item.square[0].charCodeAt(0) - square[0].charCodeAt(0)) <= 1 &&
       ((item.piece === "wP" && item.square[1] === "7" && square[1] === "8") ||

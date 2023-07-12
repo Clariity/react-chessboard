@@ -4,6 +4,7 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import { TouchBackend } from "react-dnd-touch-backend";
 
 import { Board } from "./components/Board";
+import { SparePiece } from "./components/SparePiece";
 import { ChessboardProps } from "./types";
 import { ChessboardProvider } from "./context/chessboard-context";
 import { CustomDragLayer } from "./components/CustomDragLayer";
@@ -25,53 +26,99 @@ export type ClearPremoves = {
   clearPremoves: (clearLastPieceColour?: boolean) => void;
 };
 
-export const Chessboard = forwardRef<ClearPremoves, ChessboardProps>((props, ref) => {
-  const { customDndBackend, customDndBackendOptions, ...otherProps } = props;
-  const [clientWindow, setClientWindow] = useState<Window>();
-  const [backendSet, setBackendSet] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-  const [boardWidth, setBoardWidth] = useState(props.boardWidth);
+export const Chessboard = forwardRef<ClearPremoves, ChessboardProps>(
+  (props, ref) => {
+    const {
+      customDndBackend,
+      customDndBackendOptions,
+      showSparePiecesPanel,
+      ...otherProps
+    } = props;
+    const [clientWindow, setClientWindow] = useState<Window>();
+    const [backendSet, setBackendSet] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
+    const [boardWidth, setBoardWidth] = useState(props.boardWidth);
 
-  const boardRef = useRef<HTMLObjectElement>(null);
+    const boardRef = useRef<HTMLObjectElement>(null);
 
-  useEffect(() => {
-    setIsMobile("ontouchstart" in window);
-    setBackendSet(true);
-    setClientWindow(window);
-  }, []);
+    useEffect(() => {
+      setIsMobile("ontouchstart" in window);
+      setBackendSet(true);
+      setClientWindow(window);
+    }, []);
 
-  useEffect(() => {
-    if (props.boardWidth === undefined && boardRef.current?.offsetWidth) {
-      const resizeObserver = new ResizeObserver(() => {
-        setBoardWidth(boardRef.current?.offsetWidth as number);
-      });
-      resizeObserver.observe(boardRef.current);
+    useEffect(() => {
+      if (props.boardWidth === undefined && boardRef.current?.offsetWidth) {
+        const resizeObserver = new ResizeObserver(() => {
+          setBoardWidth(boardRef.current?.offsetWidth as number);
+        });
+        resizeObserver.observe(boardRef.current);
 
-      return () => {
-        resizeObserver.disconnect();
-      };
-    }
-  }, [boardRef.current, clientWindow]);
+        return () => {
+          resizeObserver.disconnect();
+        };
+      }
+    }, [boardRef.current, clientWindow]);
 
-  const backend = customDndBackend || (isMobile ? TouchBackend : HTML5Backend);
+    const backend =
+      customDndBackend || (isMobile ? TouchBackend : HTML5Backend);
 
-  return backendSet && clientWindow ? (
-    <ErrorBoundary>
-      <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
-        <div ref={boardRef} style={{ width: "100%" }} />
-        <DndProvider
-          backend={backend}
-          context={clientWindow}
-          options={customDndBackend ? customDndBackendOptions : undefined}
+    return backendSet && clientWindow ? (
+      <ErrorBoundary>
+        <div
+          style={{ display: "flex", flexDirection: "column", width: "100%" }}
         >
-          {boardWidth && (
-            <ChessboardProvider boardWidth={boardWidth} {...otherProps} ref={ref}>
-              <CustomDragLayer />
-              <Board />
-            </ChessboardProvider>
-          )}
-        </DndProvider>
-      </div>
-    </ErrorBoundary>
-  ) : null;
-});
+          <div ref={boardRef} style={{ width: "100%" }} />
+          <DndProvider
+            backend={backend}
+            context={clientWindow}
+            options={customDndBackend ? customDndBackendOptions : undefined}
+          >
+            {boardWidth && (
+              <ChessboardProvider
+                boardWidth={boardWidth}
+                {...otherProps}
+                ref={ref}
+              >
+                <CustomDragLayer />
+                {showSparePiecesPanel && (
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      marginBottom: "12px",
+                    }}
+                  >
+                    <SparePiece piece="bK" />
+                    <SparePiece piece="bP" />
+                    <SparePiece piece="bN" />
+                    <SparePiece piece="bR" />
+                    <SparePiece piece="bQ" />
+                    <SparePiece piece="bB" />
+                  </div>
+                )}
+                <Board />
+                {showSparePiecesPanel && (
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      marginTop: "12px",
+                    }}
+                  >
+                    <SparePiece piece="wK" />
+                    <SparePiece piece="wP" />
+                    <SparePiece piece="wN" />
+                    <SparePiece piece="wR" />
+                    <SparePiece piece="wQ" />
+                    <SparePiece piece="wB" />
+                  </div>
+                )}
+              </ChessboardProvider>
+            )}
+          </DndProvider>
+        </div>
+      </ErrorBoundary>
+    ) : null;
+  }
+);

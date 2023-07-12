@@ -736,3 +736,80 @@ export const CustomSquare = () => {
     </div>
   );
 };
+
+///////////////////////////////////
+////////// ManualBoardEditor //////
+///////////////////////////////////
+export const ManualBoardEditor = () => {
+  const [game, setGame] = useState(new Chess());
+
+  console.log("<<<<<<<<", game.fen());
+
+  function safeGameMutate(modify) {
+    setGame((g) => {
+      const update = { ...g };
+      modify(update);
+      return update;
+    });
+  }
+
+  const handleSparePieceDrop = (piece, targetSquare) => {
+    const color = piece[0];
+    const type = piece[1].toLowerCase();
+    safeGameMutate((game) => {
+      const aaa = game.put({ type, color }, targetSquare);
+
+      return game;
+    });
+  };
+
+  const handlePieceDrop = (sourceSquare, targetSquare, piece) => {
+    const color = piece[0];
+    const type = piece[1].toLowerCase();
+    safeGameMutate((game) => {
+      game.remove(sourceSquare);
+      game.put({ type, color }, targetSquare);
+      return game;
+    });
+
+    return true;
+  };
+
+  return (
+    <div style={boardWrapper}>
+      <h5>{game.fen()}</h5>
+      <Chessboard
+        id="ManualBoardEditor"
+        position={game.fen()}
+        onSparePieceDrop={handleSparePieceDrop}
+        onPieceDrop={handlePieceDrop}
+        boardWidth={360}
+        showSparePiecesPanel
+        customBoardStyle={{
+          borderRadius: "4px",
+          boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
+        }}
+      />
+      <button
+        style={buttonStyle}
+        onClick={() => {
+          safeGameMutate((game) => {
+            game.reset();
+          });
+        }}
+      >
+        Start position
+      </button>
+      <button
+        style={buttonStyle}
+        onClick={() => {
+          safeGameMutate((game) => {
+            game.clear();
+          });
+        }}
+      >
+        Clear board
+      </button>
+    </div>
+  );
+};

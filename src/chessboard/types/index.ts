@@ -292,6 +292,11 @@ export type ChessboardProps = {
     piece: Piece
   ) => boolean;
   /**
+   * User function that is run when spare piece is dropped on a square.
+   * @default () => {}
+   */
+  onSparePieceDrop?: (piece: Piece, targetSquare: Square) => void;
+  /**
    * User function that is run when pawn is dropped on a promotion square. Must return whether the move was valid or not.
    * @default () => true
    */
@@ -353,4 +358,10 @@ export type ChessboardProps = {
    * @default false
    */
   autoPromoteToQueen?: boolean;
+
+  /**
+   * Whether or not show spare pieces panel for manual position editing
+   * @default false
+   */
+  showSparePiecesPanel?: boolean;
 };

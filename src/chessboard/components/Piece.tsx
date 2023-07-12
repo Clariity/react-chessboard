@@ -168,7 +168,7 @@ export function Piece({
 
   return (
     <div
-      ref={arePiecesDraggable ? (canDrag ? drag : null) : null}
+      ref={arePiecesDraggable && canDrag ? drag : null}
       onClick={() => onPieceClick(piece)}
       data-piece={piece}
       style={pieceStyle}
