@@ -293,7 +293,9 @@ export type ChessboardProps = {
   ) => boolean;
   /**
    * User function that is run when piece is dropped. Must return whether the move results in a promotion or not.
-   * @default () => false
+   * @default (sourceSquare, targetSquare, piece) => (((piece === "wP" && sourceSquare[1] === "7" && targetSquare[1] === "8") || 
+   *                                                  (piece === "bP" && sourceSquare[1] === "2" && targetSquare[1] === "1")) && 
+   *                                                  Math.abs(sourceSquare.charCodeAt(0) - targetSquare.charCodeAt(0)) <= 1)
    */
   onPromotionCheck?: (
     sourceSquare: Square,
