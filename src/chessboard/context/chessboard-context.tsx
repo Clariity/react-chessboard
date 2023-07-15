@@ -134,11 +134,6 @@ export const ChessboardProvider = forwardRef(
       isDraggablePiece = () => true,
       getPositionObject = () => {},
       onArrowsChange = () => {},
-      onPromotionCheck = (sourceSquare, targetSquare, piece) => {
-        return (((piece === "wP" && sourceSquare[1] === "7" && targetSquare[1] === "8") ||
-                (piece === "bP" && sourceSquare[1] === "2" && targetSquare[1] === "1")) &&
-                Math.abs(sourceSquare.charCodeAt(0) - targetSquare.charCodeAt(0)) <= 1)
-      },
       onDragOverSquare = () => {},
       onMouseOutSquare = () => {},
       onMouseOverSquare = () => {},
@@ -146,6 +141,11 @@ export const ChessboardProvider = forwardRef(
       onPieceDragBegin = () => {},
       onPieceDragEnd = () => {},
       onPieceDrop = () => true,
+      onPromotionCheck = (sourceSquare, targetSquare, piece) => {
+        return (((piece === "wP" && sourceSquare[1] === "7" && targetSquare[1] === "8") ||
+                (piece === "bP" && sourceSquare[1] === "2" && targetSquare[1] === "1")) &&
+                Math.abs(sourceSquare.charCodeAt(0) - targetSquare.charCodeAt(0)) <= 1)
+      },
       onPromotionPieceSelect,
       onSquareClick = () => {},
       onSquareRightClick = () => {},
@@ -445,7 +445,6 @@ export const ChessboardProvider = forwardRef(
       customSquareStyles,
       id,
       isDraggablePiece,
-      onPromotionCheck,
       onDragOverSquare,
       onMouseOutSquare,
       onMouseOverSquare,
@@ -453,6 +452,7 @@ export const ChessboardProvider = forwardRef(
       onPieceDragBegin,
       onPieceDragEnd,
       onPieceDrop,
+      onPromotionCheck,
       onPromotionPieceSelect,
       onSquareClick,
       showBoardNotation,
