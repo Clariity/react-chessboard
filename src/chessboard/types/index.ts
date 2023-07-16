@@ -232,6 +232,7 @@ export type ChessboardProps = {
    * @default snapback
    */
   dropOffBoardAction?: DropOffBoardAction;
+  onPieceDropOffBoard?: (sourceSquare: Square, piece: Piece) => void;
   /**
    * Board identifier, necessary if more than one board is mounted for drag and drop.
    * @default 0
@@ -292,10 +293,10 @@ export type ChessboardProps = {
     piece: Piece
   ) => boolean;
   /**
-   * User function that is run when spare piece is dropped on a square.
-   * @default () => {}
+   * User function that is run when spare piece is dropped on a square. Must return whether the drop was successful or not.
+   * @default () => true
    */
-  onSparePieceDrop?: (piece: Piece, targetSquare: Square) => void;
+  onSparePieceDrop?: (piece: Piece, targetSquare: Square) => boolean;
   /**
    * User function that is run when pawn is dropped on a promotion square. Must return whether the move was valid or not.
    * @default () => true

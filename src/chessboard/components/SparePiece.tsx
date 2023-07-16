@@ -35,6 +35,7 @@ export function SparePiece({ piece }: PieceProps) {
       ref={canDrag ? drag : null}
       onClick={() => console.log("CLICL")}
       data-piece={piece}
+      style={{ cursor: "move" }}
     >
       {typeof chessPieces[piece] === "function" ? (
         (chessPieces[piece] as CustomPieceFn)({

@@ -72,6 +72,8 @@ interface ChessboardProviderContext {
   autoPromoteToQueen: RequiredChessboardProps["autoPromoteToQueen"];
   showSparePiecesPanel: RequiredChessboardProps["showSparePiecesPanel"];
   onSparePieceDrop: ChessboardProps["onSparePieceDrop"];
+  onPieceDropOffBoard: ChessboardProps["onPieceDropOffBoard"];
+  dropOffBoardAction: ChessboardProps["dropOffBoardAction"];
 
   // Exported by context
   arrows: Square[][];
@@ -85,6 +87,7 @@ interface ChessboardProviderContext {
     piece: Piece,
     wasManualDropOverride?: boolean
   ) => void;
+  handleSparePieceDrop: (piece: Piece, targetSq: Square) => void;
   isWaitingForAnimation: boolean;
   lastPieceColour: string | undefined;
   onRightClickDown: (square: Square) => void;
@@ -101,6 +104,7 @@ interface ChessboardProviderContext {
   onArrowDrawEnd: (from: Square, to: Square) => void;
   drawNewArrow: (from: Square, to: Square) => void;
   currentRightClickDown?: Square;
+  deletePieceFromSquare: (sq: Square) => void;
 }
 
 export const ChessboardContext = createContext({} as ChessboardProviderContext);
@@ -143,7 +147,8 @@ export const ChessboardProvider = forwardRef(
       onPieceDragBegin = () => {},
       onPieceDragEnd = () => {},
       onPieceDrop = () => true,
-      onSparePieceDrop = () => {},
+      onSparePieceDrop = () => true,
+      onPieceDropOffBoard = () => {},
       onPromotionDialogOpen = () => true,
       onPromotionPieceSelect,
       onSquareClick = () => {},
@@ -343,11 +348,6 @@ export const ChessboardProvider = forwardRef(
         const isValidMove = onPieceDrop(sourceSq, targetSq, piece);
         if (!isValidMove) clearPremoves();
       } else {
-        // delete if dropping off board
-        if (dropOffBoardAction === "trash" && !targetSq) {
-          delete newOnDropPosition[sourceSq];
-        }
-
         // delete source piece
         delete newOnDropPosition[sourceSq];
 
@@ -362,6 +362,15 @@ export const ChessboardProvider = forwardRef(
       getPositionObject(newOnDropPosition);
     }
 
+    function deletePieceFromSquare(square: Square) {
+      const positionCopy = { ...currentPosition };
+
+      delete positionCopy[square];
+      setCurrentPosition(positionCopy);
+
+      // inform latest position information
+      getPositionObject(positionCopy);
+    }
     function attemptPremove(newPieceColour?: string) {
       if (premovesRef.current.length === 0) return;
 
@@ -393,6 +402,19 @@ export const ChessboardProvider = forwardRef(
           clearPremoves();
         }
       }
+    }
+
+    function handleSparePieceDrop(piece: Piece, targetSq: Square) {
+      const isValidDrop = onSparePieceDrop(piece, targetSq);
+
+      if (!isValidDrop) return;
+      const newOnDropPosition = { ...currentPosition };
+      // add piece in new position
+      newOnDropPosition[targetSq] = piece;
+      setCurrentPosition(newOnDropPosition);
+
+      // inform latest position information
+      getPositionObject(newOnDropPosition);
     }
 
     function clearPremoves(clearLastPieceColour = true) {
@@ -469,6 +491,7 @@ export const ChessboardProvider = forwardRef(
       clearCurrentRightClickDown,
       currentPosition,
       handleSetPosition,
+      handleSparePieceDrop,
       isWaitingForAnimation,
       lastPieceColour,
       onRightClickDown,
@@ -484,6 +507,9 @@ export const ChessboardProvider = forwardRef(
       autoPromoteToQueen,
       currentRightClickDown,
       showSparePiecesPanel,
+      dropOffBoardAction,
+      deletePieceFromSquare,
+      onPieceDropOffBoard,
     };
 
     return (

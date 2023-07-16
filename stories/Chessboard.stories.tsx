@@ -19,6 +19,14 @@ const buttonStyle = {
   boxShadow: "0 2px 5px rgba(0, 0, 0, 0.5)",
 };
 
+const inputStyle = {
+  padding: "10px 20px",
+  margin: "10px 0 10px 0",
+  borderRadius: "6px",
+  border: "none",
+  boxShadow: "0 2px 5px rgba(0, 0, 0, 0.5)",
+};
+
 const boardWrapper = {
   width: `70vw`,
   maxWidth: "70vh",
@@ -742,9 +750,10 @@ export const CustomSquare = () => {
 ///////////////////////////////////
 export const ManualBoardEditor = () => {
   const [game, setGame] = useState(new Chess());
+  const [boardOrientation, setBoardOrientation] =
+    useState<"white" | "black">("white");
 
-  console.log("<<<<<<<<", game.fen());
-
+  const [fenPosition, setFenPosition] = useState(game.fen());
   function safeGameMutate(modify) {
     setGame((g) => {
       const update = { ...g };
@@ -753,63 +762,119 @@ export const ManualBoardEditor = () => {
     });
   }
 
+  useEffect(() => {
+    setFenPosition(game.fen());
+  }, [game]);
+
   const handleSparePieceDrop = (piece, targetSquare) => {
     const color = piece[0];
     const type = piece[1].toLowerCase();
-    safeGameMutate((game) => {
-      const aaa = game.put({ type, color }, targetSquare);
+    const gameCopy = { ...game };
 
-      return game;
-    });
+    const success = gameCopy.put({ type, color }, targetSquare);
+
+    if (success) {
+      setGame(gameCopy);
+    } else {
+      alert(
+        `The board already contains ${color === "w" ? "WHITE" : "BLACK"} KING`
+      );
+    }
+
+    return success;
   };
 
   const handlePieceDrop = (sourceSquare, targetSquare, piece) => {
     const color = piece[0];
     const type = piece[1].toLowerCase();
-    safeGameMutate((game) => {
-      game.remove(sourceSquare);
-      game.put({ type, color }, targetSquare);
-      return game;
-    });
+    const gameCopy = { ...game };
 
-    return true;
+    gameCopy.remove(sourceSquare);
+    gameCopy.remove(targetSquare);
+    const success = gameCopy.put({ type, color }, targetSquare);
+
+    if (success) setGame(gameCopy);
+
+    return success;
+  };
+
+  const handlePieceDropOffBoard = (sourceSquare, piece) => {
+    const gameCopy = { ...game };
+
+    gameCopy.remove(sourceSquare);
+
+    setGame(gameCopy);
+  };
+
+  const handleFenInputChange = (e) => {
+    const { valid } = game.validate_fen(e.target.value);
+    setFenPosition(e.target.value);
+    if (valid) {
+      setGame(new Chess(e.target.value));
+    }
   };
 
   return (
-    <div style={boardWrapper}>
-      <h5>{game.fen()}</h5>
+    <div
+      style={{
+        ...boardWrapper,
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+      }}
+    >
+      <input
+        value={fenPosition}
+        style={{ ...inputStyle }}
+        onChange={handleFenInputChange}
+      />
+
       <Chessboard
         id="ManualBoardEditor"
+        boardOrientation={boardOrientation}
         position={game.fen()}
         onSparePieceDrop={handleSparePieceDrop}
         onPieceDrop={handlePieceDrop}
-        boardWidth={360}
+        onPieceDropOffBoard={handlePieceDropOffBoard}
+        dropOffBoardAction="trash"
         showSparePiecesPanel
         customBoardStyle={{
           borderRadius: "4px",
           boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
         }}
       />
-      <button
-        style={buttonStyle}
-        onClick={() => {
-          safeGameMutate((game) => {
-            game.reset();
-          });
-        }}
-      >
-        Start position
-      </button>
-      <button
-        style={buttonStyle}
-        onClick={() => {
-          safeGameMutate((game) => {
-            game.clear();
-          });
-        }}
-      >
-        Clear board
-      </button>
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <button
+          style={buttonStyle}
+          onClick={() => {
+            safeGameMutate((game) => {
+              game.reset();
+            });
+          }}
+        >
+          Start position ♟️
+        </button>
+        <button
+          style={buttonStyle}
+          onClick={() => {
+            safeGameMutate((game) => {
+              game.clear();
+            });
+          }}
+        >
+          Clear board 🗑️
+        </button>
+        <button
+          style={buttonStyle}
+          onClick={() => {
+            setBoardOrientation(
+              boardOrientation === "white" ? "black" : "white"
+            );
+          }}
+        >
+          Flip board 🔁
+        </button>
+      </div>
     </div>
   );
 };

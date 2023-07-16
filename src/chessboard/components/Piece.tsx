@@ -33,6 +33,9 @@ export function Piece({
     onPieceDragEnd,
     positionDifferences,
     premoves,
+    onPieceDropOffBoard,
+    deletePieceFromSquare,
+    dropOffBoardAction,
   } = useChessboard();
 
   const [pieceStyle, setPieceStyle] = useState({
@@ -52,7 +55,19 @@ export function Piece({
         onPieceDragBegin(piece, square);
         return { piece, square, id };
       },
-      end: () => onPieceDragEnd(piece, square),
+      end: (item, monitor) => {
+        onPieceDragEnd(piece, square);
+
+        const wasDropOutsideTheBoard = !monitor.didDrop();
+
+        if (wasDropOutsideTheBoard) {
+          if (dropOffBoardAction === "trash") {
+            deletePieceFromSquare(square);
+          }
+
+          onPieceDropOffBoard?.(square, piece);
+        }
+      },
       collect: (monitor) => ({
         canDrag: isDraggablePiece({ piece, sourceSquare: square }),
         isDragging: !!monitor.isDragging(),

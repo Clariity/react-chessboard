@@ -81,39 +81,44 @@ export const Chessboard = forwardRef<ClearPremoves, ChessboardProps>(
                 ref={ref}
               >
                 <CustomDragLayer />
-                {showSparePiecesPanel && (
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      marginBottom: "12px",
-                    }}
-                  >
-                    <SparePiece piece="bK" />
-                    <SparePiece piece="bP" />
-                    <SparePiece piece="bN" />
-                    <SparePiece piece="bR" />
-                    <SparePiece piece="bQ" />
-                    <SparePiece piece="bB" />
-                  </div>
-                )}
-                <Board />
-                {showSparePiecesPanel && (
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      marginTop: "12px",
-                    }}
-                  >
-                    <SparePiece piece="wK" />
-                    <SparePiece piece="wP" />
-                    <SparePiece piece="wN" />
-                    <SparePiece piece="wR" />
-                    <SparePiece piece="wQ" />
-                    <SparePiece piece="wB" />
-                  </div>
-                )}
+                {/* TODO manage spare piece components in a normal way */}
+                <div style={{ display: "flex", justifyContent: "center" }}>
+                  {showSparePiecesPanel && (
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        flexDirection: "column",
+                        marginRight: "24px",
+                      }}
+                    >
+                      <SparePiece piece="bK" />
+                      <SparePiece piece="bP" />
+                      <SparePiece piece="bN" />
+                      <SparePiece piece="bR" />
+                      <SparePiece piece="bQ" />
+                      <SparePiece piece="bB" />
+                    </div>
+                  )}
+                  <Board />
+                  {showSparePiecesPanel && (
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        flexDirection: "column",
+                        marginLeft: "24px",
+                      }}
+                    >
+                      <SparePiece piece="wK" />
+                      <SparePiece piece="wP" />
+                      <SparePiece piece="wN" />
+                      <SparePiece piece="wR" />
+                      <SparePiece piece="wQ" />
+                      <SparePiece piece="wB" />
+                    </div>
+                  )}
+                </div>
               </ChessboardProvider>
             )}
           </DndProvider>
