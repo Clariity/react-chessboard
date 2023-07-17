@@ -292,12 +292,15 @@ export type ChessboardProps = {
     piece: Piece
   ) => boolean;
   /**
-   * User function that is run when pawn is dropped on a promotion square. Must return whether the move was valid or not.
-   * @default () => true
+   * User function that is run when piece is dropped. Must return whether the move results in a promotion or not.
+   * @default (sourceSquare, targetSquare, piece) => (((piece === "wP" && sourceSquare[1] === "7" && targetSquare[1] === "8") || 
+   *                                                  (piece === "bP" && sourceSquare[1] === "2" && targetSquare[1] === "1")) && 
+   *                                                  Math.abs(sourceSquare.charCodeAt(0) - targetSquare.charCodeAt(0)) <= 1)
    */
-  onPromotionDialogOpen?: (
+  onPromotionCheck?: (
     sourceSquare: Square,
-    targetSquare: Square
+    targetSquare: Square,
+    piece: Piece
   ) => boolean;
   /**
    * User function that is run when a promotion piece is selected. Must return whether the move was successful or not.
