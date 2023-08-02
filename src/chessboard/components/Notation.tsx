@@ -60,6 +60,7 @@ export function Notation({ row, col }: NotationProps) {
     return (
       <div
         style={{
+          userSelect: "none",
           zIndex: 3,
           position: "absolute",
           ...{ color: col % 2 !== 0 ? blackColor : whiteColor },
@@ -75,6 +76,7 @@ export function Notation({ row, col }: NotationProps) {
     return (
       <div
         style={{
+          userSelect: "none",
           zIndex: 3,
           position: "absolute",
           ...(boardOrientation === "black"

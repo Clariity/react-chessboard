@@ -63,7 +63,7 @@ interface ChessboardProviderContext {
   onPieceDragBegin: RequiredChessboardProps["onPieceDragBegin"];
   onPieceDragEnd: RequiredChessboardProps["onPieceDragEnd"];
   onPieceDrop: RequiredChessboardProps["onPieceDrop"];
-  onPromotionDialogOpen: RequiredChessboardProps["onPromotionDialogOpen"];
+  onPromotionCheck: RequiredChessboardProps["onPromotionCheck"];
   onPromotionPieceSelect: ChessboardProps["onPromotionPieceSelect"];
   onSquareClick: RequiredChessboardProps["onSquareClick"];
   promotionDialogVariant: RequiredChessboardProps["promotionDialogVariant"];
@@ -148,7 +148,17 @@ export const ChessboardProvider = forwardRef(
       onPieceDrop = () => true,
       onSparePieceDrop = () => true,
       onPieceDropOffBoard = () => {},
-      onPromotionDialogOpen = () => true,
+      onPromotionCheck = (sourceSquare, targetSquare, piece) => {
+        return (
+          ((piece === "wP" &&
+            sourceSquare[1] === "7" &&
+            targetSquare[1] === "8") ||
+            (piece === "bP" &&
+              sourceSquare[1] === "2" &&
+              targetSquare[1] === "1")) &&
+          Math.abs(sourceSquare.charCodeAt(0) - targetSquare.charCodeAt(0)) <= 1
+        );
+      },
       onPromotionPieceSelect,
       onSquareClick = () => {},
       onSquareRightClick = () => {},
@@ -473,7 +483,7 @@ export const ChessboardProvider = forwardRef(
       onPieceDragEnd,
       onPieceDrop,
       onSparePieceDrop,
-      onPromotionDialogOpen,
+      onPromotionCheck,
       onPromotionPieceSelect,
       onSquareClick,
       showBoardNotation,
