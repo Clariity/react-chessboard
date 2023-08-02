@@ -2,21 +2,28 @@ import { ReactNode } from "react";
 import { useDrag } from "react-dnd";
 import { getEmptyImage } from "react-dnd-html5-backend";
 
-import { useChessboard } from "../context/chessboard-context";
 import { CustomPieceFn, Piece as Pc } from "../types";
+import { defaultPieces } from "../media/pieces";
 
 type PieceProps = {
   piece: Pc;
+  width: number;
+  customPieceJSX?: CustomPieceFn;
+  dndId: string;
 };
 
-export function SparePiece({ piece }: PieceProps) {
-  const { boardWidth, chessPieces, id } = useChessboard();
-
+export const SparePiece = ({
+  piece,
+  width,
+  customPieceJSX,
+  dndId,
+}: PieceProps) => {
+  const renderPiece = customPieceJSX ?? defaultPieces[piece];
   const [{ canDrag, isDragging }, drag, dragPreview] = useDrag(
     () => ({
       type: "piece",
       item: () => {
-        return { piece, isSpare: true, id };
+        return { piece, isSpare: true, id: dndId };
       },
 
       collect: (monitor) => ({
@@ -24,7 +31,7 @@ export function SparePiece({ piece }: PieceProps) {
         isDragging: !!monitor.isDragging(),
       }),
     }),
-    [piece, id]
+    [piece, dndId]
   );
 
   // hide the default preview
@@ -37,20 +44,16 @@ export function SparePiece({ piece }: PieceProps) {
       data-piece={piece}
       style={{ cursor: "move" }}
     >
-      {typeof chessPieces[piece] === "function" ? (
-        (chessPieces[piece] as CustomPieceFn)({
-          squareWidth: boardWidth / 8,
+      {typeof renderPiece === "function" ? (
+        (renderPiece as CustomPieceFn)({
+          squareWidth: width,
           isDragging,
         })
       ) : (
-        <svg
-          viewBox={"1 1 43 43"}
-          width={boardWidth / 8}
-          height={boardWidth / 8}
-        >
-          <g>{chessPieces[piece] as ReactNode}</g>
+        <svg viewBox={"1 1 43 43"} width={width} height={width}>
+          <g>{renderPiece as ReactNode}</g>
         </svg>
       )}
     </div>
   );
-}
+};

@@ -70,7 +70,6 @@ interface ChessboardProviderContext {
   showBoardNotation: RequiredChessboardProps["showBoardNotation"];
   snapToCursor: RequiredChessboardProps["snapToCursor"];
   autoPromoteToQueen: RequiredChessboardProps["autoPromoteToQueen"];
-  showSparePiecesPanel: RequiredChessboardProps["showSparePiecesPanel"];
   onSparePieceDrop: ChessboardProps["onSparePieceDrop"];
   onPieceDropOffBoard: ChessboardProps["onPieceDropOffBoard"];
   dropOffBoardAction: ChessboardProps["dropOffBoardAction"];
@@ -160,7 +159,6 @@ export const ChessboardProvider = forwardRef(
       showPromotionDialog = false,
       snapToCursor = true,
       autoPromoteToQueen = false,
-      showSparePiecesPanel = false,
     }: ChessboardProviderProps,
     ref
   ) => {
@@ -506,7 +504,6 @@ export const ChessboardProvider = forwardRef(
       showPromoteDialog,
       autoPromoteToQueen,
       currentRightClickDown,
-      showSparePiecesPanel,
       dropOffBoardAction,
       deletePieceFromSquare,
       onPieceDropOffBoard,

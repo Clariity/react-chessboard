@@ -364,5 +364,11 @@ export type ChessboardProps = {
    * Whether or not show spare pieces panel for manual position editing
    * @default false
    */
-  showSparePiecesPanel?: boolean;
+  useCustomDnDProvider?: boolean;
+
+  /**
+   * Action to take when chessboard width has been changed
+   * @default false
+   */
+  onBoardWidthChange?: (boardWidth: number) => void;
 };

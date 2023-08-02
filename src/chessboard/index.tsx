@@ -1,10 +1,10 @@
-import { forwardRef, useEffect, useRef, useState } from "react";
+import { forwardRef, useEffect, useRef, useState, ReactNode, FC } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { TouchBackend } from "react-dnd-touch-backend";
 
 import { Board } from "./components/Board";
-import { SparePiece } from "./components/SparePiece";
+
 import { ChessboardProps } from "./types";
 import { ChessboardProvider } from "./context/chessboard-context";
 import { CustomDragLayer } from "./components/CustomDragLayer";
@@ -22,8 +22,14 @@ import { ErrorBoundary } from "./components/ErrorBoundary";
 // change board orientation to 'w' or 'b'? like used in chess.js?
 // Animation on premove? - only set manual drop to false in useEffect if not attempting successful premove
 
+export { SparePiece } from "./components/SparePiece";
+
 export type ClearPremoves = {
   clearPremoves: (clearLastPieceColour?: boolean) => void;
+};
+
+const EmptyProvider: FC<{ children: ReactNode }> = ({ children }) => {
+  return <>{children}</>;
 };
 
 export const Chessboard = forwardRef<ClearPremoves, ChessboardProps>(
@@ -31,7 +37,8 @@ export const Chessboard = forwardRef<ClearPremoves, ChessboardProps>(
     const {
       customDndBackend,
       customDndBackendOptions,
-      showSparePiecesPanel,
+      useCustomDnDProvider = false,
+      onBoardWidthChange,
       ...otherProps
     } = props;
     const [clientWindow, setClientWindow] = useState<Window>();
@@ -60,8 +67,14 @@ export const Chessboard = forwardRef<ClearPremoves, ChessboardProps>(
       }
     }, [boardRef.current, clientWindow]);
 
+    useEffect(() => {
+      boardWidth && onBoardWidthChange?.(boardWidth);
+    }, [boardWidth]);
+
     const backend =
       customDndBackend || (isMobile ? TouchBackend : HTML5Backend);
+
+    const DnDWrapper = useCustomDnDProvider ? EmptyProvider : DndProvider;
 
     return backendSet && clientWindow ? (
       <ErrorBoundary>
@@ -69,7 +82,7 @@ export const Chessboard = forwardRef<ClearPremoves, ChessboardProps>(
           style={{ display: "flex", flexDirection: "column", width: "100%" }}
         >
           <div ref={boardRef} style={{ width: "100%" }} />
-          <DndProvider
+          <DnDWrapper
             backend={backend}
             context={clientWindow}
             options={customDndBackend ? customDndBackendOptions : undefined}
@@ -81,47 +94,10 @@ export const Chessboard = forwardRef<ClearPremoves, ChessboardProps>(
                 ref={ref}
               >
                 <CustomDragLayer />
-                {/* TODO manage spare piece components in a normal way */}
-                <div style={{ display: "flex", justifyContent: "center" }}>
-                  {showSparePiecesPanel && (
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        flexDirection: "column",
-                        marginRight: "24px",
-                      }}
-                    >
-                      <SparePiece piece="bK" />
-                      <SparePiece piece="bP" />
-                      <SparePiece piece="bN" />
-                      <SparePiece piece="bR" />
-                      <SparePiece piece="bQ" />
-                      <SparePiece piece="bB" />
-                    </div>
-                  )}
-                  <Board />
-                  {showSparePiecesPanel && (
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        flexDirection: "column",
-                        marginLeft: "24px",
-                      }}
-                    >
-                      <SparePiece piece="wK" />
-                      <SparePiece piece="wP" />
-                      <SparePiece piece="wN" />
-                      <SparePiece piece="wR" />
-                      <SparePiece piece="wQ" />
-                      <SparePiece piece="wB" />
-                    </div>
-                  )}
-                </div>
+                <Board />
               </ChessboardProvider>
             )}
-          </DndProvider>
+          </DnDWrapper>
         </div>
       </ErrorBoundary>
     ) : null;

@@ -1,9 +1,11 @@
 import React, { forwardRef, useEffect, useRef, useState, useMemo } from "react";
+import { DndProvider } from "react-dnd";
+import { TouchBackend } from "react-dnd-touch-backend";
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 import Chess from "chess.js";
 
-import { Chessboard, ClearPremoves } from "../src";
-import { CustomSquareProps, Square } from "../src/chessboard/types";
+import { Chessboard, ClearPremoves, SparePiece } from "../src";
+import { CustomSquareProps, Piece, Square } from "../src/chessboard/types";
 import Engine from "./stockfish/engine";
 
 // examples
@@ -25,6 +27,7 @@ const inputStyle = {
   borderRadius: "6px",
   border: "none",
   boxShadow: "0 2px 5px rgba(0, 0, 0, 0.5)",
+  width: "100%",
 };
 
 const boardWrapper = {
@@ -617,23 +620,19 @@ export const StyledBoard = () => {
     "bQ",
     "bK",
   ];
-  const customPieces = () => {
-    const returnPieces = {};
-    pieces.map((p) => {
-      returnPieces[p] = ({ squareWidth }) => (
-        <div
-          style={{
-            width: squareWidth,
-            height: squareWidth,
-            backgroundImage: `url(/${p}.png)`,
-            backgroundSize: "100%",
-          }}
-        />
-      );
-      return null;
-    });
-    return returnPieces;
-  };
+  const customPieces = {};
+  pieces.forEach((p) => {
+    customPieces[p] = ({ squareWidth }) => (
+      <div
+        style={{
+          width: squareWidth,
+          height: squareWidth,
+          backgroundImage: `url(/${p}.png)`,
+          backgroundSize: "100%",
+        }}
+      />
+    );
+  });
 
   return (
     <div style={boardWrapper}>
@@ -648,7 +647,7 @@ export const StyledBoard = () => {
         }}
         customDarkSquareStyle={{ backgroundColor: "#779952" }}
         customLightSquareStyle={{ backgroundColor: "#edeed1" }}
-        customPieces={customPieces()}
+        customPieces={customPieces}
       />
       <button
         style={buttonStyle}
@@ -752,6 +751,7 @@ export const ManualBoardEditor = () => {
   const [game, setGame] = useState(new Chess());
   const [boardOrientation, setBoardOrientation] =
     useState<"white" | "black">("white");
+  const [boardWidth, setBoardWidth] = useState(0);
 
   const [fenPosition, setFenPosition] = useState(game.fen());
   function safeGameMutate(modify) {
@@ -807,74 +807,131 @@ export const ManualBoardEditor = () => {
   };
 
   const handleFenInputChange = (e) => {
-    const { valid } = game.validate_fen(e.target.value);
-    setFenPosition(e.target.value);
+    const fen = e.target.value;
+    const { valid } = game.validate_fen(fen);
+
+    setFenPosition(fen);
     if (valid) {
-      setGame(new Chess(e.target.value));
+      const gameCopy = { ...game };
+
+      gameCopy.load(fen);
+      setGame(gameCopy);
     }
   };
+  const pieces = [
+    "wP",
+    "wN",
+    "wB",
+    "wR",
+    "wQ",
+    "wK",
+    "bP",
+    "bN",
+    "bB",
+    "bR",
+    "bQ",
+    "bK",
+  ];
 
   return (
     <div
       style={{
         ...boardWrapper,
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
+        margin: "0 auto",
+        maxWidth: "60vh",
       }}
     >
-      <input
-        value={fenPosition}
-        style={{ ...inputStyle }}
-        onChange={handleFenInputChange}
-      />
-
-      <Chessboard
-        id="ManualBoardEditor"
-        boardOrientation={boardOrientation}
-        position={game.fen()}
-        onSparePieceDrop={handleSparePieceDrop}
-        onPieceDrop={handlePieceDrop}
-        onPieceDropOffBoard={handlePieceDropOffBoard}
-        dropOffBoardAction="trash"
-        showSparePiecesPanel
-        customBoardStyle={{
-          borderRadius: "4px",
-          boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
-        }}
-      />
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        <button
-          style={buttonStyle}
-          onClick={() => {
-            safeGameMutate((game) => {
-              game.reset();
-            });
-          }}
-        >
-          Start position ♟️
-        </button>
-        <button
-          style={buttonStyle}
-          onClick={() => {
-            safeGameMutate((game) => {
-              game.clear();
-            });
-          }}
-        >
-          Clear board 🗑️
-        </button>
-        <button
-          style={buttonStyle}
-          onClick={() => {
-            setBoardOrientation(
-              boardOrientation === "white" ? "black" : "white"
-            );
-          }}
-        >
-          Flip board 🔁
-        </button>
-      </div>
+      <DndProvider
+        backend={TouchBackend}
+        context={window}
+        options={{ enableMouseEvents: true }}
+      >
+        <div>
+          <div
+            style={{
+              display: "flex",
+              margin: `${boardWidth / 32}px ${boardWidth / 8}px`,
+            }}
+          >
+            {pieces.slice(6, 12).map((piece) => (
+              <SparePiece
+                key={piece}
+                piece={piece as Piece}
+                width={boardWidth / 8}
+                dndId="ManualBoardEditor"
+              />
+            ))}
+          </div>
+          <Chessboard
+            useCustomDnDProvider
+            onBoardWidthChange={setBoardWidth}
+            id="ManualBoardEditor"
+            boardOrientation={boardOrientation}
+            position={game.fen()}
+            onSparePieceDrop={handleSparePieceDrop}
+            onPieceDrop={handlePieceDrop}
+            onPieceDropOffBoard={handlePieceDropOffBoard}
+            dropOffBoardAction="trash"
+            customBoardStyle={{
+              borderRadius: "4px",
+              boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
+            }}
+          />
+          <div
+            style={{
+              display: "flex",
+              margin: `${boardWidth / 32}px ${boardWidth / 8}px`,
+            }}
+          >
+            {pieces.slice(0, 6).map((piece) => (
+              <SparePiece
+                key={piece}
+                piece={piece as Piece}
+                width={boardWidth / 8}
+                dndId="ManualBoardEditor"
+              />
+            ))}
+          </div>
+        </div>
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <button
+            style={buttonStyle}
+            onClick={() => {
+              safeGameMutate((game) => {
+                game.reset();
+              });
+            }}
+          >
+            Start position ♟️
+          </button>
+          <button
+            style={buttonStyle}
+            onClick={() => {
+              safeGameMutate((game) => {
+                game.clear();
+              });
+            }}
+          >
+            Clear board 🗑️
+          </button>
+          <button
+            style={buttonStyle}
+            onClick={() => {
+              setBoardOrientation(
+                boardOrientation === "white" ? "black" : "white"
+              );
+            }}
+          >
+            Flip board 🔁
+          </button>
+        </div>
+        <input
+          value={fenPosition}
+          style={inputStyle}
+          onChange={handleFenInputChange}
+          placeholder="Paste FEN position to start editing"
+        />
+      </DndProvider>
     </div>
   );
 };
