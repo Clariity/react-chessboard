@@ -165,7 +165,6 @@ export function Piece({
       targetSq: squares[targetSquare],
     };
   }
-
   return (
     <div
       ref={arePiecesDraggable ? (canDrag ? drag : null) : null}
@@ -173,10 +172,11 @@ export function Piece({
       data-piece={piece}
       style={pieceStyle}
     >
-      {typeof chessPieces[piece] === "function" ? (
+      {typeof chessPieces[piece] === "function" ? ( 
         (chessPieces[piece] as CustomPieceFn)({
           squareWidth: boardWidth / 8,
           isDragging,
+          square,
         })
       ) : (
         <svg

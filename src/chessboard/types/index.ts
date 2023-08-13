@@ -111,6 +111,7 @@ export type CustomSquareRenderer =
 export type CustomPieceFnArgs = {
   isDragging: boolean;
   squareWidth: number;
+  square: Square;
 };
 
 export type CustomPieceFn = (args: CustomPieceFnArgs) => ReactElement;
