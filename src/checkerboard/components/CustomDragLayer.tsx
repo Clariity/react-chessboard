@@ -1,11 +1,11 @@
 import { ReactNode, useCallback } from "react";
 import { useDragLayer, XYCoord } from "react-dnd";
 
-import { useChessboard } from "../context/chessboard-context";
+import { useCheckerboard } from "../context/checkerboard-context";
 import { CustomPieceFn, Piece, Square } from "../types";
 
 export function CustomDragLayer() {
-  const { boardWidth, chessPieces, id, snapToCursor } = useChessboard();
+  const { boardWidth, checkerPieces, id, snapToCursor } = useCheckerboard();
 
   const collectedProps = useDragLayer((monitor) => ({
     item: monitor.getItem(),
@@ -58,14 +58,14 @@ export function CustomDragLayer() {
       }}
     >
       <div style={getItemStyle(clientOffset, sourceClientOffset)}>
-        {typeof chessPieces[item.piece] === "function" ? (
-          (chessPieces[item.piece] as CustomPieceFn)({
+        {typeof checkerPieces[item.piece] === "function" ? (
+          (checkerPieces[item.piece] as CustomPieceFn)({
             squareWidth: boardWidth / 8,
             isDragging: true,
           })
         ) : (
           <svg viewBox={"1 1 43 43"} width={boardWidth / 8} height={boardWidth / 8}>
-            <g>{chessPieces[item.piece] as ReactNode}</g>
+            <g>{checkerPieces[item.piece] as ReactNode}</g>
           </svg>
         )}
       </div>

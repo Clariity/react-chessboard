@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { COLUMNS } from "../consts";
-import { useChessboard } from "../context/chessboard-context";
+import { useCheckerboard } from "../context/checkerboard-context";
 import { Coords, Piece as Pc, Square as Sq } from "../types";
 import { Notation } from "./Notation";
 import { Piece } from "./Piece";
@@ -17,7 +17,7 @@ export function Squares() {
     id,
     premoves,
     showBoardNotation,
-  } = useChessboard();
+  } = useCheckerboard();
 
   return (
     <div

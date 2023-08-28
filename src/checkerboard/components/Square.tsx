@@ -1,7 +1,7 @@
 import { ReactNode, useEffect, useRef } from "react";
 import { useDrop } from "react-dnd";
 
-import { useChessboard } from "../context/chessboard-context";
+import { useCheckerboard } from "../context/checkerboard-context";
 import { BoardOrientation, Coords, Piece, Square as Sq } from "../types";
 
 type SquareProps = {

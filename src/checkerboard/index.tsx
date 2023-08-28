@@ -4,8 +4,8 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import { TouchBackend } from "react-dnd-touch-backend";
 
 import { Board } from "./components/Board";
-import { ChessboardProps } from "./types";
-import { ChessboardProvider } from "./context/chessboard-context";
+import { CheckerboardProps } from "./types";
+import { CheckerboardProvider } from "./context/checkerboard-context";
 import { CustomDragLayer } from "./components/CustomDragLayer";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 
@@ -16,16 +16,14 @@ import { ErrorBoundary } from "./components/ErrorBoundary";
 // npm publish --tag alpha
 // npm publish --dry-run
 
-// rewrite readme, add link to react-chessboard-svg for simply showing a chess position
-// add other things from chessground
-// change board orientation to 'w' or 'b'? like used in chess.js?
+// rewrite readme, add link to react-checkerboard-svg for simply showing a checkers position
 // Animation on premove? - only set manual drop to false in useEffect if not attempting successful premove
 
 export type ClearPremoves = {
   clearPremoves: (clearLastPieceColour?: boolean) => void;
 };
 
-export const Chessboard = forwardRef<ClearPremoves, ChessboardProps>((props, ref) => {
+export const Checkerboard = forwardRef<ClearPremoves, CheckerboardProps>((props, ref) => {
   const { customDndBackend, customDndBackendOptions, ...otherProps } = props;
   const [clientWindow, setClientWindow] = useState<Window>();
   const [backendSet, setBackendSet] = useState(false);
@@ -65,10 +63,10 @@ export const Chessboard = forwardRef<ClearPremoves, ChessboardProps>((props, ref
           options={customDndBackend ? customDndBackendOptions : undefined}
         >
           {boardWidth && (
-            <ChessboardProvider boardWidth={boardWidth} {...otherProps} ref={ref}>
+            <CheckerboardProvider boardWidth={boardWidth} {...otherProps} ref={ref}>
               <CustomDragLayer />
               <Board />
-            </ChessboardProvider>
+            </CheckerboardProvider>
           )}
         </DndProvider>
       </div>

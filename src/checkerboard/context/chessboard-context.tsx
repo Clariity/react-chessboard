@@ -17,7 +17,7 @@ import {
 } from "../functions";
 import {
   BoardPosition,
-  ChessboardProps,
+  CheckerboardProps,
   CustomPieces,
   Piece,
   Square,
@@ -25,7 +25,7 @@ import {
 
 import { useArrows } from "../hooks/useArrows";
 
-interface ChessboardProviderProps extends ChessboardProps {
+interface CheckerboardProviderProps extends CheckerboardProps {
   boardWidth: number;
   children: ReactNode;
 }
@@ -36,40 +36,40 @@ type Premove = {
   piece: Piece;
 };
 
-type RequiredChessboardProps = Required<ChessboardProps>;
+type RequiredCheckerboardProps = Required<CheckerboardProps>;
 
-interface ChessboardProviderContext {
+interface CheckerboardProviderContext {
   // Props from user
-  animationDuration: RequiredChessboardProps["animationDuration"];
-  arePiecesDraggable: RequiredChessboardProps["arePiecesDraggable"];
-  arePremovesAllowed: RequiredChessboardProps["arePremovesAllowed"];
-  boardOrientation: RequiredChessboardProps["boardOrientation"];
-  boardWidth: RequiredChessboardProps["boardWidth"];
-  customArrowColor: RequiredChessboardProps["customArrowColor"];
-  customBoardStyle: ChessboardProps["customBoardStyle"];
-  customDarkSquareStyle: RequiredChessboardProps["customDarkSquareStyle"];
-  customDropSquareStyle: RequiredChessboardProps["customDropSquareStyle"];
-  customLightSquareStyle: RequiredChessboardProps["customLightSquareStyle"];
-  customPremoveDarkSquareStyle: RequiredChessboardProps["customPremoveDarkSquareStyle"];
-  customPremoveLightSquareStyle: RequiredChessboardProps["customPremoveLightSquareStyle"];
-  customSquare: RequiredChessboardProps["customSquare"];
-  customSquareStyles: ChessboardProps["customSquareStyles"];
-  id: RequiredChessboardProps["id"];
-  isDraggablePiece: RequiredChessboardProps["isDraggablePiece"];
-  onDragOverSquare: RequiredChessboardProps["onDragOverSquare"];
-  onMouseOutSquare: RequiredChessboardProps["onMouseOutSquare"];
-  onMouseOverSquare: RequiredChessboardProps["onMouseOverSquare"];
-  onPieceClick: RequiredChessboardProps["onPieceClick"];
-  onPieceDragBegin: RequiredChessboardProps["onPieceDragBegin"];
-  onPieceDragEnd: RequiredChessboardProps["onPieceDragEnd"];
-  onPieceDrop: RequiredChessboardProps["onPieceDrop"];
-  onPromotionCheck: RequiredChessboardProps["onPromotionCheck"];
-  onPromotionPieceSelect: ChessboardProps["onPromotionPieceSelect"];
-  onSquareClick: RequiredChessboardProps["onSquareClick"];
-  promotionDialogVariant: RequiredChessboardProps["promotionDialogVariant"];
-  showBoardNotation: RequiredChessboardProps["showBoardNotation"];
-  snapToCursor: RequiredChessboardProps["snapToCursor"];
-  autoPromoteToQueen: RequiredChessboardProps["autoPromoteToQueen"];
+  animationDuration: RequiredCheckerboardProps["animationDuration"];
+  arePiecesDraggable: RequiredCheckerboardProps["arePiecesDraggable"];
+  arePremovesAllowed: RequiredCheckerboardProps["arePremovesAllowed"];
+  boardOrientation: RequiredCheckerboardProps["boardOrientation"];
+  boardWidth: RequiredCheckerboardProps["boardWidth"];
+  customArrowColor: RequiredCheckerboardProps["customArrowColor"];
+  customBoardStyle: CheckerboardProps["customBoardStyle"];
+  customDarkSquareStyle: RequiredCheckerboardProps["customDarkSquareStyle"];
+  customDropSquareStyle: RequiredCheckerboardProps["customDropSquareStyle"];
+  customLightSquareStyle: RequiredCheckerboardProps["customLightSquareStyle"];
+  customPremoveDarkSquareStyle: RequiredCheckerboardProps["customPremoveDarkSquareStyle"];
+  customPremoveLightSquareStyle: RequiredCheckerboardProps["customPremoveLightSquareStyle"];
+  customSquare: RequiredCheckerboardProps["customSquare"];
+  customSquareStyles: CheckerboardProps["customSquareStyles"];
+  id: RequiredCheckerboardProps["id"];
+  isDraggablePiece: RequiredCheckerboardProps["isDraggablePiece"];
+  onDragOverSquare: RequiredCheckerboardProps["onDragOverSquare"];
+  onMouseOutSquare: RequiredCheckerboardProps["onMouseOutSquare"];
+  onMouseOverSquare: RequiredCheckerboardProps["onMouseOverSquare"];
+  onPieceClick: RequiredCheckerboardProps["onPieceClick"];
+  onPieceDragBegin: RequiredCheckerboardProps["onPieceDragBegin"];
+  onPieceDragEnd: RequiredCheckerboardProps["onPieceDragEnd"];
+  onPieceDrop: RequiredCheckerboardProps["onPieceDrop"];
+  onPromotionCheck: RequiredCheckerboardProps["onPromotionCheck"];
+  onPromotionPieceSelect: CheckerboardProps["onPromotionPieceSelect"];
+  onSquareClick: RequiredCheckerboardProps["onSquareClick"];
+  promotionDialogVariant: RequiredCheckerboardProps["promotionDialogVariant"];
+  showBoardNotation: RequiredCheckerboardProps["showBoardNotation"];
+  snapToCursor: RequiredCheckerboardProps["snapToCursor"];
+  autoPromoteToQueen: RequiredCheckerboardProps["autoPromoteToQueen"];
 
   // Exported by context
   arrows: Square[][];
@@ -101,11 +101,11 @@ interface ChessboardProviderContext {
   currentRightClickDown?: Square;
 }
 
-export const ChessboardContext = createContext({} as ChessboardProviderContext);
+export const CheckerboardContext = createContext({} as CheckerboardProviderContext);
 
-export const useChessboard = () => useContext(ChessboardContext);
+export const useCheckerboard = () => useContext(CheckerboardContext);
 
-export const ChessboardProvider = forwardRef(
+export const CheckerboardProvider = forwardRef(
   (
     {
       animationDuration = 300,
@@ -156,7 +156,7 @@ export const ChessboardProvider = forwardRef(
       showPromotionDialog = false,
       snapToCursor = true,
       autoPromoteToQueen = false,
-    }: ChessboardProviderProps,
+    }: CheckerboardProviderProps,
     ref
   ) => {
     // position stored and displayed on board
@@ -195,8 +195,8 @@ export const ChessboardProvider = forwardRef(
     const [currentRightClickDown, setCurrentRightClickDown] =
       useState<Square | undefined>();
 
-    // chess pieces/styling
-    const [chessPieces, setChessPieces] = useState({
+    // checker pieces/styling
+    const [checkerPieces, setCheckerPieces] = useState({
       ...defaultPieces,
       ...customPieces,
     });
@@ -219,7 +219,7 @@ export const ChessboardProvider = forwardRef(
 
     // handle custom pieces change
     useEffect(() => {
-      setChessPieces({ ...defaultPieces, ...customPieces });
+      setCheckerPieces({ ...defaultPieces, ...customPieces });
     }, [customPieces]);
 
     // handle promote changes
@@ -428,7 +428,7 @@ export const ChessboardProvider = forwardRef(
       setCurrentRightClickDown(undefined);
     }
 
-    const ChessboardProviderContextValue: ChessboardProviderContext = {
+    const CheckerboardProviderContextValue: CheckerboardProviderContext = {
       animationDuration,
       arePiecesDraggable,
       arePremovesAllowed,
@@ -462,7 +462,7 @@ export const ChessboardProvider = forwardRef(
       arrows,
       newArrow,
       onArrowDrawEnd,
-      chessPieces,
+      checkerPieces,
       clearArrows,
       drawNewArrow,
       clearCurrentRightClickDown,
@@ -485,9 +485,9 @@ export const ChessboardProvider = forwardRef(
     };
 
     return (
-      <ChessboardContext.Provider value={ChessboardProviderContextValue}>
+      <CheckerboardContext.Provider value={CheckerboardProviderContextValue}>
         {children}
-      </ChessboardContext.Provider>
+      </CheckerboardContext.Provider>
     );
   }
 );

@@ -1,7 +1,7 @@
 import { useRef, useEffect } from "react";
 import { Squares } from "./Squares";
 import { Arrows } from "./Arrows";
-import { useChessboard } from "../context/chessboard-context";
+import { useCheckerboard } from "../context/checkerboard-context";
 import { PromotionDialog } from "./PromotionDialog";
 import { WhiteKing } from "./ErrorBoundary";
 
@@ -14,7 +14,7 @@ export function Board() {
     onPromotionPieceSelect,
     setShowPromoteDialog,
     showPromoteDialog,
-  } = useChessboard();
+  } = useCheckerboard();
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {

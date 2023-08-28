@@ -87,6 +87,6 @@ export default class Engine {
 
   terminate() {
     this.isReady = false;
-    this.stockfish.postMessage("quit"); // Run this before chessboard unmounting.
+    this.stockfish.postMessage("quit"); // Run this before checkerboard unmounting.
   }
 }
