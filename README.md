@@ -2,9 +2,7 @@
 
 # [react-checkerboard](https://react-checkerboard.vercel.app/)
 
-## Inspired and adapted from the React Checkerboard Library used at [ChessOpenings.co.uk](https://chessopenings.co.uk)
-
-[![Pull Requests][prs-badge]][prs] [![Version][version-badge]][version] [![MIT License][license-badge]][license]
+## Inspired and adapted from the React Chessboard Library used at [ChessOpenings.co.uk](https://chessopenings.co.uk)
 
 </div>
 
