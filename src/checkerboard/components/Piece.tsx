@@ -2,7 +2,7 @@ import { ReactNode, useEffect, useState } from "react";
 import { useDrag } from "react-dnd";
 import { getEmptyImage } from "react-dnd-html5-backend";
 
-import { useChessboard } from "../context/chessboard-context";
+import { useCheckerboard } from "../context/checkerboard-context";
 import { Coords, CustomPieceFn, Piece as Pc, Square } from "../types";
 
 type PieceProps = {
@@ -23,7 +23,7 @@ export function Piece({
     arePiecesDraggable,
     arePremovesAllowed,
     boardWidth,
-    chessPieces,
+    checkerPieces,
     currentPosition,
     id,
     isDraggablePiece,
@@ -33,7 +33,7 @@ export function Piece({
     onPieceDragEnd,
     positionDifferences,
     premoves,
-  } = useChessboard();
+  } = useCheckerboard();
 
   const [pieceStyle, setPieceStyle] = useState({
     opacity: 1,
@@ -173,8 +173,8 @@ export function Piece({
       data-piece={piece}
       style={pieceStyle}
     >
-      {typeof chessPieces[piece] === "function" ? (
-        (chessPieces[piece] as CustomPieceFn)({
+      {typeof checkerPieces[piece] === "function" ? (
+        (checkerPieces[piece] as CustomPieceFn)({
           squareWidth: boardWidth / 8,
           isDragging,
         })
@@ -184,7 +184,7 @@ export function Piece({
           width={boardWidth / 8}
           height={boardWidth / 8}
         >
-          <g>{chessPieces[piece] as ReactNode}</g>
+          <g>{checkerPieces[piece] as ReactNode}</g>
         </svg>
       )}
     </div>

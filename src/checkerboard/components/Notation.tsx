@@ -1,5 +1,5 @@
 import { COLUMNS } from "../consts";
-import { useChessboard } from "../context/chessboard-context";
+import { useCheckerboard } from "../context/checkerboard-context";
 
 type NotationProps = {
   row: number;
@@ -12,7 +12,7 @@ export function Notation({ row, col }: NotationProps) {
     boardWidth,
     customDarkSquareStyle,
     customLightSquareStyle,
-  } = useChessboard();
+  } = useCheckerboard();
 
   const whiteColor = customLightSquareStyle.backgroundColor;
   const blackColor = customDarkSquareStyle.backgroundColor;

@@ -129,7 +129,7 @@ export type DropOffBoardAction = "snapback" | "trash";
 
 export type Coords = { x: number; y: number };
 
-export type ChessboardProps = {
+export type CheckerboardProps = {
   /**
    * Time in milliseconds for piece to slide to target square. Only used when the position is programmatically changed. If a new position is set before the animation is complete, the board will cancel the current animation and snap to the new position.
    * @default 300
@@ -185,7 +185,7 @@ export type ChessboardProps = {
    */
   customDarkSquareStyle?: Record<string, string>;
   /**
-   * Custom react-dnd backend to use instead of the one provided by react-chessboard.
+   * Custom react-dnd backend to use instead of the one provided by react-checkerboard.
    */
   customDndBackend?: BackendFactory;
   /**
@@ -203,7 +203,7 @@ export type ChessboardProps = {
    */
   customLightSquareStyle?: Record<string, string>;
   /**
-   * Custom pieces object where each key must match a corresponding chess piece (wP, wB, wN, wR, wQ, wK, bP, bB, bN, bR, bQ, bK). The value of each piece is a function that takes in some optional arguments to use and must return JSX to render. e.g. { wK: ({ isDragging: boolean, squareWidth: number }) => jsx }.
+   * Custom pieces object where each key must match a corresponding checkers piece (wP, wB, wN, wR, wQ, wK, bP, bB, bN, bR, bQ, bK). The value of each piece is a function that takes in some optional arguments to use and must return JSX to render. e.g. { wK: ({ isDragging: boolean, squareWidth: number }) => jsx }.
    * @default {}
    */
   customPieces?: CustomPieces;
@@ -318,7 +318,7 @@ export type ChessboardProps = {
    */
   onSquareRightClick?: (square: Square) => any;
   /**
-   * FEN string or position object notating where the chess pieces are on the board. Start position can also be notated with the string: 'start'.
+   * FEN string or position object notating where the checkers pieces are on the board. Start position can also be notated with the string: 'start'.
    * @default start
    */
   position?: string | BoardPosition;
@@ -333,7 +333,7 @@ export type ChessboardProps = {
    */
   promotionToSquare?: Square | null;
   /**
-   * RefObject that is sent as forwardRef to chessboard.
+   * RefObject that is sent as forwardRef to checkerboard.
    */
   ref?: RefObject<HTMLDivElement>;
   /**

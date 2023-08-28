@@ -1,4 +1,4 @@
-import { useChessboard } from "../context/chessboard-context";
+import { useCheckerboard } from "../context/checkerboard-context";
 import { getRelativeCoords } from "../functions";
 import { PromotionPieceOption } from "../types";
 import { PromotionOption } from "./PromotionOption";
@@ -10,7 +10,7 @@ export function PromotionDialog() {
     promotionDialogVariant,
 
     promoteToSquare,
-  } = useChessboard();
+  } = useCheckerboard();
 
   const promotePieceColor = promoteToSquare?.[1] === "1" ? "b" : "w";
   const promotionOptions: PromotionPieceOption[] = [

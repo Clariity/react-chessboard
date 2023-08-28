@@ -1,9 +1,8 @@
 import React, { forwardRef, useEffect, useRef, useState, useMemo } from "react";
 import { ComponentMeta, ComponentStory } from "@storybook/react";
-import Chess from "chess.js";
 
-import { Chessboard, ClearPremoves } from "../src";
-import { CustomSquareProps, Square } from "../src/chessboard/types";
+import { Checkerboard, ClearPremoves } from "../src";
+import { CustomSquareProps, Square } from "../src/checkerboard/types";
 import Engine from "./stockfish/engine";
 
 // examples
@@ -34,13 +33,13 @@ const boardWrapper = {
 };
 
 export default {
-  title: "Example/Chessboard",
-  component: Chessboard,
-} as ComponentMeta<typeof Chessboard>;
+  title: "Example/Checkerboard",
+  component: Checkerboard,
+} as ComponentMeta<typeof Checkerboard>;
 
-const Template: ComponentStory<typeof Chessboard> = (args) => (
+const Template: ComponentStory<typeof Checkerboard> = (args) => (
   <div style={boardWrapper}>
-    <Chessboard {...args} />
+    <Checkerboard {...args} />
   </div>
 );
 
@@ -97,7 +96,7 @@ export const PlayVsRandom = () => {
 
   return (
     <div style={boardWrapper}>
-      <Chessboard
+      <Checkerboard
         id="PlayVsRandom"
         position={game.fen()}
         onPieceDrop={onDrop}
@@ -206,7 +205,7 @@ export const PlayVsComputer = () => {
         ))}
       </div>
 
-      <Chessboard
+      <Checkerboard
         id="PlayVsStockfish"
         position={gamePosition}
         onPieceDrop={onDrop}
@@ -401,7 +400,7 @@ export const ClickToMove = () => {
 
   return (
     <div style={boardWrapper}>
-      <Chessboard
+      <Checkerboard
         id="ClickToMove"
         animationDuration={200}
         arePiecesDraggable={false}
@@ -457,7 +456,7 @@ export const ClickToMove = () => {
 export const PremovesEnabled = () => {
   const [game, setGame] = useState(new Chess());
   const [currentTimeout, setCurrentTimeout] = useState<NodeJS.Timeout>();
-  const chessboardRef = useRef<ClearPremoves>(null);
+  const checkerboardRef = useRef<ClearPremoves>(null);
 
   function safeGameMutate(modify) {
     setGame((g) => {
@@ -500,7 +499,7 @@ export const PremovesEnabled = () => {
 
   return (
     <div style={boardWrapper}>
-      <Chessboard
+      <Checkerboard
         id="PremovesEnabled"
         arePremovesAllowed={true}
         position={game.fen()}
@@ -510,7 +509,7 @@ export const PremovesEnabled = () => {
           borderRadius: "4px",
           boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
         }}
-        ref={chessboardRef}
+        ref={checkerboardRef}
       />
       <button
         style={buttonStyle}
@@ -519,7 +518,7 @@ export const PremovesEnabled = () => {
             game.reset();
           });
           // clear premove queue
-          chessboardRef.current?.clearPremoves();
+          checkerboardRef.current?.clearPremoves();
           // stop any current timeouts
           clearTimeout(currentTimeout);
         }}
@@ -535,7 +534,7 @@ export const PremovesEnabled = () => {
             game.undo();
           });
           // clear premove queue
-          chessboardRef.current?.clearPremoves();
+          checkerboardRef.current?.clearPremoves();
           // stop any current timeouts
           clearTimeout(currentTimeout);
         }}
@@ -605,7 +604,7 @@ export const StyledBoard = () => {
 
   return (
     <div style={boardWrapper}>
-      <Chessboard
+      <Checkerboard
         id="StyledBoard"
         boardOrientation="black"
         position={game.fen()}
@@ -708,7 +707,7 @@ export const CustomSquare = () => {
 
   return (
     <div style={boardWrapper}>
-      <Chessboard id="CustomSquare" customSquare={CustomSquareRenderer} />
+      <Checkerboard id="CustomSquare" customSquare={CustomSquareRenderer} />
     </div>
   );
 };
@@ -721,14 +720,14 @@ export const AnalysisBoard = () => {
   const engine = useMemo(() => new Engine(), []);
   const game = useMemo(() => new Chess(), []);
   const inputRef = useRef<HTMLInputElement>();
-  const [chessBoardPosition, setChessBoardPosition] = useState(game.fen());
+  const [checkerBoardPosition, setCheckerBoardPosition] = useState(game.fen());
   const [positionEvaluation, setPositionEvaluation] = useState(0);
   const [depth, setDepth] = useState(10);
   const [bestLine, setBestline] = useState("");
   const [possibleMate, setPossibleMate] = useState("");
 
   function findBestMove() {
-    engine.evaluatePosition(chessBoardPosition, 18);
+    engine.evaluatePosition(checkerBoardPosition, 18);
 
     engine.onMessage(({ positionEvaluation, possibleMate, pv, depth }) => {
       if (depth < 10) return;
@@ -749,7 +748,7 @@ export const AnalysisBoard = () => {
       to: targetSquare,
       promotion: piece[1].toLowerCase() ?? "q",
     });
-    setChessBoardPosition(game.fen());
+    setCheckerBoardPosition(game.fen());
 
     // illegal move
     if (move === null) return false;
@@ -766,7 +765,7 @@ export const AnalysisBoard = () => {
     if (!game.game_over() || game.in_draw()) {
       findBestMove();
     }
-  }, [chessBoardPosition]);
+  }, [checkerBoardPosition]);
 
   const bestMove = bestLine?.split(" ")?.[0];
   const handleFenInputChange = (e) => {
@@ -775,7 +774,7 @@ export const AnalysisBoard = () => {
     if (valid) {
       inputRef.current.value = e.target.value;
       game.load(e.target.value);
-      setChessBoardPosition(game.fen());
+      setCheckerBoardPosition(game.fen());
     }
   };
   return (
@@ -795,9 +794,9 @@ export const AnalysisBoard = () => {
         onChange={handleFenInputChange}
         placeholder="Paste FEN to start analysing custom position"
       />
-      <Chessboard
+      <Checkerboard
         id="AnalysisBoard"
-        position={chessBoardPosition}
+        position={checkerBoardPosition}
         onPieceDrop={onDrop}
         customBoardStyle={{
           borderRadius: "4px",
@@ -819,7 +818,7 @@ export const AnalysisBoard = () => {
           setPossibleMate("");
           setBestline("");
           game.reset();
-          setChessBoardPosition(game.fen());
+          setCheckerBoardPosition(game.fen());
         }}
       >
         reset
@@ -830,7 +829,7 @@ export const AnalysisBoard = () => {
           setPossibleMate("");
           setBestline("");
           game.undo();
-          setChessBoardPosition(game.fen());
+          setCheckerBoardPosition(game.fen());
         }}
       >
         undo

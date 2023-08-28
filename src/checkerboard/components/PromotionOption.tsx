@@ -1,6 +1,6 @@
 import { useState, ReactNode } from "react";
 
-import { useChessboard } from "../context/chessboard-context";
+import { useCheckerboard } from "../context/checkerboard-context";
 import { CustomPieceFn, PromotionPieceOption } from "../types";
 
 type Props = {
@@ -12,7 +12,7 @@ export function PromotionOption({ option }: Props) {
 
   const {
     boardWidth,
-    chessPieces,
+    checkerPieces,
     customDarkSquareStyle,
     customLightSquareStyle,
     handleSetPosition,
@@ -20,7 +20,7 @@ export function PromotionOption({ option }: Props) {
     promoteFromSquare,
     promoteToSquare,
     promotionDialogVariant,
-  } = useChessboard();
+  } = useCheckerboard();
 
   const backgroundColor = () => {
     switch (option[1]) {
@@ -61,14 +61,14 @@ export function PromotionOption({ option }: Props) {
         transition: "all 0.1s ease-out",
       }}
     >
-      {typeof chessPieces[option] === "function" ? (
+      {typeof checkerPieces[option] === "function" ? (
         <div
           style={{
             transition: "all 0.1s ease-out",
             transform: isHover ? "scale(1)" : "scale(0.85)",
           }}
         >
-          {(chessPieces[option] as CustomPieceFn)({
+          {(checkerPieces[option] as CustomPieceFn)({
             squareWidth: boardWidth / 8,
             isDragging: false,
           })}
@@ -83,7 +83,7 @@ export function PromotionOption({ option }: Props) {
             transform: isHover ? "scale(1)" : "scale(0.85)",
           }}
         >
-          <g>{chessPieces[option] as ReactNode}</g>
+          <g>{checkerPieces[option] as ReactNode}</g>
         </svg>
       )}
     </div>

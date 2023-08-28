@@ -1,7 +1,7 @@
 import { Fragment } from "react";
 
 import { getRelativeCoords } from "../functions";
-import { useChessboard } from "../context/chessboard-context";
+import { useCheckerboard } from "../context/checkerboard-context";
 import { Square } from "../types";
 
 export const Arrows = () => {
@@ -12,7 +12,7 @@ export const Arrows = () => {
     boardWidth,
 
     customArrowColor,
-  } = useChessboard();
+  } = useCheckerboard();
 
   const arrowsList = [...arrows, newArrow].filter(Boolean) as Square[][];
   return (
