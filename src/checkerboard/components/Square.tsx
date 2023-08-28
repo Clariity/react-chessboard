@@ -51,7 +51,7 @@ export function Square({
     setPromoteFromSquare,
     setPromoteToSquare,
     setShowPromoteDialog,
-  } = useChessboard();
+  } = useCheckerboard();
 
   const [{ isOver }, drop] = useDrop(
     () => ({

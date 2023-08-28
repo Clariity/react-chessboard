@@ -73,7 +73,7 @@ interface CheckerboardProviderContext {
 
   // Exported by context
   arrows: Square[][];
-  chessPieces: CustomPieces | Record<string, ReactNode>;
+  checkerPieces: CustomPieces | Record<string, ReactNode>;
   clearArrows: () => void;
   clearCurrentRightClickDown: () => void;
   currentPosition: BoardPosition;

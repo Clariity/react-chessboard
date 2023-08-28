@@ -1,1 +1,1 @@
-export * from "./chessboard";
+export * from "./checkerboard";
