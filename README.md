@@ -10,7 +10,7 @@
 
 ## What is react-checkerboard?
 
-react-checkerboard is a React component that provides checkerboard functionality to your application. The Checkers game logic that controls the board should be independent to the board, using a library such as [Ravenback](https://github.com/bcorfman/ravenback). This integration is still in-process/
+react-checkerboard is a React component that provides checkerboard functionality to your application. The Checkers game logic that controls the board should be independent to the board, using a library such as [Ravenback](https://github.com/bcorfman/ravenback). This integration is still in-process.
 
 
 ## Installation
