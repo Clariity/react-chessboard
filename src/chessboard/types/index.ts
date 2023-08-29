@@ -293,8 +293,8 @@ export type ChessboardProps = {
   ) => boolean;
   /**
    * User function that is run when piece is dropped. Must return whether the move results in a promotion or not.
-   * @default (sourceSquare, targetSquare, piece) => (((piece === "wP" && sourceSquare[1] === "7" && targetSquare[1] === "8") || 
-   *                                                  (piece === "bP" && sourceSquare[1] === "2" && targetSquare[1] === "1")) && 
+   * @default (sourceSquare, targetSquare, piece) => (((piece === "wP" && sourceSquare[1] === "7" && targetSquare[1] === "8") ||
+   *                                                  (piece === "bP" && sourceSquare[1] === "2" && targetSquare[1] === "1")) &&
    *                                                  Math.abs(sourceSquare.charCodeAt(0) - targetSquare.charCodeAt(0)) <= 1)
    */
   onPromotionCheck?: (
@@ -356,4 +356,10 @@ export type ChessboardProps = {
    * @default false
    */
   autoPromoteToQueen?: boolean;
+
+  dragOutsideOfBoard?: boolean;
+  /**
+   * Wether or not the piece can be dragged outside of the board
+   * @default true
+   * */
 };

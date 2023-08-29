@@ -25,53 +25,92 @@ export type ClearPremoves = {
   clearPremoves: (clearLastPieceColour?: boolean) => void;
 };
 
-export const Chessboard = forwardRef<ClearPremoves, ChessboardProps>((props, ref) => {
-  const { customDndBackend, customDndBackendOptions, ...otherProps } = props;
-  const [clientWindow, setClientWindow] = useState<Window>();
-  const [backendSet, setBackendSet] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-  const [boardWidth, setBoardWidth] = useState(props.boardWidth);
+export const Chessboard = forwardRef<ClearPremoves, ChessboardProps>(
+  (props, ref) => {
+    const { customDndBackend, customDndBackendOptions, ...otherProps } = props;
+    const [clientWindow, setClientWindow] = useState<Window>();
+    const [backendSet, setBackendSet] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
+    const [boardWidth, setBoardWidth] = useState(props.boardWidth);
 
-  const boardRef = useRef<HTMLObjectElement>(null);
+    const boardRef = useRef<HTMLObjectElement>(null);
+    const boardContainerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    setIsMobile("ontouchstart" in window);
-    setBackendSet(true);
-    setClientWindow(window);
-  }, []);
+    const [boardContainerPos, setBoardContainerPos] = useState({
+      left: 0,
+      top: 0,
+    });
 
-  useEffect(() => {
-    if (props.boardWidth === undefined && boardRef.current?.offsetWidth) {
-      const resizeObserver = new ResizeObserver(() => {
-        setBoardWidth(boardRef.current?.offsetWidth as number);
+    //Set BoardContainerPos initially when boardContainerRef is set. Position is used when dragOutsideOfBoard={false}
+    useEffect(() => {
+      if (boardContainerRef.current) {
+        const { left, top } = boardContainerRef.current.getBoundingClientRect();
+        setBoardContainerPos({ left, top });
+      }
+    }, [boardContainerRef.current]);
+
+    useEffect(() => {
+      window.addEventListener("resize", (e) => {
+        if (boardContainerRef.current) {
+          const { left, top } =
+            boardContainerRef.current.getBoundingClientRect();
+          setBoardContainerPos({ left, top });
+        }
+        return () => window.removeEventListener("resize", (e) => {});
       });
-      resizeObserver.observe(boardRef.current);
+    }, []);
 
-      return () => {
-        resizeObserver.disconnect();
-      };
-    }
-  }, [boardRef.current, clientWindow]);
+    useEffect(() => {
+      setIsMobile("ontouchstart" in window);
+      setBackendSet(true);
+      setClientWindow(window);
+    }, []);
 
-  const backend = customDndBackend || (isMobile ? TouchBackend : HTML5Backend);
+    useEffect(() => {
+      if (props.boardWidth === undefined && boardRef.current?.offsetWidth) {
+        const resizeObserver = new ResizeObserver(() => {
+          setBoardWidth(boardRef.current?.offsetWidth as number);
+        });
+        resizeObserver.observe(boardRef.current);
 
-  return backendSet && clientWindow ? (
-    <ErrorBoundary>
-      <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
-        <div ref={boardRef} style={{ width: "100%" }} />
-        <DndProvider
-          backend={backend}
-          context={clientWindow}
-          options={customDndBackend ? customDndBackendOptions : undefined}
+        return () => {
+          resizeObserver.disconnect();
+        };
+      }
+    }, [boardRef.current, clientWindow]);
+
+    const backend =
+      customDndBackend || (isMobile ? TouchBackend : HTML5Backend);
+
+    return backendSet && clientWindow ? (
+      <ErrorBoundary>
+        <div
+          ref={boardContainerRef}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            width: "100%",
+          }}
         >
-          {boardWidth && (
-            <ChessboardProvider boardWidth={boardWidth} {...otherProps} ref={ref}>
-              <CustomDragLayer />
-              <Board />
-            </ChessboardProvider>
-          )}
-        </DndProvider>
-      </div>
-    </ErrorBoundary>
-  ) : null;
-});
+          <div ref={boardRef} style={{ width: "100%" }} />
+          <DndProvider
+            backend={backend}
+            context={clientWindow}
+            options={customDndBackend ? customDndBackendOptions : undefined}
+          >
+            {boardWidth && (
+              <ChessboardProvider
+                boardWidth={boardWidth}
+                {...otherProps}
+                ref={ref}
+              >
+                <CustomDragLayer boardContainer={boardContainerPos} />
+                <Board />
+              </ChessboardProvider>
+            )}
+          </DndProvider>
+        </div>
+      </ErrorBoundary>
+    ) : null;
+  }
+);

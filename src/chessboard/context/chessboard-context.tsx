@@ -70,6 +70,7 @@ interface ChessboardProviderContext {
   showBoardNotation: RequiredChessboardProps["showBoardNotation"];
   snapToCursor: RequiredChessboardProps["snapToCursor"];
   autoPromoteToQueen: RequiredChessboardProps["autoPromoteToQueen"];
+  dragOutsideOfBoard: RequiredChessboardProps["dragOutsideOfBoard"];
 
   // Exported by context
   arrows: Square[][];
@@ -142,9 +143,15 @@ export const ChessboardProvider = forwardRef(
       onPieceDragEnd = () => {},
       onPieceDrop = () => true,
       onPromotionCheck = (sourceSquare, targetSquare, piece) => {
-        return (((piece === "wP" && sourceSquare[1] === "7" && targetSquare[1] === "8") ||
-                (piece === "bP" && sourceSquare[1] === "2" && targetSquare[1] === "1")) &&
-                Math.abs(sourceSquare.charCodeAt(0) - targetSquare.charCodeAt(0)) <= 1)
+        return (
+          ((piece === "wP" &&
+            sourceSquare[1] === "7" &&
+            targetSquare[1] === "8") ||
+            (piece === "bP" &&
+              sourceSquare[1] === "2" &&
+              targetSquare[1] === "1")) &&
+          Math.abs(sourceSquare.charCodeAt(0) - targetSquare.charCodeAt(0)) <= 1
+        );
       },
       onPromotionPieceSelect,
       onSquareClick = () => {},
@@ -156,6 +163,7 @@ export const ChessboardProvider = forwardRef(
       showPromotionDialog = false,
       snapToCursor = true,
       autoPromoteToQueen = false,
+      dragOutsideOfBoard = true,
     }: ChessboardProviderProps,
     ref
   ) => {
@@ -458,6 +466,7 @@ export const ChessboardProvider = forwardRef(
       showBoardNotation,
       snapToCursor,
       promotionDialogVariant,
+      dragOutsideOfBoard,
 
       arrows,
       newArrow,

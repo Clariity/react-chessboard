@@ -1,11 +1,17 @@
-import { ReactNode, useCallback } from "react";
+import { ReactNode, useCallback, useRef, useState, useEffect } from "react";
 import { useDragLayer, XYCoord } from "react-dnd";
 
 import { useChessboard } from "../context/chessboard-context";
 import { CustomPieceFn, Piece, Square } from "../types";
 
-export function CustomDragLayer() {
-  const { boardWidth, chessPieces, id, snapToCursor } = useChessboard();
+export type CustomDragLayerProps = {
+  boardContainer: { left: number; top: number };
+};
+
+export function CustomDragLayer(props: CustomDragLayerProps) {
+  const { boardContainer } = props;
+  const { boardWidth, chessPieces, id, snapToCursor, dragOutsideOfBoard } =
+    useChessboard();
 
   const collectedProps = useDragLayer((monitor) => ({
     item: monitor.getItem(),
@@ -31,11 +37,24 @@ export function CustomDragLayer() {
       if (!clientOffset || !sourceClientOffset) return { display: "none" };
 
       let { x, y } = snapToCursor ? clientOffset : sourceClientOffset;
+      const halfSquareWidth = boardWidth / 8 / 2;
       if (snapToCursor) {
         const halfSquareWidth = boardWidth / 8 / 2;
         x -= halfSquareWidth;
         y -= halfSquareWidth;
       }
+
+      if (!dragOutsideOfBoard) {
+        const { left, top } = boardContainer;
+        // half square so the piece reaches the board
+        const maxLeft = left - halfSquareWidth;
+        const maxTop = top - halfSquareWidth;
+        const maxRight = left + boardWidth - halfSquareWidth;
+        const maxBottom = top + boardWidth - halfSquareWidth;
+        x = Math.max(maxLeft, Math.min(x, maxRight));
+        y = Math.max(maxTop, Math.min(y, maxBottom));
+      }
+
       const transform = `translate(${x}px, ${y}px)`;
 
       return {
@@ -44,7 +63,7 @@ export function CustomDragLayer() {
         touchAction: "none",
       };
     },
-    [boardWidth, snapToCursor]
+    [boardWidth, dragOutsideOfBoard, snapToCursor, boardContainer]
   );
 
   return isDragging && item.id === id ? (
@@ -64,7 +83,11 @@ export function CustomDragLayer() {
             isDragging: true,
           })
         ) : (
-          <svg viewBox={"1 1 43 43"} width={boardWidth / 8} height={boardWidth / 8}>
+          <svg
+            viewBox={"1 1 43 43"}
+            width={boardWidth / 8}
+            height={boardWidth / 8}
+          >
             <g>{chessPieces[item.piece] as ReactNode}</g>
           </svg>
         )}
