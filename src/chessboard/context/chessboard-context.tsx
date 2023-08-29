@@ -142,9 +142,15 @@ export const ChessboardProvider = forwardRef(
       onPieceDragEnd = () => {},
       onPieceDrop = () => true,
       onPromotionCheck = (sourceSquare, targetSquare, piece) => {
-        return (((piece === "wP" && sourceSquare[1] === "7" && targetSquare[1] === "8") ||
-                (piece === "bP" && sourceSquare[1] === "2" && targetSquare[1] === "1")) &&
-                Math.abs(sourceSquare.charCodeAt(0) - targetSquare.charCodeAt(0)) <= 1)
+        return (
+          ((piece === "wP" &&
+            sourceSquare[1] === "7" &&
+            targetSquare[1] === "8") ||
+            (piece === "bP" &&
+              sourceSquare[1] === "2" &&
+              targetSquare[1] === "1")) &&
+          Math.abs(sourceSquare.charCodeAt(0) - targetSquare.charCodeAt(0)) <= 1
+        );
       },
       onPromotionPieceSelect,
       onSquareClick = () => {},
@@ -265,8 +271,10 @@ export const ChessboardProvider = forwardRef(
             lastPieceColour !== undefined
           ) {
             setLastPieceColour(newPieceColour);
+          } else if (!isDifferentFromStart(newPosition)) {
+            // position === start, likely a board reset. set to black to allow black to make premoves on first move
+            setLastPieceColour("b");
           } else {
-            // position === start, likely a board reset
             setLastPieceColour(undefined);
           }
           setPositionDifferences(differences);
