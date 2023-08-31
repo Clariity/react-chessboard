@@ -736,3 +736,54 @@ export const CustomSquare = () => {
     </div>
   );
 };
+
+export const BoardWithCustomArrows = () => {
+  const colorVariants = ["#058ED9", "#093A3E", "#F75590", "#F3752B", "#48AD7E"];
+  const [activeColor, setActiveColor] = useState(colorVariants[0]);
+  return (
+    <div style={boardWrapper}>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <div>Choose arrow color</div>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          {colorVariants.map((color) => (
+            <div
+              style={{
+                width: "24px",
+                height: "24px",
+                background: color,
+                borderRadius: "50%",
+                cursor: "pointer",
+                margin: "16px 6px",
+                transform: color === activeColor ? "scale(1.5)" : "none",
+                transition: "all 0.15s ease-in",
+              }}
+              onClick={() => setActiveColor(color)}
+            />
+          ))}
+        </div>
+      </div>
+      <Chessboard
+        id="BoardWithCustomArrows"
+        customArrows={[
+          ["a2", "a3", "red"],
+          ["b2", "b4", "#1DE1AE"],
+          ["c2", "c5", "#C62662"],
+        ]}
+        customArrowColor={activeColor}
+        onArrowsChange={console.log}
+      />
+    </div>
+  );
+};

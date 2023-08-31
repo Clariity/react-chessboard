@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Square } from "../types";
 
-type Arrow = Square[];
+type Arrow = [Square, Square, string?];
 type Arrows = Arrow[];
 
 const toSet = (arrows: Arrows) =>
@@ -12,8 +12,12 @@ const toArray = (arrowsSet: Set<string>): Arrows =>
 export const useArrows = (
   customArrows?: Arrows,
   areArrowsAllowed: boolean = true,
-  onArrowsChange?: (arrows: Arrows) => void
+  onArrowsChange?: (arrows: Arrows) => void,
+  customArrowColor?: string
 ) => {
+  // arrows passed from outside as a prop
+  const [customArrowsSet, setCustomArrows] = useState(new Set<string>());
+
   // current arrows
   const [arrows, setArrows] = useState(new Set<string>());
 
@@ -22,8 +26,11 @@ export const useArrows = (
 
   // handle external arrows change
   useEffect(() => {
-    if (customArrows && (customArrows.length !== 0 || arrows.size > 0)) {
-      setArrows(toSet(customArrows));
+    if (Array.isArray(customArrows)) {
+      setCustomArrows(
+        //filter out arrows which starts and ends in the same square
+        toSet(customArrows?.filter((arrow) => arrow[0] !== arrow[1]))
+      );
     }
   }, [customArrows]);
 
@@ -55,15 +62,15 @@ export const useArrows = (
   };
 
   const drawNewArrow = (fromSquare: Square, toSquare: Square) => {
-    if (!areArrowsAllowed || fromSquare === toSquare) return;
+    if (!areArrowsAllowed) return;
 
-    setNewArrow([fromSquare, toSquare]);
+    setNewArrow([fromSquare, toSquare, customArrowColor]);
   };
 
   const onArrowDrawEnd = (fromSquare: Square, toSquare: Square) => {
     if (fromSquare === toSquare) return;
     // remove it if we already have same arrow in arrows set
-    const newArrow = `${fromSquare},${toSquare}`;
+    const newArrow = `${fromSquare},${toSquare},${customArrowColor}`;
     const arrowsSet = new Set(arrows);
     if (arrowsSet.has(newArrow)) {
       arrowsSet.delete(newArrow);
@@ -77,7 +84,7 @@ export const useArrows = (
   };
 
   return {
-    arrows: toArray(arrows),
+    arrows: toArray(new Set([...arrows, ...customArrowsSet])),
     newArrow,
     clearArrows,
     removeArrow,

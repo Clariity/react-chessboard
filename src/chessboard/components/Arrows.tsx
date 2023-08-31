@@ -2,7 +2,7 @@ import { Fragment } from "react";
 
 import { getRelativeCoords } from "../functions";
 import { useChessboard } from "../context/chessboard-context";
-import { Square } from "../types";
+import { Arrow } from "../types";
 
 export const Arrows = () => {
   const {
@@ -14,7 +14,7 @@ export const Arrows = () => {
     customArrowColor,
   } = useChessboard();
 
-  const arrowsList = [...arrows, newArrow].filter(Boolean) as Square[][];
+  const arrowsList = [...arrows, newArrow].filter(Boolean) as Arrow[];
   return (
     <svg
       width={boardWidth}
@@ -31,6 +31,8 @@ export const Arrows = () => {
         const from = getRelativeCoords(boardOrientation, boardWidth, arrow[0]);
         const to = getRelativeCoords(boardOrientation, boardWidth, arrow[1]);
         let ARROW_LENGTH_REDUCER = boardWidth / 32;
+
+        if (arrow[0] === arrow[1]) return null;
 
         const isArrowActive = i === arrows.length;
         // if there are differnet arrows targeting same square make thier length a bit shorter
@@ -58,7 +60,7 @@ export const Arrows = () => {
             key={`${arrow[0]}-${arrow[1]}${isArrowActive ? "active" : ""}`}
           >
             <marker
-              id="arrowhead"
+              id={`arrowhead-${i}`}
               markerWidth="2"
               markerHeight="2.5"
               refX="1.25"
@@ -67,7 +69,7 @@ export const Arrows = () => {
             >
               <polygon
                 points="0.3 0, 2 1.25, 0.3 2.5"
-                fill={customArrowColor}
+                fill={arrow[2] ?? customArrowColor}
               />
             </marker>
             <line
@@ -76,11 +78,11 @@ export const Arrows = () => {
               x2={end.x}
               y2={end.y}
               opacity={isArrowActive ? "0.5" : "0.65"}
-              stroke={customArrowColor}
+              stroke={arrow[2] ?? customArrowColor}
               strokeWidth={
-                isArrowActive ? (0.9 * boardWidth) / 36 : boardWidth / 36
+                isArrowActive ? (0.9 * boardWidth) / 40 : boardWidth / 40
               }
-              markerEnd="url(#arrowhead)"
+              markerEnd={`url(#arrowhead-${i})`}
             />
           </Fragment>
         );
