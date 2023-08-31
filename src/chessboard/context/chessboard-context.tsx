@@ -272,8 +272,10 @@ export const ChessboardProvider = forwardRef(
             lastPieceColour !== undefined
           ) {
             setLastPieceColour(newPieceColour);
+          } else if (!isDifferentFromStart(newPosition)) {
+            // position === start, likely a board reset. set to black to allow black to make premoves on first move
+            setLastPieceColour("b");
           } else {
-            // position === start, likely a board reset
             setLastPieceColour(undefined);
           }
           setPositionDifferences(differences);

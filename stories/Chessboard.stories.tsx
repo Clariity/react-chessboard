@@ -19,6 +19,14 @@ const buttonStyle = {
   boxShadow: "0 2px 5px rgba(0, 0, 0, 0.5)",
 };
 
+const inputStyle = {
+  padding: "10px 20px",
+  margin: "10px 0 10px 0",
+  borderRadius: "6px",
+  border: "none",
+  boxShadow: "0 2px 5px rgba(0, 0, 0, 0.5)",
+};
+
 const boardWrapper = {
   width: `70vw`,
   maxWidth: "70vh",
@@ -128,132 +136,100 @@ export const PlayVsRandom = () => {
 ////////// PlayVsStockfish ////////
 ///////////////////////////////////
 
-export const PlayVsStockfish = () => {
-  // 1. Download `stockfish.js` file from https://github.com/Clariity/react-chessboard/stories/stockfish/stockfish.js
-  // 1. Place `stockfish.js` file into your React app's `public` folder
-  // 3. Run it as a web worker like in engine.ts implementation: https://github.com/Clariity/react-chessboard/stories/stockfish/engine.ts
-  // 4. Import Engine from "./stockfish/engine";
-
+export const PlayVsComputer = () => {
+  const levels = {
+    "Easy 🤓": 2,
+    "Medium 🧐": 8,
+    "Hard 😵": 18,
+  };
   const engine = useMemo(() => new Engine(), []);
+  const game = useMemo(() => new Chess(), []);
 
-  const [game, setGame] = useState(new Chess());
-  const [ponderArrow, setPonderArrow] = useState<Square[][]>([]);
-  const [positionEvaluation, setPositionEvaluation] = useState("");
-  const [possibleMate, setPossibleMate] = useState("");
-  const [showPonderHint, setShowPonderHint] = useState(false);
+  const [gamePosition, setGamePosition] = useState(game.fen());
+  const [stockfishLevel, setStockfishLevel] = useState(2);
 
-  function safeGameMutate(modify) {
-    setGame((g) => {
-      const update = { ...g };
-      modify(update);
-      return update;
+  function findBestMove() {
+    engine.evaluatePosition(game.fen(), stockfishLevel);
+
+    engine.onMessage(({ bestMove }) => {
+      if (bestMove) {
+        // In latest chess.js versions you can just write ```game.move(bestMove)```
+        game.move({
+          from: bestMove.substring(0, 2),
+          to: bestMove.substring(2, 4),
+          promotion: bestMove.substring(4, 5),
+        });
+
+        setGamePosition(game.fen());
+      }
     });
   }
 
-  function findBestMove() {
-    // exit if the game is over
-    if (game.game_over() || game.in_draw()) return;
-
-    engine.evaluatePosition(game.fen());
-
-    engine.onMessage(
-      ({ bestMove, ponder, positionEvaluation, possibleMate }) => {
-        positionEvaluation && setPositionEvaluation(positionEvaluation);
-        possibleMate && setPossibleMate(possibleMate);
-        ponder &&
-          setPonderArrow([
-            [
-              ponder.substring(0, 2) as Square,
-              ponder.substring(2, 4) as Square,
-            ],
-          ]);
-
-        if (bestMove) {
-          safeGameMutate((game) => {
-            // TODO: in latest chess.js version you can just write ```game.move(bestMove)```
-            game.move({
-              from: bestMove.substring(0, 2),
-              to: bestMove.substring(2, 4),
-            });
-          });
-        }
-      }
-    );
-  }
-
   function onDrop(sourceSquare, targetSquare, piece) {
-    const gameCopy = { ...game };
-    const move = gameCopy.move({
+    const move = game.move({
       from: sourceSquare,
       to: targetSquare,
       promotion: piece[1].toLowerCase() ?? "q",
     });
-    setGame(gameCopy);
+    setGamePosition(game.fen());
 
     // illegal move
     if (move === null) return false;
+
+    // exit if the game is over
+    if (game.game_over() || game.in_draw()) return false;
 
     findBestMove();
 
     return true;
   }
 
-  useEffect(() => {
-    engine.init();
-
-    // Don't forget to terminate  Engine after unmount!
-    return () => engine.terminate();
-  }, []);
-
   return (
     <div style={boardWrapper}>
-      <h4>
-        Position Evaluation:{" "}
-        {possibleMate ? `#${possibleMate}` : -Number(positionEvaluation) / 100}
-      </h4>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          marginBottom: "1rem",
+        }}
+      >
+        {Object.entries(levels).map(([level, depth]) => (
+          <button
+            style={{
+              ...buttonStyle,
+              backgroundColor: depth === stockfishLevel ? "#B58863" : "#f0d9b5",
+            }}
+            onClick={() => setStockfishLevel(depth)}
+          >
+            {level}
+          </button>
+        ))}
+      </div>
+
       <Chessboard
         id="PlayVsStockfish"
-        position={game.fen()}
+        position={gamePosition}
         onPieceDrop={onDrop}
-        customBoardStyle={{
-          borderRadius: "4px",
-          boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
-        }}
-        customArrows={showPonderHint ? ponderArrow : []}
       />
+
       <button
         style={buttonStyle}
         onClick={() => {
-          setPossibleMate("");
-          safeGameMutate((game) => {
-            game.reset();
-          });
+          game.reset();
+          setGamePosition(game.fen());
         }}
       >
-        reset
+        New game
       </button>
       <button
         style={buttonStyle}
         onClick={() => {
-          setPossibleMate("");
-          safeGameMutate((game) => {
-            game.undo();
-            game.undo();
-          });
+          game.undo();
+          game.undo();
+          setGamePosition(game.fen());
         }}
       >
-        undo
-      </button>
-      <button
-        style={{
-          ...buttonStyle,
-          backgroundColor: showPonderHint ? "#B58863" : "#f0d9b5",
-        }}
-        onClick={() => {
-          setShowPonderHint(!showPonderHint);
-        }}
-      >
-        {showPonderHint ? "Hide my best move" : "Show my best move"}
+        Undo
       </button>
     </div>
   );
@@ -733,6 +709,132 @@ export const CustomSquare = () => {
   return (
     <div style={boardWrapper}>
       <Chessboard id="CustomSquare" customSquare={CustomSquareRenderer} />
+    </div>
+  );
+};
+
+//////////////////////////////////
+////////// AnalysisBoard //////////
+///////////////////////////////////
+
+export const AnalysisBoard = () => {
+  const engine = useMemo(() => new Engine(), []);
+  const game = useMemo(() => new Chess(), []);
+  const inputRef = useRef<HTMLInputElement>();
+  const [chessBoardPosition, setChessBoardPosition] = useState(game.fen());
+  const [positionEvaluation, setPositionEvaluation] = useState(0);
+  const [depth, setDepth] = useState(10);
+  const [bestLine, setBestline] = useState("");
+  const [possibleMate, setPossibleMate] = useState("");
+
+  function findBestMove() {
+    engine.evaluatePosition(chessBoardPosition, 18);
+
+    engine.onMessage(({ positionEvaluation, possibleMate, pv, depth }) => {
+      if (depth < 10) return;
+
+      positionEvaluation &&
+        setPositionEvaluation(
+          ((game.turn() === "w" ? 1 : -1) * Number(positionEvaluation)) / 100
+        );
+      possibleMate && setPossibleMate(possibleMate);
+      depth && setDepth(depth);
+      pv && setBestline(pv);
+    });
+  }
+
+  function onDrop(sourceSquare, targetSquare, piece) {
+    const move = game.move({
+      from: sourceSquare,
+      to: targetSquare,
+      promotion: piece[1].toLowerCase() ?? "q",
+    });
+    setChessBoardPosition(game.fen());
+
+    // illegal move
+    if (move === null) return false;
+
+    engine.stop();
+    setBestline("");
+
+    if (game.game_over() || game.in_draw()) return false;
+
+    return true;
+  }
+
+  useEffect(() => {
+    if (!game.game_over() || game.in_draw()) {
+      findBestMove();
+    }
+  }, [chessBoardPosition]);
+
+  const bestMove = bestLine?.split(" ")?.[0];
+  const handleFenInputChange = (e) => {
+    const { valid } = game.validate_fen(e.target.value);
+
+    if (valid) {
+      inputRef.current.value = e.target.value;
+      game.load(e.target.value);
+      setChessBoardPosition(game.fen());
+    }
+  };
+  return (
+    <div style={boardWrapper}>
+      <h4>
+        Position Evaluation:{" "}
+        {possibleMate ? `#${possibleMate}` : positionEvaluation}
+        {"; "}
+        Depth: {depth}
+      </h4>
+      <h5>
+        Best line: <i>{bestLine.slice(0, 40)}</i> ...
+      </h5>
+      <input
+        ref={inputRef}
+        style={{ ...inputStyle, width: "90%" }}
+        onChange={handleFenInputChange}
+        placeholder="Paste FEN to start analysing custom position"
+      />
+      <Chessboard
+        id="AnalysisBoard"
+        position={chessBoardPosition}
+        onPieceDrop={onDrop}
+        customBoardStyle={{
+          borderRadius: "4px",
+          boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
+        }}
+        customArrows={
+          bestMove && [
+            [
+              bestMove.substring(0, 2) as Square,
+              bestMove.substring(2, 4) as Square,
+            ],
+          ]
+        }
+        customArrowColor="rgb(0, 128, 0)"
+      />
+      <button
+        style={buttonStyle}
+        onClick={() => {
+          setPossibleMate("");
+          setBestline("");
+          game.reset();
+          setChessBoardPosition(game.fen());
+        }}
+      >
+        reset
+      </button>
+      <button
+        style={buttonStyle}
+        onClick={() => {
+          setPossibleMate("");
+          setBestline("");
+          game.undo();
+          setChessBoardPosition(game.fen());
+        }}
+      >
+        undo
+      </button>
     </div>
   );
 };
