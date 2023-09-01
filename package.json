@@ -1,6 +1,6 @@
 {
   "name": "react-checkerboard",
-  "version": "4.0.1",
+  "version": "4.1.0",
   "description": "A React Checkerboard frontend for the Ravenback checkers game engine. Based off the React Chessboard Library used at ChessOpenings.co.uk.",
   "author": "Brandon Corfman <bcorfman1@gmail.com>",
   "repository": "https://github.com/bcorfman/react-checkerboard",
@@ -40,7 +40,6 @@
     "@storybook/addon-essentials": "^7.4.0",
     "@storybook/addon-interactions": "^7.4.0",
     "@storybook/addon-links": "^7.4.0",
-    "@storybook/addon-mdx-gfm": "^7.4.0",
     "@storybook/addon-onboarding": "^1.0.8",
     "@storybook/blocks": "^7.4.0",
     "@storybook/react": "^7.4.0",

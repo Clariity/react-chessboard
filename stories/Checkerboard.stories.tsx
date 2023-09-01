@@ -3,7 +3,6 @@ import { ComponentMeta, ComponentStory } from "@storybook/react";
 
 import { Checkerboard, ClearPremoves } from "../src";
 import { CustomSquareProps, Square } from "../src/checkerboard/types";
-import Engine from "./stockfish/engine";
 
 // examples
 // multiboard example https://storybook.js.org/docs/react/writing-stories/stories-for-multiple-components
