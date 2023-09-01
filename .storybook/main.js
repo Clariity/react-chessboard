@@ -14,7 +14,7 @@ module.exports = {
     options: {}
   },
 
-  staticDirs: ["../stories/media", "../stories/stockfish"],
+  staticDirs: ["../stories/stockfish"],
 
   docs: {
     autodocs: true
