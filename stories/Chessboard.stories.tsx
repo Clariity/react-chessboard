@@ -808,10 +808,10 @@ export const AnalysisBoard = () => {
             [
               bestMove.substring(0, 2) as Square,
               bestMove.substring(2, 4) as Square,
+              "rgb(0, 128, 0)",
             ],
           ]
         }
-        customArrowColor="rgb(0, 128, 0)"
       />
       <button
         style={buttonStyle}
@@ -840,7 +840,15 @@ export const AnalysisBoard = () => {
 };
 
 export const BoardWithCustomArrows = () => {
-  const colorVariants = ["#058ED9", "#093A3E", "#F75590", "#F3752B", "#48AD7E"];
+  const colorVariants = [
+    "darkred",
+    "#48AD7E",
+    "rgb(245, 192, 0)",
+    "#093A3E",
+    "#F75590",
+    "#F3752B",
+    "#058ED9",
+  ];
   const [activeColor, setActiveColor] = useState(colorVariants[0]);
   return (
     <div style={boardWrapper}>
@@ -879,9 +887,9 @@ export const BoardWithCustomArrows = () => {
       <Chessboard
         id="BoardWithCustomArrows"
         customArrows={[
-          ["a2", "a3", "red"],
-          ["b2", "b4", "#1DE1AE"],
-          ["c2", "c5", "#C62662"],
+          ["a2", "a3", colorVariants[0]],
+          ["b2", "b4", colorVariants[1]],
+          ["c2", "c5", colorVariants[2]],
         ]}
         customArrowColor={activeColor}
         onArrowsChange={console.log}

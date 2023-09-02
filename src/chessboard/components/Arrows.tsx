@@ -11,10 +11,10 @@ export const Arrows = () => {
     boardOrientation,
     boardWidth,
 
-    customArrowColor,
+    customArrowColor: primaryArrowCollor,
   } = useChessboard();
-
   const arrowsList = [...arrows, newArrow].filter(Boolean) as Arrow[];
+
   return (
     <svg
       width={boardWidth}
@@ -28,18 +28,26 @@ export const Arrows = () => {
       }}
     >
       {arrowsList.map((arrow, i) => {
-        const from = getRelativeCoords(boardOrientation, boardWidth, arrow[0]);
-        const to = getRelativeCoords(boardOrientation, boardWidth, arrow[1]);
+        const [arrowStartField, arrowEndField, arrowColor] = arrow;
+        if (arrowStartField === arrowEndField) return null;
+        const from = getRelativeCoords(
+          boardOrientation,
+          boardWidth,
+          arrowStartField
+        );
+        const to = getRelativeCoords(
+          boardOrientation,
+          boardWidth,
+          arrowEndField
+        );
         let ARROW_LENGTH_REDUCER = boardWidth / 32;
-
-        if (arrow[0] === arrow[1]) return null;
 
         const isArrowActive = i === arrows.length;
         // if there are differnet arrows targeting same square make thier length a bit shorter
         if (
           arrows.some(
             (restArrow) =>
-              restArrow[0] !== arrow[0] && restArrow[1] === arrow[1]
+              restArrow[0] !== arrowStartField && restArrow[1] === arrowEndField
           ) &&
           !isArrowActive
         ) {
@@ -57,7 +65,9 @@ export const Arrows = () => {
 
         return (
           <Fragment
-            key={`${arrow[0]}-${arrow[1]}${isArrowActive ? "active" : ""}`}
+            key={`${arrowStartField}-${arrowEndField}${
+              isArrowActive ? "-active" : ""
+            }`}
           >
             <marker
               id={`arrowhead-${i}`}
@@ -69,7 +79,7 @@ export const Arrows = () => {
             >
               <polygon
                 points="0.3 0, 2 1.25, 0.3 2.5"
-                fill={arrow[2] ?? customArrowColor}
+                fill={arrowColor ?? primaryArrowCollor}
               />
             </marker>
             <line
@@ -78,7 +88,7 @@ export const Arrows = () => {
               x2={end.x}
               y2={end.y}
               opacity={isArrowActive ? "0.5" : "0.65"}
-              stroke={arrow[2] ?? customArrowColor}
+              stroke={arrowColor ?? primaryArrowCollor}
               strokeWidth={
                 isArrowActive ? (0.9 * boardWidth) / 40 : boardWidth / 40
               }
