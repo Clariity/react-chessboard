@@ -1,82 +1,86 @@
 import { useState, useEffect } from "react";
-import { Square, Arrow } from "../types";
+import { Square } from "../types";
 
+type Arrow = Square[];
 type Arrows = Arrow[];
+
+const toSet = (arrows: Arrows) =>
+  new Set(arrows?.map((arrow) => arrow.join(",")));
+const toArray = (arrowsSet: Set<string>): Arrows =>
+  Array.from(arrowsSet).map((arrow) => arrow.split(",")) as Arrows;
 
 export const useArrows = (
   customArrows?: Arrows,
   areArrowsAllowed: boolean = true,
-  onArrowsChange?: (arrows: Arrows) => void,
-  customArrowColor?: string
+  onArrowsChange?: (arrows: Arrows) => void
 ) => {
-  // arrows passed programatically to `ChessBoard` as a react prop
-  const [customArrowsSet, setCustomArrows] = useState<Arrows>([]);
+  // current arrows
+  const [arrows, setArrows] = useState(new Set<string>());
 
-  // arrows drawed with mouse by user on the board
-  const [arrows, setArrows] = useState<Arrows>([]);
-
-  // active arrow which user draws while dragging mouse
+  // arrow which we draw while user dragging mouse
   const [newArrow, setNewArrow] = useState<Arrow>();
 
-  // handle external `customArrows` props changes
+  // handle external arrows change
   useEffect(() => {
-    if (Array.isArray(customArrows)) {
-      setCustomArrows(
-        //filter out arrows which starts and ends in the same square
-        customArrows?.filter((arrow) => arrow[0] !== arrow[1])
-      );
+    if (customArrows && (customArrows.length !== 0 || arrows.size > 0)) {
+      setArrows(toSet(customArrows));
     }
   }, [customArrows]);
 
-  // callback when arrows changed after user interaction
+  // callback when new arrows are set
   useEffect(() => {
-    onArrowsChange?.(arrows);
+    onArrowsChange?.(toArray(arrows));
   }, [arrows]);
 
-  // function clears all arrows drawed by user
   function clearArrows() {
-    setArrows([]);
+    setArrows(new Set());
     setNewArrow(undefined);
   }
 
-  const drawNewArrow = (fromSquare: Square, toSquare: Square) => {
-    if (!areArrowsAllowed) return;
+  const removeArrow = (fromSquare: Square, toSquare: Square) => {
+    let removedArrow;
+    const arrowsArray = Array.from(arrows);
+    for (const [i] of arrowsArray.entries()) {
+      if (arrowsArray[i][0] === fromSquare && arrowsArray[i][1] === toSquare) {
+        setArrows((oldArrows) => {
+          const newArrows = [...oldArrows];
+          newArrows.splice(i, 1);
+          return new Set(newArrows);
+        });
+        removedArrow = [fromSquare, toSquare];
+      }
+    }
 
-    setNewArrow([fromSquare, toSquare, customArrowColor]);
+    return Boolean(removedArrow);
   };
 
-  const allBoardArrows = [...arrows, ...customArrowsSet];
+  const drawNewArrow = (fromSquare: Square, toSquare: Square) => {
+    if (!areArrowsAllowed || fromSquare === toSquare) return;
+
+    setNewArrow([fromSquare, toSquare]);
+  };
 
   const onArrowDrawEnd = (fromSquare: Square, toSquare: Square) => {
     if (fromSquare === toSquare) return;
-
-    let arrowsCopy;
-    const newArrow = [fromSquare, toSquare, customArrowColor] as Arrow;
-
-    const isNewArrowUnique = allBoardArrows.every(([arrowFrom, arrowTo]) => {
-      return !(arrowFrom === fromSquare && arrowTo === toSquare);
-    });
-
-    // add the newArrow to arrows array if it is unique
-    if (isNewArrowUnique) {
-      arrowsCopy = [...arrows, newArrow];
-    }
-    // remove it from the board if we already have same arrow in arrows array
+    // remove it if we already have same arrow in arrows set
+    const newArrow = `${fromSquare},${toSquare}`;
+    const arrowsSet = new Set(arrows);
+    if (arrowsSet.has(newArrow)) {
+      arrowsSet.delete(newArrow);
+    } // add to arrows set  new arrow
     else {
-      arrowsCopy = arrows.filter(([arrowFrom, arrowTo]) => {
-        debugger;
-        return !(arrowFrom === fromSquare && arrowTo === toSquare);
-      });
+      arrowsSet.add(newArrow);
     }
 
     setNewArrow(undefined);
-    setArrows(arrowsCopy);
+    setArrows(arrowsSet);
   };
 
   return {
-    arrows: allBoardArrows,
+    arrows: toArray(arrows),
     newArrow,
     clearArrows,
+    removeArrow,
     drawNewArrow,
     setArrows,
     onArrowDrawEnd,

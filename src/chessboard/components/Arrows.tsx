@@ -2,7 +2,7 @@ import { Fragment } from "react";
 
 import { getRelativeCoords } from "../functions";
 import { useChessboard } from "../context/chessboard-context";
-import { Arrow } from "../types";
+import { Square } from "../types";
 
 export const Arrows = () => {
   const {
@@ -10,10 +10,11 @@ export const Arrows = () => {
     newArrow,
     boardOrientation,
     boardWidth,
-    customArrowColor: primaryArrowCollor,
-  } = useChessboard();
-  const arrowsList = [...arrows, newArrow].filter(Boolean) as Arrow[];
 
+    customArrowColor,
+  } = useChessboard();
+
+  const arrowsList = [...arrows, newArrow].filter(Boolean) as Square[][];
   return (
     <svg
       width={boardWidth}
@@ -27,18 +28,8 @@ export const Arrows = () => {
       }}
     >
       {arrowsList.map((arrow, i) => {
-        const [arrowStartField, arrowEndField, arrowColor] = arrow;
-        if (arrowStartField === arrowEndField) return null;
-        const from = getRelativeCoords(
-          boardOrientation,
-          boardWidth,
-          arrowStartField
-        );
-        const to = getRelativeCoords(
-          boardOrientation,
-          boardWidth,
-          arrowEndField
-        );
+        const from = getRelativeCoords(boardOrientation, boardWidth, arrow[0]);
+        const to = getRelativeCoords(boardOrientation, boardWidth, arrow[1]);
         let ARROW_LENGTH_REDUCER = boardWidth / 32;
 
         const isArrowActive = i === arrows.length;
@@ -46,7 +37,7 @@ export const Arrows = () => {
         if (
           arrows.some(
             (restArrow) =>
-              restArrow[0] !== arrowStartField && restArrow[1] === arrowEndField
+              restArrow[0] !== arrow[0] && restArrow[1] === arrow[1]
           ) &&
           !isArrowActive
         ) {
@@ -64,12 +55,10 @@ export const Arrows = () => {
 
         return (
           <Fragment
-            key={`${arrowStartField}-${arrowEndField}${
-              isArrowActive ? "-active" : ""
-            }`}
+            key={`${arrow[0]}-${arrow[1]}${isArrowActive ? "active" : ""}`}
           >
             <marker
-              id={`arrowhead-${i}`}
+              id="arrowhead"
               markerWidth="2"
               markerHeight="2.5"
               refX="1.25"
@@ -78,7 +67,7 @@ export const Arrows = () => {
             >
               <polygon
                 points="0.3 0, 2 1.25, 0.3 2.5"
-                fill={arrowColor ?? primaryArrowCollor}
+                fill={customArrowColor}
               />
             </marker>
             <line
@@ -87,11 +76,11 @@ export const Arrows = () => {
               x2={end.x}
               y2={end.y}
               opacity={isArrowActive ? "0.5" : "0.65"}
-              stroke={arrowColor ?? primaryArrowCollor}
+              stroke={customArrowColor}
               strokeWidth={
-                isArrowActive ? (0.9 * boardWidth) / 40 : boardWidth / 40
+                isArrowActive ? (0.9 * boardWidth) / 36 : boardWidth / 36
               }
-              markerEnd={`url(#arrowhead-${i})`}
+              markerEnd="url(#arrowhead)"
             />
           </Fragment>
         );
