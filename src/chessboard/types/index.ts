@@ -167,8 +167,9 @@ export type ChessboardProps = {
    */
   clearPremovesOnRightClick?: boolean;
   /**
-   * Array of custom arrows to draw on the board. Each arrow within the array must be an array of length 2 with `Square` denoting the from and to square to draw the arrow e.g. [ ['a3', 'a5'], ['g1', 'f3', 'red'] ].
-   * The third element of array is optional and used for setting arrows color. If it is missing the `customArrowColor` will be used for drawing the arrow
+   * Array where each element is a tuple containing two Square values (representing the 'from' and 'to' squares) and an optional third string element for the arrow color
+   * e.g. [ ['a3', 'a5', 'red'], ['b1, 'd5] ].
+   * If third element in array is missing arrow will have `customArrowColor` or default color value
    * @default []
    */
   customArrows?: Arrow[];

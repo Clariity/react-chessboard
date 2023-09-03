@@ -64,7 +64,6 @@ export const useArrows = (
     // remove it from the board if we already have same arrow in arrows array
     else {
       arrowsCopy = arrows.filter(([arrowFrom, arrowTo]) => {
-        debugger;
         return !(arrowFrom === fromSquare && arrowTo === toSquare);
       });
     }
