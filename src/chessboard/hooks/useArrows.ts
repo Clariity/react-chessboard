@@ -12,7 +12,7 @@ export const useArrows = (
   // arrows passed programatically to `ChessBoard` as a react prop
   const [customArrowsSet, setCustomArrows] = useState<Arrows>([]);
 
-  // arrows drawed with mouse by user on the board
+  // arrows drawn with mouse by user on the board
   const [arrows, setArrows] = useState<Arrows>([]);
 
   // active arrow which user draws while dragging mouse
