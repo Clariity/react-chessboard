@@ -813,10 +813,10 @@ export const AnalysisBoard = () => {
             [
               bestMove.substring(0, 2) as Square,
               bestMove.substring(2, 4) as Square,
-              "rgb(0, 128, 0)",
             ],
           ]
         }
+        customArrowColor="rgb(0, 128, 0)"
       />
       <button
         style={buttonStyle}
