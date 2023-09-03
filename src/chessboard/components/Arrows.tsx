@@ -43,7 +43,7 @@ export const Arrows = () => {
         let ARROW_LENGTH_REDUCER = boardWidth / 32;
 
         const isArrowActive = i === arrows.length;
-        // if there are differnet arrows targeting same square make thier length a bit shorter
+        // if there are different arrows targeting the same square make their length a bit shorter
         if (
           arrows.some(
             (restArrow) =>
