@@ -14,6 +14,7 @@ export function Board() {
     onPromotionPieceSelect,
     setShowPromoteDialog,
     showPromoteDialog,
+    customBoardStyle,
   } = useChessboard();
 
   useEffect(() => {
@@ -33,32 +34,47 @@ export function Board() {
   }, []);
 
   return boardWidth ? (
-    <div ref={boardRef} style={{ position: "relative" }}>
-      <Squares />
-      <Arrows />
+    <div style={{ perspective: "1000px" }}>
+      <div
+        ref={boardRef}
+        style={{
+          position: "relative",
+          ...boardStyles(boardWidth),
+          ...customBoardStyle,
+        }}
+      >
+        <Squares />
+        <Arrows />
 
-      {showPromoteDialog && (
-        <>
-          <div
-            onClick={() => {
-              setShowPromoteDialog(false);
-              onPromotionPieceSelect?.();
-            }}
-            style={{
-              position: "absolute",
-              top: "0",
-              left: "0",
-              zIndex: "100",
-              backgroundColor: "rgba(22,21,18,.7)",
-              width: boardWidth,
-              height: boardWidth,
-            }}
-          />
-          <PromotionDialog />
-        </>
-      )}
+        {showPromoteDialog && (
+          <>
+            <div
+              onClick={() => {
+                setShowPromoteDialog(false);
+                onPromotionPieceSelect?.();
+              }}
+              style={{
+                position: "absolute",
+                top: "0",
+                left: "0",
+                zIndex: "100",
+                backgroundColor: "rgba(22,21,18,.7)",
+                width: boardWidth,
+                height: boardWidth,
+              }}
+            />
+            <PromotionDialog />
+          </>
+        )}
+      </div>
     </div>
   ) : (
     <WhiteKing />
   );
 }
+
+const boardStyles = (width: number) => ({
+  cursor: "default",
+  height: width,
+  width,
+});

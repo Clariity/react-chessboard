@@ -177,6 +177,7 @@ export function Piece({
         (chessPieces[piece] as CustomPieceFn)({
           squareWidth: boardWidth / 8,
           isDragging,
+          square,
         })
       ) : (
         <svg

@@ -8,7 +8,6 @@ export function PromotionDialog() {
     boardOrientation,
     boardWidth,
     promotionDialogVariant,
-
     promoteToSquare,
   } = useChessboard();
 

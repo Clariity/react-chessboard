@@ -10,7 +10,6 @@ export const Arrows = () => {
     newArrow,
     boardOrientation,
     boardWidth,
-
     customArrowColor: primaryArrowCollor,
   } = useChessboard();
   const arrowsList = [...arrows, newArrow].filter(Boolean) as Arrow[];

@@ -585,23 +585,23 @@ export const StyledBoard = () => {
     "bQ",
     "bK",
   ];
-  const customPieces = () => {
-    const returnPieces = {};
-    pieces.map((p) => {
-      returnPieces[p] = ({ squareWidth }) => (
+
+  const customPieces = useMemo(() => {
+    const pieceComponents = {};
+    pieces.forEach((piece) => {
+      pieceComponents[piece] = ({ squareWidth }) => (
         <div
           style={{
             width: squareWidth,
             height: squareWidth,
-            backgroundImage: `url(/${p}.png)`,
+            backgroundImage: `url(/${piece}.png)`,
             backgroundSize: "100%",
           }}
         />
       );
-      return null;
     });
-    return returnPieces;
-  };
+    return pieceComponents;
+  }, []);
 
   return (
     <div style={boardWrapper}>
@@ -616,7 +616,7 @@ export const StyledBoard = () => {
         }}
         customDarkSquareStyle={{ backgroundColor: "#779952" }}
         customLightSquareStyle={{ backgroundColor: "#edeed1" }}
-        customPieces={customPieces()}
+        customPieces={customPieces}
       />
       <button
         style={buttonStyle}
@@ -708,7 +708,11 @@ export const CustomSquare = () => {
 
   return (
     <div style={boardWrapper}>
-      <Chessboard id="CustomSquare" customSquare={CustomSquareRenderer} />
+      <Chessboard
+        id="CustomSquare"
+        customSquare={CustomSquareRenderer}
+        showBoardNotation={false}
+      />
     </div>
   );
 };
@@ -749,6 +753,7 @@ export const AnalysisBoard = () => {
       to: targetSquare,
       promotion: piece[1].toLowerCase() ?? "q",
     });
+    setPossibleMate("");
     setChessBoardPosition(game.fen());
 
     // illegal move
@@ -894,6 +899,84 @@ export const BoardWithCustomArrows = () => {
         customArrowColor={activeColor}
         onArrowsChange={console.log}
       />
+    </div>
+  );
+};
+
+export const ThreeDBoard = () => {
+  const pieces = [
+    { piece: "wP", height: 1 },
+    { piece: "wN", height: 1.2 },
+    { piece: "wB", height: 1.2 },
+    { piece: "wR", height: 1.2 },
+    { piece: "wQ", height: 1.5 },
+    { piece: "wK", height: 1.6 },
+    { piece: "bP", height: 1 },
+    { piece: "bN", height: 1.2 },
+    { piece: "bB", height: 1.2 },
+    { piece: "bR", height: 1.2 },
+    { piece: "bQ", height: 1.5 },
+    { piece: "bK", height: 1.6 },
+  ];
+
+  const AAAA = [0, 1, 1, 1, 1, 1.05, 1.05, 1.1, 1.15];
+
+  const threeDPieces = useMemo(() => {
+    const pieceComponents = {};
+    pieces.forEach(({ piece, height }) => {
+      pieceComponents[piece] = ({ squareWidth, square }) => (
+        <div
+          style={{
+            width: squareWidth,
+            height: squareWidth,
+            position: "relative",
+            pointerEvents: "none",
+          }}
+        >
+          <img
+            src={`/3DPieces/${piece}3D.png`}
+            width={squareWidth}
+            height={height * squareWidth * AAAA[square?.[1]]}
+            style={{
+              position: "absolute",
+              bottom: `${0.2 * squareWidth}px`,
+              objectFit: piece[1] === "K" ? "contain" : "cover",
+              transition: "all 0.1s ease-in",
+            }}
+          />
+        </div>
+      );
+    });
+    return pieceComponents;
+  }, []);
+
+  return (
+    <div style={boardWrapper}>
+      <Chessboard
+        id="ThreeDBoard"
+        customBoardStyle={{
+          transform: "rotateX(32deg)",
+          transformOrigin: "center",
+          border: "16px solid #865745",
+          boxShadow:
+            "rgba(0, 0, 0, 0.5) 8px 25px 12px 0px, rgba(0, 0, 0, 0.5) 8px 25px 12px 0px",
+        }}
+        customPieces={threeDPieces}
+        customLightSquareStyle={{
+          backgroundColor: "#e0c094",
+          backgroundImage: 'url("wood-pattern.png")',
+          backgroundSize: "cover",
+        }}
+        customDarkSquareStyle={{
+          backgroundColor: "#865745",
+          backgroundImage: 'url("wood-pattern.png")',
+          backgroundSize: "cover",
+        }}
+      />
+
+      <div className="container">
+        <div className="box"></div>
+      </div>
     </div>
   );
 };
