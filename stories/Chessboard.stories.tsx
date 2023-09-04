@@ -844,86 +844,66 @@ export const AnalysisBoard = () => {
   );
 };
 
-export const BoardWithCustomArrows = () => {
-  const colorVariants = [
-    "darkred",
-    "#48AD7E",
-    "rgb(245, 192, 0)",
-    "#093A3E",
-    "#F75590",
-    "#F3752B",
-    "#058ED9",
-  ];
-  const [activeColor, setActiveColor] = useState(colorVariants[0]);
-  return (
-    <div style={boardWrapper}>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
-        <div>Choose arrow color</div>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          {colorVariants.map((color) => (
-            <div
-              style={{
-                width: "24px",
-                height: "24px",
-                background: color,
-                borderRadius: "50%",
-                cursor: "pointer",
-                margin: "16px 6px",
-                transform: color === activeColor ? "scale(1.5)" : "none",
-                transition: "all 0.15s ease-in",
-              }}
-              onClick={() => setActiveColor(color)}
-            />
-          ))}
-        </div>
-      </div>
-      <Chessboard
-        id="BoardWithCustomArrows"
-        customArrows={[
-          ["a2", "a3", colorVariants[0]],
-          ["b2", "b4", colorVariants[1]],
-          ["c2", "c5", colorVariants[2]],
-        ]}
-        customArrowColor={activeColor}
-        onArrowsChange={console.log}
-      />
-    </div>
-  );
-};
-
 export const ThreeDBoard = () => {
-  const pieces = [
-    { piece: "wP", height: 1 },
-    { piece: "wN", height: 1.2 },
-    { piece: "wB", height: 1.2 },
-    { piece: "wR", height: 1.2 },
-    { piece: "wQ", height: 1.5 },
-    { piece: "wK", height: 1.6 },
-    { piece: "bP", height: 1 },
-    { piece: "bN", height: 1.2 },
-    { piece: "bB", height: 1.2 },
-    { piece: "bR", height: 1.2 },
-    { piece: "bQ", height: 1.5 },
-    { piece: "bK", height: 1.6 },
-  ];
+  const engine = useMemo(() => new Engine(), []);
+  const game = useMemo(() => new Chess(), []);
 
-  const AAAA = [0, 1, 1, 1, 1, 1.05, 1.05, 1.1, 1.15];
+  const [gamePosition, setGamePosition] = useState(game.fen());
+
+  function findBestMove() {
+    engine.evaluatePosition(game.fen());
+
+    engine.onMessage(({ bestMove }) => {
+      if (bestMove) {
+        game.move({
+          from: bestMove.substring(0, 2),
+          to: bestMove.substring(2, 4),
+          promotion: bestMove.substring(4, 5),
+        });
+
+        setGamePosition(game.fen());
+      }
+    });
+  }
+
+  function onDrop(sourceSquare, targetSquare, piece) {
+    const move = game.move({
+      from: sourceSquare,
+      to: targetSquare,
+      promotion: piece[1].toLowerCase() ?? "q",
+    });
+    setGamePosition(game.fen());
+
+    // illegal move
+    if (move === null) return false;
+
+    // exit if the game is over
+    if (game.game_over() || game.in_draw()) return false;
+
+    findBestMove();
+
+    return true;
+  }
+
+  const [activeSquare, setActiveSquare] = useState("");
+  const pieces = [
+    { piece: "wP", pieceHeight: 1 },
+    { piece: "wN", pieceHeight: 1.2 },
+    { piece: "wB", pieceHeight: 1.2 },
+    { piece: "wR", pieceHeight: 1.2 },
+    { piece: "wQ", pieceHeight: 1.5 },
+    { piece: "wK", pieceHeight: 1.6 },
+    { piece: "bP", pieceHeight: 1 },
+    { piece: "bN", pieceHeight: 1.2 },
+    { piece: "bB", pieceHeight: 1.2 },
+    { piece: "bR", pieceHeight: 1.2 },
+    { piece: "bQ", pieceHeight: 1.5 },
+    { piece: "bK", pieceHeight: 1.6 },
+  ];
 
   const threeDPieces = useMemo(() => {
     const pieceComponents = {};
-    pieces.forEach(({ piece, height }) => {
+    pieces.forEach(({ piece, pieceHeight }) => {
       pieceComponents[piece] = ({ squareWidth, square }) => (
         <div
           style={{
@@ -936,7 +916,7 @@ export const ThreeDBoard = () => {
           <img
             src={`/3DPieces/${piece}3D.png`}
             width={squareWidth}
-            height={height * squareWidth * AAAA[square?.[1]]}
+            height={pieceHeight * squareWidth}
             style={{
               position: "absolute",
               bottom: `${0.2 * squareWidth}px`,
@@ -952,12 +932,36 @@ export const ThreeDBoard = () => {
 
   return (
     <div style={boardWrapper}>
+      <button
+        style={buttonStyle}
+        onClick={() => {
+          game.reset();
+          setGamePosition(game.fen());
+        }}
+      >
+        Reset
+      </button>
+      <button
+        style={buttonStyle}
+        onClick={() => {
+          game.undo();
+          game.undo();
+          setGamePosition(game.fen());
+        }}
+      >
+        Undo
+      </button>
       <Chessboard
         id="ThreeDBoard"
+        position={gamePosition}
+        onPieceDrop={onDrop}
         customBoardStyle={{
-          transform: "rotateX(32deg)",
+          transform: "rotateX(27deg)",
           transformOrigin: "center",
           border: "16px solid #865745",
+          borderStyle: "outset",
+          borderRightColor: " #b27c67",
+          borderRadius: "2px",
           boxShadow:
             "rgba(0, 0, 0, 0.5) 8px 25px 12px 0px, rgba(0, 0, 0, 0.5) 8px 25px 12px 0px",
         }}
@@ -972,11 +976,15 @@ export const ThreeDBoard = () => {
           backgroundImage: 'url("wood-pattern.png")',
           backgroundSize: "cover",
         }}
+        animationDuration={500}
+        customSquareStyles={{
+          [activeSquare]: {
+            boxShadow: "inset 0 0 1px 6px rgba(255,255,255,0.75)",
+          },
+        }}
+        onMouseOverSquare={(sq) => setActiveSquare(sq)}
+        onMouseOutSquare={(sq) => setActiveSquare("")}
       />
-
-      <div className="container">
-        <div className="box"></div>
-      </div>
     </div>
   );
 };
