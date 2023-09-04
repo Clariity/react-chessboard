@@ -914,14 +914,13 @@ export const ThreeDBoard = () => {
           }}
         >
           <img
-            src={`/3DPieces/${piece}3D.png`}
+            src={`/3d-pieces/${piece}.webp`}
             width={squareWidth}
             height={pieceHeight * squareWidth}
             style={{
               position: "absolute",
               bottom: `${0.2 * squareWidth}px`,
               objectFit: piece[1] === "K" ? "contain" : "cover",
-              transition: "all 0.1s ease-in",
             }}
           />
         </div>
