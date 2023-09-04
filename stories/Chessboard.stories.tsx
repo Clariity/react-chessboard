@@ -759,7 +759,7 @@ export const Styled3DBoard = () => {
           border: "16px solid #b8836f",
           borderStyle: "outset",
           borderRightColor: " #b27c67",
-          borderRadius: "2px",
+          borderRadius: "4px",
           boxShadow: "rgba(0, 0, 0, 0.5) 10px 24px 6px 1px",
           borderRightWidth: "2px",
           borderLeftWidth: "2px",
