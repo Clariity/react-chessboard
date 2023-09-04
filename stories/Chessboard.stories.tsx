@@ -642,6 +642,151 @@ export const StyledBoard = () => {
   );
 };
 
+export const Styled3DBoard = () => {
+  const engine = useMemo(() => new Engine(), []);
+  const game = useMemo(() => new Chess(), []);
+
+  const [gamePosition, setGamePosition] = useState(game.fen());
+
+  function findBestMove() {
+    engine.evaluatePosition(game.fen());
+
+    engine.onMessage(({ bestMove }) => {
+      if (bestMove) {
+        game.move({
+          from: bestMove.substring(0, 2),
+          to: bestMove.substring(2, 4),
+          promotion: bestMove.substring(4, 5),
+        });
+
+        setGamePosition(game.fen());
+      }
+    });
+  }
+
+  function onDrop(sourceSquare, targetSquare, piece) {
+    const move = game.move({
+      from: sourceSquare,
+      to: targetSquare,
+      promotion: piece[1].toLowerCase() ?? "q",
+    });
+    setGamePosition(game.fen());
+
+    // illegal move
+    if (move === null) return false;
+
+    // exit if the game is over
+    if (game.game_over() || game.in_draw()) return false;
+
+    findBestMove();
+
+    return true;
+  }
+
+  const [activeSquare, setActiveSquare] = useState("");
+
+  const threeDPieces = useMemo(() => {
+    const pieces = [
+      { piece: "wP", pieceHeight: 1 },
+      { piece: "wN", pieceHeight: 1.2 },
+      { piece: "wB", pieceHeight: 1.2 },
+      { piece: "wR", pieceHeight: 1.2 },
+      { piece: "wQ", pieceHeight: 1.5 },
+      { piece: "wK", pieceHeight: 1.6 },
+      { piece: "bP", pieceHeight: 1 },
+      { piece: "bN", pieceHeight: 1.2 },
+      { piece: "bB", pieceHeight: 1.2 },
+      { piece: "bR", pieceHeight: 1.2 },
+      { piece: "bQ", pieceHeight: 1.5 },
+      { piece: "bK", pieceHeight: 1.6 },
+    ];
+
+    const pieceComponents = {};
+    pieces.forEach(({ piece, pieceHeight }) => {
+      pieceComponents[piece] = ({ squareWidth, square }) => (
+        <div
+          style={{
+            width: squareWidth,
+            height: squareWidth,
+            position: "relative",
+            pointerEvents: "none",
+          }}
+        >
+          <img
+            src={`/3d-pieces/${piece}.webp`}
+            width={squareWidth}
+            height={pieceHeight * squareWidth}
+            style={{
+              position: "absolute",
+              bottom: `${0.2 * squareWidth}px`,
+              objectFit: piece[1] === "K" ? "contain" : "cover",
+            }}
+          />
+        </div>
+      );
+    });
+    return pieceComponents;
+  }, []);
+
+  return (
+    <div style={boardWrapper}>
+      <button
+        style={buttonStyle}
+        onClick={() => {
+          game.reset();
+          setGamePosition(game.fen());
+        }}
+      >
+        Reset
+      </button>
+      <button
+        style={buttonStyle}
+        onClick={() => {
+          game.undo();
+          game.undo();
+          setGamePosition(game.fen());
+        }}
+      >
+        Undo
+      </button>
+      <Chessboard
+        id="Styled3DBoard"
+        position={gamePosition}
+        onPieceDrop={onDrop}
+        customBoardStyle={{
+          transform: "rotateX(27deg)",
+          transformOrigin: "center",
+          border: "16px solid #865745",
+          borderStyle: "outset",
+          borderRightColor: " #b27c67",
+          borderRadius: "2px",
+          boxShadow:
+            "rgba(0, 0, 0, 0.5) 8px 25px 12px 0px, rgba(0, 0, 0, 0.5) 8px 25px 12px 0px",
+        }}
+        customPieces={threeDPieces}
+        customLightSquareStyle={{
+          backgroundColor: "#e0c094",
+          backgroundImage: 'url("wood-pattern.png")',
+          backgroundSize: "cover",
+        }}
+        customDarkSquareStyle={{
+          backgroundColor: "#865745",
+          backgroundImage: 'url("wood-pattern.png")',
+          backgroundSize: "cover",
+        }}
+        animationDuration={500}
+        customSquareStyles={{
+          [activeSquare]: {
+            boxShadow: "inset 0 0 1px 6px rgba(255,255,255,0.75)",
+          },
+        }}
+        onMouseOverSquare={(sq) => setActiveSquare(sq)}
+        onMouseOutSquare={(sq) => setActiveSquare("")}
+      />
+    </div>
+  );
+};
+
 ///////////////////////////////////
 ////////// Custom Square ///////////
 ///////////////////////////////////
@@ -840,150 +985,6 @@ export const AnalysisBoard = () => {
       >
         undo
       </button>
-    </div>
-  );
-};
-
-export const ThreeDBoard = () => {
-  const engine = useMemo(() => new Engine(), []);
-  const game = useMemo(() => new Chess(), []);
-
-  const [gamePosition, setGamePosition] = useState(game.fen());
-
-  function findBestMove() {
-    engine.evaluatePosition(game.fen());
-
-    engine.onMessage(({ bestMove }) => {
-      if (bestMove) {
-        game.move({
-          from: bestMove.substring(0, 2),
-          to: bestMove.substring(2, 4),
-          promotion: bestMove.substring(4, 5),
-        });
-
-        setGamePosition(game.fen());
-      }
-    });
-  }
-
-  function onDrop(sourceSquare, targetSquare, piece) {
-    const move = game.move({
-      from: sourceSquare,
-      to: targetSquare,
-      promotion: piece[1].toLowerCase() ?? "q",
-    });
-    setGamePosition(game.fen());
-
-    // illegal move
-    if (move === null) return false;
-
-    // exit if the game is over
-    if (game.game_over() || game.in_draw()) return false;
-
-    findBestMove();
-
-    return true;
-  }
-
-  const [activeSquare, setActiveSquare] = useState("");
-  const pieces = [
-    { piece: "wP", pieceHeight: 1 },
-    { piece: "wN", pieceHeight: 1.2 },
-    { piece: "wB", pieceHeight: 1.2 },
-    { piece: "wR", pieceHeight: 1.2 },
-    { piece: "wQ", pieceHeight: 1.5 },
-    { piece: "wK", pieceHeight: 1.6 },
-    { piece: "bP", pieceHeight: 1 },
-    { piece: "bN", pieceHeight: 1.2 },
-    { piece: "bB", pieceHeight: 1.2 },
-    { piece: "bR", pieceHeight: 1.2 },
-    { piece: "bQ", pieceHeight: 1.5 },
-    { piece: "bK", pieceHeight: 1.6 },
-  ];
-
-  const threeDPieces = useMemo(() => {
-    const pieceComponents = {};
-    pieces.forEach(({ piece, pieceHeight }) => {
-      pieceComponents[piece] = ({ squareWidth, square }) => (
-        <div
-          style={{
-            width: squareWidth,
-            height: squareWidth,
-            position: "relative",
-            pointerEvents: "none",
-          }}
-        >
-          <img
-            src={`/3d-pieces/${piece}.webp`}
-            width={squareWidth}
-            height={pieceHeight * squareWidth}
-            style={{
-              position: "absolute",
-              bottom: `${0.2 * squareWidth}px`,
-              objectFit: piece[1] === "K" ? "contain" : "cover",
-            }}
-          />
-        </div>
-      );
-    });
-    return pieceComponents;
-  }, []);
-
-  return (
-    <div style={boardWrapper}>
-      <button
-        style={buttonStyle}
-        onClick={() => {
-          game.reset();
-          setGamePosition(game.fen());
-        }}
-      >
-        Reset
-      </button>
-      <button
-        style={buttonStyle}
-        onClick={() => {
-          game.undo();
-          game.undo();
-          setGamePosition(game.fen());
-        }}
-      >
-        Undo
-      </button>
-      <Chessboard
-        id="ThreeDBoard"
-        position={gamePosition}
-        onPieceDrop={onDrop}
-        customBoardStyle={{
-          transform: "rotateX(27deg)",
-          transformOrigin: "center",
-          border: "16px solid #865745",
-          borderStyle: "outset",
-          borderRightColor: " #b27c67",
-          borderRadius: "2px",
-          boxShadow:
-            "rgba(0, 0, 0, 0.5) 8px 25px 12px 0px, rgba(0, 0, 0, 0.5) 8px 25px 12px 0px",
-        }}
-        customPieces={threeDPieces}
-        customLightSquareStyle={{
-          backgroundColor: "#e0c094",
-          backgroundImage: 'url("wood-pattern.png")',
-          backgroundSize: "cover",
-        }}
-        customDarkSquareStyle={{
-          backgroundColor: "#865745",
-          backgroundImage: 'url("wood-pattern.png")',
-          backgroundSize: "cover",
-        }}
-        animationDuration={500}
-        customSquareStyles={{
-          [activeSquare]: {
-            boxShadow: "inset 0 0 1px 6px rgba(255,255,255,0.75)",
-          },
-        }}
-        onMouseOverSquare={(sq) => setActiveSquare(sq)}
-        onMouseOutSquare={(sq) => setActiveSquare("")}
-      />
     </div>
   );
 };
