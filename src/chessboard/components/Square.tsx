@@ -73,7 +73,11 @@ export function Square({
   function handleDrop(item: { piece: Piece; square: Sq; id: number }) {
     if (onPromotionCheck(item.square, square, item.piece)) {
       if (autoPromoteToQueen) {
-        handleSetPosition(item.square, square, item.piece[0] === "w" ? "wQ" : "bQ");
+        handleSetPosition(
+          item.square,
+          square,
+          item.piece[0] === "w" ? "wQ" : "bQ"
+        );
       } else {
         setPromoteFromSquare(item.square);
         setPromoteToSquare(square);

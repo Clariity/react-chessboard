@@ -161,13 +161,6 @@ export function Piece({
     return { sourceSq: squares[square] };
   }
 
-  function getSquareCoordinates(sourceSquare: Square, targetSquare: Square) {
-    return {
-      sourceSq: squares[sourceSquare],
-      targetSq: squares[targetSquare],
-    };
-  }
-
   return (
     <div
       ref={arePiecesDraggable ? (canDrag ? drag : null) : null}

@@ -756,12 +756,19 @@ export const Styled3DBoard = () => {
         customBoardStyle={{
           transform: "rotateX(27deg)",
           transformOrigin: "center",
-          border: "16px solid #865745",
+          border: "16px solid #b8836f",
           borderStyle: "outset",
           borderRightColor: " #b27c67",
           borderRadius: "2px",
-          boxShadow:
-            "rgba(0, 0, 0, 0.5) 8px 25px 12px 0px, rgba(0, 0, 0, 0.5) 8px 25px 12px 0px",
+          boxShadow: "rgba(0, 0, 0, 0.5) 10px 24px 6px 1px",
+          borderRightWidth: "6px",
+          borderLeftWidth: "4px",
+          borderTopWidth: "1px",
+          borderBottomWidth: "18px",
+          borderTopLeftRadius: "8px",
+          borderTopRightLadius: "12px",
+          padding: "8px",
+          background: "#efdbbf",
         }}
         customPieces={threeDPieces}
         customLightSquareStyle={{
