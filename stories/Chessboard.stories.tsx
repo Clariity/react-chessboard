@@ -761,14 +761,16 @@ export const Styled3DBoard = () => {
           borderRightColor: " #b27c67",
           borderRadius: "2px",
           boxShadow: "rgba(0, 0, 0, 0.5) 10px 24px 6px 1px",
-          borderRightWidth: "6px",
-          borderLeftWidth: "4px",
-          borderTopWidth: "1px",
+          borderRightWidth: "2px",
+          borderLeftWidth: "2px",
+          borderTopWidth: "0px",
           borderBottomWidth: "18px",
           borderTopLeftRadius: "8px",
-          borderTopRightLadius: "12px",
-          padding: "8px",
-          background: "#efdbbf",
+          borderTopRightRadius: "8px",
+          padding: "8px 8px 12px",
+          background: "#e0c094",
+          backgroundImage: 'url("wood-pattern.png")',
+          backgroundSize: "cover",
         }}
         customPieces={threeDPieces}
         customLightSquareStyle={{
