@@ -642,6 +642,10 @@ export const StyledBoard = () => {
   );
 };
 
+///////////////////////////////////
+///////// Styled 3D Board /////////
+///////////////////////////////////
+
 export const Styled3DBoard = () => {
   const engine = useMemo(() => new Engine(), []);
   const game = useMemo(() => new Chess(), []);
@@ -730,37 +734,39 @@ export const Styled3DBoard = () => {
 
   return (
     <div style={boardWrapper}>
-      <button
-        style={buttonStyle}
-        onClick={() => {
-          game.reset();
-          setGamePosition(game.fen());
-        }}
-      >
-        Reset
-      </button>
-      <button
-        style={buttonStyle}
-        onClick={() => {
-          game.undo();
-          game.undo();
-          setGamePosition(game.fen());
-        }}
-      >
-        Undo
-      </button>
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <button
+          style={buttonStyle}
+          onClick={() => {
+            game.reset();
+            setGamePosition(game.fen());
+          }}
+        >
+          Reset
+        </button>
+        <button
+          style={buttonStyle}
+          onClick={() => {
+            game.undo();
+            game.undo();
+            setGamePosition(game.fen());
+          }}
+        >
+          Undo
+        </button>
+      </div>
       <Chessboard
         id="Styled3DBoard"
         position={gamePosition}
         onPieceDrop={onDrop}
         customBoardStyle={{
-          transform: "rotateX(27deg)",
+          transform: "rotateX(27.5deg)",
           transformOrigin: "center",
           border: "16px solid #b8836f",
           borderStyle: "outset",
           borderRightColor: " #b27c67",
           borderRadius: "4px",
-          boxShadow: "rgba(0, 0, 0, 0.5) 10px 24px 6px 1px",
+          boxShadow: "rgba(0, 0, 0, 0.5) 2px 24px 24px 8px",
           borderRightWidth: "2px",
           borderLeftWidth: "2px",
           borderTopWidth: "0px",
