@@ -129,6 +129,8 @@ export type DropOffBoardAction = "snapback" | "trash";
 
 export type Coords = { x: number; y: number };
 
+export type Arrow = [Square, Square, string?];
+
 export type ChessboardProps = {
   /**
    * Time in milliseconds for piece to slide to target square. Only used when the position is programmatically changed. If a new position is set before the animation is complete, the board will cancel the current animation and snap to the new position.
@@ -165,10 +167,12 @@ export type ChessboardProps = {
    */
   clearPremovesOnRightClick?: boolean;
   /**
-   * Array of custom arrows to draw on the board. Each arrow within the array must be an array of length 2 with strings denoting the from and to square to draw the arrow e.g. [ ['a3', 'a5'], ['g1', 'f3'] ].
+   * Array where each element is a tuple containing two Square values (representing the 'from' and 'to' squares) and an optional third string element for the arrow color
+   * e.g. [ ['a3', 'a5', 'red'], ['b1, 'd5] ].
+   * If third element in array is missing arrow will have `customArrowColor` or default color value
    * @default []
    */
-  customArrows?: Square[][];
+  customArrows?: Arrow[];
   /**
    * String with rgb or hex value to colour drawn arrows.
    * @default rgb(255,170,0)
@@ -251,7 +255,7 @@ export type ChessboardProps = {
    * User function is run when arrows are set on the board.
    * @default () => {}
    */
-  onArrowsChange?: (squares: Square[][]) => void;
+  onArrowsChange?: (squares: Arrow[]) => void;
   /**
    * User function that is run when piece is dragged over a square.
    * @default () => {}
@@ -293,8 +297,8 @@ export type ChessboardProps = {
   ) => boolean;
   /**
    * User function that is run when piece is dropped. Must return whether the move results in a promotion or not.
-   * @default (sourceSquare, targetSquare, piece) => (((piece === "wP" && sourceSquare[1] === "7" && targetSquare[1] === "8") || 
-   *                                                  (piece === "bP" && sourceSquare[1] === "2" && targetSquare[1] === "1")) && 
+   * @default (sourceSquare, targetSquare, piece) => (((piece === "wP" && sourceSquare[1] === "7" && targetSquare[1] === "8") ||
+   *                                                  (piece === "bP" && sourceSquare[1] === "2" && targetSquare[1] === "1")) &&
    *                                                  Math.abs(sourceSquare.charCodeAt(0) - targetSquare.charCodeAt(0)) <= 1)
    */
   onPromotionCheck?: (

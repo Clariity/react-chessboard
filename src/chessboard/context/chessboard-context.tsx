@@ -21,6 +21,7 @@ import {
   CustomPieces,
   Piece,
   Square,
+  Arrow,
 } from "../types";
 
 import { useArrows } from "../hooks/useArrows";
@@ -72,7 +73,7 @@ interface ChessboardProviderContext {
   autoPromoteToQueen: RequiredChessboardProps["autoPromoteToQueen"];
 
   // Exported by context
-  arrows: Square[][];
+  arrows: Arrow[];
   chessPieces: CustomPieces | Record<string, ReactNode>;
   clearArrows: () => void;
   clearCurrentRightClickDown: () => void;
@@ -95,7 +96,7 @@ interface ChessboardProviderContext {
   setPromoteToSquare: React.Dispatch<React.SetStateAction<Square | null>>;
   setShowPromoteDialog: React.Dispatch<React.SetStateAction<boolean>>;
   showPromoteDialog: boolean;
-  newArrow?: Square[];
+  newArrow?: Arrow;
   onArrowDrawEnd: (from: Square, to: Square) => void;
   drawNewArrow: (from: Square, to: Square) => void;
   currentRightClickDown?: Square;
@@ -304,7 +305,12 @@ export const ChessboardProvider = forwardRef(
     }, [position]);
 
     const { arrows, newArrow, clearArrows, drawNewArrow, onArrowDrawEnd } =
-      useArrows(customArrows, areArrowsAllowed, onArrowsChange);
+      useArrows(
+        customArrows,
+        areArrowsAllowed,
+        onArrowsChange,
+        customArrowColor
+      );
 
     // handle drop position change
     function handleSetPosition(
