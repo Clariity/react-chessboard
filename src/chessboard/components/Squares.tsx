@@ -13,17 +13,13 @@ export function Squares() {
     boardOrientation,
     boardWidth,
     currentPosition,
-    customBoardStyle,
     id,
     premoves,
     showBoardNotation,
   } = useChessboard();
 
   return (
-    <div
-      data-boardid={id}
-      style={{ ...boardStyles(boardWidth), ...customBoardStyle }}
-    >
+    <div data-boardid={id}>
       {[...Array(8)].map((_, r) => {
         return (
           <div
@@ -80,9 +76,3 @@ export function Squares() {
     </div>
   );
 }
-
-const boardStyles = (width: number) => ({
-  cursor: "default",
-  height: width,
-  width,
-});
