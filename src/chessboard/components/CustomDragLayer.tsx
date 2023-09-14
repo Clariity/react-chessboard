@@ -8,8 +8,7 @@ export type CustomDragLayerProps = {
   boardContainer: { left: number; top: number };
 };
 
-export function CustomDragLayer(props: CustomDragLayerProps) {
-  const { boardContainer } = props;
+export function CustomDragLayer({ boardContainer }: CustomDragLayerProps) {
   const { boardWidth, chessPieces, id, snapToCursor, dragOutsideOfBoard } =
     useChessboard();
 
@@ -39,7 +38,6 @@ export function CustomDragLayer(props: CustomDragLayerProps) {
       let { x, y } = snapToCursor ? clientOffset : sourceClientOffset;
       const halfSquareWidth = boardWidth / 8 / 2;
       if (snapToCursor) {
-        const halfSquareWidth = boardWidth / 8 / 2;
         x -= halfSquareWidth;
         y -= halfSquareWidth;
       }

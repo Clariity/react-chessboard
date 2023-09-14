@@ -131,6 +131,11 @@ export type Coords = { x: number; y: number };
 
 export type ChessboardProps = {
   /**
+   * Whether or not the piece can be dragged outside of the board
+   * @default true
+   * */
+  allowDragOutsideBoard?: boolean;
+  /**
    * Time in milliseconds for piece to slide to target square. Only used when the position is programmatically changed. If a new position is set before the animation is complete, the board will cancel the current animation and snap to the new position.
    * @default 300
    */
@@ -150,6 +155,11 @@ export type ChessboardProps = {
    * @default false
    */
   arePremovesAllowed?: boolean;
+  /**
+   * Whether or not to automatically promote pawn to queen
+   * @default false
+   */
+  autoPromoteToQueen?: boolean;
   /**
    * The orientation of the board, the chosen colour will be at the bottom of the board.
    * @default white
@@ -351,15 +361,4 @@ export type ChessboardProps = {
    * @default true
    */
   snapToCursor?: boolean;
-  /**
-   * Whether or not to automatically promote pawn to queen
-   * @default false
-   */
-  autoPromoteToQueen?: boolean;
-
-  dragOutsideOfBoard?: boolean;
-  /**
-   * Wether or not the piece can be dragged outside of the board
-   * @default true
-   * */
 };
