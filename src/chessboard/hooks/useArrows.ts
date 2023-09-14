@@ -51,7 +51,7 @@ export const useArrows = (
     if (fromSquare === toSquare) return;
 
     let arrowsCopy;
-    const newArrow = [fromSquare, toSquare, customArrowColor] as Arrow;
+    const newArrow: Arrow = [fromSquare, toSquare, customArrowColor];
 
     const isNewArrowUnique = allBoardArrows.every(([arrowFrom, arrowTo]) => {
       return !(arrowFrom === fromSquare && arrowTo === toSquare);
