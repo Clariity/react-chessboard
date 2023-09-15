@@ -70,7 +70,7 @@ interface ChessboardProviderContext {
   showBoardNotation: RequiredChessboardProps["showBoardNotation"];
   snapToCursor: RequiredChessboardProps["snapToCursor"];
   autoPromoteToQueen: RequiredChessboardProps["autoPromoteToQueen"];
-  dragOutsideOfBoard: RequiredChessboardProps["dragOutsideOfBoard"];
+  allowDragOutsideBoard: RequiredChessboardProps["allowDragOutsideBoard"];
 
   // Exported by context
   arrows: Square[][];
@@ -163,7 +163,7 @@ export const ChessboardProvider = forwardRef(
       showPromotionDialog = false,
       snapToCursor = true,
       autoPromoteToQueen = false,
-      dragOutsideOfBoard = true,
+      allowDragOutsideBoard = true,
     }: ChessboardProviderProps,
     ref
   ) => {
@@ -466,7 +466,7 @@ export const ChessboardProvider = forwardRef(
       showBoardNotation,
       snapToCursor,
       promotionDialogVariant,
-      dragOutsideOfBoard,
+      allowDragOutsideBoard,
 
       arrows,
       newArrow,

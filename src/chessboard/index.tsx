@@ -41,24 +41,14 @@ export const Chessboard = forwardRef<ClearPremoves, ChessboardProps>(
       top: 0,
     });
 
-    //Set BoardContainerPos initially when boardContainerRef is set. Position is used when dragOutsideOfBoard={false}
-    useEffect(() => {
-      if (boardContainerRef.current) {
-        const { left, top } = boardContainerRef.current.getBoundingClientRect();
-        setBoardContainerPos({ left, top });
-      }
-    }, [boardContainerRef.current]);
+    const metrics = boardRef.current?.getBoundingClientRect();
 
     useEffect(() => {
-      window.addEventListener("resize", (e) => {
-        if (boardContainerRef.current) {
-          const { left, top } =
-            boardContainerRef.current.getBoundingClientRect();
-          setBoardContainerPos({ left, top });
-        }
-        return () => window.removeEventListener("resize", (e) => {});
+      setBoardContainerPos({
+        left: metrics?.left ? metrics?.left : 0,
+        top: metrics?.top ? metrics?.top : 0,
       });
-    }, []);
+    }, [metrics]);
 
     useEffect(() => {
       setIsMobile("ontouchstart" in window);

@@ -9,7 +9,7 @@ export type CustomDragLayerProps = {
 };
 
 export function CustomDragLayer({ boardContainer }: CustomDragLayerProps) {
-  const { boardWidth, chessPieces, id, snapToCursor, dragOutsideOfBoard } =
+  const { boardWidth, chessPieces, id, snapToCursor, allowDragOutsideBoard } =
     useChessboard();
 
   const collectedProps = useDragLayer((monitor) => ({
@@ -42,7 +42,7 @@ export function CustomDragLayer({ boardContainer }: CustomDragLayerProps) {
         y -= halfSquareWidth;
       }
 
-      if (!dragOutsideOfBoard) {
+      if (!allowDragOutsideBoard) {
         const { left, top } = boardContainer;
         // half square so the piece reaches the board
         const maxLeft = left - halfSquareWidth;
@@ -61,7 +61,7 @@ export function CustomDragLayer({ boardContainer }: CustomDragLayerProps) {
         touchAction: "none",
       };
     },
-    [boardWidth, dragOutsideOfBoard, snapToCursor, boardContainer]
+    [boardWidth, allowDragOutsideBoard, snapToCursor, boardContainer]
   );
 
   return isDragging && item.id === id ? (
