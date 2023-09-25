@@ -23,6 +23,7 @@ export function Piece({
     arePiecesDraggable,
     arePremovesAllowed,
     boardWidth,
+    boardOrientation,
     chessPieces,
     currentPosition,
     id,
@@ -125,8 +126,14 @@ export function Piece({
         setPieceStyle((oldPieceStyle) => ({
           ...oldPieceStyle,
           transform: `translate(${
-            (targetSq.charCodeAt(0) - sourceSq.charCodeAt(0)) * squareWidth
-          }px, ${(Number(sourceSq[1]) - Number(targetSq[1])) * squareWidth}px)`,
+            (boardOrientation === "black" ? -1 : 1) *
+            (targetSq.charCodeAt(0) - sourceSq.charCodeAt(0)) *
+            squareWidth
+          }px, ${
+            (boardOrientation === "black" ? -1 : 1) *
+            (Number(sourceSq[1]) - Number(targetSq[1])) *
+            squareWidth
+          }px)`,
           transition: `transform ${animationDuration}ms`,
           zIndex: 6,
         }));
