@@ -1,6 +1,6 @@
 {
   "name": "react-chessboard",
-  "version": "4.2.2",
+  "version": "4.2.3",
   "description": "The React Chessboard Library used at ChessOpenings.co.uk. Inspired and adapted from the unmaintained Chessboard.jsx.",
   "author": "Ryan Gregory <ryangregory.dev@outlook.com>",
   "repository": "https://github.com/Clariity/react-chessboard",
