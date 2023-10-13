@@ -44,6 +44,7 @@ interface ChessboardProviderContext {
   animationDuration: RequiredChessboardProps["animationDuration"];
   arePiecesDraggable: RequiredChessboardProps["arePiecesDraggable"];
   arePremovesAllowed: RequiredChessboardProps["arePremovesAllowed"];
+  autoPromoteToQueen: RequiredChessboardProps["autoPromoteToQueen"];
   boardOrientation: RequiredChessboardProps["boardOrientation"];
   boardWidth: RequiredChessboardProps["boardWidth"];
   customArrowColor: RequiredChessboardProps["customArrowColor"];
@@ -70,7 +71,6 @@ interface ChessboardProviderContext {
   promotionDialogVariant: RequiredChessboardProps["promotionDialogVariant"];
   showBoardNotation: RequiredChessboardProps["showBoardNotation"];
   snapToCursor: RequiredChessboardProps["snapToCursor"];
-  autoPromoteToQueen: RequiredChessboardProps["autoPromoteToQueen"];
 
   // Exported by context
   arrows: Arrow[];
@@ -78,6 +78,8 @@ interface ChessboardProviderContext {
   clearArrows: () => void;
   clearCurrentRightClickDown: () => void;
   currentPosition: BoardPosition;
+  currentRightClickDown?: Square;
+  drawNewArrow: (from: Square, to: Square) => void;
   handleSetPosition: (
     sourceSq: Square,
     targetSq: Square,
@@ -86,6 +88,8 @@ interface ChessboardProviderContext {
   ) => void;
   isWaitingForAnimation: boolean;
   lastPieceColour: string | undefined;
+  newArrow?: Arrow;
+  onArrowDrawEnd: (from: Square, to: Square) => void;
   onRightClickDown: (square: Square) => void;
   onRightClickUp: (square: Square) => void;
   positionDifferences: { added: BoardPosition; removed: BoardPosition };
@@ -96,10 +100,6 @@ interface ChessboardProviderContext {
   setPromoteToSquare: React.Dispatch<React.SetStateAction<Square | null>>;
   setShowPromoteDialog: React.Dispatch<React.SetStateAction<boolean>>;
   showPromoteDialog: boolean;
-  newArrow?: Arrow;
-  onArrowDrawEnd: (from: Square, to: Square) => void;
-  drawNewArrow: (from: Square, to: Square) => void;
-  currentRightClickDown?: Square;
 }
 
 export const ChessboardContext = createContext({} as ChessboardProviderContext);
@@ -113,6 +113,7 @@ export const ChessboardProvider = forwardRef(
       areArrowsAllowed = true,
       arePiecesDraggable = true,
       arePremovesAllowed = false,
+      autoPromoteToQueen = false,
       boardOrientation = "white",
       boardWidth,
       children,
@@ -162,7 +163,6 @@ export const ChessboardProvider = forwardRef(
       showBoardNotation = true,
       showPromotionDialog = false,
       snapToCursor = true,
-      autoPromoteToQueen = false,
     }: ChessboardProviderProps,
     ref
   ) => {
