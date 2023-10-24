@@ -48,7 +48,7 @@ export const useArrows = (
   const allBoardArrows = [...arrows, ...customArrowsSet];
 
   const onArrowDrawEnd = (fromSquare: Square, toSquare: Square) => {
-    if (fromSquare === toSquare) return;
+    if (fromSquare === toSquare || !areArrowsAllowed) return;
 
     let arrowsCopy;
     const newArrow: Arrow = [fromSquare, toSquare, customArrowColor];
