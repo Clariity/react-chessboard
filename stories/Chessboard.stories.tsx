@@ -511,6 +511,7 @@ export const PremovesEnabled = () => {
           boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
         }}
         ref={chessboardRef}
+        allowDragOutsideBoard={false}
       />
       <button
         style={buttonStyle}
