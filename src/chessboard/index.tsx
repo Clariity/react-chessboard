@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useRef, useState } from "react";
+import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { TouchBackend } from "react-dnd-touch-backend";
@@ -41,7 +41,10 @@ export const Chessboard = forwardRef<ClearPremoves, ChessboardProps>(
       top: 0,
     });
 
-    const metrics = boardRef.current?.getBoundingClientRect();
+    const metrics = useMemo(
+      () => boardRef.current?.getBoundingClientRect(),
+      [boardRef.current]
+    );
 
     useEffect(() => {
       setBoardContainerPos({
