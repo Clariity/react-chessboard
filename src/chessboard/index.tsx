@@ -1,11 +1,11 @@
-import { forwardRef, useEffect, useRef, useState } from "react";
+import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
+
 import { Board } from "./components/Board";
 import { ChessboardProps } from "./types";
 import { ChessboardProvider } from "./context/chessboard-context";
 import { CustomDragLayer } from "./components/CustomDragLayer";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { ChessboardDnDRoot } from "./components/DnDRoot";
-
 // spare pieces component
 // semantic release with github actions
 // improved arrows
@@ -18,25 +18,46 @@ import { ChessboardDnDRoot } from "./components/DnDRoot";
 // change board orientation to 'w' or 'b'? like used in chess.js?
 // Animation on premove? - only set manual drop to false in useEffect if not attempting successful premove
 
-export { SparePiece } from "./components/SparePiece";
-export { ChessboardDnDProvider } from "./components/DnDRoot";
-
 export type ClearPremoves = {
   clearPremoves: (clearLastPieceColour?: boolean) => void;
 };
+
+export { SparePiece } from "./components/SparePiece";
+export { ChessboardDnDProvider } from "./components/DnDRoot";
 
 export const Chessboard = forwardRef<ClearPremoves, ChessboardProps>(
   (props, ref) => {
     const {
       customDndBackend,
       customDndBackendOptions,
-      useCustomDnDProvider = false,
       onBoardWidthChange,
       ...otherProps
     } = props;
     const [boardWidth, setBoardWidth] = useState(props.boardWidth);
 
     const boardRef = useRef<HTMLObjectElement>(null);
+    const boardContainerRef = useRef<HTMLDivElement>(null);
+
+    const [boardContainerPos, setBoardContainerPos] = useState({
+      left: 0,
+      top: 0,
+    });
+
+    const metrics = useMemo(
+      () => boardRef.current?.getBoundingClientRect(),
+      [boardRef.current]
+    );
+
+    useEffect(() => {
+      boardWidth && onBoardWidthChange?.(boardWidth);
+    }, [boardWidth]);
+
+    useEffect(() => {
+      setBoardContainerPos({
+        left: metrics?.left ? metrics?.left : 0,
+        top: metrics?.top ? metrics?.top : 0,
+      });
+    }, [metrics]);
 
     useEffect(() => {
       if (props.boardWidth === undefined && boardRef.current?.offsetWidth) {
@@ -51,14 +72,15 @@ export const Chessboard = forwardRef<ClearPremoves, ChessboardProps>(
       }
     }, [boardRef.current]);
 
-    useEffect(() => {
-      boardWidth && onBoardWidthChange?.(boardWidth);
-    }, [boardWidth]);
-
-    return true ? (
+    return (
       <ErrorBoundary>
         <div
-          style={{ display: "flex", flexDirection: "column", width: "100%" }}
+          ref={boardContainerRef}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            width: "100%",
+          }}
         >
           <div ref={boardRef} style={{ width: "100%" }} />
           <ChessboardDnDRoot
@@ -71,13 +93,13 @@ export const Chessboard = forwardRef<ClearPremoves, ChessboardProps>(
                 {...otherProps}
                 ref={ref}
               >
-                <CustomDragLayer />
+                <CustomDragLayer boardContainer={boardContainerPos} />
                 <Board />
               </ChessboardProvider>
             )}
           </ChessboardDnDRoot>
         </div>
       </ErrorBoundary>
-    ) : null;
+    );
   }
 );

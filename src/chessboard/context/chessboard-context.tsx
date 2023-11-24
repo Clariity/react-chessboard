@@ -41,9 +41,11 @@ type RequiredChessboardProps = Required<ChessboardProps>;
 
 interface ChessboardProviderContext {
   // Props from user
+  allowDragOutsideBoard: RequiredChessboardProps["allowDragOutsideBoard"];
   animationDuration: RequiredChessboardProps["animationDuration"];
   arePiecesDraggable: RequiredChessboardProps["arePiecesDraggable"];
   arePremovesAllowed: RequiredChessboardProps["arePremovesAllowed"];
+  autoPromoteToQueen: RequiredChessboardProps["autoPromoteToQueen"];
   boardOrientation: RequiredChessboardProps["boardOrientation"];
   boardWidth: RequiredChessboardProps["boardWidth"];
   customArrowColor: RequiredChessboardProps["customArrowColor"];
@@ -55,6 +57,7 @@ interface ChessboardProviderContext {
   customPremoveLightSquareStyle: RequiredChessboardProps["customPremoveLightSquareStyle"];
   customSquare: RequiredChessboardProps["customSquare"];
   customSquareStyles: ChessboardProps["customSquareStyles"];
+  dropOffBoardAction: ChessboardProps["dropOffBoardAction"];
   id: RequiredChessboardProps["id"];
   isDraggablePiece: RequiredChessboardProps["isDraggablePiece"];
   onDragOverSquare: RequiredChessboardProps["onDragOverSquare"];
@@ -70,10 +73,8 @@ interface ChessboardProviderContext {
   promotionDialogVariant: RequiredChessboardProps["promotionDialogVariant"];
   showBoardNotation: RequiredChessboardProps["showBoardNotation"];
   snapToCursor: RequiredChessboardProps["snapToCursor"];
-  autoPromoteToQueen: RequiredChessboardProps["autoPromoteToQueen"];
   onSparePieceDrop: ChessboardProps["onSparePieceDrop"];
   onPieceDropOffBoard: ChessboardProps["onPieceDropOffBoard"];
-  dropOffBoardAction: ChessboardProps["dropOffBoardAction"];
 
   // Exported by context
   arrows: Arrow[];
@@ -81,6 +82,9 @@ interface ChessboardProviderContext {
   clearArrows: () => void;
   clearCurrentRightClickDown: () => void;
   currentPosition: BoardPosition;
+  currentRightClickDown?: Square;
+  deletePieceFromSquare: (sq: Square) => void;
+  drawNewArrow: (from: Square, to: Square) => void;
   handleSetPosition: (
     sourceSq: Square,
     targetSq: Square,
@@ -90,6 +94,8 @@ interface ChessboardProviderContext {
   handleSparePieceDrop: (piece: Piece, targetSq: Square) => void;
   isWaitingForAnimation: boolean;
   lastPieceColour: string | undefined;
+  newArrow?: Arrow;
+  onArrowDrawEnd: (from: Square, to: Square) => void;
   onRightClickDown: (square: Square) => void;
   onRightClickUp: (square: Square) => void;
   positionDifferences: { added: BoardPosition; removed: BoardPosition };
@@ -100,11 +106,6 @@ interface ChessboardProviderContext {
   setPromoteToSquare: React.Dispatch<React.SetStateAction<Square | null>>;
   setShowPromoteDialog: React.Dispatch<React.SetStateAction<boolean>>;
   showPromoteDialog: boolean;
-  newArrow?: Arrow;
-  onArrowDrawEnd: (from: Square, to: Square) => void;
-  drawNewArrow: (from: Square, to: Square) => void;
-  currentRightClickDown?: Square;
-  deletePieceFromSquare: (sq: Square) => void;
 }
 
 export const ChessboardContext = createContext({} as ChessboardProviderContext);
@@ -114,10 +115,12 @@ export const useChessboard = () => useContext(ChessboardContext);
 export const ChessboardProvider = forwardRef(
   (
     {
+      allowDragOutsideBoard = true,
       animationDuration = 300,
       areArrowsAllowed = true,
       arePiecesDraggable = true,
       arePremovesAllowed = false,
+      autoPromoteToQueen = false,
       boardOrientation = "white",
       boardWidth,
       children,
@@ -169,7 +172,6 @@ export const ChessboardProvider = forwardRef(
       showBoardNotation = true,
       showPromotionDialog = false,
       snapToCursor = true,
-      autoPromoteToQueen = false,
     }: ChessboardProviderProps,
     ref
   ) => {
@@ -362,7 +364,10 @@ export const ChessboardProvider = forwardRef(
       // if onPieceDrop function provided, execute it, position must be updated externally and captured by useEffect above for this move to show on board
       if (onPieceDrop.length) {
         const isValidMove = onPieceDrop(sourceSq, targetSq, piece);
-        if (!isValidMove) clearPremoves();
+        if (!isValidMove) {
+          clearPremoves();
+          setWasManualDrop(false);
+        }
       } else {
         // delete source piece
         delete newOnDropPosition[sourceSq];
@@ -497,6 +502,7 @@ export const ChessboardProvider = forwardRef(
       showBoardNotation,
       snapToCursor,
       promotionDialogVariant,
+      allowDragOutsideBoard,
 
       arrows,
       newArrow,
