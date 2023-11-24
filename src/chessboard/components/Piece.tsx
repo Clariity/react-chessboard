@@ -23,6 +23,7 @@ export function Piece({
     arePiecesDraggable,
     arePremovesAllowed,
     boardWidth,
+    boardOrientation,
     chessPieces,
     currentPosition,
     id,
@@ -133,12 +134,20 @@ export function Piece({
       newSquare &&
       !isPremovedPiece
     ) {
-      const { sourceSq, targetSq } = getSquareCoordinates(square, newSquare[0]);
+      const sourceSq = square;
+      const targetSq = newSquare[0];
       if (sourceSq && targetSq) {
+        const squareWidth = boardWidth / 8;
         setPieceStyle((oldPieceStyle) => ({
           ...oldPieceStyle,
-          transform: `translate(${targetSq.x - sourceSq.x}px, ${
-            targetSq.y - sourceSq.y
+          transform: `translate(${
+            (boardOrientation === "black" ? -1 : 1) *
+            (targetSq.charCodeAt(0) - sourceSq.charCodeAt(0)) *
+            squareWidth
+          }px, ${
+            (boardOrientation === "black" ? -1 : 1) *
+            (Number(sourceSq[1]) - Number(targetSq[1])) *
+            squareWidth
           }px)`,
           transition: `transform ${animationDuration}ms`,
           zIndex: 6,
@@ -174,13 +183,6 @@ export function Piece({
     return { sourceSq: squares[square] };
   }
 
-  function getSquareCoordinates(sourceSquare: Square, targetSquare: Square) {
-    return {
-      sourceSq: squares[sourceSquare],
-      targetSq: squares[targetSquare],
-    };
-  }
-
   return (
     <div
       ref={arePiecesDraggable && canDrag ? drag : null}
@@ -192,6 +194,7 @@ export function Piece({
         (chessPieces[piece] as CustomPieceFn)({
           squareWidth: boardWidth / 8,
           isDragging,
+          square,
         })
       ) : (
         <svg

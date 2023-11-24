@@ -139,132 +139,100 @@ export const PlayVsRandom = () => {
 ////////// PlayVsStockfish ////////
 ///////////////////////////////////
 
-export const PlayVsStockfish = () => {
-  // 1. Download `stockfish.js` file from https://github.com/Clariity/react-chessboard/stories/stockfish/stockfish.js
-  // 1. Place `stockfish.js` file into your React app's `public` folder
-  // 3. Run it as a web worker like in engine.ts implementation: https://github.com/Clariity/react-chessboard/stories/stockfish/engine.ts
-  // 4. Import Engine from "./stockfish/engine";
-
+export const PlayVsComputer = () => {
+  const levels = {
+    "Easy 🤓": 2,
+    "Medium 🧐": 8,
+    "Hard 😵": 18,
+  };
   const engine = useMemo(() => new Engine(), []);
+  const game = useMemo(() => new Chess(), []);
 
-  const [game, setGame] = useState(new Chess());
-  const [ponderArrow, setPonderArrow] = useState<Square[][]>([]);
-  const [positionEvaluation, setPositionEvaluation] = useState("");
-  const [possibleMate, setPossibleMate] = useState("");
-  const [showPonderHint, setShowPonderHint] = useState(false);
+  const [gamePosition, setGamePosition] = useState(game.fen());
+  const [stockfishLevel, setStockfishLevel] = useState(2);
 
-  function safeGameMutate(modify) {
-    setGame((g) => {
-      const update = { ...g };
-      modify(update);
-      return update;
+  function findBestMove() {
+    engine.evaluatePosition(game.fen(), stockfishLevel);
+
+    engine.onMessage(({ bestMove }) => {
+      if (bestMove) {
+        // In latest chess.js versions you can just write ```game.move(bestMove)```
+        game.move({
+          from: bestMove.substring(0, 2),
+          to: bestMove.substring(2, 4),
+          promotion: bestMove.substring(4, 5),
+        });
+
+        setGamePosition(game.fen());
+      }
     });
   }
 
-  function findBestMove() {
-    // exit if the game is over
-    if (game.game_over() || game.in_draw()) return;
-
-    engine.evaluatePosition(game.fen());
-
-    engine.onMessage(
-      ({ bestMove, ponder, positionEvaluation, possibleMate }) => {
-        positionEvaluation && setPositionEvaluation(positionEvaluation);
-        possibleMate && setPossibleMate(possibleMate);
-        ponder &&
-          setPonderArrow([
-            [
-              ponder.substring(0, 2) as Square,
-              ponder.substring(2, 4) as Square,
-            ],
-          ]);
-
-        if (bestMove) {
-          safeGameMutate((game) => {
-            // TODO: in latest chess.js version you can just write ```game.move(bestMove)```
-            game.move({
-              from: bestMove.substring(0, 2),
-              to: bestMove.substring(2, 4),
-            });
-          });
-        }
-      }
-    );
-  }
-
   function onDrop(sourceSquare, targetSquare, piece) {
-    const gameCopy = { ...game };
-    const move = gameCopy.move({
+    const move = game.move({
       from: sourceSquare,
       to: targetSquare,
       promotion: piece[1].toLowerCase() ?? "q",
     });
-    setGame(gameCopy);
+    setGamePosition(game.fen());
 
     // illegal move
     if (move === null) return false;
+
+    // exit if the game is over
+    if (game.game_over() || game.in_draw()) return false;
 
     findBestMove();
 
     return true;
   }
 
-  useEffect(() => {
-    engine.init();
-
-    // Don't forget to terminate  Engine after unmount!
-    return () => engine.terminate();
-  }, []);
-
   return (
     <div style={boardWrapper}>
-      <h4>
-        Position Evaluation:{" "}
-        {possibleMate ? `#${possibleMate}` : -Number(positionEvaluation) / 100}
-      </h4>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          marginBottom: "1rem",
+        }}
+      >
+        {Object.entries(levels).map(([level, depth]) => (
+          <button
+            style={{
+              ...buttonStyle,
+              backgroundColor: depth === stockfishLevel ? "#B58863" : "#f0d9b5",
+            }}
+            onClick={() => setStockfishLevel(depth)}
+          >
+            {level}
+          </button>
+        ))}
+      </div>
+
       <Chessboard
         id="PlayVsStockfish"
-        position={game.fen()}
+        position={gamePosition}
         onPieceDrop={onDrop}
-        customBoardStyle={{
-          borderRadius: "4px",
-          boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
-        }}
-        customArrows={showPonderHint ? ponderArrow : []}
       />
+
       <button
         style={buttonStyle}
         onClick={() => {
-          setPossibleMate("");
-          safeGameMutate((game) => {
-            game.reset();
-          });
+          game.reset();
+          setGamePosition(game.fen());
         }}
       >
-        reset
+        New game
       </button>
       <button
         style={buttonStyle}
         onClick={() => {
-          setPossibleMate("");
-          safeGameMutate((game) => {
-            game.undo();
-            game.undo();
-          });
+          game.undo();
+          game.undo();
+          setGamePosition(game.fen());
         }}
       >
-        undo
-      </button>
-      <button
-        style={{
-          ...buttonStyle,
-          backgroundColor: showPonderHint ? "#B58863" : "#f0d9b5",
-        }}
-        onClick={() => {
-          setShowPonderHint(!showPonderHint);
-        }}
-      >
-        {showPonderHint ? "Hide my best move" : "Show my best move"}
+        Undo
       </button>
     </div>
   );
@@ -620,19 +588,23 @@ export const StyledBoard = () => {
     "bQ",
     "bK",
   ];
-  const customPieces = {};
-  pieces.forEach((p) => {
-    customPieces[p] = ({ squareWidth }) => (
-      <div
-        style={{
-          width: squareWidth,
-          height: squareWidth,
-          backgroundImage: `url(/${p}.png)`,
-          backgroundSize: "100%",
-        }}
-      />
-    );
-  });
+
+  const customPieces = useMemo(() => {
+    const pieceComponents = {};
+    pieces.forEach((piece) => {
+      pieceComponents[piece] = ({ squareWidth }) => (
+        <div
+          style={{
+            width: squareWidth,
+            height: squareWidth,
+            backgroundImage: `url(/${piece}.png)`,
+            backgroundSize: "100%",
+          }}
+        />
+      );
+    });
+    return pieceComponents;
+  }, []);
 
   return (
     <div style={boardWrapper}>
@@ -669,6 +641,166 @@ export const StyledBoard = () => {
       >
         undo
       </button>
+    </div>
+  );
+};
+
+///////////////////////////////////
+///////// Styled 3D Board /////////
+///////////////////////////////////
+
+export const Styled3DBoard = () => {
+  const engine = useMemo(() => new Engine(), []);
+  const game = useMemo(() => new Chess(), []);
+
+  const [gamePosition, setGamePosition] = useState(game.fen());
+
+  function findBestMove() {
+    engine.evaluatePosition(game.fen());
+
+    engine.onMessage(({ bestMove }) => {
+      if (bestMove) {
+        game.move({
+          from: bestMove.substring(0, 2),
+          to: bestMove.substring(2, 4),
+          promotion: bestMove.substring(4, 5),
+        });
+
+        setGamePosition(game.fen());
+      }
+    });
+  }
+
+  function onDrop(sourceSquare, targetSquare, piece) {
+    const move = game.move({
+      from: sourceSquare,
+      to: targetSquare,
+      promotion: piece[1].toLowerCase() ?? "q",
+    });
+    setGamePosition(game.fen());
+
+    // illegal move
+    if (move === null) return false;
+
+    // exit if the game is over
+    if (game.game_over() || game.in_draw()) return false;
+
+    findBestMove();
+
+    return true;
+  }
+
+  const [activeSquare, setActiveSquare] = useState("");
+
+  const threeDPieces = useMemo(() => {
+    const pieces = [
+      { piece: "wP", pieceHeight: 1 },
+      { piece: "wN", pieceHeight: 1.2 },
+      { piece: "wB", pieceHeight: 1.2 },
+      { piece: "wR", pieceHeight: 1.2 },
+      { piece: "wQ", pieceHeight: 1.5 },
+      { piece: "wK", pieceHeight: 1.6 },
+      { piece: "bP", pieceHeight: 1 },
+      { piece: "bN", pieceHeight: 1.2 },
+      { piece: "bB", pieceHeight: 1.2 },
+      { piece: "bR", pieceHeight: 1.2 },
+      { piece: "bQ", pieceHeight: 1.5 },
+      { piece: "bK", pieceHeight: 1.6 },
+    ];
+
+    const pieceComponents = {};
+    pieces.forEach(({ piece, pieceHeight }) => {
+      pieceComponents[piece] = ({ squareWidth, square }) => (
+        <div
+          style={{
+            width: squareWidth,
+            height: squareWidth,
+            position: "relative",
+            pointerEvents: "none",
+          }}
+        >
+          <img
+            src={`/3d-pieces/${piece}.webp`}
+            width={squareWidth}
+            height={pieceHeight * squareWidth}
+            style={{
+              position: "absolute",
+              bottom: `${0.2 * squareWidth}px`,
+              objectFit: piece[1] === "K" ? "contain" : "cover",
+            }}
+          />
+        </div>
+      );
+    });
+    return pieceComponents;
+  }, []);
+
+  return (
+    <div style={boardWrapper}>
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <button
+          style={buttonStyle}
+          onClick={() => {
+            game.reset();
+            setGamePosition(game.fen());
+          }}
+        >
+          Reset
+        </button>
+        <button
+          style={buttonStyle}
+          onClick={() => {
+            game.undo();
+            game.undo();
+            setGamePosition(game.fen());
+          }}
+        >
+          Undo
+        </button>
+      </div>
+      <Chessboard
+        id="Styled3DBoard"
+        position={gamePosition}
+        onPieceDrop={onDrop}
+        customBoardStyle={{
+          transform: "rotateX(27.5deg)",
+          transformOrigin: "center",
+          border: "16px solid #b8836f",
+          borderStyle: "outset",
+          borderRightColor: " #b27c67",
+          borderRadius: "4px",
+          boxShadow: "rgba(0, 0, 0, 0.5) 2px 24px 24px 8px",
+          borderRightWidth: "2px",
+          borderLeftWidth: "2px",
+          borderTopWidth: "0px",
+          borderBottomWidth: "18px",
+          borderTopLeftRadius: "8px",
+          borderTopRightRadius: "8px",
+          padding: "8px 8px 12px",
+          background: "#e0c094",
+          backgroundImage: 'url("wood-pattern.png")',
+          backgroundSize: "cover",
+        }}
+        customPieces={threeDPieces}
+        customLightSquareStyle={{
+          backgroundColor: "#e0c094",
+          backgroundImage: 'url("wood-pattern.png")',
+          backgroundSize: "cover",
+        }}
+        customDarkSquareStyle={{
+          backgroundColor: "#865745",
+          backgroundImage: 'url("wood-pattern.png")',
+          backgroundSize: "cover",
+        }}
+        animationDuration={500}
+        customSquareStyles={{
+          [activeSquare]: {
+            boxShadow: "inset 0 0 1px 6px rgba(255,255,255,0.75)",
+          },
+        }}
+        onMouseOverSquare={(sq) => setActiveSquare(sq)}
+        onMouseOutSquare={(sq) => setActiveSquare("")}
+      />
     </div>
   );
 };
@@ -739,7 +871,197 @@ export const CustomSquare = () => {
 
   return (
     <div style={boardWrapper}>
-      <Chessboard id="CustomSquare" customSquare={CustomSquareRenderer} />
+      <Chessboard
+        id="CustomSquare"
+        customSquare={CustomSquareRenderer}
+        showBoardNotation={false}
+      />
+    </div>
+  );
+};
+
+//////////////////////////////////
+////////// AnalysisBoard //////////
+///////////////////////////////////
+
+export const AnalysisBoard = () => {
+  const engine = useMemo(() => new Engine(), []);
+  const game = useMemo(() => new Chess(), []);
+  const inputRef = useRef<HTMLInputElement>();
+  const [chessBoardPosition, setChessBoardPosition] = useState(game.fen());
+  const [positionEvaluation, setPositionEvaluation] = useState(0);
+  const [depth, setDepth] = useState(10);
+  const [bestLine, setBestline] = useState("");
+  const [possibleMate, setPossibleMate] = useState("");
+
+  function findBestMove() {
+    engine.evaluatePosition(chessBoardPosition, 18);
+
+    engine.onMessage(({ positionEvaluation, possibleMate, pv, depth }) => {
+      if (depth < 10) return;
+
+      positionEvaluation &&
+        setPositionEvaluation(
+          ((game.turn() === "w" ? 1 : -1) * Number(positionEvaluation)) / 100
+        );
+      possibleMate && setPossibleMate(possibleMate);
+      depth && setDepth(depth);
+      pv && setBestline(pv);
+    });
+  }
+
+  function onDrop(sourceSquare, targetSquare, piece) {
+    const move = game.move({
+      from: sourceSquare,
+      to: targetSquare,
+      promotion: piece[1].toLowerCase() ?? "q",
+    });
+    setPossibleMate("");
+    setChessBoardPosition(game.fen());
+
+    // illegal move
+    if (move === null) return false;
+
+    engine.stop();
+    setBestline("");
+
+    if (game.game_over() || game.in_draw()) return false;
+
+    return true;
+  }
+
+  useEffect(() => {
+    if (!game.game_over() || game.in_draw()) {
+      findBestMove();
+    }
+  }, [chessBoardPosition]);
+
+  const bestMove = bestLine?.split(" ")?.[0];
+  const handleFenInputChange = (e) => {
+    const { valid } = game.validate_fen(e.target.value);
+
+    if (valid) {
+      inputRef.current.value = e.target.value;
+      game.load(e.target.value);
+      setChessBoardPosition(game.fen());
+    }
+  };
+  return (
+    <div style={boardWrapper}>
+      <h4>
+        Position Evaluation:{" "}
+        {possibleMate ? `#${possibleMate}` : positionEvaluation}
+        {"; "}
+        Depth: {depth}
+      </h4>
+      <h5>
+        Best line: <i>{bestLine.slice(0, 40)}</i> ...
+      </h5>
+      <input
+        ref={inputRef}
+        style={{ ...inputStyle, width: "90%" }}
+        onChange={handleFenInputChange}
+        placeholder="Paste FEN to start analysing custom position"
+      />
+      <Chessboard
+        id="AnalysisBoard"
+        position={chessBoardPosition}
+        onPieceDrop={onDrop}
+        customBoardStyle={{
+          borderRadius: "4px",
+          boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
+        }}
+        customArrows={
+          bestMove && [
+            [
+              bestMove.substring(0, 2) as Square,
+              bestMove.substring(2, 4) as Square,
+              "rgb(0, 128, 0)",
+            ],
+          ]
+        }
+      />
+      <button
+        style={buttonStyle}
+        onClick={() => {
+          setPossibleMate("");
+          setBestline("");
+          game.reset();
+          setChessBoardPosition(game.fen());
+        }}
+      >
+        reset
+      </button>
+      <button
+        style={buttonStyle}
+        onClick={() => {
+          setPossibleMate("");
+          setBestline("");
+          game.undo();
+          setChessBoardPosition(game.fen());
+        }}
+      >
+        undo
+      </button>
+    </div>
+  );
+};
+
+export const BoardWithCustomArrows = () => {
+  const colorVariants = [
+    "darkred",
+    "#48AD7E",
+    "rgb(245, 192, 0)",
+    "#093A3E",
+    "#F75590",
+    "#F3752B",
+    "#058ED9",
+  ];
+  const [activeColor, setActiveColor] = useState(colorVariants[0]);
+  return (
+    <div style={boardWrapper}>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <div>Choose arrow color</div>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          {colorVariants.map((color) => (
+            <div
+              style={{
+                width: "24px",
+                height: "24px",
+                background: color,
+                borderRadius: "50%",
+                cursor: "pointer",
+                margin: "16px 6px",
+                transform: color === activeColor ? "scale(1.5)" : "none",
+                transition: "all 0.15s ease-in",
+              }}
+              onClick={() => setActiveColor(color)}
+            />
+          ))}
+        </div>
+      </div>
+      <Chessboard
+        id="BoardWithCustomArrows"
+        customArrows={[
+          ["a2", "a3", colorVariants[0]],
+          ["b2", "b4", colorVariants[1]],
+          ["c2", "c5", colorVariants[2]],
+        ]}
+        customArrowColor={activeColor}
+        onArrowsChange={console.log}
+      />
     </div>
   );
 };

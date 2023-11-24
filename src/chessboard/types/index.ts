@@ -111,6 +111,7 @@ export type CustomSquareRenderer =
 export type CustomPieceFnArgs = {
   isDragging: boolean;
   squareWidth: number;
+  square?: Square;
 };
 
 export type CustomPieceFn = (args: CustomPieceFnArgs) => ReactElement;
@@ -128,6 +129,8 @@ export type BoardOrientation = "white" | "black";
 export type DropOffBoardAction = "snapback" | "trash";
 
 export type Coords = { x: number; y: number };
+
+export type Arrow = [Square, Square, string?];
 
 export type ChessboardProps = {
   /**
@@ -165,10 +168,12 @@ export type ChessboardProps = {
    */
   clearPremovesOnRightClick?: boolean;
   /**
-   * Array of custom arrows to draw on the board. Each arrow within the array must be an array of length 2 with strings denoting the from and to square to draw the arrow e.g. [ ['a3', 'a5'], ['g1', 'f3'] ].
+   * Array where each element is a tuple containing two Square values (representing the 'from' and 'to' squares) and an optional third string element for the arrow color
+   * e.g. [ ['a3', 'a5', 'red'], ['b1, 'd5] ].
+   * If third element in array is missing arrow will have `customArrowColor` or default color value
    * @default []
    */
-  customArrows?: Square[][];
+  customArrows?: Arrow[];
   /**
    * String with rgb or hex value to colour drawn arrows.
    * @default rgb(255,170,0)
@@ -252,7 +257,7 @@ export type ChessboardProps = {
    * User function is run when arrows are set on the board.
    * @default () => {}
    */
-  onArrowsChange?: (squares: Square[][]) => void;
+  onArrowsChange?: (squares: Arrow[]) => void;
   /**
    * User function that is run when piece is dragged over a square.
    * @default () => {}
