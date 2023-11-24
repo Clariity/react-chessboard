@@ -380,3 +380,11 @@ export type ChessboardProps = {
    */
   onBoardWidthChange?: (boardWidth: number) => void;
 };
+
+export type ChessboardDnDProviderProps = {
+  children: ReactNode;
+  backend?: BackendFactory;
+  context?: unknown;
+  options?: unknown;
+  debugMode?: boolean;
+};

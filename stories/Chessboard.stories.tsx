@@ -1,10 +1,13 @@
 import React, { forwardRef, useEffect, useRef, useState, useMemo } from "react";
-import { DndProvider } from "react-dnd";
-import { TouchBackend } from "react-dnd-touch-backend";
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 import Chess from "chess.js";
 
-import { Chessboard, ClearPremoves, SparePiece } from "../src";
+import {
+  Chessboard,
+  ClearPremoves,
+  SparePiece,
+  ChessboardDnDProvider,
+} from "../src";
 import { CustomSquareProps, Piece, Square } from "../src/chessboard/types";
 import Engine from "./stockfish/engine";
 
@@ -1070,33 +1073,20 @@ export const BoardWithCustomArrows = () => {
 ////////// ManualBoardEditor //////
 ///////////////////////////////////
 export const ManualBoardEditor = () => {
-  const [game, setGame] = useState(new Chess());
+  const game = useMemo(() => new Chess("8/8/8/8/8/8/8/8 w - - 0 1"), []); // empty board
   const [boardOrientation, setBoardOrientation] =
     useState<"white" | "black">("white");
-  const [boardWidth, setBoardWidth] = useState(0);
-
+  const [boardWidth, setBoardWidth] = useState(360);
   const [fenPosition, setFenPosition] = useState(game.fen());
-  function safeGameMutate(modify) {
-    setGame((g) => {
-      const update = { ...g };
-      modify(update);
-      return update;
-    });
-  }
-
-  useEffect(() => {
-    setFenPosition(game.fen());
-  }, [game]);
 
   const handleSparePieceDrop = (piece, targetSquare) => {
     const color = piece[0];
     const type = piece[1].toLowerCase();
-    const gameCopy = { ...game };
 
-    const success = gameCopy.put({ type, color }, targetSquare);
+    const success = game.put({ type, color }, targetSquare);
 
     if (success) {
-      setGame(gameCopy);
+      setFenPosition(game.fen());
     } else {
       alert(
         `The board already contains ${color === "w" ? "WHITE" : "BLACK"} KING`
@@ -1109,23 +1099,20 @@ export const ManualBoardEditor = () => {
   const handlePieceDrop = (sourceSquare, targetSquare, piece) => {
     const color = piece[0];
     const type = piece[1].toLowerCase();
-    const gameCopy = { ...game };
 
-    gameCopy.remove(sourceSquare);
-    gameCopy.remove(targetSquare);
-    const success = gameCopy.put({ type, color }, targetSquare);
+    // this is hack to avoid chess.js bug, which I've fixed in the latest version https://github.com/jhlywa/chess.js/pull/426
+    game.remove(sourceSquare);
+    game.remove(targetSquare);
+    const success = game.put({ type, color }, targetSquare);
 
-    if (success) setGame(gameCopy);
+    if (success) setFenPosition(game.fen());
 
     return success;
   };
 
-  const handlePieceDropOffBoard = (sourceSquare, piece) => {
-    const gameCopy = { ...game };
-
-    gameCopy.remove(sourceSquare);
-
-    setGame(gameCopy);
+  const handlePieceDropOffBoard = (sourceSquare) => {
+    game.remove(sourceSquare);
+    setFenPosition(game.fen());
   };
 
   const handleFenInputChange = (e) => {
@@ -1134,10 +1121,8 @@ export const ManualBoardEditor = () => {
 
     setFenPosition(fen);
     if (valid) {
-      const gameCopy = { ...game };
-
-      gameCopy.load(fen);
-      setGame(gameCopy);
+      game.load(fen);
+      setFenPosition(game.fen());
     }
   };
   const pieces = [
@@ -1163,11 +1148,7 @@ export const ManualBoardEditor = () => {
         maxWidth: "60vh",
       }}
     >
-      <DndProvider
-        backend={TouchBackend}
-        context={window}
-        options={{ enableMouseEvents: true }}
-      >
+      <ChessboardDnDProvider>
         <div>
           <div
             style={{
@@ -1185,7 +1166,6 @@ export const ManualBoardEditor = () => {
             ))}
           </div>
           <Chessboard
-            useCustomDnDProvider
             onBoardWidthChange={setBoardWidth}
             id="ManualBoardEditor"
             boardOrientation={boardOrientation}
@@ -1219,9 +1199,8 @@ export const ManualBoardEditor = () => {
           <button
             style={buttonStyle}
             onClick={() => {
-              safeGameMutate((game) => {
-                game.reset();
-              });
+              game.reset();
+              setFenPosition(game.fen());
             }}
           >
             Start position ♟️
@@ -1229,9 +1208,8 @@ export const ManualBoardEditor = () => {
           <button
             style={buttonStyle}
             onClick={() => {
-              safeGameMutate((game) => {
-                game.clear();
-              });
+              game.clear();
+              setFenPosition(game.fen());
             }}
           >
             Clear board 🗑️
@@ -1253,7 +1231,7 @@ export const ManualBoardEditor = () => {
           onChange={handleFenInputChange}
           placeholder="Paste FEN position to start editing"
         />
-      </DndProvider>
+      </ChessboardDnDProvider>
     </div>
   );
 };
