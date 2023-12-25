@@ -90,7 +90,10 @@ export function Piece({
     if (premoves.find((p) => p.sourceSq === square && p.piece === piece))
       hidePiece = true;
 
-    // TODO: If a premoved piece returns to a premoved square, it will hide (e1, e2, e1)
+    // The last premoved piece should always be visible
+    if (isPremovedPiece && premoves.at(-1)?.targetSq === square) {
+      hidePiece = false;
+    }
 
     setPieceStyle((oldPieceStyle) => ({
       ...oldPieceStyle,
