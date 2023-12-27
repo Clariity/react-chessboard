@@ -12,7 +12,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "rm -rf /dist && rollup -c",
+    "build": "set NODE_ENV=production && rm -rf /dist && rollup -c",
     "test": "echo \"Error: no test specified\" && exit 1",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
