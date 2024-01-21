@@ -4,8 +4,9 @@ import { Arrows } from "./Arrows";
 import { useChessboard } from "../context/chessboard-context";
 import { PromotionDialog } from "./PromotionDialog";
 import { WhiteKing } from "./ErrorBoundary";
+import { ResizableButton } from "./ResizeButton";
 
-export function Board() {
+export function Board({ boardContainer, setBoardWidth }: any) {
   const boardRef = useRef<HTMLDivElement>(null);
 
   const {
@@ -66,6 +67,11 @@ export function Board() {
             <PromotionDialog />
           </>
         )}
+        <ResizableButton
+          initialBoardWidth={boardWidth}
+          boardContainer={boardContainer}
+          setBoardWidth={setBoardWidth}
+        />
       </div>
     </div>
   ) : (

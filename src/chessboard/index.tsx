@@ -82,6 +82,7 @@ export const Chessboard = forwardRef<ClearPremoves, ChessboardProps>(
           style={{
             display: "flex",
             flexDirection: "column",
+            alignItems: "center",
             width: "100%",
           }}
         >
@@ -98,7 +99,10 @@ export const Chessboard = forwardRef<ClearPremoves, ChessboardProps>(
                 ref={ref}
               >
                 <CustomDragLayer boardContainer={boardContainerPos} />
-                <Board />
+                <Board
+                  boardContainer={boardContainerPos}
+                  setBoardWidth={setBoardWidth}
+                />
               </ChessboardProvider>
             )}
           </DndProvider>

@@ -1063,3 +1063,45 @@ export const BoardWithCustomArrows = () => {
     </div>
   );
 };
+
+///////////////////////////////////
+////////// ResizableBoard ///////////
+///////////////////////////////////
+export const ResizableBoard = () => {
+  const emptyPanelStyle = {
+    background: "#f0d9b5",
+    borderRadius: "16px",
+    border: "2px solid #b58863",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    flex: "1 1 auto",
+    margin: " 0px 24px 24px",
+  };
+  return (
+    <>
+      <div style={{ display: "flex" }}>
+        <div style={emptyPanelStyle}>Left Panel</div>
+        <div
+          style={{
+            flex: "0 0 360px",
+            marginBottom: "24px",
+          }}
+        >
+          <Chessboard
+            id="ResizableBoard"
+            customBoardStyle={{
+              borderRadius: "4px",
+              boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
+            }}
+          />
+          <button style={buttonStyle}>Button 1</button>
+          <button style={buttonStyle}>Button 2</button>
+          <button style={buttonStyle}>Button 3</button>
+        </div>
+        <div style={emptyPanelStyle}>Right Panel</div>
+      </div>
+      <div style={{ ...emptyPanelStyle, minHeight: "240px" }}>Bottom Panel</div>
+    </>
+  );
+};
