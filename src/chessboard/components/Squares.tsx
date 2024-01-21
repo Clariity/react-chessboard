@@ -6,6 +6,12 @@ import { Notation } from "./Notation";
 import { Piece } from "./Piece";
 import { Square } from "./Square";
 
+// this type shows the exact route of each premoved piece
+type PremovoesHistory = {
+  piece: Pc;
+  premovesRoute: { sourceSq: Sq; targetSq: Sq; index: number }[];
+}[];
+
 export function Squares() {
   const [squares, setSquares] = useState<{ [square in Sq]?: Coords }>({});
 
@@ -19,31 +25,30 @@ export function Squares() {
     showBoardNotation,
   } = useChessboard();
 
-  const premovesHistory: any[] = useMemo(() => {
-    const result: any[] = [];
+  const premovesHistory: PremovoesHistory = useMemo(() => {
+    const result: PremovoesHistory = [];
     // if premoves aren't allowed, don't waste time on calculations
     if (!arePremovesAllowed) return [];
 
     premoves.forEach((premove, index) => {
       const { sourceSq, targetSq, piece } = premove;
 
-      // find is the premove made by already premoved piece or not
+      // find  wheter is the premove made by already premoved piece or not
       const relatedPremovedPiece = result.find(
-        (p) => p.piece === piece && p.premovesRoute.at(-1).targetSq === sourceSq
+        (p) =>
+          p.piece === piece && p.premovesRoute.at(-1)?.targetSq === sourceSq
       );
 
-      // if premove has been made by already premoved piece then write the move to its `premovesRoute` field to be able find its final destination
+      // if premove has been made by already premoved piece then write the move to its `premovesRoute` field to be able find its final destination later
       if (relatedPremovedPiece) {
-        relatedPremovedPiece.premovesRoute.push({ sourceSq, targetSq });
-        relatedPremovedPiece.index = index;
+        relatedPremovedPiece.premovesRoute.push({ sourceSq, targetSq, index });
       }
       // if premove has been made by standard piece creeate new object in `premovesHistory` where we will keep its own premoves
       else {
         result.push({
           piece,
-          premovesRoute: [{ sourceSq, targetSq }],
           // index is useful for scenarios when two or more pieces were targetted to the same square
-          index,
+          premovesRoute: [{ sourceSq, targetSq, index }],
         });
       }
     });
@@ -76,10 +81,14 @@ export function Squares() {
               const squareHasPremoveTarget = premovesHistory
                 .filter(
                   ({ premovesRoute }) =>
-                    premovesRoute.at(-1).targetSq === square
+                    premovesRoute.at(-1)?.targetSq === square
                 )
                 //the premoved piece with the higher index will be shown, as it is the latest one
-                .sort((a, b) => b.index - a.index)
+                .sort(
+                  (a, b) =>
+                    b.premovesRoute.at(-1)?.index! -
+                    a.premovesRoute.at(-1)?.index!
+                )
                 .at(0);
 
               return (
