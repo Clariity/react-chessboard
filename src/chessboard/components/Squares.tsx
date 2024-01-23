@@ -7,7 +7,7 @@ import { Piece } from "./Piece";
 import { Square } from "./Square";
 
 // this type shows the exact route of each premoved piece
-type PremovoesHistory = {
+type PremovesHistory = {
   piece: Pc;
   premovesRoute: { sourceSq: Sq; targetSq: Sq; index: number }[];
 }[];
@@ -25,15 +25,15 @@ export function Squares() {
     showBoardNotation,
   } = useChessboard();
 
-  const premovesHistory: PremovoesHistory = useMemo(() => {
-    const result: PremovoesHistory = [];
+  const premovesHistory: PremovesHistory = useMemo(() => {
+    const result: PremovesHistory = [];
     // if premoves aren't allowed, don't waste time on calculations
     if (!arePremovesAllowed) return [];
 
     premoves.forEach((premove, index) => {
       const { sourceSq, targetSq, piece } = premove;
 
-      // find  wheter is the premove made by already premoved piece or not
+      // determine if the premove is made by an already premoved piece
       const relatedPremovedPiece = result.find(
         (p) =>
           p.piece === piece && p.premovesRoute.at(-1)?.targetSq === sourceSq
@@ -43,11 +43,11 @@ export function Squares() {
       if (relatedPremovedPiece) {
         relatedPremovedPiece.premovesRoute.push({ sourceSq, targetSq, index });
       }
-      // if premove has been made by standard piece creeate new object in `premovesHistory` where we will keep its own premoves
+      // if premove has been made by standard piece create new object in `premovesHistory` where we will keep its own premoves
       else {
         result.push({
           piece,
-          // index is useful for scenarios when two or more pieces were targetted to the same square
+          // index is useful for scenarios where two or more pieces are targeting the same square
           premovesRoute: [{ sourceSq, targetSq, index }],
         });
       }
