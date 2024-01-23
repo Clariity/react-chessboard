@@ -51,6 +51,7 @@ export function Square({
     setPromoteFromSquare,
     setPromoteToSquare,
     setShowPromoteDialog,
+    handleSparePieceDrop,
   } = useChessboard();
 
   const [{ isOver }, drop] = useDrop(
@@ -70,7 +71,16 @@ export function Square({
     ]
   );
 
-  function handleDrop(item: { piece: Piece; square: Sq; id: number }) {
+  function handleDrop(item: {
+    piece: Piece;
+    isSpare?: boolean;
+    square: Sq;
+    id: number;
+  }) {
+    if (item.isSpare) {
+      handleSparePieceDrop(item.piece, square);
+      return;
+    }
     if (onPromotionCheck(item.square, square, item.piece)) {
       if (autoPromoteToQueen) {
         handleSetPosition(
