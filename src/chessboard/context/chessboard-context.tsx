@@ -50,6 +50,7 @@ interface ChessboardProviderContext {
   boardWidth: RequiredChessboardProps["boardWidth"];
   customArrowColor: RequiredChessboardProps["customArrowColor"];
   customBoardStyle: ChessboardProps["customBoardStyle"];
+  customNotationStyle: ChessboardProps["customNotationStyle"];
   customDarkSquareStyle: RequiredChessboardProps["customDarkSquareStyle"];
   customDropSquareStyle: RequiredChessboardProps["customDropSquareStyle"];
   customLightSquareStyle: RequiredChessboardProps["customLightSquareStyle"];
@@ -123,6 +124,7 @@ export const ChessboardProvider = forwardRef(
       customArrows,
       customArrowColor = "rgb(255,170,0)",
       customBoardStyle,
+      customNotationStyle,
       customDarkSquareStyle = { backgroundColor: "#B58863" },
       customDropSquareStyle = {
         boxShadow: "inset 0 0 1px 6px rgba(255,255,255,0.75)",
@@ -455,6 +457,7 @@ export const ChessboardProvider = forwardRef(
       boardWidth,
       customArrowColor,
       customBoardStyle,
+      customNotationStyle,
       customDarkSquareStyle,
       customDropSquareStyle,
       customLightSquareStyle,

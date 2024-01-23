@@ -12,6 +12,7 @@ export function Notation({ row, col }: NotationProps) {
     boardWidth,
     customDarkSquareStyle,
     customLightSquareStyle,
+    customNotationStyle,
   } = useChessboard();
 
   const whiteColor = customLightSquareStyle.backgroundColor;
@@ -37,7 +38,7 @@ export function Notation({ row, col }: NotationProps) {
             zIndex: 3,
             position: "absolute",
             ...{ color: whiteColor },
-            ...numericStyle(boardWidth),
+            ...numericStyle(boardWidth, customNotationStyle),
           }}
         >
           {getRow()}
@@ -47,7 +48,7 @@ export function Notation({ row, col }: NotationProps) {
             zIndex: 3,
             position: "absolute",
             ...{ color: whiteColor },
-            ...alphaStyle(boardWidth),
+            ...alphaStyle(boardWidth, customNotationStyle),
           }}
         >
           {getColumn()}
@@ -64,7 +65,7 @@ export function Notation({ row, col }: NotationProps) {
           zIndex: 3,
           position: "absolute",
           ...{ color: col % 2 !== 0 ? blackColor : whiteColor },
-          ...alphaStyle(boardWidth),
+          ...alphaStyle(boardWidth, customNotationStyle),
         }}
       >
         {getColumn()}
@@ -82,7 +83,7 @@ export function Notation({ row, col }: NotationProps) {
           ...(boardOrientation === "black"
             ? { color: row % 2 === 0 ? blackColor : whiteColor }
             : { color: row % 2 === 0 ? blackColor : whiteColor }),
-          ...numericStyle(boardWidth),
+          ...numericStyle(boardWidth, customNotationStyle),
         }}
       >
         {getRow()}
@@ -105,14 +106,16 @@ export function Notation({ row, col }: NotationProps) {
   return null;
 }
 
-const alphaStyle = (width: number) => ({
+const alphaStyle = (width: number, customNotationStyle?: Record<string, string | number>) => ({
   alignSelf: "flex-end",
   paddingLeft: width / 8 - width / 48,
   fontSize: width / 48,
+  ...customNotationStyle
 });
 
-const numericStyle = (width: number) => ({
+const numericStyle = (width: number, customNotationStyle?: Record<string, string | number>) => ({
   alignSelf: "flex-start",
   paddingRight: width / 8 - width / 48,
   fontSize: width / 48,
+  ...customNotationStyle
 });
