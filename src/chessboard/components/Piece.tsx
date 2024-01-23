@@ -21,7 +21,6 @@ export function Piece({
   const {
     animationDuration,
     arePiecesDraggable,
-    arePremovesAllowed,
     boardWidth,
     boardOrientation,
     chessPieces,
@@ -33,7 +32,6 @@ export function Piece({
     onPieceDragBegin,
     onPieceDragEnd,
     positionDifferences,
-    premoves,
     onPromotionCheck,
   } = useChessboard();
 
@@ -73,30 +71,6 @@ export function Piece({
       opacity: isDragging ? 0 : 1,
     }));
   }, [isDragging]);
-
-  // hide piece on matching premoves
-  useEffect(() => {
-    // if premoves aren't allowed, don't waste time on calculations
-    if (!arePremovesAllowed) return;
-
-    let hidePiece = false;
-    // side effect: if piece moves into pre-moved square, its hidden
-
-    // if there are any premove targets on this square, hide the piece underneath
-    if (!isPremovedPiece && premoves.find((p) => p.targetSq === square))
-      hidePiece = true;
-
-    // if sourceSq === sq and piece matches then this piece has been pre-moved elsewhere?
-    if (premoves.find((p) => p.sourceSq === square && p.piece === piece))
-      hidePiece = true;
-
-    // TODO: If a premoved piece returns to a premoved square, it will hide (e1, e2, e1)
-
-    setPieceStyle((oldPieceStyle) => ({
-      ...oldPieceStyle,
-      display: hidePiece ? "none" : "unset",
-    }));
-  }, [currentPosition, premoves]);
 
   // new move has come in
   // if waiting for animation, then animation has started and we can perform animation
