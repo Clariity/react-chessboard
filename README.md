@@ -51,6 +51,7 @@ npm i react-chessboard
 - Customisable Board Styles
 - Customisable Pieces
 - Customisable Square Styles
+- Customisable Notation Styles
 - Drag and Drop
 - Draw Arrows with Drag or Props
 - Mobile Compatibility
