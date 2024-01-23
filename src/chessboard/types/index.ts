@@ -195,7 +195,7 @@ export type ChessboardProps = {
    */
   customBoardStyle?: Record<string, string | number>;
   /**
-   * Custom notation style object e.g. {fontSize: '12px'}
+   * Custom notation style object e.g. { fontSize: '12px' }
    * @default {}
    */
   customNotationStyle?: Record<string, string | number>;
