@@ -113,6 +113,20 @@ export function Square({
       style={defaultSquareStyle}
       data-square-color={squareColor}
       data-square={square}
+      onTouchMove={(e) => {
+        // Handle touch events on tablet and mobile not covered by onMouseOver
+        const touchLocation = e.touches[0];
+        const touchElement = document.elementsFromPoint(
+          touchLocation.clientX,
+          touchLocation.clientY
+        );
+        const square = touchElement
+          ?.find((el) => el.getAttribute("data-square"))
+          ?.getAttribute("data-square") as Sq;
+        if (square) {
+          onMouseOverSquare(square);
+        }
+      }}
       onMouseOver={(e) => {
         // noop if moving from child of square into square.
 
