@@ -40,28 +40,29 @@ export const Arrows = () => {
           boardWidth,
           arrowEndField
         );
-        let ARROW_LENGTH_REDUCER = boardWidth / 32;
+        let ARROW_LENGTH_REDUCER = boardWidth / 64;
 
         const isArrowActive = i === arrows.length;
-        // if there are different arrows targeting the same square make their length a bit shorter
-        if (
-          arrows.some(
-            (restArrow) =>
-              restArrow[0] !== arrowStartField && restArrow[1] === arrowEndField
-          ) &&
-          !isArrowActive
-        ) {
-          ARROW_LENGTH_REDUCER = boardWidth / 16;
-        }
         const dx = to.x - from.x;
         const dy = to.y - from.y;
-
         const r = Math.hypot(dy, dx);
 
         const end = {
           x: from.x + (dx * (r - ARROW_LENGTH_REDUCER)) / r,
           y: from.y + (dy * (r - ARROW_LENGTH_REDUCER)) / r,
         };
+        const mid = {
+          x: from.x,
+          y: end.y,
+        };
+
+        const isKnightMove =
+          Math.abs(dx) === 2 * Math.abs(dy) ||
+          Math.abs(dy) === 2 * Math.abs(dx);
+
+        let pathD = isKnightMove
+          ? `M${from.x},${from.y} L${mid.x},${mid.y} L${end.x},${end.y}`
+          : `M${from.x},${from.y} L${end.x},${end.y}`;
 
         return (
           <Fragment
@@ -82,17 +83,15 @@ export const Arrows = () => {
                 fill={arrowColor ?? primaryArrowCollor}
               />
             </marker>
-            <line
-              x1={from.x}
-              y1={from.y}
-              x2={end.x}
-              y2={end.y}
+            <path
+              d={pathD}
               opacity={isArrowActive ? "0.5" : "0.65"}
               stroke={arrowColor ?? primaryArrowCollor}
               strokeWidth={
                 isArrowActive ? (0.9 * boardWidth) / 40 : boardWidth / 40
               }
               markerEnd={`url(#arrowhead-${i})`}
+              fill="transparent"
             />
           </Fragment>
         );
