@@ -40,26 +40,58 @@ export const Arrows = () => {
           boardWidth,
           arrowEndField
         );
-        let ARROW_LENGTH_REDUCER = boardWidth / 64;
 
-        const isArrowActive = i === arrows.length;
         const dx = to.x - from.x;
         const dy = to.y - from.y;
         const r = Math.hypot(dy, dx);
+
+        const isArrowActive = i === arrows.length;
+
+        // Knight move is where the move is a 2:1 ratio, but to limit it to legal knight moves
+        // we check the difference between the start and end rank is 2 or less
+        const isKnightMove =
+          (Math.abs(dx) === 2 * Math.abs(dy) ||
+            Math.abs(dy) === 2 * Math.abs(dx)) &&
+          Math.abs(
+            parseInt(arrowStartField.split("")[1]) -
+              parseInt(arrowEndField.split("")[1])
+          ) <= 2;
+
+        let ARROW_LENGTH_REDUCER = boardWidth / 32;
+        // if there are different arrows targeting the same square make their length a bit shorter
+        if (
+          arrows.some(
+            (restArrow) =>
+              restArrow[0] !== arrowStartField && restArrow[1] === arrowEndField
+          ) &&
+          !isArrowActive
+        ) {
+          // Knight move should be reduced by less than normal arrows
+          // to allow for up to 8 arrows into one square nicely
+          ARROW_LENGTH_REDUCER = isKnightMove
+            ? boardWidth / 24
+            : boardWidth / 16;
+        }
 
         const end = {
           x: from.x + (dx * (r - ARROW_LENGTH_REDUCER)) / r,
           y: from.y + (dy * (r - ARROW_LENGTH_REDUCER)) / r,
         };
-        const mid = {
-          x: from.x,
-          y: end.y,
-        };
+        // The mid point is only used in Knight move drawing
+        // and here we prioritise drawing along the long edge
+        // by defining the midpoint depending on which is bigger X or Y
+        const mid =
+          Math.abs(dx) < Math.abs(dy)
+            ? {
+                x: from.x,
+                y: end.y,
+              }
+            : {
+                x: end.x,
+                y: from.y,
+              };
 
-        const isKnightMove =
-          Math.abs(dx) === 2 * Math.abs(dy) ||
-          Math.abs(dy) === 2 * Math.abs(dx);
-
+        // Define the path, either with or without a mid point
         let pathD = isKnightMove
           ? `M${from.x},${from.y} L${mid.x},${mid.y} L${end.x},${end.y}`
           : `M${from.x},${from.y} L${end.x},${end.y}`;
@@ -91,7 +123,7 @@ export const Arrows = () => {
                 isArrowActive ? (0.9 * boardWidth) / 40 : boardWidth / 40
               }
               markerEnd={`url(#arrowhead-${i})`}
-              fill="transparent"
+              fill="none"
             />
           </Fragment>
         );
