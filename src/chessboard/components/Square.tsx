@@ -150,7 +150,10 @@ export function Square({
       }}
       onDragEnter={() => onDragOverSquare(square)}
       onClick={() => {
-        onSquareClick(square);
+        const piece = Array.isArray(children)
+          ? children.find((c) => c?.props?.piece)?.props?.piece
+          : undefined;
+        onSquareClick(square, piece);
         clearArrows();
       }}
       onContextMenu={(e) => {

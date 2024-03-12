@@ -291,7 +291,7 @@ export type ChessboardProps = {
    * User function that is run when piece is clicked.
    * @default () => {}
    */
-  onPieceClick?: (piece: Piece) => any;
+  onPieceClick?: (piece: Piece, square: Square) => any;
   /**
    * User function that is run when piece is grabbed to start dragging.
    * @default () => {}
@@ -331,7 +331,7 @@ export type ChessboardProps = {
    * User function that is run when a square is clicked.
    * @default () => {}
    */
-  onSquareClick?: (square: Square) => any;
+  onSquareClick?: (square: Square, piece: Piece | undefined) => any;
   /**
    * User function that is run when a square is right clicked.
    * @default () => {}
