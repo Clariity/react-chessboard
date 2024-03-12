@@ -68,7 +68,7 @@ interface ChessboardProviderContext {
   onPieceDragEnd: RequiredChessboardProps["onPieceDragEnd"];
   onPieceDrop: RequiredChessboardProps["onPieceDrop"];
   onPromotionCheck: RequiredChessboardProps["onPromotionCheck"];
-  onPromotionPieceSelect: ChessboardProps["onPromotionPieceSelect"];
+  onPromotionPieceSelect: RequiredChessboardProps["onPromotionPieceSelect"];
   onSquareClick: RequiredChessboardProps["onSquareClick"];
   promotionDialogVariant: RequiredChessboardProps["promotionDialogVariant"];
   showBoardNotation: RequiredChessboardProps["showBoardNotation"];
@@ -158,7 +158,7 @@ export const ChessboardProvider = forwardRef(
           Math.abs(sourceSquare.charCodeAt(0) - targetSquare.charCodeAt(0)) <= 1
         );
       },
-      onPromotionPieceSelect,
+      onPromotionPieceSelect = () => true,
       onSquareClick = () => {},
       onSquareRightClick = () => {},
       position = "start",
