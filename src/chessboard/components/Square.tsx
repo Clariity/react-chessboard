@@ -116,7 +116,7 @@ export function Square({
       data-square-color={squareColor}
       data-square={square}
       onTouchMove={(e) => {
-        // Handle touch events on tablet and mobile not covered by onMouseOver
+        // Handle touch events on tablet and mobile not covered by onMouseOver/onDragEnter
         const touchLocation = e.touches[0];
         const touchElement = document.elementsFromPoint(
           touchLocation.clientX,
