@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useRef, useState } from "react";
+import { ReactNode, useEffect, useRef } from "react";
 import { useDrop } from "react-dnd";
 
 import { useChessboard } from "../context/chessboard-context";
@@ -51,6 +51,8 @@ export function Square({
     setPromoteFromSquare,
     setPromoteToSquare,
     setShowPromoteDialog,
+    lastSquareDraggedOver,
+    setLastSquareDraggedOver,
   } = useChessboard();
 
   const [{ isOver }, drop] = useDrop(
@@ -69,8 +71,6 @@ export function Square({
       lastPieceColour,
     ]
   );
-  const [lastSquareDraggedOver, setLastSquareDraggedOver] =
-    useState<Sq | null>(null);
 
   function handleDrop(item: { piece: Piece; square: Sq; id: number }) {
     if (onPromotionCheck(item.square, square, item.piece)) {
@@ -122,12 +122,12 @@ export function Square({
           touchLocation.clientX,
           touchLocation.clientY
         );
-        const square = touchElement
+        const draggedOverSquare = touchElement
           ?.find((el) => el.getAttribute("data-square"))
           ?.getAttribute("data-square") as Sq;
-        if (square && square !== lastSquareDraggedOver) {
-          setLastSquareDraggedOver(square);
-          onDragOverSquare(square);
+        if (draggedOverSquare && draggedOverSquare !== lastSquareDraggedOver) {
+          setLastSquareDraggedOver(draggedOverSquare);
+          onDragOverSquare(draggedOverSquare);
         }
       }}
       onMouseOver={(e) => {
