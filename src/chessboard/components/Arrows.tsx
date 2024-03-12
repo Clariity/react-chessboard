@@ -46,16 +46,7 @@ export const Arrows = () => {
         const r = Math.hypot(dy, dx);
 
         const isArrowActive = i === arrows.length;
-
-        // Knight move is where the move is a 2:1 ratio, but to limit it to legal knight moves
-        // we check the difference between the start and end rank is 2 or less
-        const isKnightMove =
-          (Math.abs(dx) === 2 * Math.abs(dy) ||
-            Math.abs(dy) === 2 * Math.abs(dx)) &&
-          Math.abs(
-            parseInt(arrowStartField.split("")[1]) -
-              parseInt(arrowEndField.split("")[1])
-          ) <= 2;
+        const isKnightMove = r === Math.hypot(1, 2) * (boardWidth / 8);
 
         let ARROW_LENGTH_REDUCER = boardWidth / 32;
         // if there are different arrows targeting the same square make their length a bit shorter
