@@ -66,11 +66,7 @@ export const Arrows = () => {
           ) &&
           !isArrowActive
         ) {
-          // Knight move should be reduced by less than normal arrows
-          // to allow for up to 8 arrows into one square nicely
-          ARROW_LENGTH_REDUCER = isKnightMove
-            ? boardWidth / 24
-            : boardWidth / 16;
+          ARROW_LENGTH_REDUCER = boardWidth / 16;
         }
 
         const end = {
