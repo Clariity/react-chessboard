@@ -42,18 +42,14 @@ export function PromotionOption({ option }: Props) {
   return (
     <div
       onClick={() => {
-        onPromotionPieceSelect?.length
-          ? onPromotionPieceSelect(
-              option,
-              promoteFromSquare ?? undefined,
-              promoteToSquare ?? undefined
-            )
-          : handleSetPosition(
-              promoteFromSquare!,
-              promoteToSquare!,
-              option,
-              true
-            );
+        if (
+          onPromotionPieceSelect(
+            option,
+            promoteFromSquare ?? undefined,
+            promoteToSquare ?? undefined
+          )
+        )
+          handleSetPosition(promoteFromSquare!, promoteToSquare!, option, true);
       }}
       onMouseOver={() => setIsHover(true)}
       onMouseOut={() => setIsHover(false)}
