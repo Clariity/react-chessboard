@@ -90,6 +90,7 @@ interface ChessboardProviderContext {
   ) => void;
   isWaitingForAnimation: boolean;
   lastPieceColour: string | undefined;
+  lastSquareDraggedOver: Square | null;
   newArrow?: Arrow;
   onArrowDrawEnd: (from: Square, to: Square) => void;
   onRightClickDown: (square: Square) => void;
@@ -98,12 +99,11 @@ interface ChessboardProviderContext {
   premoves: Premove[];
   promoteFromSquare: Square | null;
   promoteToSquare: Square | null;
+  setLastSquareDraggedOver: React.Dispatch<React.SetStateAction<Square | null>>;
   setPromoteFromSquare: React.Dispatch<React.SetStateAction<Square | null>>;
   setPromoteToSquare: React.Dispatch<React.SetStateAction<Square | null>>;
   setShowPromoteDialog: React.Dispatch<React.SetStateAction<boolean>>;
   showPromoteDialog: boolean;
-  lastSquareDraggedOver: Square | null;
-  setLastSquareDraggedOver: React.Dispatch<React.SetStateAction<Square | null>>;
 }
 
 export const ChessboardContext = createContext({} as ChessboardProviderContext);

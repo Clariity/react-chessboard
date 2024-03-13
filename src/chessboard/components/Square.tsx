@@ -39,6 +39,7 @@ export function Square({
     handleSetPosition,
     isWaitingForAnimation,
     lastPieceColour,
+    lastSquareDraggedOver,
     onArrowDrawEnd,
     onDragOverSquare,
     onMouseOutSquare,
@@ -48,11 +49,10 @@ export function Square({
     onRightClickDown,
     onRightClickUp,
     onSquareClick,
+    setLastSquareDraggedOver,
     setPromoteFromSquare,
     setPromoteToSquare,
     setShowPromoteDialog,
-    lastSquareDraggedOver,
-    setLastSquareDraggedOver,
   } = useChessboard();
 
   const [{ isOver }, drop] = useDrop(
