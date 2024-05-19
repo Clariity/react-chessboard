@@ -90,6 +90,7 @@ interface ChessboardProviderContext {
   ) => void;
   isWaitingForAnimation: boolean;
   lastPieceColour: string | undefined;
+  lastSquareDraggedOver: Square | null;
   newArrow?: Arrow;
   onArrowDrawEnd: (from: Square, to: Square) => void;
   onRightClickDown: (square: Square) => void;
@@ -98,6 +99,7 @@ interface ChessboardProviderContext {
   premoves: Premove[];
   promoteFromSquare: Square | null;
   promoteToSquare: Square | null;
+  setLastSquareDraggedOver: React.Dispatch<React.SetStateAction<Square | null>>;
   setPromoteFromSquare: React.Dispatch<React.SetStateAction<Square | null>>;
   setPromoteToSquare: React.Dispatch<React.SetStateAction<Square | null>>;
   setShowPromoteDialog: React.Dispatch<React.SetStateAction<boolean>>;
@@ -220,6 +222,10 @@ export const ChessboardProvider = forwardRef(
 
     // if currently waiting for an animation to finish
     const [isWaitingForAnimation, setIsWaitingForAnimation] = useState(false);
+
+    // last square dragged over for checking in touch events
+    const [lastSquareDraggedOver, setLastSquareDraggedOver] =
+      useState<Square | null>(null);
 
     // open clearPremoves() to allow user to call on undo/reset/whenever
     useImperativeHandle(ref, () => ({
@@ -505,6 +511,8 @@ export const ChessboardProvider = forwardRef(
       showPromoteDialog,
       autoPromoteToQueen,
       currentRightClickDown,
+      lastSquareDraggedOver,
+      setLastSquareDraggedOver,
     };
 
     return (
