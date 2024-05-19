@@ -39,6 +39,7 @@ export function Square({
     handleSetPosition,
     isWaitingForAnimation,
     lastPieceColour,
+    lastSquareDraggedOver,
     onArrowDrawEnd,
     onDragOverSquare,
     onMouseOutSquare,
@@ -48,6 +49,7 @@ export function Square({
     onRightClickDown,
     onRightClickUp,
     onSquareClick,
+    setLastSquareDraggedOver,
     setPromoteFromSquare,
     setPromoteToSquare,
     setShowPromoteDialog,
@@ -123,6 +125,21 @@ export function Square({
       style={defaultSquareStyle}
       data-square-color={squareColor}
       data-square={square}
+      onTouchMove={(e) => {
+        // Handle touch events on tablet and mobile not covered by onMouseOver/onDragEnter
+        const touchLocation = e.touches[0];
+        const touchElement = document.elementsFromPoint(
+          touchLocation.clientX,
+          touchLocation.clientY
+        );
+        const draggedOverSquare = touchElement
+          ?.find((el) => el.getAttribute("data-square"))
+          ?.getAttribute("data-square") as Sq;
+        if (draggedOverSquare && draggedOverSquare !== lastSquareDraggedOver) {
+          setLastSquareDraggedOver(draggedOverSquare);
+          onDragOverSquare(draggedOverSquare);
+        }
+      }}
       onMouseOver={(e) => {
         // noop if moving from child of square into square.
 
@@ -160,7 +177,8 @@ export function Square({
       }}
       onDragEnter={() => onDragOverSquare(square)}
       onClick={() => {
-        onSquareClick(square);
+        const piece = currentPosition[square];
+        onSquareClick(square, piece);
         clearArrows();
       }}
       onContextMenu={(e) => {

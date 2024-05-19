@@ -650,6 +650,27 @@ export const StyledBoard = () => {
 };
 
 ///////////////////////////////////
+////////// Styled Notations ///////////
+///////////////////////////////////
+export const StyledNotations = () => {
+  const [game, setGame] = useState(new Chess());
+
+  return (
+    <div style={boardWrapper}>
+      <Chessboard
+        id="StyledBoard"
+        boardOrientation="black"
+        position={game.fen()}
+        customNotationStyle={{
+          color: "#000",
+          fontWeight: 'bold'
+        }}
+      />
+    </div>
+  );
+};
+
+///////////////////////////////////
 ///////// Styled 3D Board /////////
 ///////////////////////////////////
 
