@@ -160,6 +160,7 @@ export function Piece({
           viewBox={"1 1 43 43"}
           width={boardWidth / 8}
           height={boardWidth / 8}
+          style={{ display: "block" }}
         >
           <g>{chessPieces[piece] as ReactNode}</g>
         </svg>
