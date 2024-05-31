@@ -1,11 +1,11 @@
 import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
 
 import { Board } from "./components/Board";
+import { ChessboardDnDRoot } from "./components/DnDRoot";
 import { ChessboardProps } from "./types";
 import { ChessboardProvider } from "./context/chessboard-context";
 import { CustomDragLayer } from "./components/CustomDragLayer";
 import { ErrorBoundary } from "./components/ErrorBoundary";
-import { ChessboardDnDRoot } from "./components/DnDRoot";
 // spare pieces component
 // semantic release with github actions
 // improved arrows

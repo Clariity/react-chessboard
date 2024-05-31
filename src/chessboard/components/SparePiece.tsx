@@ -40,7 +40,6 @@ export const SparePiece = ({
   return (
     <div
       ref={canDrag ? drag : null}
-      onClick={() => console.log("CLICL")}
       data-piece={piece}
       style={{ cursor: "move" }}
     >

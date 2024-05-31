@@ -37,6 +37,7 @@ export function Square({
     customSquareStyles,
     drawNewArrow,
     handleSetPosition,
+    handleSparePieceDrop,
     isWaitingForAnimation,
     lastPieceColour,
     lastSquareDraggedOver,
@@ -53,7 +54,6 @@ export function Square({
     setPromoteFromSquare,
     setPromoteToSquare,
     setShowPromoteDialog,
-    handleSparePieceDrop,
   } = useChessboard();
 
   const [{ isOver }, drop] = useDrop(
@@ -73,12 +73,15 @@ export function Square({
     ]
   );
 
-  function handleDrop(item: {
+  type BoardPiece = {
     piece: Piece;
-    isSpare?: boolean;
+    readonly isSpare: false;
     square: Sq;
     id: number;
-  }) {
+  };
+  type SparePiece = { piece: Piece; readonly isSpare: true; id: number };
+
+  function handleDrop(item: BoardPiece | SparePiece) {
     if (item.isSpare) {
       handleSparePieceDrop(item.piece, square);
       return;

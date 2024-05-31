@@ -252,6 +252,10 @@ export type ChessboardProps = {
    * @default snapback
    */
   dropOffBoardAction?: DropOffBoardAction;
+  /**
+   * User function that is run when piece is dropped off the board.
+   * @default snapback
+   */
   onPieceDropOffBoard?: (sourceSquare: Square, piece: Piece) => void;
   /**
    * Board identifier, necessary if more than one board is mounted for drag and drop.

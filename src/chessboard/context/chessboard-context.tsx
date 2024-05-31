@@ -68,14 +68,14 @@ interface ChessboardProviderContext {
   onPieceDragBegin: RequiredChessboardProps["onPieceDragBegin"];
   onPieceDragEnd: RequiredChessboardProps["onPieceDragEnd"];
   onPieceDrop: RequiredChessboardProps["onPieceDrop"];
+  onPieceDropOffBoard: ChessboardProps["onPieceDropOffBoard"];
   onPromotionCheck: RequiredChessboardProps["onPromotionCheck"];
   onPromotionPieceSelect: RequiredChessboardProps["onPromotionPieceSelect"];
+  onSparePieceDrop: ChessboardProps["onSparePieceDrop"];
   onSquareClick: RequiredChessboardProps["onSquareClick"];
   promotionDialogVariant: RequiredChessboardProps["promotionDialogVariant"];
   showBoardNotation: RequiredChessboardProps["showBoardNotation"];
   snapToCursor: RequiredChessboardProps["snapToCursor"];
-  onSparePieceDrop: ChessboardProps["onSparePieceDrop"];
-  onPieceDropOffBoard: ChessboardProps["onPieceDropOffBoard"];
 
   // Exported by context
   arrows: Arrow[];
@@ -154,7 +154,6 @@ export const ChessboardProvider = forwardRef(
       onPieceDragBegin = () => {},
       onPieceDragEnd = () => {},
       onPieceDrop = () => true,
-      onSparePieceDrop = () => true,
       onPieceDropOffBoard = () => {},
       onPromotionCheck = (sourceSquare, targetSquare, piece) => {
         return (
@@ -168,6 +167,7 @@ export const ChessboardProvider = forwardRef(
         );
       },
       onPromotionPieceSelect = () => true,
+      onSparePieceDrop = () => true,
       onSquareClick = () => {},
       onSquareRightClick = () => {},
       position = "start",
