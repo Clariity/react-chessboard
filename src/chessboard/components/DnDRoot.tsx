@@ -63,14 +63,12 @@ export const ChessboardDnDRoot: FC<ChessboardDnDRootProps> = ({
     setClientWindow(window);
   }, []);
 
-  const backend = customDndBackend || (isMobile ? TouchBackend : HTML5Backend);
-
   // in case we already wrapped `<Chessboard/>`  with `<DnDProvider/>` we don't need to create a new one `<DnDProvider/>`
   const DnDWrapper = isCustomDndProviderSet ? EmptyProvider : DndProvider;
 
   return backendSet && clientWindow ? (
     <DnDWrapper
-      backend={backend}
+      backend={customDndBackend || (isMobile ? TouchBackend : HTML5Backend)}
       context={clientWindow}
       options={customDndBackend ? customDndBackendOptions : undefined}
     >
