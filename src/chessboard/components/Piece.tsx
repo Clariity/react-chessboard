@@ -25,14 +25,17 @@ export function Piece({
     boardOrientation,
     chessPieces,
     currentPosition,
+    deletePieceFromSquare,
+    dropOffBoardAction,
     id,
     isDraggablePiece,
     isWaitingForAnimation,
     onPieceClick,
     onPieceDragBegin,
     onPieceDragEnd,
-    positionDifferences,
+    onPieceDropOffBoard,
     onPromotionCheck,
+    positionDifferences,
   } = useChessboard();
 
   const [pieceStyle, setPieceStyle] = useState({
@@ -52,7 +55,19 @@ export function Piece({
         onPieceDragBegin(piece, square);
         return { piece, square, id };
       },
-      end: () => onPieceDragEnd(piece, square),
+      end: (item, monitor) => {
+        onPieceDragEnd(piece, square);
+
+        const wasDropOutsideTheBoard = !monitor.didDrop();
+
+        if (wasDropOutsideTheBoard) {
+          if (dropOffBoardAction === "trash") {
+            deletePieceFromSquare(square);
+          }
+
+          onPieceDropOffBoard?.(square, piece);
+        }
+      },
       collect: (monitor) => ({
         canDrag: isDraggablePiece({ piece, sourceSquare: square }),
         isDragging: !!monitor.isDragging(),
@@ -144,7 +159,7 @@ export function Piece({
 
   return (
     <div
-      ref={arePiecesDraggable ? (canDrag ? drag : null) : null}
+      ref={arePiecesDraggable && canDrag ? drag : null}
       onClick={() => onPieceClick(piece, square)}
       data-piece={piece}
       style={pieceStyle}
