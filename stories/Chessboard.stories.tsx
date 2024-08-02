@@ -652,12 +652,12 @@ export const StyledNotations = () => {
   return (
     <div style={boardWrapper}>
       <Chessboard
-        id="StyledBoard"
+        id="StyledNotations"
         boardOrientation="black"
         position={game.fen()}
         customNotationStyle={{
           color: "#000",
-          fontWeight: 'bold'
+          fontWeight: "bold",
         }}
       />
     </div>
