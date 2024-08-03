@@ -9,7 +9,7 @@ export const useArrows = (
   onArrowsChange?: (arrows: Arrows) => void,
   customArrowColor?: string
 ) => {
-  // arrows passed programmatically to `ChessBoard` as a react prop
+  // arrows passed programatically to `ChessBoard` as a react prop
   const [customArrowsSet, setCustomArrows] = useState<Arrows>([]);
 
   // arrows drawn with mouse by user on the board
@@ -25,8 +25,6 @@ export const useArrows = (
         //filter out arrows which starts and ends in the same square
         customArrows?.filter((arrow) => arrow[0] !== arrow[1])
       );
-      // makes it so that custom arrows also controls current arrows drawn on the board
-      setArrows(customArrows?.filter((arrow) => arrow[0] !== arrow[1]));
     }
   }, [customArrows]);
 

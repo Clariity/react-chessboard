@@ -190,7 +190,7 @@ export type ChessboardProps = {
    */
   customArrowColor?: string;
   /**
-   * Custom board style object e.g. { borderRadius: '5px', boxShadow: '0 5px 15px rgba(0, 0, 0, 0.5 '}.
+   * Custom board style object e.g. { borderRadius: '5px', boxShadow: '0 5px 15px rgba(0, 0, 0, 0.5)'}.
    * @default {}
    */
   customBoardStyle?: Record<string, string | number>;
