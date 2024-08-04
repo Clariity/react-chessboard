@@ -1,14 +1,14 @@
-import { ReactNode, useCallback } from "react";
+import { ReactNode, RefObject, useCallback, useEffect, useState } from "react";
 import { useDragLayer, XYCoord } from "react-dnd";
 
 import { useChessboard } from "../context/chessboard-context";
 import { CustomPieceFn, Piece, Square } from "../types";
 
 export type CustomDragLayerProps = {
-  boardContainer: { left: number; top: number };
+  boardRef: RefObject<HTMLObjectElement>;
 };
 
-export function CustomDragLayer({ boardContainer }: CustomDragLayerProps) {
+export function CustomDragLayer({ boardRef }: CustomDragLayerProps) {
   const { boardWidth, chessPieces, id, snapToCursor, allowDragOutsideBoard } =
     useChessboard();
 
@@ -30,6 +30,12 @@ export function CustomDragLayer({ boardContainer }: CustomDragLayerProps) {
     sourceClientOffset: XYCoord | null;
     isDragging: boolean;
   } = collectedProps;
+
+  const [boardContainer, setBoardContainer] = useState({ left: 0, top: 0 })
+  useEffect(() => {
+    const rect = boardRef.current?.getBoundingClientRect()
+    setBoardContainer({ left: rect?.left || 0, top: rect?.top || 0 })
+  }, [boardRef.current, isDragging])
 
   const getItemStyle = useCallback(
     (clientOffset: XYCoord | null, sourceClientOffset: XYCoord | null) => {

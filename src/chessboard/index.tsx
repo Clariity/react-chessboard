@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
+import { forwardRef, useEffect, useRef, useState } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { TouchBackend } from "react-dnd-touch-backend";
@@ -32,26 +32,7 @@ export const Chessboard = forwardRef<ClearPremoves, ChessboardProps>(
     const [backendSet, setBackendSet] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
     const [boardWidth, setBoardWidth] = useState(props.boardWidth);
-
     const boardRef = useRef<HTMLObjectElement>(null);
-    const boardContainerRef = useRef<HTMLDivElement>(null);
-
-    const [boardContainerPos, setBoardContainerPos] = useState({
-      left: 0,
-      top: 0,
-    });
-
-    const metrics = useMemo(
-      () => boardRef.current?.getBoundingClientRect(),
-      [boardRef.current]
-    );
-
-    useEffect(() => {
-      setBoardContainerPos({
-        left: metrics?.left ? metrics?.left : 0,
-        top: metrics?.top ? metrics?.top : 0,
-      });
-    }, [metrics]);
 
     useEffect(() => {
       setIsMobile("ontouchstart" in window);
@@ -78,7 +59,6 @@ export const Chessboard = forwardRef<ClearPremoves, ChessboardProps>(
     return backendSet && clientWindow ? (
       <ErrorBoundary>
         <div
-          ref={boardContainerRef}
           style={{
             display: "flex",
             flexDirection: "column",
@@ -97,7 +77,7 @@ export const Chessboard = forwardRef<ClearPremoves, ChessboardProps>(
                 {...otherProps}
                 ref={ref}
               >
-                <CustomDragLayer boardContainer={boardContainerPos} />
+                <CustomDragLayer boardRef={boardRef} />
                 <Board />
               </ChessboardProvider>
             )}
