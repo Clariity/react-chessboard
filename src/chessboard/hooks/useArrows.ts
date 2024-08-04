@@ -21,6 +21,8 @@ export const useArrows = (
   // handle external `customArrows` props changes
   useEffect(() => {
     if (Array.isArray(customArrows)) {
+      // so that custom arrows overwrite temporary arrows
+      clearArrows();
       setCustomArrows(
         //filter out arrows which starts and ends in the same square
         customArrows?.filter((arrow) => arrow[0] !== arrow[1])
