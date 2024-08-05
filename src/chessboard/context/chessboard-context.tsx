@@ -58,6 +58,7 @@ interface ChessboardProviderContext {
   customPremoveLightSquareStyle: RequiredChessboardProps["customPremoveLightSquareStyle"];
   customSquare: RequiredChessboardProps["customSquare"];
   customSquareStyles: ChessboardProps["customSquareStyles"];
+  dropOffBoardAction: ChessboardProps["dropOffBoardAction"];
   id: RequiredChessboardProps["id"];
   isDraggablePiece: RequiredChessboardProps["isDraggablePiece"];
   onDragOverSquare: RequiredChessboardProps["onDragOverSquare"];
@@ -67,8 +68,10 @@ interface ChessboardProviderContext {
   onPieceDragBegin: RequiredChessboardProps["onPieceDragBegin"];
   onPieceDragEnd: RequiredChessboardProps["onPieceDragEnd"];
   onPieceDrop: RequiredChessboardProps["onPieceDrop"];
+  onPieceDropOffBoard: ChessboardProps["onPieceDropOffBoard"];
   onPromotionCheck: RequiredChessboardProps["onPromotionCheck"];
   onPromotionPieceSelect: RequiredChessboardProps["onPromotionPieceSelect"];
+  onSparePieceDrop: ChessboardProps["onSparePieceDrop"];
   onSquareClick: RequiredChessboardProps["onSquareClick"];
   promotionDialogVariant: RequiredChessboardProps["promotionDialogVariant"];
   showBoardNotation: RequiredChessboardProps["showBoardNotation"];
@@ -81,6 +84,7 @@ interface ChessboardProviderContext {
   clearCurrentRightClickDown: () => void;
   currentPosition: BoardPosition;
   currentRightClickDown?: Square;
+  deletePieceFromSquare: (sq: Square) => void;
   drawNewArrow: (from: Square, to: Square) => void;
   handleSetPosition: (
     sourceSq: Square,
@@ -88,6 +92,7 @@ interface ChessboardProviderContext {
     piece: Piece,
     wasManualDropOverride?: boolean
   ) => void;
+  handleSparePieceDrop: (piece: Piece, targetSq: Square) => void;
   isWaitingForAnimation: boolean;
   lastPieceColour: string | undefined;
   lastSquareDraggedOver: Square | null;
@@ -149,6 +154,7 @@ export const ChessboardProvider = forwardRef(
       onPieceDragBegin = () => {},
       onPieceDragEnd = () => {},
       onPieceDrop = () => true,
+      onPieceDropOffBoard = () => {},
       onPromotionCheck = (sourceSquare, targetSquare, piece) => {
         return (
           ((piece === "wP" &&
@@ -161,6 +167,7 @@ export const ChessboardProvider = forwardRef(
         );
       },
       onPromotionPieceSelect = () => true,
+      onSparePieceDrop = () => true,
       onSquareClick = () => {},
       onSquareRightClick = () => {},
       position = "start",
@@ -370,11 +377,6 @@ export const ChessboardProvider = forwardRef(
           setWasManualDrop(false);
         }
       } else {
-        // delete if dropping off board
-        if (dropOffBoardAction === "trash" && !targetSq) {
-          delete newOnDropPosition[sourceSq];
-        }
-
         // delete source piece
         delete newOnDropPosition[sourceSq];
 
@@ -389,6 +391,15 @@ export const ChessboardProvider = forwardRef(
       getPositionObject(newOnDropPosition);
     }
 
+    function deletePieceFromSquare(square: Square) {
+      const positionCopy = { ...currentPosition };
+
+      delete positionCopy[square];
+      setCurrentPosition(positionCopy);
+
+      // inform latest position information
+      getPositionObject(positionCopy);
+    }
     function attemptPremove(newPieceColour?: string) {
       if (premovesRef.current.length === 0) return;
 
@@ -420,6 +431,19 @@ export const ChessboardProvider = forwardRef(
           clearPremoves();
         }
       }
+    }
+
+    function handleSparePieceDrop(piece: Piece, targetSq: Square) {
+      const isValidDrop = onSparePieceDrop(piece, targetSq);
+
+      if (!isValidDrop) return;
+      const newOnDropPosition = { ...currentPosition };
+      // add piece in new position
+      newOnDropPosition[targetSq] = piece;
+      setCurrentPosition(newOnDropPosition);
+
+      // inform latest position information
+      getPositionObject(newOnDropPosition);
     }
 
     function clearPremoves(clearLastPieceColour = true) {
@@ -456,23 +480,41 @@ export const ChessboardProvider = forwardRef(
     }
 
     const ChessboardProviderContextValue: ChessboardProviderContext = {
+      allowDragOutsideBoard,
       animationDuration,
       arePiecesDraggable,
       arePremovesAllowed,
+      arrows,
+      autoPromoteToQueen,
       boardOrientation,
       boardWidth,
+      chessPieces,
+      clearArrows,
+      clearCurrentRightClickDown,
+      currentPosition,
+      currentRightClickDown,
       customArrowColor,
       customBoardStyle,
-      customNotationStyle,
       customDarkSquareStyle,
       customDropSquareStyle,
       customLightSquareStyle,
+      customNotationStyle,
       customPremoveDarkSquareStyle,
       customPremoveLightSquareStyle,
       customSquare,
       customSquareStyles,
+      deletePieceFromSquare,
+      drawNewArrow,
+      dropOffBoardAction,
+      handleSetPosition,
+      handleSparePieceDrop,
       id,
       isDraggablePiece,
+      isWaitingForAnimation,
+      lastPieceColour,
+      lastSquareDraggedOver,
+      newArrow,
+      onArrowDrawEnd,
       onDragOverSquare,
       onMouseOutSquare,
       onMouseOverSquare,
@@ -480,39 +522,25 @@ export const ChessboardProvider = forwardRef(
       onPieceDragBegin,
       onPieceDragEnd,
       onPieceDrop,
+      onPieceDropOffBoard,
       onPromotionCheck,
       onPromotionPieceSelect,
-      onSquareClick,
-      showBoardNotation,
-      snapToCursor,
-      promotionDialogVariant,
-      allowDragOutsideBoard,
-
-      arrows,
-      newArrow,
-      onArrowDrawEnd,
-      chessPieces,
-      clearArrows,
-      drawNewArrow,
-      clearCurrentRightClickDown,
-      currentPosition,
-      handleSetPosition,
-      isWaitingForAnimation,
-      lastPieceColour,
       onRightClickDown,
       onRightClickUp,
+      onSparePieceDrop,
+      onSquareClick,
       positionDifferences,
+      premoves,
       promoteFromSquare,
       promoteToSquare,
-      premoves,
+      promotionDialogVariant,
+      setLastSquareDraggedOver,
       setPromoteFromSquare,
       setPromoteToSquare,
       setShowPromoteDialog,
+      showBoardNotation,
       showPromoteDialog,
-      autoPromoteToQueen,
-      currentRightClickDown,
-      lastSquareDraggedOver,
-      setLastSquareDraggedOver,
+      snapToCursor,
     };
 
     return (

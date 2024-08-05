@@ -1,14 +1,11 @@
 import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
-import { TouchBackend } from "react-dnd-touch-backend";
 
 import { Board } from "./components/Board";
+import { ChessboardDnDRoot } from "./components/DnDRoot";
 import { ChessboardProps } from "./types";
 import { ChessboardProvider } from "./context/chessboard-context";
 import { CustomDragLayer } from "./components/CustomDragLayer";
 import { ErrorBoundary } from "./components/ErrorBoundary";
-
 // spare pieces component
 // semantic release with github actions
 // improved arrows
@@ -25,12 +22,17 @@ export type ClearPremoves = {
   clearPremoves: (clearLastPieceColour?: boolean) => void;
 };
 
+export { SparePiece } from "./components/SparePiece";
+export { ChessboardDnDProvider } from "./components/DnDRoot";
+
 export const Chessboard = forwardRef<ClearPremoves, ChessboardProps>(
   (props, ref) => {
-    const { customDndBackend, customDndBackendOptions, ...otherProps } = props;
-    const [clientWindow, setClientWindow] = useState<Window>();
-    const [backendSet, setBackendSet] = useState(false);
-    const [isMobile, setIsMobile] = useState(false);
+    const {
+      customDndBackend,
+      customDndBackendOptions,
+      onBoardWidthChange,
+      ...otherProps
+    } = props;
     const [boardWidth, setBoardWidth] = useState(props.boardWidth);
 
     const boardRef = useRef<HTMLObjectElement>(null);
@@ -47,17 +49,15 @@ export const Chessboard = forwardRef<ClearPremoves, ChessboardProps>(
     );
 
     useEffect(() => {
+      boardWidth && onBoardWidthChange?.(boardWidth);
+    }, [boardWidth]);
+
+    useEffect(() => {
       setBoardContainerPos({
         left: metrics?.left ? metrics?.left : 0,
         top: metrics?.top ? metrics?.top : 0,
       });
     }, [metrics]);
-
-    useEffect(() => {
-      setIsMobile("ontouchstart" in window);
-      setBackendSet(true);
-      setClientWindow(window);
-    }, []);
 
     useEffect(() => {
       if (props.boardWidth === undefined && boardRef.current?.offsetWidth) {
@@ -70,12 +70,9 @@ export const Chessboard = forwardRef<ClearPremoves, ChessboardProps>(
           resizeObserver.disconnect();
         };
       }
-    }, [boardRef.current, clientWindow]);
+    }, [boardRef.current]);
 
-    const backend =
-      customDndBackend || (isMobile ? TouchBackend : HTML5Backend);
-
-    return backendSet && clientWindow ? (
+    return (
       <ErrorBoundary>
         <div
           ref={boardContainerRef}
@@ -86,10 +83,9 @@ export const Chessboard = forwardRef<ClearPremoves, ChessboardProps>(
           }}
         >
           <div ref={boardRef} style={{ width: "100%" }} />
-          <DndProvider
-            backend={backend}
-            context={clientWindow}
-            options={customDndBackend ? customDndBackendOptions : undefined}
+          <ChessboardDnDRoot
+            customDndBackend={customDndBackend}
+            customDndBackendOptions={customDndBackendOptions}
           >
             {boardWidth && (
               <ChessboardProvider
@@ -101,9 +97,9 @@ export const Chessboard = forwardRef<ClearPremoves, ChessboardProps>(
                 <Board />
               </ChessboardProvider>
             )}
-          </DndProvider>
+          </ChessboardDnDRoot>
         </div>
       </ErrorBoundary>
-    ) : null;
+    );
   }
 );
