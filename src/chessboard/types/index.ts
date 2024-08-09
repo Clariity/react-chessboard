@@ -253,6 +253,11 @@ export type ChessboardProps = {
    */
   dropOffBoardAction?: DropOffBoardAction;
   /**
+   * User function that is run when piece is dropped off the board.
+   * @default snapback
+   */
+  onPieceDropOffBoard?: (sourceSquare: Square, piece: Piece) => void;
+  /**
    * Board identifier, necessary if more than one board is mounted for drag and drop.
    * @default 0
    */
@@ -272,6 +277,11 @@ export type ChessboardProps = {
    * @default () => {}
    */
   onArrowsChange?: (squares: Arrow[]) => void;
+  /**
+   * Action to take when chessboard width has been changed
+   * @default false
+   */
+  onBoardWidthChange?: (boardWidth: number) => void;
   /**
    * User function that is run when piece is dragged over a square.
    * @default () => {}
@@ -311,6 +321,11 @@ export type ChessboardProps = {
     targetSquare: Square,
     piece: Piece
   ) => boolean;
+  /**
+   * User function that is run when spare piece is dropped on a square. Must return whether the drop was successful or not.
+   * @default () => true
+   */
+  onSparePieceDrop?: (piece: Piece, targetSquare: Square) => boolean;
   /**
    * User function that is run when piece is dropped. Must return whether the move results in a promotion or not.
    * @default (sourceSquare, targetSquare, piece) => (((piece === "wP" && sourceSquare[1] === "7" && targetSquare[1] === "8") ||
@@ -375,4 +390,12 @@ export type ChessboardProps = {
    * @default true
    */
   snapToCursor?: boolean;
+};
+
+export type ChessboardDnDProviderProps = {
+  children: ReactNode;
+  backend?: BackendFactory;
+  context?: unknown;
+  options?: unknown;
+  debugMode?: boolean;
 };

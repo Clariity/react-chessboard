@@ -37,6 +37,7 @@ export function Square({
     customSquareStyles,
     drawNewArrow,
     handleSetPosition,
+    handleSparePieceDrop,
     isWaitingForAnimation,
     lastPieceColour,
     lastSquareDraggedOver,
@@ -72,7 +73,19 @@ export function Square({
     ]
   );
 
-  function handleDrop(item: { piece: Piece; square: Sq; id: number }) {
+  type BoardPiece = {
+    piece: Piece;
+    readonly isSpare: false;
+    square: Sq;
+    id: number;
+  };
+  type SparePiece = { piece: Piece; readonly isSpare: true; id: number };
+
+  function handleDrop(item: BoardPiece | SparePiece) {
+    if (item.isSpare) {
+      handleSparePieceDrop(item.piece, square);
+      return;
+    }
     if (onPromotionCheck(item.square, square, item.piece)) {
       if (autoPromoteToQueen) {
         handleSetPosition(
