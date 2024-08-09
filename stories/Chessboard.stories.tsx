@@ -1,13 +1,10 @@
 import React, { forwardRef, useEffect, useRef, useState, useMemo } from "react";
-import { ComponentMeta, ComponentStory } from "@storybook/react";
-import Chess from "chess.js";
+import { Meta } from "@storybook/react";
+import { Chess } from "chess.js";
 
 import { Chessboard, ClearPremoves } from "../src";
 import { CustomSquareProps, Square } from "../src/chessboard/types";
 import Engine from "./stockfish/engine";
-
-// examples
-// multiboard example https://storybook.js.org/docs/react/writing-stories/stories-for-multiple-components
 
 const buttonStyle = {
   cursor: "pointer",
@@ -33,25 +30,23 @@ const boardWrapper = {
   margin: "3rem auto",
 };
 
-export default {
-  title: "Example/Chessboard",
+const meta: Meta<typeof Chessboard> = {
+  title: "Chessboard",
   component: Chessboard,
-} as ComponentMeta<typeof Chessboard>;
+  decorators: [
+    (Story) => (
+      <div style={boardWrapper}>
+        <Story />
+      </div>
+    ),
+  ],
+};
+export default meta;
 
-const Template: ComponentStory<typeof Chessboard> = (args) => (
-  <div style={boardWrapper}>
-    <Chessboard {...args} />
-  </div>
-);
-
-export const ConfigurableBoard = Template.bind({});
-ConfigurableBoard.args = {
-  id: "Configurable Board",
+export const Default = () => {
+  return <Chessboard id="defaultBoard" />;
 };
 
-///////////////////////////////////
-////////// PlayVsRandom ///////////
-///////////////////////////////////
 export const PlayVsRandom = () => {
   const [game, setGame] = useState(new Chess());
   const [currentTimeout, setCurrentTimeout] = useState<NodeJS.Timeout>();
@@ -131,10 +126,6 @@ export const PlayVsRandom = () => {
     </div>
   );
 };
-
-///////////////////////////////////
-////////// PlayVsStockfish ////////
-///////////////////////////////////
 
 export const PlayVsComputer = () => {
   const levels = {
@@ -235,9 +226,6 @@ export const PlayVsComputer = () => {
   );
 };
 
-//////////////////////////////////
-////////// ClickToMove ///////////
-//////////////////////////////////
 export const ClickToMove = () => {
   const [game, setGame] = useState(new Chess());
   const [moveFrom, setMoveFrom] = useState("");
@@ -451,9 +439,6 @@ export const ClickToMove = () => {
   );
 };
 
-//////////////////////////////////////
-////////// PremovesEnabled ///////////
-//////////////////////////////////////
 export const PremovesEnabled = () => {
   const [game, setGame] = useState(new Chess());
   const [currentTimeout, setCurrentTimeout] = useState<NodeJS.Timeout>();
@@ -547,9 +532,6 @@ export const PremovesEnabled = () => {
   );
 };
 
-///////////////////////////////////
-////////// Styled Board ///////////
-///////////////////////////////////
 export const StyledBoard = () => {
   const [game, setGame] = useState(new Chess());
 
@@ -643,9 +625,6 @@ export const StyledBoard = () => {
   );
 };
 
-///////////////////////////////////
-////////// Styled Notations ///////////
-///////////////////////////////////
 export const StyledNotations = () => {
   const [game, setGame] = useState(new Chess());
 
@@ -663,10 +642,6 @@ export const StyledNotations = () => {
     </div>
   );
 };
-
-///////////////////////////////////
-///////// Styled 3D Board /////////
-///////////////////////////////////
 
 export const Styled3DBoard = () => {
   const engine = useMemo(() => new Engine(), []);
@@ -824,69 +799,36 @@ export const Styled3DBoard = () => {
   );
 };
 
-///////////////////////////////////
-////////// Custom Square ///////////
-///////////////////////////////////
-const CustomSquareRenderer = forwardRef<HTMLDivElement, CustomSquareProps>(
-  (props, ref) => {
-    const { children, square, squareColor, style } = props;
-
-    return (
-      <div ref={ref} style={{ ...style, position: "relative" }}>
-        {children}
-        <div
-          style={{
-            position: "absolute",
-            right: 0,
-            bottom: 0,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            height: 16,
-            width: 16,
-            borderTopLeftRadius: 6,
-            backgroundColor: squareColor === "black" ? "#064e3b" : "#312e81",
-            color: "#fff",
-            fontSize: 14,
-          }}
-        >
-          {square}
-        </div>
-      </div>
-    );
-  }
-);
-
 export const CustomSquare = () => {
-  // Defined outside
+  const CustomSquareRenderer = forwardRef<HTMLDivElement, CustomSquareProps>(
+    (props, ref) => {
+      const { children, square, squareColor, style } = props;
 
-  // const CustomSquareRenderer = forwardRef<HTMLDivElement, CustomSquareProps>((props, ref) => {
-  //   const { children, square, squareColor, style } = props;
-
-  //   return (
-  //     <div ref={ref} style={{ ...style, position: "relative" }}>
-  //       {children}
-  //       <div
-  //         style={{
-  //           position: "absolute",
-  //           right: 0,
-  //           bottom: 0,
-  //           display: "flex",
-  //           alignItems: "center",
-  //           justifyContent: "center",
-  //           height: 16,
-  //           width: 16,
-  //           borderTopLeftRadius: 6,
-  //           backgroundColor: squareColor === "black" ? "#064e3b" : "#312e81",
-  //           color: "#fff",
-  //           fontSize: 14,
-  //         }}
-  //       >
-  //         {square}
-  //       </div>
-  //     </div>
-  //   );
-  // });
+      return (
+        <div ref={ref} style={{ ...style, position: "relative" }}>
+          {children}
+          <div
+            style={{
+              position: "absolute",
+              right: 0,
+              bottom: 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              height: 16,
+              width: 16,
+              borderTopLeftRadius: 6,
+              backgroundColor: squareColor === "black" ? "#064e3b" : "#312e81",
+              color: "#fff",
+              fontSize: 14,
+            }}
+          >
+            {square}
+          </div>
+        </div>
+      );
+    }
+  );
 
   return (
     <div style={boardWrapper}>
@@ -899,14 +841,10 @@ export const CustomSquare = () => {
   );
 };
 
-//////////////////////////////////
-////////// AnalysisBoard //////////
-///////////////////////////////////
-
 export const AnalysisBoard = () => {
   const engine = useMemo(() => new Engine(), []);
   const game = useMemo(() => new Chess(), []);
-  const inputRef = useRef<HTMLInputElement>();
+  const inputRef = useRef<HTMLInputElement>(null);
   const [chessBoardPosition, setChessBoardPosition] = useState(game.fen());
   const [positionEvaluation, setPositionEvaluation] = useState(0);
   const [depth, setDepth] = useState(10);
@@ -917,7 +855,7 @@ export const AnalysisBoard = () => {
     engine.evaluatePosition(chessBoardPosition, 18);
 
     engine.onMessage(({ positionEvaluation, possibleMate, pv, depth }) => {
-      if (depth < 10) return;
+      if (depth && depth < 10) return;
 
       positionEvaluation &&
         setPositionEvaluation(
@@ -959,7 +897,7 @@ export const AnalysisBoard = () => {
   const handleFenInputChange = (e) => {
     const { valid } = game.validate_fen(e.target.value);
 
-    if (valid) {
+    if (valid && inputRef.current) {
       inputRef.current.value = e.target.value;
       game.load(e.target.value);
       setChessBoardPosition(game.fen());
@@ -991,13 +929,15 @@ export const AnalysisBoard = () => {
           boxShadow: "0 2px 10px rgba(0, 0, 0, 0.5)",
         }}
         customArrows={
-          bestMove && [
-            [
-              bestMove.substring(0, 2) as Square,
-              bestMove.substring(2, 4) as Square,
-              "rgb(0, 128, 0)",
-            ],
-          ]
+          bestMove
+            ? [
+                [
+                  bestMove.substring(0, 2) as Square,
+                  bestMove.substring(2, 4) as Square,
+                  "rgb(0, 128, 0)",
+                ],
+              ]
+            : undefined
         }
       />
       <button
