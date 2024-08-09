@@ -965,7 +965,6 @@ export const AnalysisBoard = () => {
     </div>
   );
 };
-
 export const BoardWithCustomArrows = () => {
   const colorVariants = [
     "darkred",
@@ -977,6 +976,11 @@ export const BoardWithCustomArrows = () => {
     "#058ED9",
   ];
   const [activeColor, setActiveColor] = useState(colorVariants[0]);
+  const [customArrows, setCustomArrows] = useState([
+    ["a2", "a3", colorVariants[0]],
+    ["b2", "b4", colorVariants[1]],
+    ["c2", "c5", colorVariants[2]],
+  ]);
   return (
     <div style={boardWrapper}>
       <div
@@ -1013,11 +1017,7 @@ export const BoardWithCustomArrows = () => {
       </div>
       <Chessboard
         id="BoardWithCustomArrows"
-        customArrows={[
-          ["a2", "a3", colorVariants[0]],
-          ["b2", "b4", colorVariants[1]],
-          ["c2", "c5", colorVariants[2]],
-        ]}
+        customArrows={customArrows}
         customArrowColor={activeColor}
         onArrowsChange={console.log}
       />
