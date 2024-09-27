@@ -48,6 +48,18 @@ export class ChessX {
         return { type, color };
     }
 
+    // Method to check if the current board contains 'x' or 'X'
+    hasX(): boolean {
+        for (const row of this.board) {
+            for (const square of row) {
+                if (square.toLowerCase() === 'x') {
+                    return true; // Found 'x' or 'X'
+                }
+            }
+        }
+        return false; // No 'x' or 'X' found
+    }
+
     // Helper method to parse FENX into a 2D array (board state)
     private parseFENX(fenx: string): string[][] {
         const rows = fenx.split(' ')[0].split('/'); // Only handle the piece placement part of FENX
@@ -150,3 +162,19 @@ export class ChessX {
 
 // // Get the piece on a5 (should be empty)
 // console.log(chessX.getPiece('a5')); // Output: null
+
+// // Initialize a ChessX game with an initial FENX without 'x' or 'X'
+// const chessX1 = new ChessX(
+//     'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+// );
+// console.log(chessX1.hasX()); // Output: false
+
+// // Initialize another ChessX game with 'x' in the position
+// const chessX2 = new ChessX(
+//     'rnbqkbnr/pppppppp/8/8/3x4/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+// );
+// console.log(chessX2.hasX()); // Output: true
+
+// // Place a white 'X' on e4
+// chessX1.put({ type: 'x', color: 'w' }, 'e4');
+// console.log(chessX1.hasX()); // Output: true
