@@ -74,12 +74,14 @@ export type Piece =
   | "wR"
   | "wQ"
   | "wK"
+  | "wX"
   | "bP"
   | "bB"
   | "bN"
   | "bR"
   | "bQ"
-  | "bK";
+  | "bK"
+  | "bX";
 
 export type BoardPosition = { [square in Square]?: Piece };
 
@@ -319,7 +321,7 @@ export type ChessboardProps = {
   onPieceDrop?: (
     sourceSquare: Square,
     targetSquare: Square,
-    piece: Piece
+    piece: Piece,
   ) => boolean;
   /**
    * User function that is run when spare piece is dropped on a square. Must return whether the drop was successful or not.
@@ -335,7 +337,7 @@ export type ChessboardProps = {
   onPromotionCheck?: (
     sourceSquare: Square,
     targetSquare: Square,
-    piece: Piece
+    piece: Piece,
   ) => boolean;
   /**
    * User function that is run when a promotion piece is selected. Must return whether the move was successful or not.
@@ -344,7 +346,7 @@ export type ChessboardProps = {
   onPromotionPieceSelect?: (
     piece?: PromotionPieceOption,
     promoteFromSquare?: Square,
-    promoteToSquare?: Square
+    promoteToSquare?: Square,
   ) => boolean;
   /**
    * User function that is run when a square is clicked.

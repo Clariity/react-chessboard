@@ -1,0 +1,13 @@
+<svg
+      xmlns="http://www.w3.org/2000/svg"
+      version="1.1"
+      width="45"
+      height="45"
+    >
+      <polygon
+        points="22.5,0 45,45 0,45"
+        stroke="black"
+        fill="white"
+        stroke-width="1.5"
+      />{" "}
+    </svg>
