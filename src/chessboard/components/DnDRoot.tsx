@@ -63,10 +63,14 @@ export const ChessboardDnDRoot: FC<ChessboardDnDRootProps> = ({
     setClientWindow(window);
   }, []);
 
-  // in case we already wrapped `<Chessboard/>`  with `<DnDProvider/>` we don't need to create a new one `<DnDProvider/>`
+  // in case we already wrapped `<Chessboard/>`  with `<DnDProvider/>` we don't need to create a new one
   const DnDWrapper = isCustomDndProviderSet ? EmptyProvider : DndProvider;
 
-  return backendSet && clientWindow ? (
+  if (!backendSet) {
+    return null;
+  }
+
+  return clientWindow ? (
     <DnDWrapper
       backend={customDndBackend || (isMobile ? TouchBackend : HTML5Backend)}
       context={clientWindow}
@@ -75,6 +79,6 @@ export const ChessboardDnDRoot: FC<ChessboardDnDRootProps> = ({
       {children}
     </DnDWrapper>
   ) : (
-    <> {children}</>
+    <>{children}</>
   );
 };
