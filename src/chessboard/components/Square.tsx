@@ -2,7 +2,7 @@ import { ReactNode, useEffect, useRef } from "react";
 import { useDrop } from "react-dnd";
 
 import { useChessboard } from "../context/chessboard-context";
-import { BoardOrientation, Coords, Piece, Square as Sq } from "../types";
+import { BoardDimensions, BoardOrientation, Coords, Piece, Square as Sq } from "../types";
 
 type SquareProps = {
   children: ReactNode;
@@ -22,6 +22,7 @@ export function Square({
   const squareRef = useRef<HTMLElement>(null);
   const {
     autoPromoteToQueen,
+    boardDimensions,
     boardWidth,
     boardOrientation,
     clearArrows,
@@ -111,7 +112,7 @@ export function Square({
   }, [boardWidth, boardOrientation]);
 
   const defaultSquareStyle = {
-    ...borderRadius(square, boardOrientation, customBoardStyle),
+    ...borderRadius(square, boardDimensions, boardOrientation, customBoardStyle),
     ...(squareColor === "black"
       ? customDarkSquareStyle
       : customLightSquareStyle),
@@ -194,7 +195,7 @@ export function Square({
           // @ts-ignore
           ref={squareRef as any}
           style={{
-            ...size(boardWidth),
+            ...size(boardWidth, boardDimensions),
             ...center,
             ...(!squareHasPremove && customSquareStyles?.[square]),
           }}
@@ -207,7 +208,7 @@ export function Square({
           square={square}
           squareColor={squareColor}
           style={{
-            ...size(boardWidth),
+            ...size(boardWidth, boardDimensions),
             ...center,
             ...(!squareHasPremove && customSquareStyles?.[square]),
           }}
@@ -224,13 +225,14 @@ const center = {
   justifyContent: "center",
 };
 
-const size = (width: number) => ({
-  width: width / 8,
-  height: width / 8,
+const size = (width: number, boardDimensions: BoardDimensions = {rows: 8, columns: 8}) => ({
+  width: width / Math.max(boardDimensions.rows, boardDimensions.columns),
+  height: width / Math.max(boardDimensions.rows, boardDimensions.columns),
 });
 
 const borderRadius = (
   square: Sq,
+  boardDimensions: BoardDimensions = {rows: 8, columns: 8},
   boardOrientation: BoardOrientation,
   customBoardStyle?: Record<string, string | number>
 ) => {
@@ -241,7 +243,7 @@ const borderRadius = (
       ? { borderBottomLeftRadius: customBoardStyle.borderRadius }
       : { borderTopRightRadius: customBoardStyle.borderRadius };
   }
-  if (square === "a8") {
+  if (square === `a${boardDimensions.rows}`) {
     return boardOrientation === "white"
       ? { borderTopLeftRadius: customBoardStyle.borderRadius }
       : { borderBottomRightRadius: customBoardStyle.borderRadius };
@@ -251,7 +253,7 @@ const borderRadius = (
       ? { borderBottomRightRadius: customBoardStyle.borderRadius }
       : { borderTopLeftRadius: customBoardStyle.borderRadius };
   }
-  if (square === "h8") {
+  if (square === `h${boardDimensions.rows}`) {
     return boardOrientation === "white"
       ? { borderTopRightRadius: customBoardStyle.borderRadius }
       : { borderBottomLeftRadius: customBoardStyle.borderRadius };

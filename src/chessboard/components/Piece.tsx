@@ -21,6 +21,7 @@ export function Piece({
   const {
     animationDuration,
     arePiecesDraggable,
+    boardDimensions,
     boardWidth,
     boardOrientation,
     chessPieces,
@@ -111,7 +112,7 @@ export function Piece({
       const sourceSq = square;
       const targetSq = newSquare[0];
       if (sourceSq && targetSq) {
-        const squareWidth = boardWidth / 8;
+        const squareWidth = boardWidth / Math.max(boardDimensions.rows, boardDimensions.columns);
         setPieceStyle((oldPieceStyle) => ({
           ...oldPieceStyle,
           transform: `translate(${
@@ -166,15 +167,15 @@ export function Piece({
     >
       {typeof chessPieces[piece] === "function" ? (
         (chessPieces[piece] as CustomPieceFn)({
-          squareWidth: boardWidth / 8,
+          squareWidth: boardWidth / Math.max(boardDimensions.rows, boardDimensions.columns),
           isDragging,
           square,
         })
       ) : (
         <svg
           viewBox={"1 1 43 43"}
-          width={boardWidth / 8}
-          height={boardWidth / 8}
+          width={boardWidth / Math.max(boardDimensions.rows, boardDimensions.columns)}
+          height={boardWidth / Math.max(boardDimensions.rows, boardDimensions.columns)}
           style={{ display: "block" }}
         >
           <g>{chessPieces[piece] as ReactNode}</g>

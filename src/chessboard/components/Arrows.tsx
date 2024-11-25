@@ -8,6 +8,7 @@ export const Arrows = () => {
   const {
     arrows,
     newArrow,
+    boardDimensions,
     boardOrientation,
     boardWidth,
 
@@ -31,11 +32,13 @@ export const Arrows = () => {
         const [arrowStartField, arrowEndField, arrowColor] = arrow;
         if (arrowStartField === arrowEndField) return null;
         const from = getRelativeCoords(
+          boardDimensions,
           boardOrientation,
           boardWidth,
           arrowStartField
         );
         const to = getRelativeCoords(
+          boardDimensions,
           boardOrientation,
           boardWidth,
           arrowEndField

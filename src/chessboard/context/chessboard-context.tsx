@@ -48,6 +48,7 @@ interface ChessboardProviderContext {
   autoPromoteToQueen: RequiredChessboardProps["autoPromoteToQueen"];
   boardOrientation: RequiredChessboardProps["boardOrientation"];
   boardWidth: RequiredChessboardProps["boardWidth"];
+  boardDimensions: RequiredChessboardProps["boardDimensions"];
   customArrowColor: RequiredChessboardProps["customArrowColor"];
   customBoardStyle: ChessboardProps["customBoardStyle"];
   customNotationStyle: ChessboardProps["customNotationStyle"];
@@ -126,6 +127,7 @@ export const ChessboardProvider = forwardRef(
       autoPromoteToQueen = false,
       boardOrientation = "white",
       boardWidth,
+      boardDimensions = { rows: 8, columns: 8 },
       children,
       clearPremovesOnRightClick = true,
       customArrows,
@@ -488,6 +490,7 @@ export const ChessboardProvider = forwardRef(
       autoPromoteToQueen,
       boardOrientation,
       boardWidth,
+      boardDimensions,
       chessPieces,
       clearArrows,
       clearCurrentRightClickDown,

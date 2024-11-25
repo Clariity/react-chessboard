@@ -17,6 +17,7 @@ export function Squares() {
 
   const {
     arePremovesAllowed,
+    boardDimensions,
     boardOrientation,
     boardWidth,
     currentPosition,
@@ -58,7 +59,7 @@ export function Squares() {
 
   return (
     <div data-boardid={id}>
-      {[...Array(8)].map((_, r) => {
+      {[...Array(boardDimensions.rows)].map((_, r) => {
         return (
           <div
             key={r.toString()}
@@ -68,12 +69,12 @@ export function Squares() {
               width: boardWidth,
             }}
           >
-            {[...Array(8)].map((_, c) => {
+            {[...Array(boardDimensions.columns)].map((_, c) => {
               const square =
                 boardOrientation === "black"
-                  ? ((COLUMNS[7 - c] + (r + 1)) as Sq)
-                  : ((COLUMNS[c] + (8 - r)) as Sq);
-              const squareColor = c % 2 === r % 2 ? "white" : "black";
+                  ? ((COLUMNS[(boardDimensions.columns -1) - c] + (r + 1)) as Sq)
+                  : ((COLUMNS[c] + (boardDimensions.columns - r)) as Sq);
+              const squareColor = (c % 2 === r % 2) === (boardDimensions.rows % 2 === 0) ? "white" : "black";
               const squareHasPremove = premoves.find(
                 (p) => p.sourceSq === square || p.targetSq === square
               );

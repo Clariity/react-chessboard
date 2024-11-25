@@ -1,5 +1,6 @@
 import { COLUMNS } from "../consts";
 import { useChessboard } from "../context/chessboard-context";
+import { BoardDimensions } from "../types";
 
 type NotationProps = {
   row: number;
@@ -8,6 +9,7 @@ type NotationProps = {
 
 export function Notation({ row, col }: NotationProps) {
   const {
+    boardDimensions,
     boardOrientation,
     boardWidth,
     customDarkSquareStyle,
@@ -19,15 +21,15 @@ export function Notation({ row, col }: NotationProps) {
   const blackColor = customDarkSquareStyle.backgroundColor;
 
   const isRow = col === 0;
-  const isColumn = row === 7;
+  const isColumn = row === (boardDimensions.rows - 1);
   const isBottomLeftSquare = isRow && isColumn;
 
   function getRow() {
-    return boardOrientation === "white" ? 8 - row : row + 1;
+    return boardOrientation === "white" ? boardDimensions.rows - row : row + 1;
   }
 
   function getColumn() {
-    return boardOrientation === "black" ? COLUMNS[7 - col] : COLUMNS[col];
+    return boardOrientation === "black" ? COLUMNS[(boardDimensions.columns - 1) - col] : COLUMNS[col];
   }
 
   function renderBottomLeft() {
@@ -35,20 +37,22 @@ export function Notation({ row, col }: NotationProps) {
       <>
         <div
           style={{
+            userSelect: "none",
             zIndex: 3,
             position: "absolute",
             ...{ color: whiteColor },
-            ...numericStyle(boardWidth, customNotationStyle),
+            ...numericStyle(boardWidth, boardDimensions, customNotationStyle),
           }}
         >
           {getRow()}
         </div>
         <div
           style={{
+            userSelect: "none",
             zIndex: 3,
             position: "absolute",
             ...{ color: whiteColor },
-            ...alphaStyle(boardWidth, customNotationStyle),
+            ...alphaStyle(boardWidth, boardDimensions, customNotationStyle),
           }}
         >
           {getColumn()}
@@ -64,8 +68,8 @@ export function Notation({ row, col }: NotationProps) {
           userSelect: "none",
           zIndex: 3,
           position: "absolute",
-          ...{ color: col % 2 !== 0 ? blackColor : whiteColor },
-          ...alphaStyle(boardWidth, customNotationStyle),
+          ...{ color: (col % 2 !== 0) ? blackColor : whiteColor },
+          ...alphaStyle(boardWidth, boardDimensions, customNotationStyle),
         }}
       >
         {getColumn()}
@@ -80,10 +84,8 @@ export function Notation({ row, col }: NotationProps) {
           userSelect: "none",
           zIndex: 3,
           position: "absolute",
-          ...(boardOrientation === "black"
-            ? { color: row % 2 === 0 ? blackColor : whiteColor }
-            : { color: row % 2 === 0 ? blackColor : whiteColor }),
-          ...numericStyle(boardWidth, customNotationStyle),
+          ...({ color: (row % 2 === 0) === (boardDimensions.columns % 2 === 0) ? blackColor : whiteColor }),
+          ...numericStyle(boardWidth, boardDimensions, customNotationStyle),
         }}
       >
         {getRow()}
@@ -106,16 +108,16 @@ export function Notation({ row, col }: NotationProps) {
   return null;
 }
 
-const alphaStyle = (width: number, customNotationStyle?: Record<string, string | number>) => ({
+const alphaStyle = (width: number, boardDimensions: BoardDimensions, customNotationStyle?: Record<string, string | number>) => ({
   alignSelf: "flex-end",
-  paddingLeft: width / 8 - width / 48,
+  paddingLeft: width / Math.max(boardDimensions.rows, boardDimensions.columns) - width / 48,
   fontSize: width / 48,
   ...customNotationStyle
 });
 
-const numericStyle = (width: number, customNotationStyle?: Record<string, string | number>) => ({
+const numericStyle = (width: number, boardDimensions: BoardDimensions, customNotationStyle?: Record<string, string | number>) => ({
   alignSelf: "flex-start",
-  paddingRight: width / 8 - width / 48,
+  paddingRight: width / Math.max(boardDimensions.rows, boardDimensions.columns) - width / 48,
   fontSize: width / 48,
   ...customNotationStyle
 });

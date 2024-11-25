@@ -9,7 +9,7 @@ export type CustomDragLayerProps = {
 };
 
 export function CustomDragLayer({ boardContainer }: CustomDragLayerProps) {
-  const { boardWidth, chessPieces, id, snapToCursor, allowDragOutsideBoard } =
+  const { boardWidth, boardDimensions, chessPieces, id, snapToCursor, allowDragOutsideBoard } =
     useChessboard();
 
   const collectedProps = useDragLayer((monitor) => ({
@@ -36,7 +36,7 @@ export function CustomDragLayer({ boardContainer }: CustomDragLayerProps) {
       if (!clientOffset || !sourceClientOffset) return { display: "none" };
 
       let { x, y } = snapToCursor ? clientOffset : sourceClientOffset;
-      const halfSquareWidth = boardWidth / 8 / 2;
+      const halfSquareWidth = boardWidth / Math.max(boardDimensions.rows, boardDimensions.columns) / 2;
       if (snapToCursor) {
         x -= halfSquareWidth;
         y -= halfSquareWidth;
@@ -77,14 +77,14 @@ export function CustomDragLayer({ boardContainer }: CustomDragLayerProps) {
       <div style={getItemStyle(clientOffset, sourceClientOffset)}>
         {typeof chessPieces[item.piece] === "function" ? (
           (chessPieces[item.piece] as CustomPieceFn)({
-            squareWidth: boardWidth / 8,
+            squareWidth: boardWidth / (Math.max(boardDimensions.rows, boardDimensions.columns)),
             isDragging: true,
           })
         ) : (
           <svg
             viewBox={"1 1 43 43"}
-            width={boardWidth / 8}
-            height={boardWidth / 8}
+            width={boardWidth / (Math.max(boardDimensions.rows, boardDimensions.columns))}
+            height={boardWidth / (Math.max(boardDimensions.rows, boardDimensions.columns))}
           >
             <g>{chessPieces[item.piece] as ReactNode}</g>
           </svg>

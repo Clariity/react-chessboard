@@ -1,71 +1,12 @@
 import type { FC, ReactElement, ReactNode, Ref, RefObject } from "react";
 import { BackendFactory } from "dnd-core";
 
-export type Square =
-  | "a8"
-  | "b8"
-  | "c8"
-  | "d8"
-  | "e8"
-  | "f8"
-  | "g8"
-  | "h8"
-  | "a7"
-  | "b7"
-  | "c7"
-  | "d7"
-  | "e7"
-  | "f7"
-  | "g7"
-  | "h7"
-  | "a6"
-  | "b6"
-  | "c6"
-  | "d6"
-  | "e6"
-  | "f6"
-  | "g6"
-  | "h6"
-  | "a5"
-  | "b5"
-  | "c5"
-  | "d5"
-  | "e5"
-  | "f5"
-  | "g5"
-  | "h5"
-  | "a4"
-  | "b4"
-  | "c4"
-  | "d4"
-  | "e4"
-  | "f4"
-  | "g4"
-  | "h4"
-  | "a3"
-  | "b3"
-  | "c3"
-  | "d3"
-  | "e3"
-  | "f3"
-  | "g3"
-  | "h3"
-  | "a2"
-  | "b2"
-  | "c2"
-  | "d2"
-  | "e2"
-  | "f2"
-  | "g2"
-  | "h2"
-  | "a1"
-  | "b1"
-  | "c1"
-  | "d1"
-  | "e1"
-  | "f1"
-  | "g1"
-  | "h1";
+
+type SquareColumn = 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j' | 'k' | 'l';
+type SquareRow = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
+
+// Combine column and row to create the full square type
+export type Square = `${SquareColumn}${SquareRow}`;
 
 export type Piece =
   | "wP"
@@ -126,6 +67,8 @@ export type CustomSquareStyles = {
 
 export type BoardOrientation = "white" | "black";
 
+export type BoardDimensions = { rows: number; columns: number };
+
 export type DropOffBoardAction = "snapback" | "trash";
 
 export type Coords = { x: number; y: number };
@@ -172,6 +115,11 @@ export type ChessboardProps = {
    * The width of the board in pixels.
    */
   boardWidth?: number;
+  /**
+   * The number of squares on the board represented by rows, and columns (For some chess variants not using standard board sizes).
+   * @default { rows: 8, columns: 8 }
+   */
+  boardDimensions?: BoardDimensions;
   /**
    * If premoves are allowed, whether or not to clear the premove queue on right click.
    * @default true

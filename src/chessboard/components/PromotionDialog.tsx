@@ -1,10 +1,11 @@
 import { useChessboard } from "../context/chessboard-context";
 import { getRelativeCoords } from "../functions";
-import { PromotionPieceOption } from "../types";
+import { PromotionPieceOption, Square } from "../types";
 import { PromotionOption } from "./PromotionOption";
 
 export function PromotionDialog() {
   const {
+    boardDimensions,
     boardOrientation,
     boardWidth,
     promotionDialogVariant,
@@ -23,7 +24,7 @@ export function PromotionDialog() {
     default: {
       display: "grid",
       gridTemplateColumns: "1fr 1fr",
-      transform: `translate(${-boardWidth / 8}px, ${-boardWidth / 8}px)`,
+      transform: `translate(${-boardWidth / boardDimensions.columns}px, ${-boardWidth / boardDimensions.columns}px)`,
     },
     vertical: {
       transform: `translate(${-boardWidth / 16}px, ${-boardWidth / 16}px)`,
@@ -32,7 +33,7 @@ export function PromotionDialog() {
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
-      transform: `translate(0px, ${(3 * boardWidth) / 8}px)`,
+      transform: `translate(0px, ${(3 * boardWidth) / boardDimensions.columns}px)`,
       width: "100%",
       height: `${boardWidth / 4}px`,
       top: 0,
@@ -42,9 +43,10 @@ export function PromotionDialog() {
   };
 
   const dialogCoords = getRelativeCoords(
+    boardDimensions,
     boardOrientation,
     boardWidth,
-    promoteToSquare || "a8"
+    promoteToSquare || `a${boardDimensions.rows}` as Square
   );
 
   return (
