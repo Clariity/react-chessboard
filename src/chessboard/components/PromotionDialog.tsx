@@ -12,6 +12,8 @@ export function PromotionDialog() {
     promoteToSquare,
   } = useChessboard();
 
+  const boardHeight = (boardWidth * boardDimensions.rows) / boardDimensions.columns;
+
   const promotePieceColor = promoteToSquare?.[1] === "1" ? "b" : "w";
   const promotionOptions: PromotionPieceOption[] = [
     `${promotePieceColor ?? "w"}Q`,
@@ -46,6 +48,7 @@ export function PromotionDialog() {
     boardDimensions,
     boardOrientation,
     boardWidth,
+    boardHeight,
     promoteToSquare || `a${boardDimensions.rows}` as Square
   );
 

@@ -4,6 +4,7 @@ import { getRelativeCoords } from "../functions";
 import { useChessboard } from "../context/chessboard-context";
 import { Arrow } from "../types";
 
+
 export const Arrows = () => {
   const {
     arrows,
@@ -11,15 +12,17 @@ export const Arrows = () => {
     boardDimensions,
     boardOrientation,
     boardWidth,
-
     customArrowColor: primaryArrowCollor,
   } = useChessboard();
+
+  const boardHeight = (boardWidth * boardDimensions.rows) / boardDimensions.columns;
+
   const arrowsList = [...arrows, newArrow].filter(Boolean) as Arrow[];
 
   return (
     <svg
       width={boardWidth}
-      height={boardWidth}
+      height={boardHeight}
       style={{
         position: "absolute",
         top: "0",
@@ -29,24 +32,30 @@ export const Arrows = () => {
       }}
     >
       {arrowsList.map((arrow, i) => {
+        console.log("arrow: ", arrow);
         const [arrowStartField, arrowEndField, arrowColor] = arrow;
         if (arrowStartField === arrowEndField) return null;
+
         const from = getRelativeCoords(
           boardDimensions,
           boardOrientation,
           boardWidth,
+          boardHeight,
           arrowStartField
         );
+
         const to = getRelativeCoords(
           boardDimensions,
           boardOrientation,
           boardWidth,
+          boardHeight,
           arrowEndField
         );
-        let ARROW_LENGTH_REDUCER = boardWidth / 32;
+
+        let ARROW_LENGTH_REDUCER = Math.min(boardWidth, boardHeight) / 32;
 
         const isArrowActive = i === arrows.length;
-        // if there are different arrows targeting the same square make their length a bit shorter
+
         if (
           arrows.some(
             (restArrow) =>
@@ -54,8 +63,9 @@ export const Arrows = () => {
           ) &&
           !isArrowActive
         ) {
-          ARROW_LENGTH_REDUCER = boardWidth / 16;
+          ARROW_LENGTH_REDUCER = Math.min(boardWidth, boardHeight) / 16;
         }
+
         const dx = to.x - from.x;
         const dy = to.y - from.y;
 

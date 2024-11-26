@@ -26,6 +26,11 @@ export function Squares() {
     showBoardNotation,
   } = useChessboard();
 
+  const dynamicColumns = Array.from(
+    { length: boardDimensions.columns },
+    (_, i) => String.fromCharCode(97 + i) // 97 is 'a'
+  );
+
   const premovesHistory: PremovesHistory = useMemo(() => {
     const result: PremovesHistory = [];
     // if premoves aren't allowed, don't waste time on calculations
@@ -72,23 +77,17 @@ export function Squares() {
             {[...Array(boardDimensions.columns)].map((_, c) => {
               const square =
                 boardOrientation === "black"
-                  ? ((COLUMNS[(boardDimensions.columns -1) - c] + (r + 1)) as Sq)
-                  : ((COLUMNS[c] + (boardDimensions.columns - r)) as Sq);
-              const squareColor = (c % 2 === r % 2) === (boardDimensions.rows % 2 === 0) ? "white" : "black";
-              const squareHasPremove = premoves.find(
+                  ? ((dynamicColumns[boardDimensions.columns - 1 - c] + (r + 1)) as Sq)
+                  : ((dynamicColumns[c] + (boardDimensions.rows - r)) as Sq);
+              const squareColor = (r + c) % 2 === 0 === (boardDimensions.columns % 2 === 0) ? "white" : "black";
+              const squareHasPremove = premoves.some(
                 (p) => p.sourceSq === square || p.targetSq === square
               );
-
               const squareHasPremoveTarget = premovesHistory
-                .filter(
-                  ({ premovesRoute }) =>
-                    premovesRoute.at(-1)?.targetSq === square
-                )
-                //the premoved piece with the higher index will be shown, as it is the latest one
+                .filter(({ premovesRoute }) => premovesRoute.at(-1)?.targetSq === square)
                 .sort(
                   (a, b) =>
-                    b.premovesRoute.at(-1)?.index! -
-                    a.premovesRoute.at(-1)?.index!
+                    b.premovesRoute.at(-1)?.index! - a.premovesRoute.at(-1)?.index!
                 )
                 .at(0);
 

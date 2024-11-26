@@ -57,6 +57,8 @@ export function Square({
     setShowPromoteDialog,
   } = useChessboard();
 
+  const boardHeight = (boardWidth * boardDimensions.rows) / boardDimensions.columns;
+
   const [{ isOver }, drop] = useDrop(
     () => ({
       accept: "piece",
@@ -109,7 +111,7 @@ export function Square({
       const { x, y } = squareRef.current.getBoundingClientRect();
       setSquares((oldSquares) => ({ ...oldSquares, [square]: { x, y } }));
     }
-  }, [boardWidth, boardOrientation]);
+  }, [boardWidth, boardHeight, boardOrientation]);
 
   const defaultSquareStyle = {
     ...borderRadius(square, boardDimensions, boardOrientation, customBoardStyle),
@@ -146,7 +148,7 @@ export function Square({
       }}
       onMouseOver={(e) => {
         // noop if moving from child of square into square.
-
+        console.log("onMouseOver square: ", square);
         if (e.buttons === 2 && currentRightClickDown) {
           drawNewArrow(currentRightClickDown, square);
         }
@@ -195,7 +197,7 @@ export function Square({
           // @ts-ignore
           ref={squareRef as any}
           style={{
-            ...size(boardWidth, boardDimensions),
+            ...size(boardWidth, boardHeight, boardDimensions),
             ...center,
             ...(!squareHasPremove && customSquareStyles?.[square]),
           }}
@@ -208,7 +210,7 @@ export function Square({
           square={square}
           squareColor={squareColor}
           style={{
-            ...size(boardWidth, boardDimensions),
+            ...size(boardWidth, boardHeight, boardDimensions),
             ...center,
             ...(!squareHasPremove && customSquareStyles?.[square]),
           }}
@@ -225,9 +227,13 @@ const center = {
   justifyContent: "center",
 };
 
-const size = (width: number, boardDimensions: BoardDimensions = {rows: 8, columns: 8}) => ({
-  width: width / Math.max(boardDimensions.rows, boardDimensions.columns),
-  height: width / Math.max(boardDimensions.rows, boardDimensions.columns),
+const size = (
+  width: number,
+  height: number,
+  boardDimensions: BoardDimensions = { rows: 8, columns: 8 }
+) => ({
+  width: width / boardDimensions.columns,
+  height: height / boardDimensions.rows,
 });
 
 const borderRadius = (

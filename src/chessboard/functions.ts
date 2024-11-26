@@ -11,27 +11,23 @@ export function getRelativeCoords(
   boardDimensions: BoardDimensions = { rows: 8, columns: 8 },
   boardOrientation: BoardOrientation,
   boardWidth: number,
+  boardHeight: number,
   square: Square
-): {
-  x: number;
-  y: number;
-} {
-  const squareWidth = boardWidth / Math.max(boardDimensions.rows, boardDimensions.columns);
-  
-  const columnIndex =
-    boardOrientation === "white"
-      ? square[0].charCodeAt(0) - "a".charCodeAt(0) // 'a' is 0, 'b' is 1, etc.
-      : boardDimensions.columns - 1 - (square[0].charCodeAt(0) - "a".charCodeAt(0));
+): { x: number; y: number } {
+  const squareWidth = boardWidth / boardDimensions.columns;
+  const squareHeight = boardHeight / boardDimensions.rows;
+
+  const columnIndex = boardOrientation === "white"
+    ? square[0].charCodeAt(0) - "a".charCodeAt(0)
+    : boardDimensions.columns - 1 - (square[0].charCodeAt(0) - "a".charCodeAt(0));
 
   const match = square.match(/\d+/);
-  const rowIndex =
-    boardOrientation === "white"
-      ? boardDimensions.rows - (match ? parseInt(match[0], 10) : boardDimensions.rows)
-      : (match ? parseInt(match[0], 10) : boardDimensions.rows) - 1;
+  const rowIndex = boardOrientation === "white"
+    ? boardDimensions.rows - (match ? parseInt(match[0], 10) : 8)
+    : (match ? parseInt(match[0], 10) : 8) - 1;
 
   const x = columnIndex * squareWidth + squareWidth / 2;
-  const y = rowIndex * squareWidth + squareWidth / 2;
-  
+  const y = rowIndex * squareHeight + squareHeight / 2;
   return { x, y };
 }
 

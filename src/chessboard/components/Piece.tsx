@@ -39,6 +39,9 @@ export function Piece({
     positionDifferences,
   } = useChessboard();
 
+  const squareWidth = boardWidth / Math.max(boardDimensions.rows, boardDimensions.columns);
+  const squareHeight = boardWidth * (boardDimensions.rows / boardDimensions.columns) / Math.max(boardDimensions.rows, boardDimensions.columns);
+
   const [pieceStyle, setPieceStyle] = useState({
     opacity: 1,
     zIndex: 5,
@@ -112,7 +115,6 @@ export function Piece({
       const sourceSq = square;
       const targetSq = newSquare[0];
       if (sourceSq && targetSq) {
-        const squareWidth = boardWidth / Math.max(boardDimensions.rows, boardDimensions.columns);
         setPieceStyle((oldPieceStyle) => ({
           ...oldPieceStyle,
           transform: `translate(${
@@ -122,7 +124,7 @@ export function Piece({
           }px, ${
             (boardOrientation === "black" ? -1 : 1) *
             (Number(sourceSq[1]) - Number(targetSq[1])) *
-            squareWidth
+            squareHeight
           }px)`,
           transition: `transform ${animationDuration}ms`,
           zIndex: 6,
@@ -167,15 +169,15 @@ export function Piece({
     >
       {typeof chessPieces[piece] === "function" ? (
         (chessPieces[piece] as CustomPieceFn)({
-          squareWidth: boardWidth / Math.max(boardDimensions.rows, boardDimensions.columns),
+          squareWidth,
           isDragging,
           square,
         })
       ) : (
         <svg
           viewBox={"1 1 43 43"}
-          width={boardWidth / Math.max(boardDimensions.rows, boardDimensions.columns)}
-          height={boardWidth / Math.max(boardDimensions.rows, boardDimensions.columns)}
+          width={squareWidth}
+          height={squareWidth}
           style={{ display: "block" }}
         >
           <g>{chessPieces[piece] as ReactNode}</g>

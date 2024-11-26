@@ -10,12 +10,16 @@ export function Board() {
 
   const {
     boardWidth,
+    boardDimensions,
     clearCurrentRightClickDown,
     onPromotionPieceSelect,
     setShowPromoteDialog,
     showPromoteDialog,
     customBoardStyle,
   } = useChessboard();
+
+  const boardHeight = (boardWidth * boardDimensions.rows) / boardDimensions.columns;
+  console.log("boardHeight:", boardHeight);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -39,7 +43,7 @@ export function Board() {
         ref={boardRef}
         style={{
           position: "relative",
-          ...boardStyles(boardWidth),
+          ...boardStyles(boardWidth, boardHeight),
           ...customBoardStyle,
         }}
       >
@@ -60,7 +64,7 @@ export function Board() {
                 zIndex: "100",
                 backgroundColor: "rgba(22,21,18,.7)",
                 width: boardWidth,
-                height: boardWidth,
+                height: boardHeight,
               }}
             />
             <PromotionDialog />
@@ -73,8 +77,8 @@ export function Board() {
   );
 }
 
-const boardStyles = (width: number) => ({
+const boardStyles = (width: number, height: number) => ({
   cursor: "default",
-  height: width,
+  height,
   width,
 });

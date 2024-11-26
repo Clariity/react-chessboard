@@ -9,8 +9,19 @@ export type CustomDragLayerProps = {
 };
 
 export function CustomDragLayer({ boardContainer }: CustomDragLayerProps) {
-  const { boardWidth, boardDimensions, chessPieces, id, snapToCursor, allowDragOutsideBoard } =
-    useChessboard();
+  const {
+    boardWidth,
+    boardDimensions,
+    chessPieces,
+    id,
+    snapToCursor,
+    allowDragOutsideBoard,
+  } = useChessboard();
+
+  const boardHeight = (boardWidth * boardDimensions.rows) / boardDimensions.columns;
+
+  const squareWidth = boardWidth / boardDimensions.columns;
+  const squareHeight = boardHeight / boardDimensions.rows;
 
   const collectedProps = useDragLayer((monitor) => ({
     item: monitor.getItem(),
@@ -36,19 +47,22 @@ export function CustomDragLayer({ boardContainer }: CustomDragLayerProps) {
       if (!clientOffset || !sourceClientOffset) return { display: "none" };
 
       let { x, y } = snapToCursor ? clientOffset : sourceClientOffset;
-      const halfSquareWidth = boardWidth / Math.max(boardDimensions.rows, boardDimensions.columns) / 2;
+      const halfSquareWidth = squareWidth / 2;
+      const halfSquareHeight = squareHeight / 2;
+
       if (snapToCursor) {
         x -= halfSquareWidth;
-        y -= halfSquareWidth;
+        y -= halfSquareHeight;
       }
 
       if (!allowDragOutsideBoard) {
         const { left, top } = boardContainer;
-        // half square so the piece reaches the board
+
         const maxLeft = left - halfSquareWidth;
-        const maxTop = top - halfSquareWidth;
+        const maxTop = top - halfSquareHeight;
         const maxRight = left + boardWidth - halfSquareWidth;
-        const maxBottom = top + boardWidth - halfSquareWidth;
+        const maxBottom = top + boardHeight - halfSquareHeight;
+
         x = Math.max(maxLeft, Math.min(x, maxRight));
         y = Math.max(maxTop, Math.min(y, maxBottom));
       }
@@ -61,7 +75,7 @@ export function CustomDragLayer({ boardContainer }: CustomDragLayerProps) {
         touchAction: "none",
       };
     },
-    [boardWidth, allowDragOutsideBoard, snapToCursor, boardContainer]
+    [squareWidth, squareHeight, boardWidth, boardHeight, allowDragOutsideBoard, snapToCursor, boardContainer]
   );
 
   return isDragging && item.id === id ? (
@@ -77,15 +91,11 @@ export function CustomDragLayer({ boardContainer }: CustomDragLayerProps) {
       <div style={getItemStyle(clientOffset, sourceClientOffset)}>
         {typeof chessPieces[item.piece] === "function" ? (
           (chessPieces[item.piece] as CustomPieceFn)({
-            squareWidth: boardWidth / (Math.max(boardDimensions.rows, boardDimensions.columns)),
+            squareWidth,
             isDragging: true,
           })
         ) : (
-          <svg
-            viewBox={"1 1 43 43"}
-            width={boardWidth / (Math.max(boardDimensions.rows, boardDimensions.columns))}
-            height={boardWidth / (Math.max(boardDimensions.rows, boardDimensions.columns))}
-          >
+          <svg viewBox={"1 1 43 43"} width={squareWidth} height={squareHeight}>
             <g>{chessPieces[item.piece] as ReactNode}</g>
           </svg>
         )}
