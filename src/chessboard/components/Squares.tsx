@@ -78,8 +78,9 @@ export function Squares() {
               const square =
                 boardOrientation === "black"
                   ? ((dynamicColumns[boardDimensions.columns - 1 - c] + (r + 1)) as Sq)
-                  : ((dynamicColumns[c] + (boardDimensions.rows - r)) as Sq);
-              const squareColor = (r + c) % 2 === 0 === (boardDimensions.columns % 2 === 0) ? "white" : "black";
+                  : ((dynamicColumns[c] + (boardDimensions.rows - r)) as Sq);          
+              
+              const squareColor = (r + c) % 2 === 0 === (boardOrientation === "white" ? boardDimensions.rows % 2 !== 0 : boardDimensions.columns % 2 !== 0) ? "black" : "white";
               const squareHasPremove = premoves.some(
                 (p) => p.sourceSq === square || p.targetSq === square
               );
