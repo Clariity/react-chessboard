@@ -39,9 +39,11 @@ export function Piece({
     positionDifferences,
   } = useChessboard();
 
-  const squareWidth = boardWidth / Math.max(boardDimensions.rows, boardDimensions.columns);
-  const squareHeight = boardWidth * (boardDimensions.rows / boardDimensions.columns) / Math.max(boardDimensions.rows, boardDimensions.columns);
+  const boardHeight = (boardWidth * boardDimensions.rows) / boardDimensions.columns;
 
+  const squareWidth = boardWidth / boardDimensions.columns;
+  const squareHeight = boardHeight / boardDimensions.rows;
+  
   const [pieceStyle, setPieceStyle] = useState({
     opacity: 1,
     zIndex: 5,
@@ -177,7 +179,7 @@ export function Piece({
         <svg
           viewBox={"1 1 43 43"}
           width={squareWidth}
-          height={squareWidth}
+          height={squareHeight}
           style={{ display: "block" }}
         >
           <g>{chessPieces[piece] as ReactNode}</g>
