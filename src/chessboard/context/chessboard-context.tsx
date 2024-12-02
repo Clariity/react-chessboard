@@ -160,8 +160,8 @@ export const ChessboardProvider = forwardRef(
       onPromotionCheck = (sourceSquare, targetSquare, piece) => {
         return (
           ((piece === "wP" &&
-            sourceSquare[1] === "7" &&
-            targetSquare[1] === "8") ||
+            sourceSquare[1] === (boardDimensions.rows - 1).toString() &&
+            targetSquare[1] === (boardDimensions.rows).toString()) ||
             (piece === "bP" &&
               sourceSquare[1] === "2" &&
               targetSquare[1] === "1")) &&
