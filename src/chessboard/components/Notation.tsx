@@ -17,6 +17,8 @@ export function Notation({ row, col }: NotationProps) {
     customNotationStyle,
   } = useChessboard();
 
+  const boardHeight = (boardWidth * boardDimensions.rows) / boardDimensions.columns;
+
   const whiteColor = customLightSquareStyle.backgroundColor;
   const blackColor = customDarkSquareStyle.backgroundColor;
 
@@ -33,6 +35,7 @@ export function Notation({ row, col }: NotationProps) {
   }
 
   function renderBottomLeft() {
+    console.log("bottom left: ", getRow(), getColumn());
     return (
       <>
         <div
@@ -40,8 +43,8 @@ export function Notation({ row, col }: NotationProps) {
             userSelect: "none",
             zIndex: 3,
             position: "absolute",
-            ...{ color: whiteColor },
-            ...numericStyle(boardWidth, boardDimensions, customNotationStyle),
+            ...{ color: ((boardOrientation === "white") ? whiteColor : ((boardDimensions.rows % 2 === 0) === (boardDimensions.columns % 2 === 0)) ? whiteColor : blackColor) },
+            ...numericStyle(boardWidth, boardHeight, boardDimensions, customNotationStyle),
           }}
         >
           {getRow()}
@@ -51,8 +54,8 @@ export function Notation({ row, col }: NotationProps) {
             userSelect: "none",
             zIndex: 3,
             position: "absolute",
-            ...{ color: whiteColor },
-            ...alphaStyle(boardWidth, boardDimensions, customNotationStyle),
+            ...{ color: ((boardOrientation === "white") ? whiteColor : ((boardDimensions.rows % 2 === 0) === (boardDimensions.columns % 2 === 0)) ? whiteColor : blackColor) },
+            ...alphaStyle(boardWidth, boardHeight, boardDimensions, customNotationStyle),
           }}
         >
           {getColumn()}
@@ -68,8 +71,8 @@ export function Notation({ row, col }: NotationProps) {
           userSelect: "none",
           zIndex: 3,
           position: "absolute",
-          ...{ color: (col % 2 !== 0) ? blackColor : whiteColor },
-          ...alphaStyle(boardWidth, boardDimensions, customNotationStyle),
+          ...{ color: boardOrientation === "white" ? ((col % 2 === 0) ? whiteColor : blackColor) : ((col % 2 !== 0) === (boardDimensions.rows % 2 === 0) === (boardDimensions.columns % 2 === 0) ? blackColor : whiteColor) },
+          ...alphaStyle(boardWidth, boardHeight, boardDimensions, customNotationStyle),
         }}
       >
         {getColumn()}
@@ -84,8 +87,8 @@ export function Notation({ row, col }: NotationProps) {
           userSelect: "none",
           zIndex: 3,
           position: "absolute",
-          ...({ color: (row % 2 === 0) === (boardDimensions.columns % 2 === 0) ? blackColor : whiteColor }),
-          ...numericStyle(boardWidth, boardDimensions, customNotationStyle),
+          ...({ color: boardOrientation === "white" ? ((row % 2 === 0) === (boardDimensions.rows % 2 !== 0) ? whiteColor : blackColor) : ((row % 2 === 0) === (boardDimensions.columns % 2 !== 0) ? whiteColor : blackColor) }),
+          ...numericStyle(boardWidth, boardHeight, boardDimensions, customNotationStyle),
         }}
       >
         {getRow()}
@@ -108,16 +111,16 @@ export function Notation({ row, col }: NotationProps) {
   return null;
 }
 
-const alphaStyle = (width: number, boardDimensions: BoardDimensions, customNotationStyle?: Record<string, string | number>) => ({
+const alphaStyle = (width: number, height: number, boardDimensions: BoardDimensions, customNotationStyle?: Record<string, string | number>) => ({
   alignSelf: "flex-end",
-  paddingLeft: width / Math.max(boardDimensions.rows, boardDimensions.columns) - width / 48,
-  fontSize: width / 48,
+  paddingLeft: Math.max(width, height) / Math.max(boardDimensions.rows, boardDimensions.columns) - Math.max(width, height) / 48,
+  fontSize: Math.max(width, height) / 48,
   ...customNotationStyle
 });
 
-const numericStyle = (width: number, boardDimensions: BoardDimensions, customNotationStyle?: Record<string, string | number>) => ({
+const numericStyle = (width: number, height: number, boardDimensions: BoardDimensions, customNotationStyle?: Record<string, string | number>) => ({
   alignSelf: "flex-start",
-  paddingRight: width / Math.max(boardDimensions.rows, boardDimensions.columns) - width / 48,
-  fontSize: width / 48,
+  paddingRight: Math.max(width, height) / Math.max(boardDimensions.rows, boardDimensions.columns) - Math.max(width, height) / 48,
+  fontSize: Math.max(width, height) / 48,
   ...customNotationStyle
 });
