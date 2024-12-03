@@ -1,4 +1,3 @@
-import { COLUMNS } from "../consts";
 import { useChessboard } from "../context/chessboard-context";
 import { BoardDimensions } from "../types";
 
@@ -18,6 +17,10 @@ export function Notation({ row, col }: NotationProps) {
   } = useChessboard();
 
   const boardHeight = (boardWidth * boardDimensions.rows) / boardDimensions.columns;
+  const dynamicColumns = Array.from(
+    { length: boardDimensions.columns },
+    (_, i) => String.fromCharCode(97 + i) // 97 is 'a'
+  );
 
   const whiteColor = customLightSquareStyle.backgroundColor;
   const blackColor = customDarkSquareStyle.backgroundColor;
@@ -31,7 +34,7 @@ export function Notation({ row, col }: NotationProps) {
   }
 
   function getColumn() {
-    return boardOrientation === "black" ? COLUMNS[(boardDimensions.columns - 1) - col] : COLUMNS[col];
+    return boardOrientation === "black" ? dynamicColumns[(boardDimensions.columns - 1) - col] : dynamicColumns[col];
   }
 
   function renderBottomLeft() {

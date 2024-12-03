@@ -1,7 +1,5 @@
 import { BoardPosition } from "./types";
 
-export const COLUMNS = "abcdefghijkl".split("");
-
 export const START_POSITION_OBJECT: BoardPosition = {
   a8: "bR",
   b8: "bN",

@@ -1,6 +1,5 @@
 import { BoardDimensions, BoardOrientation, BoardPosition, Piece, Square } from "./types";
 import {
-  COLUMNS,
   START_POSITION_OBJECT,
 } from "./consts";
 
@@ -142,7 +141,11 @@ function fenToObj(fen: string, boardDimensions: BoardDimensions = { rows: 8, col
         }
       } else {
         // piece
-        const square = COLUMNS[colIdx] + currentRow;
+        const dynamicColumns = Array.from(
+          { length: boardDimensions.columns },
+          (_, i) => String.fromCharCode(97 + i) // 97 is 'a'
+        );
+        const square = dynamicColumns[colIdx] + currentRow;
         position[square as Square] = fenToPieceCode(row[j]);
         colIdx = colIdx + 1;
       }
