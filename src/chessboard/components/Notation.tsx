@@ -1,5 +1,4 @@
 import { useChessboard } from "../context/chessboard-context";
-import { BoardDimensions } from "../types";
 
 type NotationProps = {
   row: number;
@@ -21,6 +20,8 @@ export function Notation({ row, col }: NotationProps) {
     { length: boardDimensions.columns },
     (_, i) => String.fromCharCode(97 + i) // 97 is 'a'
   );
+  const squareWidth = boardWidth / boardDimensions.columns;
+  const squareHeight = boardHeight / boardDimensions.rows;
 
   const whiteColor = customLightSquareStyle.backgroundColor;
   const blackColor = customDarkSquareStyle.backgroundColor;
@@ -38,7 +39,6 @@ export function Notation({ row, col }: NotationProps) {
   }
 
   function renderBottomLeft() {
-    console.log("bottom left: ", getRow(), getColumn());
     return (
       <>
         <div
@@ -47,7 +47,7 @@ export function Notation({ row, col }: NotationProps) {
             zIndex: 3,
             position: "absolute",
             ...{ color: ((boardOrientation === "white") ? whiteColor : ((boardDimensions.rows % 2 === 0) === (boardDimensions.columns % 2 === 0)) ? whiteColor : blackColor) },
-            ...numericStyle(boardWidth, boardHeight, boardDimensions, customNotationStyle),
+            ...numericStyle(squareWidth, squareHeight, customNotationStyle),
           }}
         >
           {getRow()}
@@ -58,7 +58,7 @@ export function Notation({ row, col }: NotationProps) {
             zIndex: 3,
             position: "absolute",
             ...{ color: ((boardOrientation === "white") ? whiteColor : ((boardDimensions.rows % 2 === 0) === (boardDimensions.columns % 2 === 0)) ? whiteColor : blackColor) },
-            ...alphaStyle(boardWidth, boardHeight, boardDimensions, customNotationStyle),
+            ...alphaStyle(squareWidth, squareHeight, customNotationStyle),
           }}
         >
           {getColumn()}
@@ -75,7 +75,7 @@ export function Notation({ row, col }: NotationProps) {
           zIndex: 3,
           position: "absolute",
           ...{ color: boardOrientation === "white" ? ((col % 2 === 0) ? whiteColor : blackColor) : ((col % 2 !== 0) === (boardDimensions.rows % 2 === 0) === (boardDimensions.columns % 2 === 0) ? blackColor : whiteColor) },
-          ...alphaStyle(boardWidth, boardHeight, boardDimensions, customNotationStyle),
+          ...alphaStyle(squareWidth, squareHeight, customNotationStyle),
         }}
       >
         {getColumn()}
@@ -91,7 +91,7 @@ export function Notation({ row, col }: NotationProps) {
           zIndex: 3,
           position: "absolute",
           ...({ color: boardOrientation === "white" ? ((row % 2 === 0) === (boardDimensions.rows % 2 !== 0) ? whiteColor : blackColor) : ((row % 2 === 0) === (boardDimensions.columns % 2 !== 0) ? whiteColor : blackColor) }),
-          ...numericStyle(boardWidth, boardHeight, boardDimensions, customNotationStyle),
+          ...numericStyle(squareWidth, squareHeight, customNotationStyle),
         }}
       >
         {getRow()}
@@ -114,16 +114,16 @@ export function Notation({ row, col }: NotationProps) {
   return null;
 }
 
-const alphaStyle = (width: number, height: number, boardDimensions: BoardDimensions, customNotationStyle?: Record<string, string | number>) => ({
-  alignSelf: "flex-end",
-  paddingLeft: Math.max(width, height) / Math.max(boardDimensions.rows, boardDimensions.columns) - Math.max(width, height) / 48,
-  fontSize: Math.max(width, height) / 48,
+const alphaStyle = (width: number, height: number, customNotationStyle?: Record<string, string | number>) => ({
+  right: Math.max(width, height) / 48,
+  bottom: 0,
+  fontSize: Math.max(width, height) / 6.2,
   ...customNotationStyle
 });
 
-const numericStyle = (width: number, height: number, boardDimensions: BoardDimensions, customNotationStyle?: Record<string, string | number>) => ({
-  alignSelf: "flex-start",
-  paddingRight: Math.max(width, height) / Math.max(boardDimensions.rows, boardDimensions.columns) - Math.max(width, height) / 48,
-  fontSize: Math.max(width, height) / 48,
+const numericStyle = (width: number, height: number, customNotationStyle?: Record<string, string | number>) => ({
+  top: 0,
+  left: Math.max(width, height) / 48,
+  fontSize: Math.max(width, height) / 6.2,
   ...customNotationStyle
 });

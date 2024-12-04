@@ -148,7 +148,6 @@ export function Square({
       }}
       onMouseOver={(e) => {
         // noop if moving from child of square into square.
-        console.log("onMouseOver square: ", square);
         if (e.buttons === 2 && currentRightClickDown) {
           drawNewArrow(currentRightClickDown, square);
         }
@@ -224,7 +223,7 @@ export function Square({
 
 const center = {
   display: "flex",
-  justifyContent: "center",
+  position: "relative",
 };
 
 const size = (
