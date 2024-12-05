@@ -184,12 +184,7 @@ function isValidFen(fen: string, boardDimensions: BoardDimensions = { rows: 8, c
  * Expand out fen notation to countable characters for validation
  */
 function expandFenEmptySquares(fen: string): string {
-  return fen.replace(/\d+/g, (match) => {
-    const numEmptySquares = parseInt(match, 10);
-
-    // Expand the number into a string of "1"s
-    return "1".repeat(numEmptySquares);
-  });
+  return fen.replace(/\d+/g, (match) => "1".repeat(parseInt(match, 10)));
 }
 
 /**
