@@ -847,6 +847,59 @@ export const CustomSquare = () => {
   );
 };
 
+export const VaryingBoardSizes = () => {
+  const [boardRows, setBoardRows] = useState(8);
+  const [boardColumns, setBoardColumns] = useState(8);
+
+  const handleRowsChange = (event) => {
+    setBoardRows(parseInt(event.target.value, 10) || 8);
+  };
+
+  const handleColumnsChange = (event) => {
+    setBoardColumns(parseInt(event.target.value, 10) || 8);
+  };
+
+  return (
+    <div>
+      <div style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "center",
+          marginBottom: "8px",
+          gap: "8px",
+        }}>
+        <div>
+          <label htmlFor="rows">Rows:</label>
+          <input
+            type="number"
+            id="rows"
+            name="rows"
+            min="1"
+            max="16"
+            step="1"
+            value={boardRows}
+            onChange={handleRowsChange}
+          />
+        </div>
+        <div>
+          <label htmlFor="columns">Columns:</label>
+          <input
+            type="number"
+            id="columns"
+            name="columns"
+            min="1"
+            max="16"
+            step="1"
+            value={boardColumns}
+            onChange={handleColumnsChange}
+          />
+        </div>
+      </div>
+      <Chessboard boardDimensions={ {rows: boardRows, columns: boardColumns} } />
+    </div>
+  );
+};
+
 export const AnalysisBoard = () => {
   const engine = useMemo(() => new Engine(), []);
   const game = useMemo(() => new Chess(), []);
