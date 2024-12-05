@@ -114,7 +114,7 @@ export function convertPositionToObject(
 function fenToObj(fen: string, boardDimensions: BoardDimensions = { rows: 8, columns: 8}): BoardPosition {
   if (!isValidFen(fen, boardDimensions)) return {};
 
-  fen = expandFenEmptySquares(fen, boardDimensions);
+  fen = expandFenEmptySquares(fen);
 
   // cut off any move, castling, etc info from the end. we're only interested in position information
   fen = fen.replace(/ .+$/, "");
@@ -166,7 +166,7 @@ function isValidFen(fen: string, boardDimensions: BoardDimensions = { rows: 8, c
   fen = fen.replace(/ .+$/, "");
 
   // expand the empty square numbers to just 1s
-  fen = expandFenEmptySquares(fen, boardDimensions);
+  fen = expandFenEmptySquares(fen);
 
   // there should be a section seperated by a slash for each row on the board (8 for standard chess)
   const chunks = fen.split("/");
@@ -185,15 +185,9 @@ function isValidFen(fen: string, boardDimensions: BoardDimensions = { rows: 8, c
 /**
  * Expand out fen notation to countable characters for validation
  */
-function expandFenEmptySquares(fen: string, boardDimensions: BoardDimensions = { rows: 8, columns: 8 }): string {
+function expandFenEmptySquares(fen: string): string {
   return fen.replace(/\d+/g, (match) => {
     const numEmptySquares = parseInt(match, 10);
-
-    // if (numEmptySquares > boardDimensions.columns) {
-    //   throw new Error(
-    //     `Invalid FEN (${fen}): empty square count (${numEmptySquares}) exceeds board dimensions (${boardDimensions.columns})`
-    //   );
-    // }
 
     // Expand the number into a string of "1"s
     return "1".repeat(numEmptySquares);
