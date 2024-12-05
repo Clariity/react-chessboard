@@ -1,9 +1,8 @@
 import type { FC, ReactElement, ReactNode, Ref, RefObject } from "react";
 import { BackendFactory } from "dnd-core";
 
-
-type SquareColumn = 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j' | 'k' | 'l';
-type SquareRow = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
+type SquareColumn = 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j' | 'k' | 'l' | 'm' | 'n' | 'o' | 'p';
+type SquareRow = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16;
 
 // Combine column and row to create the full square type
 export type Square = `${SquareColumn}${SquareRow}`;
@@ -107,6 +106,11 @@ export type ChessboardProps = {
    */
   autoPromoteToQueen?: boolean;
   /**
+   * The number of squares on the board represented by rows, and columns (For some chess variants not using standard board sizes).
+   * @default { rows: 8, columns: 8 }
+   */
+  boardDimensions?: BoardDimensions;
+  /**
    * The orientation of the board, the chosen colour will be at the bottom of the board.
    * @default white
    */
@@ -115,11 +119,6 @@ export type ChessboardProps = {
    * The width of the board in pixels.
    */
   boardWidth?: number;
-  /**
-   * The number of squares on the board represented by rows, and columns (For some chess variants not using standard board sizes).
-   * @default { rows: 8, columns: 8 }
-   */
-  boardDimensions?: BoardDimensions;
   /**
    * If premoves are allowed, whether or not to clear the premove queue on right click.
    * @default true

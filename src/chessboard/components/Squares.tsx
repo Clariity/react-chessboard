@@ -1,5 +1,4 @@
 import { useState, useMemo } from "react";
-import { COLUMNS } from "../consts";
 import { useChessboard } from "../context/chessboard-context";
 import { Coords, Piece as Pc, Square as Sq } from "../types";
 import { Notation } from "./Notation";

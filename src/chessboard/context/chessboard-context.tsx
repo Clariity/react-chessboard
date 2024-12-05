@@ -46,9 +46,9 @@ interface ChessboardProviderContext {
   arePiecesDraggable: RequiredChessboardProps["arePiecesDraggable"];
   arePremovesAllowed: RequiredChessboardProps["arePremovesAllowed"];
   autoPromoteToQueen: RequiredChessboardProps["autoPromoteToQueen"];
+  boardDimensions: RequiredChessboardProps["boardDimensions"];
   boardOrientation: RequiredChessboardProps["boardOrientation"];
   boardWidth: RequiredChessboardProps["boardWidth"];
-  boardDimensions: RequiredChessboardProps["boardDimensions"];
   customArrowColor: RequiredChessboardProps["customArrowColor"];
   customBoardStyle: ChessboardProps["customBoardStyle"];
   customNotationStyle: ChessboardProps["customNotationStyle"];
@@ -183,7 +183,7 @@ export const ChessboardProvider = forwardRef(
   ) => {
     // position stored and displayed on board
     const [currentPosition, setCurrentPosition] = useState(
-      convertPositionToObject(position)
+      convertPositionToObject(position, boardDimensions)
     );
 
     // calculated differences between current and incoming positions
@@ -259,7 +259,7 @@ export const ChessboardProvider = forwardRef(
       // clear any open promotion dialogs
       clearPromotion();
 
-      const newPosition = convertPositionToObject(position);
+      const newPosition = convertPositionToObject(position, boardDimensions);
       const differences = getPositionDifferences(currentPosition, newPosition);
       const newPieceColour =
         Object.keys(differences.added)?.length <= 2
