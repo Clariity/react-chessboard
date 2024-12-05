@@ -93,7 +93,8 @@ export function getPositionDifferences(
  * Converts a fen string or existing position object to a position object.
  */
 export function convertPositionToObject(
-  position: string | BoardPosition
+  position: string | BoardPosition,
+  boardDimensions?: BoardDimensions
 ): BoardPosition {
   if (position === "start") {
     return START_POSITION_OBJECT;
@@ -101,7 +102,7 @@ export function convertPositionToObject(
 
   if (typeof position === "string") {
     // attempt to convert fen to position object
-    return fenToObj(position);
+    return fenToObj(position, boardDimensions);
   }
 
   return position;
@@ -111,7 +112,9 @@ export function convertPositionToObject(
  * Converts a fen string to a position object.
  */
 function fenToObj(fen: string, boardDimensions: BoardDimensions = { rows: 8, columns: 8}): BoardPosition {
-  if (!isValidFen(fen)) return {};
+  if (!isValidFen(fen, boardDimensions)) return {};
+
+  fen = expandFenEmptySquares(fen, boardDimensions);
 
   // cut off any move, castling, etc info from the end. we're only interested in position information
   fen = fen.replace(/ .+$/, "");
@@ -163,14 +166,14 @@ function isValidFen(fen: string, boardDimensions: BoardDimensions = { rows: 8, c
   fen = fen.replace(/ .+$/, "");
 
   // expand the empty square numbers to just 1s
-  fen = expandFenEmptySquares(fen);
+  fen = expandFenEmptySquares(fen, boardDimensions);
 
-  // fen should be 8 sections separated by slashes
+  // there should be a section seperated by a slash for each row on the board (8 for standard chess)
   const chunks = fen.split("/");
-  if (chunks.length !== boardDimensions.columns) return false;
+  if (chunks.length !== boardDimensions.rows) return false;
 
   // check each section
-  for (let i = 0; i < boardDimensions.columns; i++) {
+  for (let i = 0; i < boardDimensions.rows; i++) {
     if (chunks[i].length !== boardDimensions.columns || chunks[i].search(/[^kqrnbpKQRNBP1]/) !== -1) {
       return false;
     }
@@ -183,7 +186,7 @@ function isValidFen(fen: string, boardDimensions: BoardDimensions = { rows: 8, c
  * Expand out fen notation to countable characters for validation
  */
 function expandFenEmptySquares(fen: string, boardDimensions: BoardDimensions = { rows: 8, columns: 8 }): string {
-  return fen.replace(/\d/g, (match) => {
+  return fen.replace(/\d+/g, (match) => {
     const numEmptySquares = parseInt(match, 10);
 
     if (numEmptySquares > boardDimensions.columns) {
