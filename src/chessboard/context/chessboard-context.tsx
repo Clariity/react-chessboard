@@ -181,6 +181,16 @@ export const ChessboardProvider = forwardRef(
     }: ChessboardProviderProps,
     ref
   ) => {
+
+    useEffect(() => {
+      if (boardDimensions.rows <= 0 || boardDimensions.columns <= 0) {
+        throw new Error("Board Dimensions Out of Range. Min dimensions are 1x1.");
+      }
+      else if (boardDimensions.rows > 16 || boardDimensions.columns > 16) {
+        throw new Error("Board Dimensions Out of Range. Max Dimensions are 16x16.");
+      }
+    }, [boardDimensions]);
+
     // position stored and displayed on board
     const [currentPosition, setCurrentPosition] = useState(
       convertPositionToObject(position, boardDimensions)
