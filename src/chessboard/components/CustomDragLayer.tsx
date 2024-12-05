@@ -19,9 +19,7 @@ export function CustomDragLayer({ boardContainer }: CustomDragLayerProps) {
   } = useChessboard();
 
   const boardHeight = (boardWidth * boardDimensions.rows) / boardDimensions.columns;
-
   const squareWidth = boardWidth / boardDimensions.columns;
-  const squareHeight = boardHeight / boardDimensions.rows;
 
   const collectedProps = useDragLayer((monitor) => ({
     item: monitor.getItem(),
@@ -48,20 +46,19 @@ export function CustomDragLayer({ boardContainer }: CustomDragLayerProps) {
 
       let { x, y } = snapToCursor ? clientOffset : sourceClientOffset;
       const halfSquareWidth = squareWidth / 2;
-      const halfSquareHeight = squareHeight / 2;
 
       if (snapToCursor) {
         x -= halfSquareWidth;
-        y -= halfSquareHeight;
+        y -= halfSquareWidth;
       }
 
       if (!allowDragOutsideBoard) {
         const { left, top } = boardContainer;
 
         const maxLeft = left - halfSquareWidth;
-        const maxTop = top - halfSquareHeight;
+        const maxTop = top - halfSquareWidth;
         const maxRight = left + boardWidth - halfSquareWidth;
-        const maxBottom = top + boardHeight - halfSquareHeight;
+        const maxBottom = top + boardHeight - halfSquareWidth;
 
         x = Math.max(maxLeft, Math.min(x, maxRight));
         y = Math.max(maxTop, Math.min(y, maxBottom));
@@ -75,7 +72,7 @@ export function CustomDragLayer({ boardContainer }: CustomDragLayerProps) {
         touchAction: "none",
       };
     },
-    [squareWidth, squareHeight, boardWidth, boardHeight, allowDragOutsideBoard, snapToCursor, boardContainer]
+    [squareWidth, boardWidth, boardHeight, allowDragOutsideBoard, snapToCursor, boardContainer]
   );
 
   return isDragging && item.id === id ? (
@@ -95,7 +92,7 @@ export function CustomDragLayer({ boardContainer }: CustomDragLayerProps) {
             isDragging: true,
           })
         ) : (
-          <svg viewBox={"1 1 43 43"} width={squareWidth} height={squareHeight}>
+          <svg viewBox={"1 1 43 43"} width={squareWidth} height={squareWidth}>
             <g>{chessPieces[item.piece] as ReactNode}</g>
           </svg>
         )}

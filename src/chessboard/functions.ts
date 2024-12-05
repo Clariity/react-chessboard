@@ -10,11 +10,9 @@ export function getRelativeCoords(
   boardDimensions: BoardDimensions = { rows: 8, columns: 8 },
   boardOrientation: BoardOrientation,
   boardWidth: number,
-  boardHeight: number,
   square: Square
 ): { x: number; y: number } {
   const squareWidth = boardWidth / boardDimensions.columns;
-  const squareHeight = boardHeight / boardDimensions.rows;
 
   const columnIndex = boardOrientation === "white"
     ? square[0].charCodeAt(0) - "a".charCodeAt(0)
@@ -26,7 +24,7 @@ export function getRelativeCoords(
     : (match ? parseInt(match[0], 10) : 8) - 1;
 
   const x = columnIndex * squareWidth + squareWidth / 2;
-  const y = rowIndex * squareHeight + squareHeight / 2;
+  const y = rowIndex * squareWidth + squareWidth / 2;
   return { x, y };
 }
 

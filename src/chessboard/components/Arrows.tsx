@@ -17,7 +17,6 @@ export const Arrows = () => {
 
   const boardHeight = (boardWidth * boardDimensions.rows) / boardDimensions.columns;
   const squareWidth = boardWidth / boardDimensions.columns;
-  const squareHeight = boardHeight / boardDimensions.rows;
 
   const arrowsList = [...arrows, newArrow].filter(Boolean) as Arrow[];
 
@@ -41,7 +40,6 @@ export const Arrows = () => {
           boardDimensions,
           boardOrientation,
           boardWidth,
-          boardHeight,
           arrowStartField
         );
 
@@ -49,11 +47,10 @@ export const Arrows = () => {
           boardDimensions,
           boardOrientation,
           boardWidth,
-          boardHeight,
           arrowEndField
         );
 
-        let ARROW_LENGTH_REDUCER = Math.max(squareWidth, squareHeight) / 5;
+        let ARROW_LENGTH_REDUCER = squareWidth / 5;
 
         const isArrowActive = i === arrows.length;
 
@@ -64,7 +61,7 @@ export const Arrows = () => {
           ) &&
           !isArrowActive
         ) {
-          ARROW_LENGTH_REDUCER = Math.max(squareWidth, squareHeight) / 3.5;
+          ARROW_LENGTH_REDUCER = squareWidth / 3.5;
         }
 
         const dx = to.x - from.x;
@@ -104,7 +101,7 @@ export const Arrows = () => {
               opacity={isArrowActive ? "0.5" : "0.65"}
               stroke={arrowColor ?? primaryArrowCollor}
               strokeWidth={
-                isArrowActive ? (0.9 * Math.max(squareWidth, squareHeight)) / 5.5 : Math.max(squareWidth, squareHeight) / 5.5
+                isArrowActive ? 0.9 * squareWidth / 5.5 : squareWidth / 5.5
               }
               markerEnd={`url(#arrowhead-${i})`}
             />

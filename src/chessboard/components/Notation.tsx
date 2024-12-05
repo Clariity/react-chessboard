@@ -15,13 +15,11 @@ export function Notation({ row, col }: NotationProps) {
     customNotationStyle,
   } = useChessboard();
 
-  const boardHeight = (boardWidth * boardDimensions.rows) / boardDimensions.columns;
   const dynamicColumns = Array.from(
     { length: boardDimensions.columns },
     (_, i) => String.fromCharCode(97 + i) // 97 is 'a'
   );
   const squareWidth = boardWidth / boardDimensions.columns;
-  const squareHeight = boardHeight / boardDimensions.rows;
 
   const whiteColor = customLightSquareStyle.backgroundColor;
   const blackColor = customDarkSquareStyle.backgroundColor;
@@ -47,7 +45,7 @@ export function Notation({ row, col }: NotationProps) {
             zIndex: 3,
             position: "absolute",
             ...{ color: ((boardOrientation === "white") ? whiteColor : ((boardDimensions.rows % 2 === 0) === (boardDimensions.columns % 2 === 0)) ? whiteColor : blackColor) },
-            ...numericStyle(squareWidth, squareHeight, customNotationStyle),
+            ...numericStyle(squareWidth, customNotationStyle),
           }}
         >
           {getRow()}
@@ -58,7 +56,7 @@ export function Notation({ row, col }: NotationProps) {
             zIndex: 3,
             position: "absolute",
             ...{ color: ((boardOrientation === "white") ? whiteColor : ((boardDimensions.rows % 2 === 0) === (boardDimensions.columns % 2 === 0)) ? whiteColor : blackColor) },
-            ...alphaStyle(squareWidth, squareHeight, customNotationStyle),
+            ...alphaStyle(squareWidth, customNotationStyle),
           }}
         >
           {getColumn()}
@@ -75,7 +73,7 @@ export function Notation({ row, col }: NotationProps) {
           zIndex: 3,
           position: "absolute",
           ...{ color: boardOrientation === "white" ? ((col % 2 === 0) ? whiteColor : blackColor) : ((col % 2 !== 0) === (boardDimensions.rows % 2 === 0) === (boardDimensions.columns % 2 === 0) ? blackColor : whiteColor) },
-          ...alphaStyle(squareWidth, squareHeight, customNotationStyle),
+          ...alphaStyle(squareWidth, customNotationStyle),
         }}
       >
         {getColumn()}
@@ -91,7 +89,7 @@ export function Notation({ row, col }: NotationProps) {
           zIndex: 3,
           position: "absolute",
           ...({ color: boardOrientation === "white" ? ((row % 2 === 0) === (boardDimensions.rows % 2 !== 0) ? whiteColor : blackColor) : ((row % 2 === 0) === (boardDimensions.columns % 2 !== 0) ? whiteColor : blackColor) }),
-          ...numericStyle(squareWidth, squareHeight, customNotationStyle),
+          ...numericStyle(squareWidth, customNotationStyle),
         }}
       >
         {getRow()}
@@ -114,16 +112,16 @@ export function Notation({ row, col }: NotationProps) {
   return null;
 }
 
-const alphaStyle = (width: number, height: number, customNotationStyle?: Record<string, string | number>) => ({
-  right: Math.max(width, height) / 48,
+const alphaStyle = (width: number, customNotationStyle?: Record<string, string | number>) => ({
+  right: width / 48,
   bottom: 0,
-  fontSize: Math.max(width, height) / 6.2,
+  fontSize: width / 6.2,
   ...customNotationStyle
 });
 
-const numericStyle = (width: number, height: number, customNotationStyle?: Record<string, string | number>) => ({
+const numericStyle = (width: number, customNotationStyle?: Record<string, string | number>) => ({
   top: 0,
-  left: Math.max(width, height) / 48,
-  fontSize: Math.max(width, height) / 6.2,
+  left: width / 48,
+  fontSize: width / 6.2,
   ...customNotationStyle
 });
