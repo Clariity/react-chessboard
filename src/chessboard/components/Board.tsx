@@ -19,7 +19,6 @@ export function Board() {
   } = useChessboard();
 
   const boardHeight = (boardWidth * boardDimensions.rows) / boardDimensions.columns;
-  console.log("boardHeight:", boardHeight);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
