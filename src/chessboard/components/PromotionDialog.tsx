@@ -14,7 +14,7 @@ export function PromotionDialog() {
 
   const boardHeight = (boardWidth * boardDimensions.rows) / boardDimensions.columns;
 
-  const promotePieceColor = promoteToSquare?.[1] === "1" ? "b" : "w";
+  const promotePieceColor = promoteToSquare?.slice(1,3) === "1" ? "b" : "w";
   const promotionOptions: PromotionPieceOption[] = [
     `${promotePieceColor ?? "w"}Q`,
     `${promotePieceColor ?? "w"}R`,

@@ -125,7 +125,7 @@ export function Piece({
             squareWidth
           }px, ${
             (boardOrientation === "black" ? -1 : 1) *
-            (Number(sourceSq[1]) - Number(targetSq[1])) *
+            (Number(sourceSq.slice(1,3)) - Number(targetSq.slice(1,3))) *
             squareHeight
           }px)`,
           transition: `transform ${animationDuration}ms`,
