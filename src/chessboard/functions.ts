@@ -189,11 +189,11 @@ function expandFenEmptySquares(fen: string, boardDimensions: BoardDimensions = {
   return fen.replace(/\d+/g, (match) => {
     const numEmptySquares = parseInt(match, 10);
 
-    if (numEmptySquares > boardDimensions.columns) {
-      throw new Error(
-        `Invalid FEN: empty square count (${numEmptySquares}) exceeds board dimensions (${boardDimensions.columns})`
-      );
-    }
+    // if (numEmptySquares > boardDimensions.columns) {
+    //   throw new Error(
+    //     `Invalid FEN (${fen}): empty square count (${numEmptySquares}) exceeds board dimensions (${boardDimensions.columns})`
+    //   );
+    // }
 
     // Expand the number into a string of "1"s
     return "1".repeat(numEmptySquares);
