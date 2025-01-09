@@ -19,14 +19,23 @@ export function PromotionDialog() {
     `${promotePieceColor ?? "w"}B`,
   ];
 
+  // Determines if promotion is happening on the bottom rank
+  const isBottomRank =
+    (boardOrientation === "white" && promoteToSquare?.[1] === "1") ||
+    (boardOrientation === "black" && promoteToSquare?.[1] === "8");
+
   const dialogStyles = {
     default: {
       display: "grid",
       gridTemplateColumns: "1fr 1fr",
-      transform: `translate(${-boardWidth / 8}px, ${-boardWidth / 8}px)`,
+      transform: isBottomRank
+        ? `translate(${-boardWidth / 8}px, ${+boardWidth / 8}px)`
+        : `translate(${-boardWidth / 8}px, ${-boardWidth / 8}px)`,
     },
     vertical: {
-      transform: `translate(${-boardWidth / 16}px, ${-boardWidth / 16}px)`,
+      transform: isBottomRank
+        ? `translate(${-boardWidth / 16}px, ${+boardWidth / 16}px)`
+        : `translate(${-boardWidth / 16}px, ${-boardWidth / 16}px)`,
     },
     modal: {
       display: "flex",
@@ -44,23 +53,32 @@ export function PromotionDialog() {
   const dialogCoords = getRelativeCoords(
     boardOrientation,
     boardWidth,
-    promoteToSquare || "a8"
+    promoteToSquare || "a8",
   );
 
   return (
     <div
       style={{
         position: "absolute",
-        top: `${dialogCoords?.y}px`,
+        // Bottom rank promotion forces the dialog to start from the bottom edge
+        top: isBottomRank ? undefined : `${dialogCoords?.y}px`,
+        bottom: isBottomRank ? `${boardWidth - dialogCoords?.y}px` : undefined,
         left: `${dialogCoords?.x}px`,
         zIndex: 1000,
         ...dialogStyles[promotionDialogVariant],
       }}
       title="Choose promotion piece"
     >
-      {promotionOptions.map((option) => (
-        <PromotionOption key={option} option={option} />
-      ))}
+      {
+        // Reversing the order in which piece icons appear for vertical dialog if promotion occurs on the bottom rank
+        isBottomRank && promotionDialogVariant === "vertical"
+          ? promotionOptions
+              .reverse()
+              .map((option) => <PromotionOption key={option} option={option} />)
+          : promotionOptions.map((option) => (
+              <PromotionOption key={option} option={option} />
+            ))
+      }
     </div>
   );
 }
