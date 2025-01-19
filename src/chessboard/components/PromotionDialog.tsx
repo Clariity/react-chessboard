@@ -56,6 +56,12 @@ export function PromotionDialog() {
     promoteToSquare || "a8",
   );
 
+  // Reversing the order in which piece icons appear for vertical dialog if promotion occurs on the bottom rank
+  const orderedPromotionOptions =
+    isBottomRank && promotionDialogVariant === "vertical"
+      ? promotionOptions.reverse()
+      : promotionOptions;
+
   return (
     <div
       style={{
@@ -69,16 +75,9 @@ export function PromotionDialog() {
       }}
       title="Choose promotion piece"
     >
-      {
-        // Reversing the order in which piece icons appear for vertical dialog if promotion occurs on the bottom rank
-        isBottomRank && promotionDialogVariant === "vertical"
-          ? promotionOptions
-              .reverse()
-              .map((option) => <PromotionOption key={option} option={option} />)
-          : promotionOptions.map((option) => (
-              <PromotionOption key={option} option={option} />
-            ))
-      }
+      {orderedPromotionOptions.map((option) => (
+        <PromotionOption key={option} option={option} />
+      ))}
     </div>
   );
 }
