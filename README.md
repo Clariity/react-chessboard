@@ -73,8 +73,8 @@ import { Chessboard } from "react-chessboard";
 
 export default function App() {
   return (
-    <div>
-      <Chessboard id="BasicBoard" />
+    <div style={{ width: '400px' }}>
+      <Chessboard id="BasicChessboard" />
     </div>
   );
 }
