@@ -120,7 +120,11 @@ export default function PlayRandomMoveEngine() {
     return true;
   }
 
-  return <Chessboard position={game.fen()} onPieceDrop={onDrop} />;
+  return <Chessboard
+    position={game.fen()}
+    onPieceDrop={onDrop}
+    autoPromoteToQueen={true} // always promote to a queen for example simplicity
+  />;
 }
 ```
 
