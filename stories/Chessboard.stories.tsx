@@ -309,7 +309,7 @@ export const ClickToMove = () => {
         verbose: true,
       });
       const foundMove = moves.find(
-        (m) => m.from === moveFrom && m.to === square
+        (m) => m.from === moveFrom && m.to === square,
       );
       // not a valid move
       if (!foundMove) {
@@ -833,7 +833,7 @@ export const CustomSquare = () => {
           </div>
         </div>
       );
-    }
+    },
   );
 
   return (
@@ -865,7 +865,7 @@ export const AnalysisBoard = () => {
 
       positionEvaluation &&
         setPositionEvaluation(
-          ((game.turn() === "w" ? 1 : -1) * Number(positionEvaluation)) / 100
+          ((game.turn() === "w" ? 1 : -1) * Number(positionEvaluation)) / 100,
         );
       possibleMate && setPossibleMate(possibleMate);
       depth && setDepth(depth);
@@ -1036,8 +1036,9 @@ export const BoardWithCustomArrows = () => {
 ///////////////////////////////////
 export const ManualBoardEditor = () => {
   const game = useMemo(() => new Chess("8/8/8/8/8/8/8/8 w - - 0 1"), []); // empty board
-  const [boardOrientation, setBoardOrientation] =
-    useState<"white" | "black">("white");
+  const [boardOrientation, setBoardOrientation] = useState<"white" | "black">(
+    "white",
+  );
   const [boardWidth, setBoardWidth] = useState(360);
   const [fenPosition, setFenPosition] = useState(game.fen());
 
@@ -1051,7 +1052,7 @@ export const ManualBoardEditor = () => {
       setFenPosition(game.fen());
     } else {
       alert(
-        `The board already contains ${color === "w" ? "WHITE" : "BLACK"} KING`
+        `The board already contains ${color === "w" ? "WHITE" : "BLACK"} KING`,
       );
     }
 
@@ -1180,7 +1181,7 @@ export const ManualBoardEditor = () => {
             style={buttonStyle}
             onClick={() => {
               setBoardOrientation(
-                boardOrientation === "white" ? "black" : "white"
+                boardOrientation === "white" ? "black" : "white",
               );
             }}
           >
