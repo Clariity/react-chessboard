@@ -21,6 +21,7 @@ export function Piece({
   const {
     animationDuration,
     arePiecesDraggable,
+    boardDimensions,
     boardWidth,
     boardOrientation,
     chessPieces,
@@ -38,6 +39,8 @@ export function Piece({
     positionDifferences,
   } = useChessboard();
 
+  const squareWidth = boardWidth / boardDimensions.columns;
+  
   const [pieceStyle, setPieceStyle] = useState({
     opacity: 1,
     zIndex: 5,
@@ -111,7 +114,6 @@ export function Piece({
       const sourceSq = square;
       const targetSq = newSquare[0];
       if (sourceSq && targetSq) {
-        const squareWidth = boardWidth / 8;
         setPieceStyle((oldPieceStyle) => ({
           ...oldPieceStyle,
           transform: `translate(${
@@ -120,7 +122,7 @@ export function Piece({
             squareWidth
           }px, ${
             (boardOrientation === "black" ? -1 : 1) *
-            (Number(sourceSq[1]) - Number(targetSq[1])) *
+            (Number(sourceSq.slice(1,3)) - Number(targetSq.slice(1,3))) *
             squareWidth
           }px)`,
           transition: `transform ${animationDuration}ms`,
@@ -166,15 +168,15 @@ export function Piece({
     >
       {typeof chessPieces[piece] === "function" ? (
         (chessPieces[piece] as CustomPieceFn)({
-          squareWidth: boardWidth / 8,
+          squareWidth,
           isDragging,
           square,
         })
       ) : (
         <svg
           viewBox={"1 1 43 43"}
-          width={boardWidth / 8}
-          height={boardWidth / 8}
+          width={squareWidth}
+          height={squareWidth}
           style={{ display: "block" }}
         >
           <g>{chessPieces[piece] as ReactNode}</g>

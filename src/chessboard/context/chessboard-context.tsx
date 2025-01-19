@@ -46,6 +46,7 @@ interface ChessboardProviderContext {
   arePiecesDraggable: RequiredChessboardProps["arePiecesDraggable"];
   arePremovesAllowed: RequiredChessboardProps["arePremovesAllowed"];
   autoPromoteToQueen: RequiredChessboardProps["autoPromoteToQueen"];
+  boardDimensions: RequiredChessboardProps["boardDimensions"];
   boardOrientation: RequiredChessboardProps["boardOrientation"];
   boardWidth: RequiredChessboardProps["boardWidth"];
   customArrowColor: RequiredChessboardProps["customArrowColor"];
@@ -124,6 +125,7 @@ export const ChessboardProvider = forwardRef(
       arePiecesDraggable = true,
       arePremovesAllowed = false,
       autoPromoteToQueen = false,
+      boardDimensions = { rows: 8, columns: 8 },
       boardOrientation = "white",
       boardWidth,
       children,
@@ -158,11 +160,11 @@ export const ChessboardProvider = forwardRef(
       onPromotionCheck = (sourceSquare, targetSquare, piece) => {
         return (
           ((piece === "wP" &&
-            sourceSquare[1] === "7" &&
-            targetSquare[1] === "8") ||
+            sourceSquare.slice(1,3) === (boardDimensions.rows - 1).toString() &&
+            targetSquare.slice(1,3) === (boardDimensions.rows).toString()) ||
             (piece === "bP" &&
-              sourceSquare[1] === "2" &&
-              targetSquare[1] === "1")) &&
+              sourceSquare.slice(1,3) === "2" &&
+              targetSquare.slice(1,3) === "1")) &&
           Math.abs(sourceSquare.charCodeAt(0) - targetSquare.charCodeAt(0)) <= 1
         );
       },
@@ -179,9 +181,19 @@ export const ChessboardProvider = forwardRef(
     }: ChessboardProviderProps,
     ref
   ) => {
+
+    useEffect(() => {
+      if (boardDimensions.rows <= 0 || boardDimensions.columns <= 0) {
+        throw new Error("Board Dimensions Out of Range. Min dimensions are 1x1.");
+      }
+      else if (boardDimensions.rows > 16 || boardDimensions.columns > 16) {
+        throw new Error("Board Dimensions Out of Range. Max Dimensions are 16x16.");
+      }
+    }, [boardDimensions]);
+
     // position stored and displayed on board
     const [currentPosition, setCurrentPosition] = useState(
-      convertPositionToObject(position)
+      convertPositionToObject(position, boardDimensions)
     );
 
     // calculated differences between current and incoming positions
@@ -257,7 +269,7 @@ export const ChessboardProvider = forwardRef(
       // clear any open promotion dialogs
       clearPromotion();
 
-      const newPosition = convertPositionToObject(position);
+      const newPosition = convertPositionToObject(position, boardDimensions);
       const differences = getPositionDifferences(currentPosition, newPosition);
       const newPieceColour =
         Object.keys(differences.added)?.length <= 2
@@ -488,6 +500,7 @@ export const ChessboardProvider = forwardRef(
       autoPromoteToQueen,
       boardOrientation,
       boardWidth,
+      boardDimensions,
       chessPieces,
       clearArrows,
       clearCurrentRightClickDown,

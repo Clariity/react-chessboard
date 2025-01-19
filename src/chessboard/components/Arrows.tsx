@@ -4,21 +4,26 @@ import { getRelativeCoords } from "../functions";
 import { useChessboard } from "../context/chessboard-context";
 import { Arrow } from "../types";
 
+
 export const Arrows = () => {
   const {
     arrows,
     newArrow,
+    boardDimensions,
     boardOrientation,
     boardWidth,
-
     customArrowColor: primaryArrowCollor,
   } = useChessboard();
+
+  const boardHeight = (boardWidth * boardDimensions.rows) / boardDimensions.columns;
+  const squareWidth = boardWidth / boardDimensions.columns;
+
   const arrowsList = [...arrows, newArrow].filter(Boolean) as Arrow[];
 
   return (
     <svg
       width={boardWidth}
-      height={boardWidth}
+      height={boardHeight}
       style={{
         position: "absolute",
         top: "0",
@@ -30,20 +35,25 @@ export const Arrows = () => {
       {arrowsList.map((arrow, i) => {
         const [arrowStartField, arrowEndField, arrowColor] = arrow;
         if (arrowStartField === arrowEndField) return null;
+
         const from = getRelativeCoords(
+          boardDimensions,
           boardOrientation,
           boardWidth,
           arrowStartField
         );
+
         const to = getRelativeCoords(
+          boardDimensions,
           boardOrientation,
           boardWidth,
           arrowEndField
         );
-        let ARROW_LENGTH_REDUCER = boardWidth / 32;
+
+        let ARROW_LENGTH_REDUCER = squareWidth / 5;
 
         const isArrowActive = i === arrows.length;
-        // if there are different arrows targeting the same square make their length a bit shorter
+
         if (
           arrows.some(
             (restArrow) =>
@@ -51,8 +61,9 @@ export const Arrows = () => {
           ) &&
           !isArrowActive
         ) {
-          ARROW_LENGTH_REDUCER = boardWidth / 16;
+          ARROW_LENGTH_REDUCER = squareWidth / 3.5;
         }
+
         const dx = to.x - from.x;
         const dy = to.y - from.y;
 
@@ -90,7 +101,7 @@ export const Arrows = () => {
               opacity={isArrowActive ? "0.5" : "0.65"}
               stroke={arrowColor ?? primaryArrowCollor}
               strokeWidth={
-                isArrowActive ? (0.9 * boardWidth) / 40 : boardWidth / 40
+                isArrowActive ? 0.9 * squareWidth / 5.5 : squareWidth / 5.5
               }
               markerEnd={`url(#arrowhead-${i})`}
             />
