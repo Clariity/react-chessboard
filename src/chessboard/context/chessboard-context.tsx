@@ -12,6 +12,7 @@ import {
 import { defaultPieces } from "../media/pieces";
 import {
   convertPositionToObject,
+  modifiedFenToObj,
   getPositionDifferences,
   isDifferentFromStart,
 } from "../functions";
@@ -109,6 +110,7 @@ interface ChessboardProviderContext {
   setPromoteToSquare: React.Dispatch<React.SetStateAction<Square | null>>;
   setShowPromoteDialog: React.Dispatch<React.SetStateAction<boolean>>;
   showPromoteDialog: boolean;
+  modifiedFen: string;
 }
 
 export const ChessboardContext = createContext({} as ChessboardProviderContext);
@@ -145,16 +147,16 @@ export const ChessboardProvider = forwardRef(
       dropOffBoardAction = "snapback",
       id = 0,
       isDraggablePiece = () => true,
-      getPositionObject = () => {},
-      onArrowsChange = () => {},
-      onDragOverSquare = () => {},
-      onMouseOutSquare = () => {},
-      onMouseOverSquare = () => {},
-      onPieceClick = () => {},
-      onPieceDragBegin = () => {},
-      onPieceDragEnd = () => {},
+      getPositionObject = () => { },
+      onArrowsChange = () => { },
+      onDragOverSquare = () => { },
+      onMouseOutSquare = () => { },
+      onMouseOverSquare = () => { },
+      onPieceClick = () => { },
+      onPieceDragBegin = () => { },
+      onPieceDragEnd = () => { },
       onPieceDrop = () => true,
-      onPieceDropOffBoard = () => {},
+      onPieceDropOffBoard = () => { },
       onPromotionCheck = (sourceSquare, targetSquare, piece) => {
         return (
           ((piece === "wP" &&
@@ -168,9 +170,10 @@ export const ChessboardProvider = forwardRef(
       },
       onPromotionPieceSelect = () => true,
       onSparePieceDrop = () => true,
-      onSquareClick = () => {},
-      onSquareRightClick = () => {},
+      onSquareClick = () => { },
+      onSquareRightClick = () => { },
       position = "start",
+      modifiedFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR",
       promotionDialogVariant = "default",
       promotionToSquare = null,
       showBoardNotation = true,
@@ -181,8 +184,10 @@ export const ChessboardProvider = forwardRef(
   ) => {
     // position stored and displayed on board
     const [currentPosition, setCurrentPosition] = useState(
-      convertPositionToObject(position)
+      modifiedFenToObj(modifiedFen)
     );
+    console.log(modifiedFen)
+    console.log(modifiedFenToObj(modifiedFen))
 
     // calculated differences between current and incoming positions
     const [positionDifferences, setPositionDifferences] = useState<{
@@ -257,7 +262,7 @@ export const ChessboardProvider = forwardRef(
       // clear any open promotion dialogs
       clearPromotion();
 
-      const newPosition = convertPositionToObject(position);
+      const newPosition = modifiedFenToObj(modifiedFen);
       const differences = getPositionDifferences(currentPosition, newPosition);
       const newPieceColour =
         Object.keys(differences.added)?.length <= 2
@@ -541,6 +546,7 @@ export const ChessboardProvider = forwardRef(
       showBoardNotation,
       showPromoteDialog,
       snapToCursor,
+      modifiedFen,
     };
 
     return (

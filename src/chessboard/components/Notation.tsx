@@ -2,11 +2,14 @@ import { COLUMNS } from "../consts";
 import { useChessboard } from "../context/chessboard-context";
 
 type NotationProps = {
+  file: string;
+  rank: string;
   row: number;
   col: number;
+  numRows: number;
 };
 
-export function Notation({ row, col }: NotationProps) {
+export function Notation({ file, rank, row, col, numRows }: NotationProps) {
   const {
     boardOrientation,
     boardWidth,
@@ -19,16 +22,8 @@ export function Notation({ row, col }: NotationProps) {
   const blackColor = customDarkSquareStyle.backgroundColor;
 
   const isRow = col === 0;
-  const isColumn = row === 7;
+  const isColumn = row === numRows - 1;
   const isBottomLeftSquare = isRow && isColumn;
-
-  function getRow() {
-    return boardOrientation === "white" ? 8 - row : row + 1;
-  }
-
-  function getColumn() {
-    return boardOrientation === "black" ? COLUMNS[7 - col] : COLUMNS[col];
-  }
 
   function renderBottomLeft() {
     return (
@@ -41,7 +36,7 @@ export function Notation({ row, col }: NotationProps) {
             ...numericStyle(boardWidth, customNotationStyle),
           }}
         >
-          {getRow()}
+          {rank}
         </div>
         <div
           style={{
@@ -51,7 +46,7 @@ export function Notation({ row, col }: NotationProps) {
             ...alphaStyle(boardWidth, customNotationStyle),
           }}
         >
-          {getColumn()}
+          {file}
         </div>
       </>
     );
@@ -68,7 +63,7 @@ export function Notation({ row, col }: NotationProps) {
           ...alphaStyle(boardWidth, customNotationStyle),
         }}
       >
-        {getColumn()}
+        {file}
       </div>
     );
   }
@@ -86,7 +81,7 @@ export function Notation({ row, col }: NotationProps) {
           ...numericStyle(boardWidth, customNotationStyle),
         }}
       >
-        {getRow()}
+        {rank}
       </div>
     );
   }

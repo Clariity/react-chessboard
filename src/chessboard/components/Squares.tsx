@@ -23,7 +23,16 @@ export function Squares() {
     id,
     premoves,
     showBoardNotation,
+    modifiedFen,
   } = useChessboard();
+
+  const modifiedFenRows = modifiedFen.split("/");
+  const numRows = modifiedFenRows.length;
+
+  let eighthRowIdx = modifiedFenRows.findIndex(row => row.includes("#"));
+  if (eighthRowIdx === -1) {
+    eighthRowIdx = 0
+  }
 
   const premovesHistory: PremovesHistory = useMemo(() => {
     const result: PremovesHistory = [];
@@ -58,7 +67,14 @@ export function Squares() {
 
   return (
     <div data-boardid={id}>
-      {[...Array(8)].map((_, r) => {
+      {[...Array(numRows)].map((_, r) => {
+        const rowIdx = boardOrientation === "white" ? r : numRows - r - 1
+        const row = modifiedFenRows[rowIdx].replace("#", "")
+        const numCols = getNumCols(row);
+        let aFileIdx = row.indexOf("$");
+        if (aFileIdx === -1) {
+          aFileIdx = 0
+        }
         return (
           <div
             key={r.toString()}
@@ -68,11 +84,21 @@ export function Squares() {
               width: boardWidth,
             }}
           >
-            {[...Array(8)].map((_, c) => {
-              const square =
-                boardOrientation === "black"
-                  ? ((COLUMNS[7 - c] + (r + 1)) as Sq)
-                  : ((COLUMNS[c] + (8 - r)) as Sq);
+            {[...Array(numCols)].map((_, c) => {
+              const square = getSquare(
+                boardOrientation,
+                r, c,
+                eighthRowIdx,
+                aFileIdx,
+                numRows,
+                numCols,
+              );
+
+              const sqSplit = square.match(/\d+|[a-zA-Z]/g)
+              if (!sqSplit) return
+              const file = sqSplit[0]
+              const rank = sqSplit[1]
+
               const squareColor = c % 2 === r % 2 ? "white" : "black";
               const squareHasPremove = premoves.find(
                 (p) => p.sourceSq === square || p.targetSq === square
@@ -114,7 +140,7 @@ export function Squares() {
                       squares={squares}
                     />
                   )}
-                  {showBoardNotation && <Notation row={r} col={c} />}
+                  {showBoardNotation && <Notation row={r} col={c} file={file} rank={rank} numRows={numRows} />}
                 </Square>
               );
             })}
@@ -123,4 +149,50 @@ export function Squares() {
       })}
     </div>
   );
+}
+
+function getNumCols(row: string): number {
+  const rowSplit = row.match(/\d+|[a-zA-Z]/g);
+  if (!rowSplit) return 0;
+  let numCols = 0
+  for (let i = 0; i < rowSplit.length; i++) {
+    if (rowSplit[i].search(/\d/) === -1) {
+      numCols += 1;
+      continue;
+    }
+    numCols += parseInt(rowSplit[i], 10)
+  }
+  return numCols
+}
+
+function getSquare(
+  boardOrientation: string,
+  row: number,
+  col: number,
+  eighthRowIdx: number,
+  aFileIdx: number,
+  numRows: number,
+  numCols: number,
+): string {
+  // don't ask how this makes sense, I spent 1 hour thinking about it and it does
+  if (boardOrientation === "white") {
+    const rank = eighthRowIdx + 8 - row;
+    let file: string;
+    const distToAFile = col - aFileIdx;
+    if (distToAFile >= 0) {
+      file = String.fromCharCode(96 + col);
+    } else {
+      file = String.fromCharCode(64 + Math.abs(distToAFile));
+    }
+    return `${file}${rank}`;
+  } else {
+    const rank = 9 - numRows + row + eighthRowIdx
+    let file: string
+    if (aFileIdx + col <= numCols - 1) {
+      file = String.fromCharCode(97 + numCols - 1 - aFileIdx - col)
+    } else {
+      file = String.fromCharCode(65 + Math.abs(aFileIdx + col - numCols))
+    }
+    return `${file}${rank}`
+  }
 }

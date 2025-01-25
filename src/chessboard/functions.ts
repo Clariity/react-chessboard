@@ -106,12 +106,7 @@ export function convertPositionToObject(
   return position;
 }
 
-/**
- * Converts a fen string to a position object.
- */
 function fenToObj(fen: string): BoardPosition {
-  if (!isValidFen(fen)) return {};
-
   // cut off any move, castling, etc info from the end. we're only interested in position information
   fen = fen.replace(/ .+$/, "");
   const rows = fen.split("/");
@@ -141,41 +136,72 @@ function fenToObj(fen: string): BoardPosition {
 }
 
 /**
- * Returns whether string is valid fen notation.
+ * Converts a fen string to a position object.
+ * # - Marker for 8th row (if required)
+ * $ - Market for a file (if required)
  */
-function isValidFen(fen: string): boolean {
+export function modifiedFenToObj(fen: string): BoardPosition {
   // cut off any move, castling, etc info from the end. we're only interested in position information
   fen = fen.replace(/ .+$/, "");
+  const rows = fen.split("/");
 
-  // expand the empty square numbers to just 1s
-  fen = expandFenEmptySquares(fen);
+  let currentRowIdx = getStartRowIdx(rows);
+  
+  const position: BoardPosition = {};
 
-  // fen should be 8 sections separated by slashes
-  const chunks = fen.split("/");
-  if (chunks.length !== 8) return false;
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i].match(/\d+|[a-zA-Z]/g); // ab12c -> ['a', 'b', '12', 'c']
+    if (!row) continue;
+    let colIdx = getStartColIdx(rows[i]);
 
-  // check each section
-  for (let i = 0; i < 8; i++) {
-    if (chunks[i].length !== 8 || chunks[i].search(/[^kqrnbpKQRNBP1]/) !== -1) {
-      return false;
+    // loop through each character in the FEN section
+    for (let j = 0; j < row.length; j++) {
+      // number / empty squares
+      if (row[j].search(/\d/) !== -1) {
+        const numEmptySquares = parseInt(row[j], 10);
+        colIdx = colIdx + numEmptySquares;
+      } else {
+        // piece
+        const square = getColumnNotation(colIdx) + currentRowIdx;
+        position[square as Square] = fenToPieceCode(row[j]);
+        colIdx = colIdx + 1;
+      }
     }
+    currentRowIdx = currentRowIdx - 1;
   }
-
-  return true;
+  return position;
 }
 
-/**
- * Expand out fen notation to countable characters for validation
- */
-function expandFenEmptySquares(fen: string): string {
-  return fen
-    .replace(/8/g, "11111111")
-    .replace(/7/g, "1111111")
-    .replace(/6/g, "111111")
-    .replace(/5/g, "11111")
-    .replace(/4/g, "1111")
-    .replace(/3/g, "111")
-    .replace(/2/g, "11");
+function getStartRowIdx(rows:string[]):number {
+  const eighthRowIdx = rows.findIndex(row => row.startsWith('#'))
+  if (eighthRowIdx === -1) return 8;
+  return eighthRowIdx + 8;
+}
+
+function getStartColIdx(row:string):number {
+  const aFileIdx = row.indexOf('$')
+  if (aFileIdx === -1 || aFileIdx === 0) return 0;
+
+  const beforeMarker = row.substring(0, aFileIdx)
+  const beforeMarkerSplit = beforeMarker.match(/\d+|[a-zA-Z]/g)
+  if (!beforeMarkerSplit) return 0;
+  
+  let squaresBeforeMarker = 0;
+  for (let i = 0; i < beforeMarkerSplit.length; i++) {
+    if (beforeMarkerSplit[i].search(/\d/) === -1) {
+      squaresBeforeMarker += 1;
+      continue;
+    }
+    squaresBeforeMarker += parseInt(beforeMarkerSplit[i], 10)
+  }
+  return -squaresBeforeMarker;
+}
+
+function getColumnNotation(colIdx:number):string {
+  if (colIdx < 0) {
+    return String.fromCharCode(64 + Math.abs(colIdx))
+  }
+  return String.fromCharCode(97 + colIdx)
 }
 
 /**

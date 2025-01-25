@@ -50,7 +50,11 @@ const meta: Meta<typeof Chessboard> = {
 export default meta;
 
 export const Default = () => {
-  return <Chessboard id="defaultBoard" />;
+  return <Chessboard
+    id="defaultBoard"
+    modifiedFen="1$9/#1$rnbqkbnr1/1$pppppppp1/1$9/1$9/1$9/1$9/1$PPPPPPPP1/1$RNBQKBNR1/1$9"
+    boardOrientation="white"
+  />;
 };
 
 export const PlayVsRandom = () => {
@@ -264,7 +268,7 @@ export const ClickToMove = () => {
       newSquares[move.to] = {
         background:
           game.get(move.to) &&
-          game.get(move.to).color !== game.get(square).color
+            game.get(move.to).color !== game.get(square).color
             ? "radial-gradient(circle, rgba(0,0,0,.1) 85%, transparent 85%)"
             : "radial-gradient(circle, rgba(0,0,0,.1) 25%, transparent 25%)",
         borderRadius: "50%",
@@ -387,7 +391,7 @@ export const ClickToMove = () => {
       ...rightClickedSquares,
       [square]:
         rightClickedSquares[square] &&
-        rightClickedSquares[square].backgroundColor === colour
+          rightClickedSquares[square].backgroundColor === colour
           ? undefined
           : { backgroundColor: colour },
     });
@@ -937,12 +941,12 @@ export const AnalysisBoard = () => {
         customArrows={
           bestMove
             ? [
-                [
-                  bestMove.substring(0, 2) as Square,
-                  bestMove.substring(2, 4) as Square,
-                  "rgb(0, 128, 0)",
-                ],
-              ]
+              [
+                bestMove.substring(0, 2) as Square,
+                bestMove.substring(2, 4) as Square,
+                "rgb(0, 128, 0)",
+              ],
+            ]
             : undefined
         }
       />
