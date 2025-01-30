@@ -10,6 +10,7 @@ type SquareProps = {
   square: Sq;
   squareColor: "white" | "black";
   squareHasPremove: boolean;
+  isEmptySpace: boolean;
 };
 
 export function Square({
@@ -18,6 +19,7 @@ export function Square({
   setSquares,
   squareHasPremove,
   children,
+  isEmptySpace,
 }: SquareProps) {
   const squareRef = useRef<HTMLElement>(null);
   const {
@@ -125,7 +127,11 @@ export function Square({
   return (
     <div
       ref={drop}
-      style={defaultSquareStyle}
+      style={{
+        ...defaultSquareStyle,
+        ...emptySpace(isEmptySpace),
+      }
+      }
       data-square-color={squareColor}
       data-square={square}
       onTouchMove={(e) => {
@@ -223,6 +229,10 @@ const center = {
   display: "flex",
   justifyContent: "center",
 };
+
+const emptySpace = (isEmptySpace: boolean) => ({
+  opacity: isEmptySpace ? 0 : 1,
+})
 
 const size = (width: number) => ({
   width: width / 8,

@@ -11,7 +11,6 @@ import {
 
 import { defaultPieces } from "../media/pieces";
 import {
-  convertPositionToObject,
   modifiedFenToObj,
   getPositionDifferences,
   isDifferentFromStart,

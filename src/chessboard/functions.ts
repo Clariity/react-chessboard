@@ -157,9 +157,11 @@ export function modifiedFenToObj(fen: string): BoardPosition {
     // loop through each character in the FEN section
     for (let j = 0; j < row.length; j++) {
       // number / empty squares
-      if (row[j].search(/\d/) !== -1) {
+      if (row[j].search(/\d/) !== -1)  {
         const numEmptySquares = parseInt(row[j], 10);
         colIdx = colIdx + numEmptySquares;
+      } else if (row[j] === 'E') {
+        colIdx = colIdx + 1;
       } else {
         // piece
         const square = getColumnNotation(colIdx) + currentRowIdx;

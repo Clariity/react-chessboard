@@ -1,5 +1,4 @@
 import { useState, useMemo } from "react";
-import { COLUMNS } from "../consts";
 import { useChessboard } from "../context/chessboard-context";
 import { Coords, Piece as Pc, Square as Sq } from "../types";
 import { Notation } from "./Notation";
@@ -71,10 +70,9 @@ export function Squares() {
         const rowIdx = boardOrientation === "white" ? r : numRows - r - 1
         const row = modifiedFenRows[rowIdx].replace("#", "")
         const numCols = getNumCols(row);
-        let aFileIdx = row.indexOf("$");
-        if (aFileIdx === -1) {
-          aFileIdx = 0
-        }
+        let aFileIdx = numSqBeforeAFile(row)
+        let shownNumberPreviously = false
+
         return (
           <div
             key={r.toString()}
@@ -85,6 +83,10 @@ export function Squares() {
             }}
           >
             {[...Array(numCols)].map((_, c) => {
+              const showNumbers = !isEmptySpace(row, c, numCols, boardOrientation) && !shownNumberPreviously
+              if (showNumbers) {
+                shownNumberPreviously = true
+              }
               const square = getSquare(
                 boardOrientation,
                 r, c,
@@ -99,7 +101,6 @@ export function Squares() {
               const file = sqSplit[0]
               const rank = sqSplit[1]
 
-              const squareColor = c % 2 === r % 2 ? "white" : "black";
               const squareHasPremove = premoves.find(
                 (p) => p.sourceSq === square || p.targetSq === square
               );
@@ -116,14 +117,14 @@ export function Squares() {
                     a.premovesRoute.at(-1)?.index!
                 )
                 .at(0);
-
               return (
                 <Square
                   key={`${c}${r}`}
                   square={square}
-                  squareColor={squareColor}
+                  squareColor={getSqColor(r, c, eighthRowIdx, aFileIdx, numRows, numCols, boardOrientation)}
                   setSquares={setSquares}
                   squareHasPremove={!!squareHasPremove}
+                  isEmptySpace={isEmptySpace(row, c, numCols, boardOrientation)}
                 >
                   {!squareHasPremove && currentPosition[square] && (
                     <Piece
@@ -140,7 +141,15 @@ export function Squares() {
                       squares={squares}
                     />
                   )}
-                  {showBoardNotation && <Notation row={r} col={c} file={file} rank={rank} numRows={numRows} />}
+                  {showBoardNotation && <Notation
+                    row={r}
+                    col={c}
+                    showNumbers={c === aFileIdx}
+                    showLetters={r === (boardOrientation === "white" ? eighthRowIdx + 7 : numRows - eighthRowIdx - 1)}
+                    file={file}
+                    rank={rank}
+                    squareColor={getSqColor(r, c, eighthRowIdx, aFileIdx, numRows, numCols, boardOrientation)}
+                  />}
                 </Square>
               );
             })}
@@ -151,8 +160,28 @@ export function Squares() {
   );
 }
 
+function getSqColor(
+  row: number,
+  col: number,
+  eighthRowIdx: number,
+  aFileIdx: number,
+  numRows: number,
+  numCols: number,
+  boardOrientation: string,
+): "white" | "black" {
+  if (boardOrientation === "black") {
+    eighthRowIdx = numRows - eighthRowIdx
+    aFileIdx = numCols - aFileIdx
+  }
+  if (eighthRowIdx % 2 === aFileIdx % 2) {
+    return (col % 2 === row % 2) ? "white" : "black"
+  }
+  return (col % 2 === row % 2) ? "black" : "white"
+}
+
 function getNumCols(row: string): number {
-  const rowSplit = row.match(/\d+|[a-zA-Z]/g);
+  let anchorIdx = row.indexOf("$")
+  const rowSplit = row.slice(anchorIdx + 1).match(/\d+|[a-zA-Z]/g);
   if (!rowSplit) return 0;
   let numCols = 0
   for (let i = 0; i < rowSplit.length; i++) {
@@ -162,7 +191,46 @@ function getNumCols(row: string): number {
     }
     numCols += parseInt(rowSplit[i], 10)
   }
-  return numCols
+  return numCols + numSqBeforeAFile(row)
+}
+
+function numSqBeforeAFile(row: string): number {
+  const markerIdx = row.indexOf("$")
+  if (markerIdx === -1) return 0
+
+  const beforeMarker = row.substring(0, markerIdx)
+  const beforeMarkerSplit = beforeMarker.match(/\d+|[a-zA-Z]/g)
+  if (!beforeMarkerSplit) return 0;
+
+  let squaresBeforeMarker = 0;
+  for (let i = 0; i < beforeMarkerSplit.length; i++) {
+    if (beforeMarkerSplit[i].search(/\d/) === -1) {
+      squaresBeforeMarker += 1;
+      continue;
+    }
+    squaresBeforeMarker += parseInt(beforeMarkerSplit[i], 10)
+  }
+  return squaresBeforeMarker
+}
+
+function isEmptySpace(row: string, col: number, numCols: number, boardOrientation: string): boolean {
+  const rowSplit = row.match(/\d+|[a-zA-Z]/g);
+  if (!rowSplit) return false;
+  let colIdx = 0;
+  for (let i = 0; i < rowSplit.length; i++) {
+    if (boardOrientation === "white" && colIdx === col) {
+      return rowSplit[i] === 'E'
+    }
+    if (boardOrientation === "black" && colIdx === numCols - col - 1) {
+      return rowSplit[i] === 'E'
+    }
+    if (rowSplit[i].search(/\d/) === -1) {
+      colIdx += 1;
+      continue;
+    }
+    colIdx += parseInt(rowSplit[i], 10)
+  }
+  return false
 }
 
 function getSquare(
@@ -180,7 +248,7 @@ function getSquare(
     let file: string;
     const distToAFile = col - aFileIdx;
     if (distToAFile >= 0) {
-      file = String.fromCharCode(96 + col);
+      file = String.fromCharCode(97 + distToAFile);
     } else {
       file = String.fromCharCode(64 + Math.abs(distToAFile));
     }

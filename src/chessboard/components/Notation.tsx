@@ -1,4 +1,3 @@
-import { COLUMNS } from "../consts";
 import { useChessboard } from "../context/chessboard-context";
 
 type NotationProps = {
@@ -6,12 +5,13 @@ type NotationProps = {
   rank: string;
   row: number;
   col: number;
-  numRows: number;
+  showNumbers: boolean;
+  showLetters: boolean;
+  squareColor: "white" | "black";
 };
 
-export function Notation({ file, rank, row, col, numRows }: NotationProps) {
+export function Notation({ file, rank, row, col, showNumbers, showLetters, squareColor }: NotationProps) {
   const {
-    boardOrientation,
     boardWidth,
     customDarkSquareStyle,
     customLightSquareStyle,
@@ -21,9 +21,7 @@ export function Notation({ file, rank, row, col, numRows }: NotationProps) {
   const whiteColor = customLightSquareStyle.backgroundColor;
   const blackColor = customDarkSquareStyle.backgroundColor;
 
-  const isRow = col === 0;
-  const isColumn = row === numRows - 1;
-  const isBottomLeftSquare = isRow && isColumn;
+  const isBottomLeftSquare = showNumbers && showLetters;
 
   function renderBottomLeft() {
     return (
@@ -32,7 +30,7 @@ export function Notation({ file, rank, row, col, numRows }: NotationProps) {
           style={{
             zIndex: 3,
             position: "absolute",
-            ...{ color: whiteColor },
+            ...{ color: squareColor === "white" ? blackColor : whiteColor },
             ...numericStyle(boardWidth, customNotationStyle),
           }}
         >
@@ -42,7 +40,7 @@ export function Notation({ file, rank, row, col, numRows }: NotationProps) {
           style={{
             zIndex: 3,
             position: "absolute",
-            ...{ color: whiteColor },
+            ...{ color: squareColor === "white" ? blackColor : whiteColor },
             ...alphaStyle(boardWidth, customNotationStyle),
           }}
         >
@@ -59,7 +57,7 @@ export function Notation({ file, rank, row, col, numRows }: NotationProps) {
           userSelect: "none",
           zIndex: 3,
           position: "absolute",
-          ...{ color: col % 2 !== 0 ? blackColor : whiteColor },
+          ...{ color: squareColor === "white" ? blackColor : whiteColor },
           ...alphaStyle(boardWidth, customNotationStyle),
         }}
       >
@@ -75,9 +73,7 @@ export function Notation({ file, rank, row, col, numRows }: NotationProps) {
           userSelect: "none",
           zIndex: 3,
           position: "absolute",
-          ...(boardOrientation === "black"
-            ? { color: row % 2 === 0 ? blackColor : whiteColor }
-            : { color: row % 2 === 0 ? blackColor : whiteColor }),
+          ...{ color: squareColor === "white" ? blackColor : whiteColor },
           ...numericStyle(boardWidth, customNotationStyle),
         }}
       >
@@ -90,11 +86,11 @@ export function Notation({ file, rank, row, col, numRows }: NotationProps) {
     return renderBottomLeft();
   }
 
-  if (isColumn) {
+  if (showLetters) {
     return renderLetters();
   }
 
-  if (isRow) {
+  if (showNumbers) {
     return renderNumbers();
   }
 
