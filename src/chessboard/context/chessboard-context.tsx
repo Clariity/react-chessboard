@@ -110,6 +110,7 @@ interface ChessboardProviderContext {
   setShowPromoteDialog: React.Dispatch<React.SetStateAction<boolean>>;
   showPromoteDialog: boolean;
   modifiedFen: string;
+  currentNonExistentSquares: { [square in Square]: boolean };
 }
 
 export const ChessboardContext = createContext({} as ChessboardProviderContext);
@@ -182,11 +183,9 @@ export const ChessboardProvider = forwardRef(
     ref
   ) => {
     // position stored and displayed on board
-    const [currentPosition, setCurrentPosition] = useState(
-      modifiedFenToObj(modifiedFen)
-    );
-    console.log(modifiedFen)
-    console.log(modifiedFenToObj(modifiedFen))
+    const [postition, nonExistentSquares] = modifiedFenToObj(modifiedFen);
+    const [currentPosition, setCurrentPosition] = useState(postition);
+    const [currentNonExistentSquares, setCurrentNonExistentSquares] = useState(nonExistentSquares);
 
     // calculated differences between current and incoming positions
     const [positionDifferences, setPositionDifferences] = useState<{
@@ -261,13 +260,13 @@ export const ChessboardProvider = forwardRef(
       // clear any open promotion dialogs
       clearPromotion();
 
-      const newPosition = modifiedFenToObj(modifiedFen);
+      const [newPosition, newNonExistentSquares] = modifiedFenToObj(modifiedFen);
       const differences = getPositionDifferences(currentPosition, newPosition);
       const newPieceColour =
         Object.keys(differences.added)?.length <= 2
           ? Object.entries(differences.added)?.[0]?.[1][0]
           : undefined;
-
+      setCurrentNonExistentSquares(newNonExistentSquares);
       // external move has come in before animation is over
       // cancel animation and immediately update position
       if (isWaitingForAnimation) {
@@ -342,6 +341,10 @@ export const ChessboardProvider = forwardRef(
     ) {
       // if dropped back down, don't do anything
       if (sourceSq === targetSq) {
+        return;
+      }
+      console.log(currentNonExistentSquares)
+      if (currentNonExistentSquares[targetSq]) {
         return;
       }
 
@@ -546,6 +549,7 @@ export const ChessboardProvider = forwardRef(
       showPromoteDialog,
       snapToCursor,
       modifiedFen,
+      currentNonExistentSquares,
     };
 
     return (

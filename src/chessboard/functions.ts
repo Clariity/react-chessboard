@@ -140,7 +140,7 @@ function fenToObj(fen: string): BoardPosition {
  * # - Marker for 8th row (if required)
  * $ - Market for a file (if required)
  */
-export function modifiedFenToObj(fen: string): BoardPosition {
+export function modifiedFenToObj(fen: string): [BoardPosition, { [square in Square]: boolean }] {
   // cut off any move, castling, etc info from the end. we're only interested in position information
   fen = fen.replace(/ .+$/, "");
   const rows = fen.split("/");
@@ -148,6 +148,7 @@ export function modifiedFenToObj(fen: string): BoardPosition {
   let currentRowIdx = getStartRowIdx(rows);
   
   const position: BoardPosition = {};
+  const nonExistentSquares: { [square in Square]: boolean } = {};
 
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i].match(/\d+|[a-zA-Z]/g); // ab12c -> ['a', 'b', '12', 'c']
@@ -161,6 +162,7 @@ export function modifiedFenToObj(fen: string): BoardPosition {
         const numEmptySquares = parseInt(row[j], 10);
         colIdx = colIdx + numEmptySquares;
       } else if (row[j] === 'E') {
+        nonExistentSquares[getColumnNotation(colIdx) + currentRowIdx] = true;
         colIdx = colIdx + 1;
       } else {
         // piece
@@ -171,7 +173,7 @@ export function modifiedFenToObj(fen: string): BoardPosition {
     }
     currentRowIdx = currentRowIdx - 1;
   }
-  return position;
+  return [ position, nonExistentSquares ];
 }
 
 function getStartRowIdx(rows:string[]):number {
