@@ -199,6 +199,7 @@ export function Square({
             ...size(boardWidth, boardHeight, boardDimensions),
             ...center,
             ...(!squareHasPremove && customSquareStyles?.[square]),
+            position: 'relative',
           }}
         >
           {children}
