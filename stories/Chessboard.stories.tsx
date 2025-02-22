@@ -1,6 +1,6 @@
 import React, { forwardRef, useEffect, useRef, useState, useMemo } from "react";
 import { Meta } from "@storybook/react";
-import { Chess } from "chess.js";
+import { Chess, validateFen } from "chess.js";
 
 import {
   Chessboard,
@@ -58,38 +58,43 @@ export const PlayVsRandom = () => {
   const [currentTimeout, setCurrentTimeout] = useState<NodeJS.Timeout>();
 
   function safeGameMutate(modify) {
-    setGame((g) => {
-      const update = { ...g };
-      modify(update);
-      return update;
+    setGame((prevGame) => {
+      const newGame = new Chess();
+      newGame.loadPgn(prevGame.pgn());
+      modify(newGame);
+      return newGame;
     });
   }
 
+  function makeAMove(move) {
+    let moveResult = null;
+
+    safeGameMutate((prevGame) => {
+      try {
+        moveResult = prevGame.move(move);
+      } catch {}
+    });
+    return moveResult; // null if the move was illegal, the move object if the move was legal
+  }
+
   function makeRandomMove() {
-    const possibleMoves = game.moves();
-
-    // exit if the game is over
-    if (game.game_over() || game.in_draw() || possibleMoves.length === 0)
-      return;
-
-    const randomIndex = Math.floor(Math.random() * possibleMoves.length);
-    safeGameMutate((game) => {
-      game.move(possibleMoves[randomIndex]);
+    safeGameMutate((prevGame) => {
+      if (prevGame.isGameOver()) return; // no change if game is over
+      const possibleMoves = prevGame.moves();
+      const randomIndex = Math.floor(Math.random() * possibleMoves.length);
+      prevGame.move(possibleMoves[randomIndex]);
     });
   }
 
   function onDrop(sourceSquare, targetSquare, piece) {
-    const gameCopy = { ...game };
-    const move = gameCopy.move({
+    const move = makeAMove({
       from: sourceSquare,
       to: targetSquare,
       promotion: piece[1].toLowerCase() ?? "q",
     });
-    setGame(gameCopy);
 
     // illegal move
     if (move === null) return false;
-
     // store timeout so it can be cleared on undo/reset so computer doesn't execute move
     const newTimeout = setTimeout(makeRandomMove, 200);
     setCurrentTimeout(newTimeout);
@@ -116,18 +121,27 @@ export const PlayVsRandom = () => {
           clearTimeout(currentTimeout);
         }}
       >
-        reset
+        Reset
       </button>
       <button
         style={buttonStyle}
         onClick={() => {
-          safeGameMutate((game) => {
-            game.undo();
-          });
+          if (game.turn() === "w") {
+            safeGameMutate((game) => {
+              game.undo();
+            });
+            safeGameMutate((game) => {
+              game.undo();
+            });
+          } else {
+            safeGameMutate((game) => {
+              game.undo();
+            });
+          }
           clearTimeout(currentTimeout);
         }}
       >
-        undo
+        Undo
       </button>
     </div>
   );
@@ -150,13 +164,7 @@ export const PlayVsComputer = () => {
 
     engine.onMessage(({ bestMove }) => {
       if (bestMove) {
-        // In latest chess.js versions you can just write ```game.move(bestMove)```
-        game.move({
-          from: bestMove.substring(0, 2),
-          to: bestMove.substring(2, 4),
-          promotion: bestMove.substring(4, 5),
-        });
-
+        game.move(bestMove);
         setGamePosition(game.fen());
       }
     });
@@ -174,7 +182,7 @@ export const PlayVsComputer = () => {
     if (move === null) return false;
 
     // exit if the game is over
-    if (game.game_over() || game.in_draw()) return false;
+    if (game.isGameOver()) return false;
 
     findBestMove();
 
@@ -243,17 +251,15 @@ export const ClickToMove = () => {
 
   function safeGameMutate(modify) {
     setGame((g) => {
-      const update = { ...g };
+      const update = new Chess();
+      update.loadPgn(g.pgn());
       modify(update);
       return update;
     });
   }
 
   function getMoveOptions(square) {
-    const moves = game.moves({
-      square,
-      verbose: true,
-    });
+    const moves = game.moves({ square, verbose: true });
     if (moves.length === 0) {
       setOptionSquares({});
       return false;
@@ -279,15 +285,11 @@ export const ClickToMove = () => {
   }
 
   function makeRandomMove() {
-    const possibleMoves = game.moves();
-
-    // exit if the game is over
-    if (game.game_over() || game.in_draw() || possibleMoves.length === 0)
-      return;
-
-    const randomIndex = Math.floor(Math.random() * possibleMoves.length);
-    safeGameMutate((game) => {
-      game.move(possibleMoves[randomIndex]);
+    safeGameMutate((prevGame) => {
+      if (prevGame.isGameOver()) return; // no change if game is over
+      const possibleMoves = prevGame.moves();
+      const randomIndex = Math.floor(Math.random() * possibleMoves.length);
+      prevGame.move(possibleMoves[randomIndex]);
     });
   }
 
@@ -305,7 +307,7 @@ export const ClickToMove = () => {
     if (!moveTo) {
       // check if valid move before showing dialog
       const moves = game.moves({
-        moveFrom,
+        square: moveFrom,
         verbose: true,
       });
       const foundMove = moves.find(
@@ -337,7 +339,8 @@ export const ClickToMove = () => {
       }
 
       // is normal move
-      const gameCopy = { ...game };
+      const gameCopy = new Chess();
+      gameCopy.loadPgn(game.pgn());
       const move = gameCopy.move({
         from: moveFrom,
         to: square,
@@ -364,7 +367,8 @@ export const ClickToMove = () => {
   function onPromotionPieceSelect(piece) {
     // if no piece passed then user has cancelled dialog, don't make move and reset
     if (piece) {
-      const gameCopy = { ...game };
+      const gameCopy = new Chess();
+      gameCopy.loadPgn(game.pgn());
       gameCopy.move({
         from: moveFrom,
         to: moveTo,
@@ -431,9 +435,18 @@ export const ClickToMove = () => {
       <button
         style={buttonStyle}
         onClick={() => {
-          safeGameMutate((game) => {
-            game.undo();
-          });
+          if (game.turn() === "w") {
+            safeGameMutate((game) => {
+              game.undo();
+            });
+            safeGameMutate((game) => {
+              game.undo();
+            });
+          } else {
+            safeGameMutate((game) => {
+              game.undo();
+            });
+          }
           setMoveSquares({});
           setOptionSquares({});
           setRightClickedSquares({});
@@ -452,39 +465,44 @@ export const PremovesEnabled = () => {
 
   function safeGameMutate(modify) {
     setGame((g) => {
-      const update = { ...g };
+      const update = new Chess();
+      update.loadPgn(g.pgn());
       modify(update);
       return update;
     });
   }
 
+  function makeAMove(move) {
+    let moveResult = null;
+
+    safeGameMutate((prevGame) => {
+      try {
+        moveResult = prevGame.move(move);
+      } catch {}
+    });
+    return moveResult; // null if the move was illegal, the move object if the move was legal
+  }
+
   function makeRandomMove() {
-    const possibleMoves = game.moves();
-
-    // exit if the game is over
-    if (game.game_over() || game.in_draw() || possibleMoves.length === 0)
-      return;
-
-    const randomIndex = Math.floor(Math.random() * possibleMoves.length);
-    safeGameMutate((game) => {
-      game.move(possibleMoves[randomIndex]);
+    safeGameMutate((prevGame) => {
+      if (prevGame.isGameOver()) return; // no change if game is over
+      const possibleMoves = prevGame.moves();
+      const randomIndex = Math.floor(Math.random() * possibleMoves.length);
+      prevGame.move(possibleMoves[randomIndex]);
     });
   }
 
   function onDrop(sourceSquare, targetSquare, piece) {
-    const gameCopy = { ...game };
-    const move = gameCopy.move({
+    const move = makeAMove({
       from: sourceSquare,
       to: targetSquare,
       promotion: piece[1].toLowerCase() ?? "q",
     });
-    setGame(gameCopy);
 
     // illegal move
     if (move === null) return false;
-
     // store timeout so it can be cleared on undo/reset so computer doesn't execute move
-    const newTimeout = setTimeout(makeRandomMove, 2000);
+    const newTimeout = setTimeout(makeRandomMove, 1500);
     setCurrentTimeout(newTimeout);
     return true;
   }
@@ -521,18 +539,24 @@ export const PremovesEnabled = () => {
       <button
         style={buttonStyle}
         onClick={() => {
-          // undo twice to undo computer move too
-          safeGameMutate((game) => {
-            game.undo();
-            game.undo();
-          });
+          if (game.turn() === "w") {
+            safeGameMutate((game) => {
+              game.undo();
+            });
+            safeGameMutate((game) => {
+              game.undo();
+            });
+          } else {
+            safeGameMutate((game) => {
+              game.undo();
+            });
+          }
           // clear premove queue
           chessboardRef.current?.clearPremoves();
-          // stop any current timeouts
           clearTimeout(currentTimeout);
         }}
       >
-        undo
+        Undo
       </button>
     </div>
   );
@@ -542,22 +566,35 @@ export const StyledBoard = () => {
   const [game, setGame] = useState(new Chess());
 
   function safeGameMutate(modify) {
-    setGame((g) => {
-      const update = { ...g };
-      modify(update);
-      return update;
+    setGame((prevGame) => {
+      const newGame = new Chess();
+      newGame.loadPgn(prevGame.pgn());
+      modify(newGame);
+      return newGame;
     });
   }
 
+  function makeAMove(move) {
+    let moveResult = null;
+
+    safeGameMutate((prevGame) => {
+      try {
+        moveResult = prevGame.move(move);
+      } catch {}
+    });
+    return moveResult; // null if the move was illegal, the move object if the move was legal
+  }
+
   function onDrop(sourceSquare, targetSquare, piece) {
-    const gameCopy = { ...game };
-    const move = gameCopy.move({
+    const move = makeAMove({
       from: sourceSquare,
       to: targetSquare,
       promotion: piece[1].toLowerCase() ?? "q",
     });
-    setGame(gameCopy);
-    return move;
+
+    // illegal move
+    if (move === null) return false;
+    return true;
   }
 
   const pieces = [
@@ -615,17 +652,26 @@ export const StyledBoard = () => {
           });
         }}
       >
-        reset
+        Reset
       </button>
       <button
         style={buttonStyle}
         onClick={() => {
-          safeGameMutate((game) => {
-            game.undo();
-          });
+          if (game.turn() === "w") {
+            safeGameMutate((game) => {
+              game.undo();
+            });
+            safeGameMutate((game) => {
+              game.undo();
+            });
+          } else {
+            safeGameMutate((game) => {
+              game.undo();
+            });
+          }
         }}
       >
-        undo
+        Undo
       </button>
     </div>
   );
@@ -660,11 +706,7 @@ export const Styled3DBoard = () => {
 
     engine.onMessage(({ bestMove }) => {
       if (bestMove) {
-        game.move({
-          from: bestMove.substring(0, 2),
-          to: bestMove.substring(2, 4),
-          promotion: bestMove.substring(4, 5),
-        });
+        game.move(bestMove);
 
         setGamePosition(game.fen());
       }
@@ -672,6 +714,9 @@ export const Styled3DBoard = () => {
   }
 
   function onDrop(sourceSquare, targetSquare, piece) {
+    // exit if the game is over
+    if (game.isGameOver()) return false;
+
     const move = game.move({
       from: sourceSquare,
       to: targetSquare,
@@ -681,9 +726,6 @@ export const Styled3DBoard = () => {
 
     // illegal move
     if (move === null) return false;
-
-    // exit if the game is over
-    if (game.game_over() || game.in_draw()) return false;
 
     findBestMove();
 
@@ -745,17 +787,21 @@ export const Styled3DBoard = () => {
             setGamePosition(game.fen());
           }}
         >
-          Reset
+          reset
         </button>
         <button
           style={buttonStyle}
           onClick={() => {
-            game.undo();
-            game.undo();
+            if (game.turn() === "w") {
+              game.undo();
+              game.undo();
+            } else {
+              game.undo();
+            }
             setGamePosition(game.fen());
           }}
         >
-          Undo
+          undo
         </button>
       </div>
       <Chessboard
@@ -874,6 +920,8 @@ export const AnalysisBoard = () => {
   }
 
   function onDrop(sourceSquare, targetSquare, piece) {
+    if (game.isGameOver()) return false;
+
     const move = game.move({
       from: sourceSquare,
       to: targetSquare,
@@ -887,23 +935,20 @@ export const AnalysisBoard = () => {
 
     engine.stop();
     setBestline("");
-
-    if (game.game_over() || game.in_draw()) return false;
-
     return true;
   }
 
   useEffect(() => {
-    if (!game.game_over() || game.in_draw()) {
+    if (!game.isGameOver()) {
       findBestMove();
     }
   }, [chessBoardPosition]);
 
   const bestMove = bestLine?.split(" ")?.[0];
   const handleFenInputChange = (e) => {
-    const { valid } = game.validate_fen(e.target.value);
+    const { ok } = validateFen(e.target.value);
 
-    if (valid && inputRef.current) {
+    if (ok && inputRef.current) {
       inputRef.current.value = e.target.value;
       game.load(e.target.value);
       setChessBoardPosition(game.fen());
@@ -1035,9 +1080,12 @@ export const BoardWithCustomArrows = () => {
 ////////// ManualBoardEditor //////
 ///////////////////////////////////
 export const ManualBoardEditor = () => {
-  const game = useMemo(() => new Chess("8/8/8/8/8/8/8/8 w - - 0 1"), []); // empty board
-  const [boardOrientation, setBoardOrientation] =
-    useState<"white" | "black">("white");
+  const chessObject = new Chess();
+  chessObject.load("8/8/8/8/8/8/8/8 w - - 0 1", { skipValidation: true });
+  const game = useMemo(() => chessObject, []); // empty board
+  const [boardOrientation, setBoardOrientation] = useState<"white" | "black">(
+    "white"
+  );
   const [boardWidth, setBoardWidth] = useState(360);
   const [fenPosition, setFenPosition] = useState(game.fen());
 
@@ -1062,9 +1110,7 @@ export const ManualBoardEditor = () => {
     const color = piece[0];
     const type = piece[1].toLowerCase();
 
-    // this is hack to avoid chess.js bug, which I've fixed in the latest version https://github.com/jhlywa/chess.js/pull/426
     game.remove(sourceSquare);
-    game.remove(targetSquare);
     const success = game.put({ type, color }, targetSquare);
 
     if (success) setFenPosition(game.fen());
@@ -1079,10 +1125,10 @@ export const ManualBoardEditor = () => {
 
   const handleFenInputChange = (e) => {
     const fen = e.target.value;
-    const { valid } = game.validate_fen(fen);
+    const { ok } = validateFen(fen);
 
     setFenPosition(fen);
-    if (valid) {
+    if (ok) {
       game.load(fen);
       setFenPosition(game.fen());
     }
@@ -1120,7 +1166,6 @@ export const ManualBoardEditor = () => {
           >
             {pieces.slice(6, 12).map((piece) => (
               <SparePiece
-                key={piece}
                 piece={piece as Piece}
                 width={boardWidth / 8}
                 dndId="ManualBoardEditor"
@@ -1149,7 +1194,6 @@ export const ManualBoardEditor = () => {
           >
             {pieces.slice(0, 6).map((piece) => (
               <SparePiece
-                key={piece}
                 piece={piece as Piece}
                 width={boardWidth / 8}
                 dndId="ManualBoardEditor"

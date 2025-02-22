@@ -82,36 +82,40 @@ export default function App() {
 
 ### Basic Example
 
-#### IMPORTANT: Examples use the current stable release of chess.js. As of writing this, chess.js v1.0.0 is still in beta. These examples use chess.js ^0.12.0
-
 ```jsx
 import { useState } from "react";
-import Chess from "chess.js";
+import { Chess } from "chess.js";
 import { Chessboard } from "react-chessboard";
 
 export default function PlayRandomMoveEngine() {
   const [game, setGame] = useState(new Chess());
 
   function makeAMove(move) {
-    const gameCopy = { ...game };
-    const result = gameCopy.move(move);
+    let moveResult = null;
+
+    const gameCopy = new Chess(game.fen());
+    moveResult = gameCopy.move(move);
     setGame(gameCopy);
-    return result; // null if the move was illegal, the move object if the move was legal
+    return moveResult; // null if move was illegal else move object
   }
 
   function makeRandomMove() {
-    const possibleMoves = game.moves();
-    if (game.game_over() || game.in_draw() || possibleMoves.length === 0)
-      return; // exit if the game is over
-    const randomIndex = Math.floor(Math.random() * possibleMoves.length);
-    makeAMove(possibleMoves[randomIndex]);
+    setGame((prevGame) => {
+      if (prevGame.isGameOver()) return prevGame; // no change if game is over
+
+      const possibleMoves = prevGame.moves();
+      const randomIndex = Math.floor(Math.random() * possibleMoves.length);
+      const gameCopy = new Chess(prevGame.fen());
+      gameCopy.move(possibleMoves[randomIndex]);
+      return gameCopy;
+    });
   }
 
   function onDrop(sourceSquare, targetSquare) {
     const move = makeAMove({
       from: sourceSquare,
       to: targetSquare,
-      promotion: "q", // always promote to a queen for example simplicity
+      promotion: "q", // always promote to a queen, for example simplicity
     });
 
     // illegal move
@@ -120,11 +124,13 @@ export default function PlayRandomMoveEngine() {
     return true;
   }
 
-  return <Chessboard
-    position={game.fen()}
-    onPieceDrop={onDrop}
-    autoPromoteToQueen={true} // always promote to a queen for example simplicity
-  />;
+  return (
+    <Chessboard
+      position={game.fen()}
+      onPieceDrop={onDrop}
+      autoPromoteToQueen={true} // always promote to a queen, for example simplicity
+    />
+  );
 }
 ```
 
