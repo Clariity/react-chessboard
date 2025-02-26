@@ -11,6 +11,7 @@ export function PromotionOption({ option }: Props) {
   const [isHover, setIsHover] = useState(false);
 
   const {
+    boardDimensions,
     boardWidth,
     chessPieces,
     customDarkSquareStyle,
@@ -69,15 +70,15 @@ export function PromotionOption({ option }: Props) {
           }}
         >
           {(chessPieces[option] as CustomPieceFn)({
-            squareWidth: boardWidth / 8,
+            squareWidth: boardWidth / boardDimensions.columns,
             isDragging: false,
           })}
         </div>
       ) : (
         <svg
           viewBox={"1 1 43 43"}
-          width={boardWidth / 8}
-          height={boardWidth / 8}
+          width={boardWidth / boardDimensions.columns}
+          height={boardWidth / boardDimensions.columns}
           style={{
             transition: "all 0.1s ease-out",
             transform: isHover ? "scale(1)" : "scale(0.85)",

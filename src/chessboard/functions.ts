@@ -1,31 +1,30 @@
-import { BoardOrientation, BoardPosition, Piece, Square } from "./types";
+import { BoardDimensions, BoardOrientation, BoardPosition, Piece, Square } from "./types";
 import {
-  BLACK_COLUMN_VALUES,
-  BLACK_ROWS,
-  COLUMNS,
   START_POSITION_OBJECT,
-  WHITE_COLUMN_VALUES,
-  WHITE_ROWS,
 } from "./consts";
 
 /**
  * Retrieves the coordinates at the centre of the requested square, relative to the top left of the board (0, 0).
  */
 export function getRelativeCoords(
+  boardDimensions: BoardDimensions = { rows: 8, columns: 8 },
   boardOrientation: BoardOrientation,
   boardWidth: number,
   square: Square
-): {
-  x: number;
-  y: number;
-} {
-  const squareWidth = boardWidth / 8;
-  const columns =
-    boardOrientation === "white" ? WHITE_COLUMN_VALUES : BLACK_COLUMN_VALUES;
-  const rows = boardOrientation === "white" ? WHITE_ROWS : BLACK_ROWS;
+): { x: number; y: number } {
+  const squareWidth = boardWidth / boardDimensions.columns;
 
-  const x = columns[square[0]] * squareWidth + squareWidth / 2;
-  const y = rows[parseInt(square[1], 10) - 1] * squareWidth + squareWidth / 2;
+  const columnIndex = boardOrientation === "white"
+    ? square[0].charCodeAt(0) - "a".charCodeAt(0)
+    : boardDimensions.columns - 1 - (square[0].charCodeAt(0) - "a".charCodeAt(0));
+
+  const match = square.match(/\d+/);
+  const rowIndex = boardOrientation === "white"
+    ? boardDimensions.rows - (match ? parseInt(match[0], 10) : 8)
+    : (match ? parseInt(match[0], 10) : 8) - 1;
+
+  const x = columnIndex * squareWidth + squareWidth / 2;
+  const y = rowIndex * squareWidth + squareWidth / 2;
   return { x, y };
 }
 
@@ -92,7 +91,8 @@ export function getPositionDifferences(
  * Converts a fen string or existing position object to a position object.
  */
 export function convertPositionToObject(
-  position: string | BoardPosition
+  position: string | BoardPosition,
+  boardDimensions?: BoardDimensions
 ): BoardPosition {
   if (position === "start") {
     return START_POSITION_OBJECT;
@@ -100,7 +100,7 @@ export function convertPositionToObject(
 
   if (typeof position === "string") {
     // attempt to convert fen to position object
-    return fenToObj(position);
+    return fenToObj(position, boardDimensions);
   }
 
   return position;
@@ -109,28 +109,44 @@ export function convertPositionToObject(
 /**
  * Converts a fen string to a position object.
  */
-function fenToObj(fen: string): BoardPosition {
-  if (!isValidFen(fen)) return {};
+function fenToObj(fen: string, boardDimensions: BoardDimensions = { rows: 8, columns: 8}): BoardPosition {
+  if (!isValidFen(fen, boardDimensions)) return {};
+
+  fen = expandFenEmptySquares(fen);
 
   // cut off any move, castling, etc info from the end. we're only interested in position information
   fen = fen.replace(/ .+$/, "");
   const rows = fen.split("/");
   const position: BoardPosition = {};
-  let currentRow = 8;
+  let currentRow = boardDimensions.rows;
 
-  for (let i = 0; i < 8; i++) {
+  const numericRegex = /^\d+$/;
+
+  for (let i = 0; i < boardDimensions.rows; i++) {
     const row = rows[i].split("");
     let colIdx = 0;
 
     // loop through each character in the FEN section
     for (let j = 0; j < row.length; j++) {
       // number / empty squares
-      if (row[j].search(/[1-8]/) !== -1) {
+      if (numericRegex.test(row[j])) {
         const numEmptySquares = parseInt(row[j], 10);
-        colIdx = colIdx + numEmptySquares;
+
+        // Validate the range explicitly
+        if (numEmptySquares >= 1 && numEmptySquares <= boardDimensions.columns) {
+          colIdx += numEmptySquares;
+        } else {
+          throw new Error(
+            `Invalid FEN: empty square count (${numEmptySquares}) exceeds board dimensions (${boardDimensions.columns})`
+          );
+        }
       } else {
         // piece
-        const square = COLUMNS[colIdx] + currentRow;
+        const dynamicColumns = Array.from(
+          { length: boardDimensions.columns },
+          (_, i) => String.fromCharCode(97 + i) // 97 is 'a'
+        );
+        const square = dynamicColumns[colIdx] + currentRow;
         position[square as Square] = fenToPieceCode(row[j]);
         colIdx = colIdx + 1;
       }
@@ -143,20 +159,20 @@ function fenToObj(fen: string): BoardPosition {
 /**
  * Returns whether string is valid fen notation.
  */
-function isValidFen(fen: string): boolean {
+function isValidFen(fen: string, boardDimensions: BoardDimensions = { rows: 8, columns: 8}): boolean {
   // cut off any move, castling, etc info from the end. we're only interested in position information
   fen = fen.replace(/ .+$/, "");
 
   // expand the empty square numbers to just 1s
   fen = expandFenEmptySquares(fen);
 
-  // fen should be 8 sections separated by slashes
+  // there should be a section seperated by a slash for each row on the board (8 for standard chess)
   const chunks = fen.split("/");
-  if (chunks.length !== 8) return false;
+  if (chunks.length !== boardDimensions.rows) return false;
 
   // check each section
-  for (let i = 0; i < 8; i++) {
-    if (chunks[i].length !== 8 || chunks[i].search(/[^kqrnbpKQRNBP1]/) !== -1) {
+  for (let i = 0; i < boardDimensions.rows; i++) {
+    if (chunks[i].length !== boardDimensions.columns || chunks[i].search(/[^kqrnbpKQRNBP1]/) !== -1) {
       return false;
     }
   }
@@ -168,14 +184,7 @@ function isValidFen(fen: string): boolean {
  * Expand out fen notation to countable characters for validation
  */
 function expandFenEmptySquares(fen: string): string {
-  return fen
-    .replace(/8/g, "11111111")
-    .replace(/7/g, "1111111")
-    .replace(/6/g, "111111")
-    .replace(/5/g, "11111")
-    .replace(/4/g, "1111")
-    .replace(/3/g, "111")
-    .replace(/2/g, "11");
+  return fen.replace(/\d+/g, (match) => "1".repeat(parseInt(match, 10)));
 }
 
 /**

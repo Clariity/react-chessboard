@@ -2,7 +2,7 @@ import { ReactNode, useEffect, useRef } from "react";
 import { useDrop } from "react-dnd";
 
 import { useChessboard } from "../context/chessboard-context";
-import { BoardOrientation, Coords, Piece, Square as Sq } from "../types";
+import { BoardDimensions, BoardOrientation, Coords, Piece, Square as Sq } from "../types";
 
 type SquareProps = {
   children: ReactNode;
@@ -22,6 +22,7 @@ export function Square({
   const squareRef = useRef<HTMLElement>(null);
   const {
     autoPromoteToQueen,
+    boardDimensions,
     boardWidth,
     boardOrientation,
     clearArrows,
@@ -55,6 +56,8 @@ export function Square({
     setPromoteToSquare,
     setShowPromoteDialog,
   } = useChessboard();
+
+  const boardHeight = (boardWidth * boardDimensions.rows) / boardDimensions.columns;
 
   const [{ isOver }, drop] = useDrop(
     () => ({
@@ -108,10 +111,10 @@ export function Square({
       const { x, y } = squareRef.current.getBoundingClientRect();
       setSquares((oldSquares) => ({ ...oldSquares, [square]: { x, y } }));
     }
-  }, [boardWidth, boardOrientation]);
+  }, [boardWidth, boardHeight, boardOrientation]);
 
   const defaultSquareStyle = {
-    ...borderRadius(square, boardOrientation, customBoardStyle),
+    ...borderRadius(square, boardDimensions, boardOrientation, customBoardStyle),
     ...(squareColor === "black"
       ? customDarkSquareStyle
       : customLightSquareStyle),
@@ -145,7 +148,6 @@ export function Square({
       }}
       onMouseOver={(e) => {
         // noop if moving from child of square into square.
-
         if (e.buttons === 2 && currentRightClickDown) {
           drawNewArrow(currentRightClickDown, square);
         }
@@ -194,9 +196,10 @@ export function Square({
           // @ts-ignore
           ref={squareRef as any}
           style={{
-            ...size(boardWidth),
+            ...size(boardWidth, boardHeight, boardDimensions),
             ...center,
             ...(!squareHasPremove && customSquareStyles?.[square]),
+            position: 'relative',
           }}
         >
           {children}
@@ -207,7 +210,7 @@ export function Square({
           square={square}
           squareColor={squareColor}
           style={{
-            ...size(boardWidth),
+            ...size(boardWidth, boardHeight, boardDimensions),
             ...center,
             ...(!squareHasPremove && customSquareStyles?.[square]),
           }}
@@ -221,16 +224,21 @@ export function Square({
 
 const center = {
   display: "flex",
-  justifyContent: "center",
+  position: "relative",
 };
 
-const size = (width: number) => ({
-  width: width / 8,
-  height: width / 8,
+const size = (
+  width: number,
+  height: number,
+  boardDimensions: BoardDimensions = { rows: 8, columns: 8 }
+) => ({
+  width: width / boardDimensions.columns,
+  height: height / boardDimensions.rows,
 });
 
 const borderRadius = (
   square: Sq,
+  boardDimensions: BoardDimensions = {rows: 8, columns: 8},
   boardOrientation: BoardOrientation,
   customBoardStyle?: Record<string, string | number>
 ) => {
@@ -241,7 +249,7 @@ const borderRadius = (
       ? { borderBottomLeftRadius: customBoardStyle.borderRadius }
       : { borderTopRightRadius: customBoardStyle.borderRadius };
   }
-  if (square === "a8") {
+  if (square === `a${boardDimensions.rows}`) {
     return boardOrientation === "white"
       ? { borderTopLeftRadius: customBoardStyle.borderRadius }
       : { borderBottomRightRadius: customBoardStyle.borderRadius };
@@ -251,7 +259,7 @@ const borderRadius = (
       ? { borderBottomRightRadius: customBoardStyle.borderRadius }
       : { borderTopLeftRadius: customBoardStyle.borderRadius };
   }
-  if (square === "h8") {
+  if (square === `h${boardDimensions.rows}`) {
     return boardOrientation === "white"
       ? { borderTopRightRadius: customBoardStyle.borderRadius }
       : { borderBottomLeftRadius: customBoardStyle.borderRadius };

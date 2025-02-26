@@ -847,6 +847,80 @@ export const CustomSquare = () => {
   );
 };
 
+export const VaryingBoardDimensions = () => {
+  const [boardRows, setBoardRows] = useState(10);
+  const [boardColumns, setBoardColumns] = useState(10);
+
+  const handleRowsChange = (event) => {
+    let inputValue = parseInt(event.target.value, 10) || 8;
+    const clampedValue = Math.max(1, Math.min(inputValue, 16));
+    setBoardRows(clampedValue);
+  };
+
+  const handleColumnsChange = (event) => {
+    let inputValue = parseInt(event.target.value, 10) || 8;
+    const clampedValue = Math.max(1, Math.min(inputValue, 16));
+    setBoardColumns(clampedValue);
+  };
+
+  return (
+    <div>
+      <h3 style={{marginBottom: "1px"}}>Adjust Dimensions:</h3>
+      <div style={{
+          display: "flex",
+          flexDirection: "row",
+          marginBottom: "8px",
+          gap: "8px",
+        }}>
+        <div>
+          <label htmlFor="rows">Rows: </label>
+          <input
+            type="number"
+            id="rows"
+            name="rows"
+            min="1"
+            max="16"
+            step="1"
+            value={boardRows}
+            onChange={handleRowsChange}
+            style={{height: "40px;",                    
+                    fontSize: "16px",
+                    textAlign: "center",
+                    backgroundColor: "#f0d9b5",
+                    border: "2px solid #B58863",
+                    borderRadius: "5px",
+                    outline: "none",}}
+          />
+        </div>
+        <div>
+          <label htmlFor="columns">Columns: </label>
+          <input
+            type="number"
+            id="columns"
+            name="columns"
+            min="1"
+            max="16"
+            step="1"
+            value={boardColumns}
+            onChange={handleColumnsChange}
+            style={{height: "40px;",                    
+                    fontSize: "16px",
+                    textAlign: "center",
+                    backgroundColor: "#f0d9b5",
+                    border: "2px solid #B58863",
+                    borderRadius: "5px",
+                    outline: "none",}}
+          />
+        </div>
+      </div>
+      <Chessboard 
+        boardDimensions={ {rows: boardRows, columns: boardColumns} } 
+        position={ "r8r/1nbnqknbn1/pppppppppp/10/10/10/10/PPPPPPPPPP/1NBNQKNBN1/R8R w KQkq - 0 1" }
+      />
+    </div>
+  );
+};
+
 export const AnalysisBoard = () => {
   const engine = useMemo(() => new Engine(), []);
   const game = useMemo(() => new Chess(), []);
