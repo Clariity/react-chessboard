@@ -286,7 +286,7 @@ export type ChessboardProps = {
    * User function that is run when a square is clicked.
    * @default () => {}
    */
-  onSquareClick?: (square: Square, piece: Piece | undefined) => any;
+  onSquareClick?: (square: Square, piece: string | undefined) => any;
   /**
    * User function that is run when a square is right clicked.
    * @default () => {}

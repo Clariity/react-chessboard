@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useRef } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import { useDrop } from "react-dnd";
 
 import { useChessboard } from "../context/chessboard-context";
@@ -7,14 +7,14 @@ import { BoardOrientation, Coords, Piece, Square as Sq } from "../types";
 type SquareProps = {
   children: ReactNode;
   setSquares: React.Dispatch<React.SetStateAction<{ [square in Sq]?: Coords }>>;
-  square: Sq;
+  location: Sq;
   squareColor: "white" | "black";
   squareHasPremove: boolean;
   isEmptySpace: boolean;
 };
 
 export function Square({
-  square,
+  location: location,
   squareColor,
   setSquares,
   squareHasPremove,
@@ -27,7 +27,7 @@ export function Square({
     boardWidth,
     boardOrientation,
     clearArrows,
-    currentPosition,
+    boardState,
     currentRightClickDown,
     customBoardStyle,
     customDarkSquareStyle,
@@ -67,13 +67,14 @@ export function Square({
       }),
     }),
     [
-      square,
-      currentPosition,
+      location,
+      boardState.getBoard(),
       onPieceDrop,
       isWaitingForAnimation,
       lastPieceColour,
     ]
   );
+  const [isHovered, setIsHovered] = useState(false);
 
   type BoardPiece = {
     piece: Piece;
@@ -85,35 +86,35 @@ export function Square({
 
   function handleDrop(item: BoardPiece | SparePiece) {
     if (item.isSpare) {
-      handleSparePieceDrop(item.piece, square);
+      handleSparePieceDrop(item.piece, location);
       return;
     }
-    if (onPromotionCheck(item.square, square, item.piece)) {
+    if (onPromotionCheck(item.square, location, item.piece)) {
       if (autoPromoteToQueen) {
         handleSetPosition(
           item.square,
-          square,
+          location,
           item.piece[0] === "w" ? "wQ" : "bQ"
         );
       } else {
         setPromoteFromSquare(item.square);
-        setPromoteToSquare(square);
+        setPromoteToSquare(location);
         setShowPromoteDialog(true);
       }
     } else {
-      handleSetPosition(item.square, square, item.piece, true);
+      handleSetPosition(item.square, location, item.piece, true);
     }
   }
 
   useEffect(() => {
     if (squareRef.current) {
       const { x, y } = squareRef.current.getBoundingClientRect();
-      setSquares((oldSquares) => ({ ...oldSquares, [square]: { x, y } }));
+      setSquares((oldSquares) => ({ ...oldSquares, [location]: { x, y } }));
     }
   }, [boardWidth, boardOrientation]);
 
   const defaultSquareStyle = {
-    ...borderRadius(square, boardOrientation, customBoardStyle),
+    ...borderRadius(location, boardOrientation, customBoardStyle),
     ...(squareColor === "black"
       ? customDarkSquareStyle
       : customLightSquareStyle),
@@ -130,10 +131,11 @@ export function Square({
       style={{
         ...defaultSquareStyle,
         ...emptySpace(isEmptySpace),
+        ...(isHovered && isEmptySpace && { opacity: 0.9 })
       }
       }
       data-square-color={squareColor}
-      data-square={square}
+      data-square={location}
       onTouchMove={(e) => {
         // Handle touch events on tablet and mobile not covered by onMouseOver/onDragEnter
         const touchLocation = e.touches[0];
@@ -151,9 +153,9 @@ export function Square({
       }}
       onMouseOver={(e) => {
         // noop if moving from child of square into square.
-
+        setIsHovered(true);
         if (e.buttons === 2 && currentRightClickDown) {
-          drawNewArrow(currentRightClickDown, square);
+          drawNewArrow(currentRightClickDown, location);
         }
 
         if (
@@ -163,31 +165,32 @@ export function Square({
           return;
         }
 
-        onMouseOverSquare(square);
+        onMouseOverSquare(location);
       }}
       onMouseOut={(e) => {
         // noop if moving from square into a child of square.
+        setIsHovered(false);
         if (
           e.relatedTarget &&
           e.currentTarget.contains(e.relatedTarget as Node)
         )
           return;
-        onMouseOutSquare(square);
+        onMouseOutSquare(location);
       }}
       onMouseDown={(e) => {
-        if (e.button === 2) onRightClickDown(square);
+        if (e.button === 2) onRightClickDown(location);
       }}
       onMouseUp={(e) => {
         if (e.button === 2) {
           if (currentRightClickDown)
-            onArrowDrawEnd(currentRightClickDown, square);
-          onRightClickUp(square);
+            onArrowDrawEnd(currentRightClickDown, location);
+          onRightClickUp(location);
         }
       }}
-      onDragEnter={() => onDragOverSquare(square)}
+      onDragEnter={() => onDragOverSquare(location)}
       onClick={() => {
-        const piece = currentPosition[square];
-        onSquareClick(square, piece);
+        const piece = boardState.getPiece(location);
+        onSquareClick(location, piece);
         clearArrows();
       }}
       onContextMenu={(e) => {
@@ -202,7 +205,7 @@ export function Square({
           style={{
             ...size(boardWidth),
             ...center,
-            ...(!squareHasPremove && customSquareStyles?.[square]),
+            ...(!squareHasPremove && customSquareStyles?.[location]),
           }}
         >
           {children}
@@ -210,12 +213,12 @@ export function Square({
       ) : (
         <CustomSquare
           ref={squareRef}
-          square={square}
+          square={location}
           squareColor={squareColor}
           style={{
             ...size(boardWidth),
             ...center,
-            ...(!squareHasPremove && customSquareStyles?.[square]),
+            ...(!squareHasPremove && customSquareStyles?.[location]),
           }}
         >
           {children}

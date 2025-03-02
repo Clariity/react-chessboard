@@ -4,6 +4,10 @@ import { Coords, Piece as Pc, Square as Sq } from "../types";
 import { Notation } from "./Notation";
 import { Piece } from "./Piece";
 import { Square } from "./Square";
+import { NON_EXISTENT_SQUARE } from "../boardState";
+
+const A_FILE = "a";
+const FIRST_RANK = "1";
 
 // this type shows the exact route of each premoved piece
 type PremovesHistory = {
@@ -18,20 +22,23 @@ export function Squares() {
     arePremovesAllowed,
     boardOrientation,
     boardWidth,
-    currentPosition,
     id,
     premoves,
     showBoardNotation,
-    modifiedFen,
+    boardState,
   } = useChessboard();
 
-  const modifiedFenRows = modifiedFen.split("/");
-  const numRows = modifiedFenRows.length;
+  // const modifiedFenRows = modifiedFen.split("/");
+  // const numRows = modifiedFenRows.length;
 
-  let eighthRowIdx = modifiedFenRows.findIndex(row => row.includes("#"));
-  if (eighthRowIdx === -1) {
-    eighthRowIdx = 0
-  }
+  // let eighthRowIdx = modifiedFenRows.findIndex(row => row.includes("#"));
+  // if (eighthRowIdx === -1) {
+  //   eighthRowIdx = 0
+  // }
+
+  const numRows = boardState.getNumRows();
+  const numCols = boardState.getNumCols();
+
 
   const premovesHistory: PremovesHistory = useMemo(() => {
     const result: PremovesHistory = [];
@@ -67,6 +74,75 @@ export function Squares() {
   return (
     <div data-boardid={id}>
       {[...Array(numRows)].map((_, r) => {
+
+        return (
+          <div
+            key={r.toString()}
+            style={{
+              display: "flex",
+              flexWrap: "nowrap",
+              width: boardWidth,
+            }}
+          >
+            {[...Array(numCols)].map((_, c) => {
+              const sq = boardState.getSquare(r, c);
+              const isEmptySpace = sq.piece === NON_EXISTENT_SQUARE;
+              const location = `${sq.file}${sq.rank}`
+
+              const squareHasPremove = premoves.find(
+                (p) => p.sourceSq === location || p.targetSq === location
+              );
+
+              const squareHasPremoveTarget = premovesHistory
+                .filter(
+                  ({ premovesRoute }) =>
+                    premovesRoute.at(-1)?.targetSq === location
+                )
+                //the premoved piece with the higher index will be shown, as it is the latest one
+                .sort(
+                  (a, b) =>
+                    b.premovesRoute.at(-1)?.index! -
+                    a.premovesRoute.at(-1)?.index!
+                )
+                .at(0);
+              return (
+                <Square
+                  key={`${c}${r}`}
+                  location={location}
+                  squareColor={getSqColor(sq.file, sq.rank)}
+                  setSquares={setSquares}
+                  squareHasPremove={!!squareHasPremove}
+                  isEmptySpace={isEmptySpace}
+                >
+                  {!squareHasPremove && boardState.getPiece(location) !== "" && (
+                    <Piece
+                      piece={boardState.getPiece(location) as Pc}
+                      square={location}
+                      squares={squares}
+                    />
+                  )}
+                  {squareHasPremoveTarget && (
+                    <Piece
+                      isPremovedPiece={true}
+                      piece={squareHasPremoveTarget.piece}
+                      square={location}
+                      squares={squares}
+                    />
+                  )}
+                  {showBoardNotation && <Notation
+                    showNumbers={sq.file === A_FILE}
+                    showLetters={sq.rank === FIRST_RANK}
+                    file={sq.file}
+                    rank={sq.rank}
+                    squareColor={getSqColor(sq.file, sq.rank)}
+                  />}
+                </Square>
+              );
+            })}
+          </div>
+        );
+      })}
+      {/* {[...Array(numRows)].map((_, r) => {
         const rowIdx = boardOrientation === "white" ? r : numRows - r - 1
         const row = modifiedFenRows[rowIdx].replace("#", "")
         const numCols = getNumCols(row);
@@ -155,28 +231,44 @@ export function Squares() {
             })}
           </div>
         );
-      })}
+      })} */}
+
     </div>
   );
 }
 
-function getSqColor(
-  row: number,
-  col: number,
-  eighthRowIdx: number,
-  aFileIdx: number,
-  numRows: number,
-  numCols: number,
-  boardOrientation: string,
-): "white" | "black" {
-  if (boardOrientation === "black") {
-    eighthRowIdx = numRows - eighthRowIdx
-    aFileIdx = numCols - aFileIdx
+// function getSqColor(
+//   row: number,
+//   col: number,
+//   eighthRowIdx: number,
+//   aFileIdx: number,
+//   numRows: number,
+//   numCols: number,
+//   boardOrientation: string,
+// ): "white" | "black" {
+//   if (boardOrientation === "black") {
+//     eighthRowIdx = numRows - eighthRowIdx
+//     aFileIdx = numCols - aFileIdx
+//   }
+//   if (eighthRowIdx % 2 === aFileIdx % 2) {
+//     return (col % 2 === row % 2) ? "white" : "black"
+//   }
+//   return (col % 2 === row % 2) ? "black" : "white"
+// }
+
+function getSqColor(file: string, rank: string): "white" | "black" {
+  const rankInt = parseInt(rank, 10);
+
+  let fileInt = file.charCodeAt(0);
+  if (fileInt < 97) { // capital letters
+    // A -> 65 which is odd, I am converting it to an even nummber
+    // because I want the square to be white
+    fileInt += 1
   }
-  if (eighthRowIdx % 2 === aFileIdx % 2) {
-    return (col % 2 === row % 2) ? "white" : "black"
+  if (rankInt % 2 === fileInt % 2) {
+    return "black"
   }
-  return (col % 2 === row % 2) ? "black" : "white"
+  return "white"
 }
 
 function getNumCols(row: string): number {

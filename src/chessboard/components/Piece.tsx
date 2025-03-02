@@ -24,7 +24,7 @@ export function Piece({
     boardWidth,
     boardOrientation,
     chessPieces,
-    currentPosition,
+    boardState,
     deletePieceFromSquare,
     dropOffBoardAction,
     id,
@@ -73,7 +73,7 @@ export function Piece({
         isDragging: !!monitor.isDragging(),
       }),
     }),
-    [piece, square, currentPosition, id]
+    [piece, square, boardState.getBoard(), id]
   );
 
   // hide the default preview
@@ -114,15 +114,13 @@ export function Piece({
         const squareWidth = boardWidth / 8;
         setPieceStyle((oldPieceStyle) => ({
           ...oldPieceStyle,
-          transform: `translate(${
-            (boardOrientation === "black" ? -1 : 1) *
+          transform: `translate(${(boardOrientation === "black" ? -1 : 1) *
             (targetSq.charCodeAt(0) - sourceSq.charCodeAt(0)) *
             squareWidth
-          }px, ${
-            (boardOrientation === "black" ? -1 : 1) *
+            }px, ${(boardOrientation === "black" ? -1 : 1) *
             (Number(sourceSq[1]) - Number(targetSq[1])) *
             squareWidth
-          }px)`,
+            }px)`,
           transition: `transform ${animationDuration}ms`,
           zIndex: 6,
         }));
@@ -140,7 +138,7 @@ export function Piece({
         transition: `transform ${0}ms`,
       }));
     }
-  }, [currentPosition]);
+  }, [boardState.getBoard()]);
 
   // update is piece draggable
   useEffect(() => {
@@ -151,7 +149,7 @@ export function Piece({
           ? "-webkit-grab"
           : "default",
     }));
-  }, [square, currentPosition, arePiecesDraggable]);
+  }, [square, boardState.getBoard(), arePiecesDraggable]);
 
   function getSingleSquareCoordinates() {
     return { sourceSq: squares[square] };

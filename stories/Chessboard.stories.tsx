@@ -52,8 +52,10 @@ export default meta;
 export const Default = () => {
   return <Chessboard
     id="defaultBoard"
-    modifiedFen="#E$rnbqkbnrE/E$ppppppppE/E$8E/E$8E/E$8E/E$8E/1$PPPPPPPPE/E$RNBQKBNR1"
-    boardOrientation="black"
+    modifiedFen="1$9/#1$rnbqkbnr1/1$pppppppp1/1$9/1$9/1$9/1$9/1$PPPPPPPP1/1$RNBQKBNR1/1$9"
+    boardOrientation="white"
+    areArrowsAllowed={false}
+    arePremovesAllowed={false}
   />;
 };
 

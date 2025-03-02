@@ -3,14 +3,12 @@ import { useChessboard } from "../context/chessboard-context";
 type NotationProps = {
   file: string;
   rank: string;
-  row: number;
-  col: number;
   showNumbers: boolean;
   showLetters: boolean;
   squareColor: "white" | "black";
 };
 
-export function Notation({ file, rank, row, col, showNumbers, showLetters, squareColor }: NotationProps) {
+export function Notation({ file, rank, showNumbers, showLetters, squareColor }: NotationProps) {
   const {
     boardWidth,
     customDarkSquareStyle,

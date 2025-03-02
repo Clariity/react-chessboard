@@ -25,7 +25,7 @@ import {
 } from "../types";
 
 import { useArrows } from "../hooks/useArrows";
-
+import { BoardStateInterface, useBoardState } from "../boardState";
 interface ChessboardProviderProps extends ChessboardProps {
   boardWidth: number;
   children: ReactNode;
@@ -109,8 +109,7 @@ interface ChessboardProviderContext {
   setPromoteToSquare: React.Dispatch<React.SetStateAction<Square | null>>;
   setShowPromoteDialog: React.Dispatch<React.SetStateAction<boolean>>;
   showPromoteDialog: boolean;
-  modifiedFen: string;
-  currentNonExistentSquares: { [square in Square]: boolean };
+  boardState: BoardStateInterface;
 }
 
 export const ChessboardContext = createContext({} as ChessboardProviderContext);
@@ -185,7 +184,8 @@ export const ChessboardProvider = forwardRef(
     // position stored and displayed on board
     const [postition, nonExistentSquares] = modifiedFenToObj(modifiedFen);
     const [currentPosition, setCurrentPosition] = useState(postition);
-    const [currentNonExistentSquares, setCurrentNonExistentSquares] = useState(nonExistentSquares);
+
+    const boardState = useBoardState(modifiedFen);
 
     // calculated differences between current and incoming positions
     const [positionDifferences, setPositionDifferences] = useState<{
@@ -266,7 +266,7 @@ export const ChessboardProvider = forwardRef(
         Object.keys(differences.added)?.length <= 2
           ? Object.entries(differences.added)?.[0]?.[1][0]
           : undefined;
-      setCurrentNonExistentSquares(newNonExistentSquares);
+
       // external move has come in before animation is over
       // cancel animation and immediately update position
       if (isWaitingForAnimation) {
@@ -322,7 +322,7 @@ export const ChessboardProvider = forwardRef(
       return () => {
         clearTimeout(previousTimeout);
       };
-    }, [position]);
+    }, [modifiedFen]);
 
     const { arrows, newArrow, clearArrows, drawNewArrow, onArrowDrawEnd } =
       useArrows(
@@ -341,10 +341,6 @@ export const ChessboardProvider = forwardRef(
     ) {
       // if dropped back down, don't do anything
       if (sourceSq === targetSq) {
-        return;
-      }
-      console.log(currentNonExistentSquares)
-      if (currentNonExistentSquares[targetSq]) {
         return;
       }
 
@@ -386,10 +382,10 @@ export const ChessboardProvider = forwardRef(
       } else {
         // delete source piece
         delete newOnDropPosition[sourceSq];
-
         // add piece in new position
         newOnDropPosition[targetSq] = piece;
         setCurrentPosition(newOnDropPosition);
+        boardState.movePiece(sourceSq, targetSq);
       }
 
       clearPromotion();
@@ -548,8 +544,7 @@ export const ChessboardProvider = forwardRef(
       showBoardNotation,
       showPromoteDialog,
       snapToCursor,
-      modifiedFen,
-      currentNonExistentSquares,
+      boardState,
     };
 
     return (
