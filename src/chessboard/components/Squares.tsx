@@ -4,7 +4,7 @@ import { Coords, Piece as Pc, Square as Sq } from "../types";
 import { Notation } from "./Notation";
 import { Piece } from "./Piece";
 import { Square } from "./Square";
-import { NON_EXISTENT_SQUARE } from "../boardState";
+import { BoardState, NON_EXISTENT_SQUARE } from "../boardState";
 
 const A_FILE = "a";
 const H_FILE = "h";
@@ -41,6 +41,8 @@ export function Squares() {
     colArray.reverse();
   }
 
+  const { top, left } = getBoardRelativeOffsets(boardState.getBoard(), boardWidth);
+
   const premovesHistory: PremovesHistory = useMemo(() => {
     const result: PremovesHistory = [];
     // if premoves aren't allowed, don't waste time on calculations
@@ -73,7 +75,14 @@ export function Squares() {
   }, [premoves]);
 
   return (
-    <div data-boardid={id}>
+    <div
+      data-boardid={id}
+      style={{
+        position: "relative",
+        top: top,
+        left: left
+      }}
+    >
       {rowArray.map((r) => {
 
         return (
@@ -178,4 +187,19 @@ function showLetters(rank: string, boardOrientation: "white" | "black"): boolean
     return rank === FIRST_RANK;
   }
   return rank === EIGHTH_RANK;
+}
+
+function getBoardRelativeOffsets(board: BoardState, boardWidth: number): { top: number, left: number } {
+  const a8Location = "a8";
+  const a8LocationIdx = board.locationToIdx[a8Location];
+  if (!a8LocationIdx) {
+    return {
+      top: 0,
+      left: 0
+    }
+  }
+  return {
+    top: -a8LocationIdx.row * boardWidth / 8,
+    left: -a8LocationIdx.col * boardWidth / 8
+  }
 }

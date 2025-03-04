@@ -15,7 +15,7 @@ type Square = {
 
 type Row = Square[]
 
-type BoardState = {
+export type BoardState = {
     rows: Row[]
     locationToIdx: {
         [key: string]: {
