@@ -7,7 +7,9 @@ import { Square } from "./Square";
 import { NON_EXISTENT_SQUARE } from "../boardState";
 
 const A_FILE = "a";
+const H_FILE = "h";
 const FIRST_RANK = "1";
+const EIGHTH_RANK = "8";
 
 // this type shows the exact route of each premoved piece
 type PremovesHistory = {
@@ -31,6 +33,13 @@ export function Squares() {
   const numRows = boardState.getNumRows();
   const numCols = boardState.getNumCols();
 
+  let rowArray = Array.from({ length: numRows }, (_, i) => i);
+  let colArray = Array.from({ length: numCols }, (_, i) => i);
+
+  if (boardOrientation === "black") {
+    rowArray.reverse();
+    colArray.reverse();
+  }
 
   const premovesHistory: PremovesHistory = useMemo(() => {
     const result: PremovesHistory = [];
@@ -65,7 +74,7 @@ export function Squares() {
 
   return (
     <div data-boardid={id}>
-      {[...Array(numRows)].map((_, r) => {
+      {rowArray.map((r) => {
 
         return (
           <div
@@ -76,7 +85,7 @@ export function Squares() {
               width: boardWidth,
             }}
           >
-            {[...Array(numCols)].map((_, c) => {
+            {colArray.map((c) => {
               const sq = boardState.getSquare(r, c);
               const isEmptySpace = sq.piece === NON_EXISTENT_SQUARE;
               const location = `${sq.file}${sq.rank}`
@@ -122,8 +131,8 @@ export function Squares() {
                     />
                   )}
                   {showBoardNotation && <Notation
-                    showNumbers={sq.file === A_FILE}
-                    showLetters={sq.rank === FIRST_RANK}
+                    showNumbers={showNumbers(sq.file, boardOrientation)}
+                    showLetters={showLetters(sq.rank, boardOrientation)}
                     file={sq.file}
                     rank={sq.rank}
                     squareColor={getSqColor(sq.file, sq.rank)}
@@ -147,8 +156,26 @@ function getSqColor(file: string, rank: string): "white" | "black" {
     // because I want the square to be white
     fileInt += 1
   }
-  if (rankInt % 2 === fileInt % 2) {
+  if (isEven(rankInt) === isEven(fileInt)) {
     return "black"
   }
   return "white"
+}
+
+function isEven(num: number): boolean {
+  return num % 2 === 0;
+}
+
+function showNumbers(file: string, boardOrientation: "white" | "black"): boolean {
+  if (boardOrientation === "white") {
+    return file === A_FILE;
+  }
+  return file === H_FILE;
+}
+
+function showLetters(rank: string, boardOrientation: "white" | "black"): boolean {
+  if (boardOrientation === "white") {
+    return rank === FIRST_RANK;
+  }
+  return rank === EIGHTH_RANK;
 }
