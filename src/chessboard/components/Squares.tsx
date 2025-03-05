@@ -123,6 +123,7 @@ export function Squares() {
                   setSquares={setSquares}
                   squareHasPremove={!!squareHasPremove}
                   isEmptySpace={isEmptySpace}
+                  onClick={() => boardState.materializeUnit(location)}
                 >
                   {!squareHasPremove && boardState.getPiece(location) !== "" && (
                     <Piece
@@ -158,11 +159,11 @@ export function Squares() {
 
 function getSqColor(file: string, rank: string): "white" | "black" {
   const rankInt = parseInt(rank, 10);
-
   let fileInt = file.charCodeAt(0);
+
   if (fileInt < 97) { // capital letters
     // A -> 65 which is odd, I am converting it to an even nummber
-    // because I want the square to be white
+    // because I want the A1 square to be white
     fileInt += 1
   }
   if (isEven(rankInt) === isEven(fileInt)) {

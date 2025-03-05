@@ -11,6 +11,7 @@ type SquareProps = {
   squareColor: "white" | "black";
   squareHasPremove: boolean;
   isEmptySpace: boolean;
+  onClick: (location: Sq) => void;
 };
 
 export function Square({
@@ -20,6 +21,7 @@ export function Square({
   squareHasPremove,
   children,
   isEmptySpace,
+  onClick,
 }: SquareProps) {
   const squareRef = useRef<HTMLElement>(null);
   const {
@@ -191,6 +193,7 @@ export function Square({
       onClick={() => {
         const piece = boardState.getPiece(location);
         onSquareClick(location, piece);
+        onClick(location);
         clearArrows();
       }}
       onContextMenu={(e) => {
