@@ -3,8 +3,8 @@ import { useChessboard } from "../context/chessboard-context";
 import { Coords, Piece as Pc, Square as Sq } from "../types";
 import { Notation } from "./Notation";
 import { Piece } from "./Piece";
-import { Square } from "./Square";
-import { BoardState, NON_EXISTENT_SQUARE } from "../boardState";
+import { Square, SquareType } from "./Square";
+import { BoardState, NON_EXISTENT_SQUARE, Idx, Square as SqState } from "../boardState";
 
 const A_FILE = "a";
 const H_FILE = "h";
@@ -43,6 +43,7 @@ export function Squares() {
 
   const { top, left } = getBoardRelativeOffsets(boardState.getBoard(), boardWidth);
 
+  const [highlightedIdxs, setHighlightedIdxs] = useState<Idx[]>([]);
   const premovesHistory: PremovesHistory = useMemo(() => {
     const result: PremovesHistory = [];
     // if premoves aren't allowed, don't waste time on calculations
@@ -74,6 +75,25 @@ export function Squares() {
     return result;
   }, [premoves]);
 
+  const onMouseOverSquare = (location: Sq) => {
+    const unitSqIdxs = boardState.getUnitSqIdxs(location);
+    setHighlightedIdxs(unitSqIdxs);
+  }
+
+  const onMouseOutSquare = () => {
+    setHighlightedIdxs([]);
+  }
+
+  const getSqType = (sq: SqState, idx: Idx): SquareType => {
+    if (sq.piece !== NON_EXISTENT_SQUARE) {
+      return SquareType.Normal;
+    }
+    if (highlightedIdxs.some(id => id.row === idx.row && id.col === idx.col)) {
+      return SquareType.NonExistentHighlighted;
+    }
+    return SquareType.NonExistent;
+  }
+
   return (
     <div
       data-boardid={id}
@@ -96,7 +116,6 @@ export function Squares() {
           >
             {colArray.map((c) => {
               const sq = boardState.getSquare(r, c);
-              const isEmptySpace = sq.piece === NON_EXISTENT_SQUARE;
               const location = `${sq.file}${sq.rank}`
 
               const squareHasPremove = premoves.find(
@@ -122,8 +141,10 @@ export function Squares() {
                   squareColor={getSqColor(sq.file, sq.rank)}
                   setSquares={setSquares}
                   squareHasPremove={!!squareHasPremove}
-                  isEmptySpace={isEmptySpace}
-                  onClick={() => boardState.materializeUnit(location)}
+                  clickCallback={boardState.materializeUnit}
+                  squareType={getSqType(sq, { row: r, col: c })}
+                  mouseOverCb={onMouseOverSquare}
+                  mouseOutCb={onMouseOutSquare}
                 >
                   {!squareHasPremove && boardState.getPiece(location) !== "" && (
                     <Piece

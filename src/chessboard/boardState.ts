@@ -3,26 +3,30 @@ import { useState, useEffect } from 'react';
 export const NON_EXISTENT_SQUARE = 'E';
 export const EMPTY_SQUARE = 'e';
 export const DEFAULT_ADD_UNIT: AddUnit = {
-    x: 1,
-    y: 1
+    x: 2,
+    y: 2
 }
 
-type Square = {
+export type Square = {
     piece: string; // could be a piece or empty/non-existent square
     rank: string; 
     file: string;
 }
 
-type Row = Square[]
-type Col = Square[]
+export type Row = Square[]
+export type Col = Square[]
+export type Idx = {
+    row: number;
+    col: number;
+}
 
 export type BoardState = {
     rows: Row[]
     locationToIdx: {
-        [key: string]: {
-            row: number;
-            col: number;
-        }
+        [key: string]: Idx
+    }
+    locationToUnitSqIdxs: {
+        [key: string]: Idx[]
     }
 };
 
@@ -43,8 +47,13 @@ export interface BoardStateInterface {
     movePiece(from:string, to:string): void;
     getPiece(location: string): string;
     getBoard(): BoardState;
-    
+    getUnitSqIdxs(location: string): {
+        row: number;
+        col: number;
+    }[];
+
     materializeUnit(location: string):void
+
 }
 
 export function useBoardState(modifiedFen: string): BoardStateInterface {
@@ -122,9 +131,16 @@ export function useBoardState(modifiedFen: string): BoardStateInterface {
             return;
         }
         const newRows = [...board.rows];
-        newRows[idx.row][idx.col].piece = EMPTY_SQUARE;
+        const unitSqIdxs = board.locationToUnitSqIdxs[location];
+        unitSqIdxs.forEach(unitSqIdx => {
+            newRows[unitSqIdx.row][unitSqIdx.col].piece = EMPTY_SQUARE;
+        });
         const newBoard = createBoard(newRows)
         setBoard(newBoard);
+    }
+
+    const getUnitSqIdxs = (location: string): Idx[] => {
+        return board.locationToUnitSqIdxs[location];
     }
 
     return {
@@ -134,9 +150,32 @@ export function useBoardState(modifiedFen: string): BoardStateInterface {
         movePiece,
         getPiece,
         getBoard,
-        materializeUnit
+        materializeUnit,
+        getUnitSqIdxs
     }
 
+}
+
+function getAllPossibleUnits(idx: Idx): Idx[][] {
+    if (DEFAULT_ADD_UNIT.x == 1 && DEFAULT_ADD_UNIT.y == 1) {
+        return [[idx]]
+    }
+    return [
+        getUnitUsingIdx(idx, {horizontal: 1, vertical: 1}),
+        getUnitUsingIdx(idx, {horizontal: 1, vertical: -1}),
+        getUnitUsingIdx(idx, {horizontal: -1, vertical: 1}),
+        getUnitUsingIdx(idx, {horizontal: -1, vertical: -1}),
+    ]
+}
+
+function getUnitUsingIdx(idx: Idx, direction: {horizontal:1|-1, vertical:1|-1}): Idx[] {
+    const unit: Idx[] = [];
+    for (let i = 0; i < DEFAULT_ADD_UNIT.x; i++) {
+        for (let j = 0; j < DEFAULT_ADD_UNIT.y; j++) {
+            unit.push({ row: idx.row + j * direction.vertical, col: idx.col + i * direction.horizontal });
+        }
+    }
+    return unit;
 }
 
 function modifiedFenToObj(fen: string): Row[] {
@@ -279,7 +318,8 @@ function createBoard(rawRows:Row[]):BoardState {
     const newRows = addNesPaddingToRows(rawRows, toAdd)
     return {
         rows: newRows,
-        locationToIdx: createLocationToIdx(newRows)
+        locationToIdx: createLocationToIdx(newRows),
+        locationToUnitSqIdxs: createLocationToUnitSqIdxs(newRows)
     }
 }
 
@@ -382,4 +422,38 @@ function addTBNesPaddingToRows(rows:Row[], top:number, bottom:number):Row[] {
         newRows.push(nonExistentRow(rowLength, startingFenColIdx, rank))
     }
     return newRows
+}
+
+const isUnitValid = (rows: Row[], unit: Idx[]): boolean => {
+    return unit.every(idx => {
+        const row = rows[idx.row];
+        if (!row) {
+            return false
+        }
+        const sq = row[idx.col];
+        if (!sq) {
+            return false
+        }
+        return sq.piece === NON_EXISTENT_SQUARE;
+    });
+}
+
+const computeUnitSqIdxs = (idx: Idx, rows: Row[]): Idx[] => {
+    const allPossibleUnits = getAllPossibleUnits(idx);
+    const validUnits = allPossibleUnits.filter(unit => isUnitValid(rows, unit));
+    if (validUnits.length === 0) {
+        return []
+    }
+    return validUnits[0];
+}
+
+function createLocationToUnitSqIdxs(rows: Row[]): { [key: string]: Idx[] } {
+    const locationToUnitSqIdxs: { [key: string]: Idx[] } = {};
+    rows.forEach((row, rowIdx) => {
+        row.forEach((square, colIdx) => {
+            const unitSqIdxs = computeUnitSqIdxs({ row: rowIdx, col: colIdx }, rows);
+            locationToUnitSqIdxs[`${square.file}${square.rank}`] = unitSqIdxs;
+        });
+    });
+    return locationToUnitSqIdxs;
 }

@@ -4,14 +4,22 @@ import { useDrop } from "react-dnd";
 import { useChessboard } from "../context/chessboard-context";
 import { BoardOrientation, Coords, Piece, Square as Sq } from "../types";
 
+export enum SquareType {
+  Normal = "Normal",
+  NonExistent = "NonExistent", // maybe it should be bitmap but it felt overengineered so made it an enum
+  NonExistentHighlighted = "NonExistentHighlighted",
+}
+
 type SquareProps = {
   children: ReactNode;
   setSquares: React.Dispatch<React.SetStateAction<{ [square in Sq]?: Coords }>>;
   location: Sq;
   squareColor: "white" | "black";
   squareHasPremove: boolean;
-  isEmptySpace: boolean;
-  onClick: (location: Sq) => void;
+  clickCallback: (location: Sq) => void;
+  mouseOverCb?: (location: Sq) => void;
+  mouseOutCb?: (location: Sq) => void;
+  squareType: SquareType;
 };
 
 export function Square({
@@ -20,8 +28,10 @@ export function Square({
   setSquares,
   squareHasPremove,
   children,
-  isEmptySpace,
-  onClick,
+  clickCallback,
+  mouseOverCb,
+  mouseOutCb,
+  squareType
 }: SquareProps) {
   const squareRef = useRef<HTMLElement>(null);
   const {
@@ -76,7 +86,6 @@ export function Square({
       lastPieceColour,
     ]
   );
-  const [isHovered, setIsHovered] = useState(false);
 
   type BoardPiece = {
     piece: Piece;
@@ -132,10 +141,8 @@ export function Square({
       ref={drop}
       style={{
         ...defaultSquareStyle,
-        ...emptySpace(isEmptySpace),
-        ...(isHovered && isEmptySpace && { opacity: 0.9 })
-      }
-      }
+        ...sqTypeStyles(squareType),
+      }}
       data-square-color={squareColor}
       data-square={location}
       onTouchMove={(e) => {
@@ -155,7 +162,6 @@ export function Square({
       }}
       onMouseOver={(e) => {
         // noop if moving from child of square into square.
-        setIsHovered(true);
         if (e.buttons === 2 && currentRightClickDown) {
           drawNewArrow(currentRightClickDown, location);
         }
@@ -167,16 +173,17 @@ export function Square({
           return;
         }
 
+        mouseOverCb?.(location);
         onMouseOverSquare(location);
       }}
       onMouseOut={(e) => {
         // noop if moving from square into a child of square.
-        setIsHovered(false);
         if (
           e.relatedTarget &&
           e.currentTarget.contains(e.relatedTarget as Node)
         )
           return;
+        mouseOutCb?.(location);
         onMouseOutSquare(location);
       }}
       onMouseDown={(e) => {
@@ -193,7 +200,7 @@ export function Square({
       onClick={() => {
         const piece = boardState.getPiece(location);
         onSquareClick(location, piece);
-        onClick(location);
+        clickCallback(location);
         clearArrows();
       }}
       onContextMenu={(e) => {
@@ -236,9 +243,16 @@ const center = {
   justifyContent: "center",
 };
 
-const emptySpace = (isEmptySpace: boolean) => ({
-  opacity: isEmptySpace ? 0 : 1,
-})
+const sqTypeStyles = (sqType: SquareType) => {
+  switch (sqType) {
+    case SquareType.NonExistent:
+      return { opacity: 0 };
+    case SquareType.NonExistentHighlighted:
+      return { opacity: 0.5 };
+    default:
+      return {};
+  }
+}
 
 const size = (width: number) => ({
   width: width / 8,
