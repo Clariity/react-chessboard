@@ -164,7 +164,10 @@ export const ChessboardProvider = forwardRef(
             (piece === "bP" &&
               sourceSquare[1] === "2" &&
               targetSquare[1] === "1")) &&
-          Math.abs(sourceSquare.charCodeAt(0) - targetSquare.charCodeAt(0)) <= 1
+          (
+            Math.abs(sourceSquare.charCodeAt(0) - targetSquare.charCodeAt(0)) <= 1 ||
+            (sourceSquare[0].toLowerCase() === targetSquare[0].toLowerCase()) // when moving from a file to A file
+          )
         );
       },
       onPromotionPieceSelect = () => true,
@@ -398,7 +401,7 @@ export const ChessboardProvider = forwardRef(
         // add piece in new position
         newOnDropPosition[move.targetSquare!] = move.piece!;
         setCurrentPosition(newOnDropPosition);
-        boardState.movePiece(move.sourceSquare!, move.targetSquare!);
+        boardState.movePiece(move.sourceSquare!, move.targetSquare!, move.piece!);
       }
 
       clearPromotion();

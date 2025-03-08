@@ -51,7 +51,7 @@ export interface BoardStateInterface {
     getNumRows(): number;
     getNumCols(): number;
     getSquare(row: number, col: number): Square;
-    movePiece(from:string, to:string): void;
+    movePiece(from:string, to:string, piece: string): void;
     getPiece(location: string): string;
     isLocationNonExistent(location: string): boolean;
     getBoard(): BoardState;
@@ -94,14 +94,14 @@ export function useBoardState(modifiedFen: string): BoardStateInterface {
         return board.rows[row][col];
     }
 
-    const movePiece = (from:string, to:string) => {
+    const movePiece = (from:string, to:string, piece: string) => {
         const fromIdx = board.locationToIdx[from];
         const toIdx = board.locationToIdx[to];
         if (!fromIdx || !toIdx) {
             return;
         }
-        const piece = board.rows[fromIdx.row][fromIdx.col].piece;
-        if (piece === EMPTY_SQUARE || piece === NON_EXISTENT_SQUARE) {
+        const oldPiece = board.rows[fromIdx.row][fromIdx.col].piece;
+        if (oldPiece === EMPTY_SQUARE || oldPiece === NON_EXISTENT_SQUARE) {
             return;
         }
         const targetPiece = board.rows[toIdx.row][toIdx.col].piece;

@@ -81,7 +81,7 @@ export const Default = () => {
     id="defaultBoard"
     modifiedFen={modifiedFen}
     boardOrientation="white"
-    onMove={onMove}
+    // onMove={onMove}
     areArrowsAllowed={false}
     arePremovesAllowed={false}
   />;
