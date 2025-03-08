@@ -49,11 +49,28 @@ const meta: Meta<typeof Chessboard> = {
 };
 export default meta;
 
+
+
 export const Default = () => {
+  const [modifiedFen, setModifiedFen] = useState("#rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR")
+
+  const onPieceDrop = (
+    sourceSquare: Square,
+    targetSquare: Square,
+    piece: Piece
+  ): boolean => {
+    if (sourceSquare === "a2" && targetSquare === "a4" && piece === "wP") {
+      setModifiedFen("#rnbqkbnr/pppppppp/8/8/P7/8/1PPPPPPP/RNBQKBNR")
+      return true
+    }
+    console.log(sourceSquare, targetSquare, piece)
+    return false
+  }
   return <Chessboard
     id="defaultBoard"
-    modifiedFen="#rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
+    modifiedFen={modifiedFen}
     boardOrientation="white"
+    // onPieceDrop={onPieceDrop}
     areArrowsAllowed={false}
     arePremovesAllowed={false}
   />;

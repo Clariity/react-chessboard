@@ -76,6 +76,9 @@ export function Squares() {
   }, [premoves]);
 
   const onMouseOverSquare = (location: Sq) => {
+    if (!boardState.isLocationNonExistent(location)) {
+      return;
+    }
     const unitSqIdxs = boardState.getUnitSqIdxs(location);
     setHighlightedIdxs(unitSqIdxs);
   }

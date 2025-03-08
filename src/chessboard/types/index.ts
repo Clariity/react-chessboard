@@ -68,6 +68,16 @@ export type Coords = { x: number; y: number };
 
 export type Arrow = [Square, Square, string?];
 
+export type Move = {
+  moveType: "move" | "extend"
+
+  sourceSquare?: Square // will have value when moveType is "move"
+  targetSquare?: Square // will have value when moveType is "extend"
+  piece?: Piece // will have value when moveType is "move"
+
+  expandLocation: Square // will have the point from which the add unit will be added
+}
+
 export type ChessboardProps = {
   /**
    * Whether or not the piece can be dragged outside of the board
@@ -257,6 +267,11 @@ export type ChessboardProps = {
     targetSquare: Square,
     piece: Piece
   ) => boolean;
+  /**
+   * User function that is run when a move is made. Must return whether the move was successful or not.
+   * @default () => true
+   */
+  onMove?:(move:Move) => boolean;
   /**
    * User function that is run when spare piece is dropped on a square. Must return whether the drop was successful or not.
    * @default () => true

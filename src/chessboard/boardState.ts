@@ -2,11 +2,18 @@ import { useState, useEffect } from 'react';
 
 export const NON_EXISTENT_SQUARE = 'E';
 export const EMPTY_SQUARE = 'e';
-export const DEFAULT_ADD_UNIT: AddUnit = {
-    x: 2,
-    y: 2
+
+// The add unit for the left and right of the chess board
+const HORIZONTAL_ADD_UNIT: AddUnit = { 
+    x: 1,
+    y: 1
 }
 
+// The add unit for the top and bottom of the chess board
+const VERTICAL_ADD_UNIT: AddUnit = {
+    x: 1,
+    y: 1
+}
 export type Square = {
     piece: string; // could be a piece or empty/non-existent square
     rank: string; 
@@ -46,6 +53,7 @@ export interface BoardStateInterface {
     getSquare(row: number, col: number): Square;
     movePiece(from:string, to:string): void;
     getPiece(location: string): string;
+    isLocationNonExistent(location: string): boolean;
     getBoard(): BoardState;
     getUnitSqIdxs(location: string): {
         row: number;
@@ -143,6 +151,14 @@ export function useBoardState(modifiedFen: string): BoardStateInterface {
         return board.locationToUnitSqIdxs[location];
     }
 
+    const isLocationNonExistent = (location: string): boolean => {
+        const idx = board.locationToIdx[location];
+        if (!idx) {
+            return false;
+        }
+        return board.rows[idx.row][idx.col].piece === NON_EXISTENT_SQUARE;
+    }
+
     return {
         getNumRows,
         getNumCols,
@@ -151,27 +167,28 @@ export function useBoardState(modifiedFen: string): BoardStateInterface {
         getPiece,
         getBoard,
         materializeUnit,
-        getUnitSqIdxs
+        getUnitSqIdxs,
+        isLocationNonExistent
     }
 
 }
 
-function getAllPossibleUnits(idx: Idx): Idx[][] {
-    if (DEFAULT_ADD_UNIT.x == 1 && DEFAULT_ADD_UNIT.y == 1) {
+function getAllPossibleUnits(idx: Idx, addUnit: AddUnit): Idx[][] {
+    if (addUnit.x == 1 && addUnit.y == 1) {
         return [[idx]]
     }
     return [
-        getUnitUsingIdx(idx, {horizontal: 1, vertical: 1}),
-        getUnitUsingIdx(idx, {horizontal: 1, vertical: -1}),
-        getUnitUsingIdx(idx, {horizontal: -1, vertical: 1}),
-        getUnitUsingIdx(idx, {horizontal: -1, vertical: -1}),
+        getUnitUsingIdx(idx, {horizontal: 1, vertical: 1}, addUnit),
+        getUnitUsingIdx(idx, {horizontal: 1, vertical: -1}, addUnit),
+        getUnitUsingIdx(idx, {horizontal: -1, vertical: 1}, addUnit),
+        getUnitUsingIdx(idx, {horizontal: -1, vertical: -1}, addUnit),
     ]
 }
 
-function getUnitUsingIdx(idx: Idx, direction: {horizontal:1|-1, vertical:1|-1}): Idx[] {
+function getUnitUsingIdx(idx: Idx, direction: {horizontal:1|-1, vertical:1|-1}, addUnit: AddUnit            ): Idx[] {
     const unit: Idx[] = [];
-    for (let i = 0; i < DEFAULT_ADD_UNIT.x; i++) {
-        for (let j = 0; j < DEFAULT_ADD_UNIT.y; j++) {
+    for (let i = 0; i < addUnit.x; i++) {
+        for (let j = 0; j < addUnit.y; j++) {
             unit.push({ row: idx.row + j * direction.vertical, col: idx.col + i * direction.horizontal });
         }
     }
@@ -310,10 +327,10 @@ function createBoard(rawRows:Row[]):BoardState {
         left:number,
         right:number
     } = {
-        top: DEFAULT_ADD_UNIT.y - numNonExistentRowsTopN(rawRows, DEFAULT_ADD_UNIT.y),
-        bottom: DEFAULT_ADD_UNIT.y - numNonExistentRowsBottomN(rawRows, DEFAULT_ADD_UNIT.y),
-        left:DEFAULT_ADD_UNIT.x - numNonExistentColsLeftN(rawRows, DEFAULT_ADD_UNIT.x),
-        right:DEFAULT_ADD_UNIT.x - numNonExistentColsRightN(rawRows, DEFAULT_ADD_UNIT.x)
+        top: VERTICAL_ADD_UNIT.y - numNonExistentRowsTopN(rawRows, VERTICAL_ADD_UNIT.y),
+        bottom: VERTICAL_ADD_UNIT.y - numNonExistentRowsBottomN(rawRows, VERTICAL_ADD_UNIT.y),
+        left:HORIZONTAL_ADD_UNIT.x - numNonExistentColsLeftN(rawRows, HORIZONTAL_ADD_UNIT.x),
+        right:HORIZONTAL_ADD_UNIT.x - numNonExistentColsRightN(rawRows, HORIZONTAL_ADD_UNIT.x)
     }
     const newRows = addNesPaddingToRows(rawRows, toAdd)
     return {
@@ -438,8 +455,8 @@ const isUnitValid = (rows: Row[], unit: Idx[]): boolean => {
     });
 }
 
-const computeUnitSqIdxs = (idx: Idx, rows: Row[]): Idx[] => {
-    const allPossibleUnits = getAllPossibleUnits(idx);
+const computeUnitSqIdxs = (idx: Idx, rows: Row[], addUnit: AddUnit): Idx[] => {
+    const allPossibleUnits = getAllPossibleUnits(idx, addUnit);
     const validUnits = allPossibleUnits.filter(unit => isUnitValid(rows, unit));
     if (validUnits.length === 0) {
         return []
@@ -451,9 +468,30 @@ function createLocationToUnitSqIdxs(rows: Row[]): { [key: string]: Idx[] } {
     const locationToUnitSqIdxs: { [key: string]: Idx[] } = {};
     rows.forEach((row, rowIdx) => {
         row.forEach((square, colIdx) => {
-            const unitSqIdxs = computeUnitSqIdxs({ row: rowIdx, col: colIdx }, rows);
+            if (square.piece !== NON_EXISTENT_SQUARE) {
+                return;
+            }
+            const addUnit = getAddUnitByLocPrioVert(square.file, square.rank);
+            const unitSqIdxs = computeUnitSqIdxs({ row: rowIdx, col: colIdx }, rows, addUnit);
             locationToUnitSqIdxs[`${square.file}${square.rank}`] = unitSqIdxs;
         });
     });
     return locationToUnitSqIdxs;
+}
+
+function getAddUnitByLoc(file:string, rank:string):AddUnit {
+    if (file.charCodeAt(0) < 97 && file.charCodeAt(0) > 65) { // capital letters
+        return HORIZONTAL_ADD_UNIT;
+    }
+    if (file.charCodeAt(0) > 68) { // letters beyond small h
+        return HORIZONTAL_ADD_UNIT;
+    }
+    return VERTICAL_ADD_UNIT;
+}
+
+function getAddUnitByLocPrioVert(file:string, rank: string):AddUnit {
+    if (parseInt(rank, 10) > 8 || parseInt(rank, 10) < 1) {
+        return VERTICAL_ADD_UNIT;
+    }
+    return HORIZONTAL_ADD_UNIT;
 }
