@@ -3,6 +3,11 @@ import { BackendFactory } from "dnd-core";
 
 export type Square = string;
 
+export enum MoveType {
+  MOVE = "move",
+  EXTEND = "extend"
+}
+
 export type Piece =
   | "wP"
   | "wB"
@@ -69,13 +74,13 @@ export type Coords = { x: number; y: number };
 export type Arrow = [Square, Square, string?];
 
 export type Move = {
-  moveType: "move" | "extend"
+  type: MoveType
 
   sourceSquare?: Square // will have value when moveType is "move"
   targetSquare?: Square // will have value when moveType is "extend"
   piece?: Piece // will have value when moveType is "move"
 
-  expandLocation: Square // will have the point from which the add unit will be added
+  expandLocation?: Square // will have the point from which the add unit will be added
 }
 
 export type ChessboardProps = {

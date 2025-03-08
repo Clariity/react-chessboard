@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { useChessboard } from "../context/chessboard-context";
-import { Coords, Piece as Pc, Square as Sq } from "../types";
+import { Coords, MoveType, Piece as Pc, Square as Sq } from "../types";
 import { Notation } from "./Notation";
 import { Piece } from "./Piece";
 import { Square, SquareType } from "./Square";
@@ -28,6 +28,7 @@ export function Squares() {
     premoves,
     showBoardNotation,
     boardState,
+    handleSetPosition,
   } = useChessboard();
 
   const numRows = boardState.getNumRows();
@@ -97,6 +98,12 @@ export function Squares() {
     return SquareType.NonExistent;
   }
 
+  const clickCallback = (location: Sq) => {
+    handleSetPosition({
+      type: MoveType.EXTEND,
+      expandLocation: location,
+    })
+  }
   return (
     <div
       data-boardid={id}
@@ -144,7 +151,7 @@ export function Squares() {
                   squareColor={getSqColor(sq.file, sq.rank)}
                   setSquares={setSquares}
                   squareHasPremove={!!squareHasPremove}
-                  clickCallback={boardState.materializeUnit}
+                  clickCallback={clickCallback}
                   squareType={getSqType(sq, { row: r, col: c })}
                   mouseOverCb={onMouseOverSquare}
                   mouseOutCb={onMouseOutSquare}

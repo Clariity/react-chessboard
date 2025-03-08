@@ -1,7 +1,7 @@
 import { useState, ReactNode } from "react";
 
 import { useChessboard } from "../context/chessboard-context";
-import { CustomPieceFn, PromotionPieceOption } from "../types";
+import { CustomPieceFn, MoveType, PromotionPieceOption } from "../types";
 
 type Props = {
   option: PromotionPieceOption;
@@ -49,7 +49,12 @@ export function PromotionOption({ option }: Props) {
             promoteToSquare ?? undefined
           )
         )
-          handleSetPosition(promoteFromSquare!, promoteToSquare!, option, true);
+          handleSetPosition({
+            type: MoveType.MOVE,
+            sourceSquare: promoteFromSquare!,
+            targetSquare: promoteToSquare!,
+            piece: option,
+          });
       }}
       onMouseOver={() => setIsHover(true)}
       onMouseOut={() => setIsHover(false)}

@@ -2,7 +2,7 @@ import { ReactNode, useEffect, useRef } from "react";
 import { useDrop } from "react-dnd";
 
 import { useChessboard } from "../context/chessboard-context";
-import { BoardOrientation, Coords, Piece, Square as Sq } from "../types";
+import { BoardOrientation, Coords, Move, MoveType, Piece, Square as Sq } from "../types";
 
 export enum SquareType {
   Normal = "Normal",
@@ -102,18 +102,26 @@ export function Square({
     }
     if (onPromotionCheck(item.square, location, item.piece)) {
       if (autoPromoteToQueen) {
-        handleSetPosition(
-          item.square,
-          location,
-          item.piece[0] === "w" ? "wQ" : "bQ"
-        );
+        const move = {
+          type: MoveType.MOVE,
+          sourceSquare: item.square,
+          targetSquare: location,
+          piece: item.piece[0] === "w" ? "wQ" : "bQ"
+        } as Move
+        handleSetPosition(move);
       } else {
         setPromoteFromSquare(item.square);
         setPromoteToSquare(location);
         setShowPromoteDialog(true);
       }
     } else {
-      handleSetPosition(item.square, location, item.piece, true);
+      const move = {
+        type: MoveType.MOVE,
+        sourceSquare: item.square,
+        targetSquare: location,
+        piece: item.piece
+      } as Move
+      handleSetPosition(move);
     }
   }
 

@@ -22,6 +22,8 @@ import {
   Piece,
   Square,
   Arrow,
+  Move,
+  MoveType,
 } from "../types";
 
 import { useArrows } from "../hooks/useArrows";
@@ -87,9 +89,7 @@ interface ChessboardProviderContext {
   deletePieceFromSquare: (sq: Square) => void;
   drawNewArrow: (from: Square, to: Square) => void;
   handleSetPosition: (
-    sourceSq: Square,
-    targetSq: Square,
-    piece: Piece,
+    move: Move,
     wasManualDropOverride?: boolean
   ) => void;
   handleSparePieceDrop: (piece: Piece, targetSq: Square) => void;
@@ -178,6 +178,7 @@ export const ChessboardProvider = forwardRef(
       showBoardNotation = true,
       showPromotionDialog = false,
       snapToCursor = true,
+      onMove = () => true,
     }: ChessboardProviderProps,
     ref
   ) => {
@@ -334,13 +335,25 @@ export const ChessboardProvider = forwardRef(
 
     // handle drop position change
     function handleSetPosition(
-      sourceSq: Square,
-      targetSq: Square,
-      piece: Piece,
+      move: Move,
       wasManualDropOverride?: boolean
     ) {
+      // TODO: fix how this function is designed too many indendation levels
+      if (move.type === MoveType.EXTEND) {
+        if (onMove.length) {
+          const isValidMove = onMove(move)
+          if (!isValidMove) {
+            clearPremoves();
+            setWasManualDrop(false);
+            clearPromotion();
+            return;
+          }
+        }
+        boardState.materializeUnit(move.expandLocation!)
+        return;
+      }
       // if dropped back down, don't do anything
-      if (sourceSq === targetSq) {
+      if (move.sourceSquare === move.targetSquare) {
         return;
       }
 
@@ -351,13 +364,13 @@ export const ChessboardProvider = forwardRef(
       if (
         (arePremovesAllowed && isWaitingForAnimation) ||
         (arePremovesAllowed &&
-          (lastPieceColour === piece[0] ||
-            premovesRef.current.filter((p: Premove) => p.piece[0] === piece[0])
+          (lastPieceColour === move.piece![0] ||
+            premovesRef.current.filter((p: Premove) => p.piece[0] === move.piece![0])
               .length > 0))
       ) {
         const oldPremoves: Premove[] = [...premovesRef.current];
 
-        oldPremoves.push({ sourceSq, targetSq, piece });
+        oldPremoves.push({ sourceSq: move.sourceSquare!, targetSq: move.targetSquare!, piece: move.piece! });
         premovesRef.current = oldPremoves;
         setPremoves([...oldPremoves]);
         clearPromotion();
@@ -370,22 +383,22 @@ export const ChessboardProvider = forwardRef(
       const newOnDropPosition = { ...currentPosition };
 
       setWasManualDrop(!!wasManualDropOverride);
-      setLastPieceColour(piece[0]);
+      setLastPieceColour(move.piece![0]);
 
       // if onPieceDrop function provided, execute it, position must be updated externally and captured by useEffect above for this move to show on board
-      if (onPieceDrop.length) {
-        const isValidMove = onPieceDrop(sourceSq, targetSq, piece);
+      if (onMove.length) {
+        const isValidMove = onMove(move)
         if (!isValidMove) {
           clearPremoves();
           setWasManualDrop(false);
         }
       } else {
         // delete source piece
-        delete newOnDropPosition[sourceSq];
+        delete newOnDropPosition[move.sourceSquare!];
         // add piece in new position
-        newOnDropPosition[targetSq] = piece;
+        newOnDropPosition[move.targetSquare!] = move.piece!;
         setCurrentPosition(newOnDropPosition);
-        boardState.movePiece(sourceSq, targetSq);
+        boardState.movePiece(move.sourceSquare!, move.targetSquare!);
       }
 
       clearPromotion();

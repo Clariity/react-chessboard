@@ -1,6 +1,7 @@
 import React, { forwardRef, useEffect, useRef, useState, useMemo } from "react";
 import { Meta } from "@storybook/react";
 import { Chess } from "chess.js";
+import { Move, MoveType } from "../src/chessboard/types";
 
 import {
   Chessboard,
@@ -54,23 +55,33 @@ export default meta;
 export const Default = () => {
   const [modifiedFen, setModifiedFen] = useState("#rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR")
 
-  const onPieceDrop = (
-    sourceSquare: Square,
-    targetSquare: Square,
-    piece: Piece
+  const onMove = (
+    move: Move,
   ): boolean => {
-    if (sourceSquare === "a2" && targetSquare === "a4" && piece === "wP") {
+    if (move.type === MoveType.EXTEND) {
+      if (move.expandLocation === "A1") {
+        setModifiedFen("#E$rnbqkbnr/E$pppppppp/E$8/E$8/E$8/E$8/E$PPPPPPPP/1$RNBQKBNR")
+        return true
+      }
+      return false
+    }
+    if (move.sourceSquare === "a2" && move.targetSquare === "a4" && move.piece === "wP") {
       setModifiedFen("#rnbqkbnr/pppppppp/8/8/P7/8/1PPPPPPP/RNBQKBNR")
+      // setTimeout(() => {
+      //   console.log("setting fen")
+      //   setModifiedFen("#rnbqkbnr/1ppppppp/8/p7/P7/8/1PPPPPPP/RNBQKBNR")
+      // }, 1000)
       return true
     }
-    console.log(sourceSquare, targetSquare, piece)
+    console.log(move)
     return false
   }
+
   return <Chessboard
     id="defaultBoard"
     modifiedFen={modifiedFen}
     boardOrientation="white"
-    // onPieceDrop={onPieceDrop}
+    onMove={onMove}
     areArrowsAllowed={false}
     arePremovesAllowed={false}
   />;

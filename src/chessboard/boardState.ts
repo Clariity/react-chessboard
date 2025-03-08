@@ -6,12 +6,12 @@ export const EMPTY_SQUARE = 'e';
 // The add unit for the left and right of the chess board
 const HORIZONTAL_ADD_UNIT: AddUnit = { 
     x: 1,
-    y: 1
+    y: 8
 }
 
 // The add unit for the top and bottom of the chess board
 const VERTICAL_ADD_UNIT: AddUnit = {
-    x: 1,
+    x: 8,
     y: 1
 }
 export type Square = {
@@ -63,7 +63,13 @@ export interface BoardStateInterface {
     materializeUnit(location: string):void
 
 }
-
+/**
+ * Assumption about modifiedFen string: each row should have equal number of
+ * squares. Ideally this should be handled here but to make life easier for now
+ * I want the provider of modifiedFen to handle this.
+ * 
+ * Maybe I will handle it here in the future.
+ */
 export function useBoardState(modifiedFen: string): BoardStateInterface {
     const [board, setBoard] = useState<BoardState>({
         rows: [[] as Square[]],
