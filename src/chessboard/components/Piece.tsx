@@ -29,13 +29,11 @@ export function Piece({
     dropOffBoardAction,
     id,
     isDraggablePiece,
-    isWaitingForAnimation,
     onPieceClick,
     onPieceDragBegin,
     onPieceDragEnd,
     onPieceDropOffBoard,
     onPromotionCheck,
-    positionDifferences,
   } = useChessboard();
 
   const [pieceStyle, setPieceStyle] = useState({
@@ -91,19 +89,20 @@ export function Piece({
   // if waiting for animation, then animation has started and we can perform animation
   // we need to head towards where we need to go, we are the source, we are heading towards the target
   useEffect(() => {
-    const removedPiece = positionDifferences.removed?.[square];
+    const diff = boardState.getDiff();
+    const removedPiece = diff.removed?.[square];
     // return as null and not loaded yet
-    if (!positionDifferences.added || !removedPiece) return;
+    if (!diff.added || !removedPiece) return;
     // check if piece matches or if removed piece was a pawn and new square is on 1st or 8th rank (promotion)
     const newSquare = (
-      Object.entries(positionDifferences.added) as [Square, Pc][]
+      Object.entries(diff.added) as [Square, Pc][]
     ).find(
       ([s, p]) =>
         p === removedPiece || onPromotionCheck(square, s, removedPiece)
     );
     // we can perform animation if our square was in removed, AND the matching piece is in added AND this isn't a premoved piece
     if (
-      isWaitingForAnimation &&
+      boardState.getIsWaitingForAnimation() &&
       removedPiece &&
       newSquare &&
       !isPremovedPiece
@@ -126,7 +125,7 @@ export function Piece({
         }));
       }
     }
-  }, [positionDifferences]);
+  }, [boardState.getDiff()]);
 
   // translate to their own positions (repaint on undo)
   useEffect(() => {

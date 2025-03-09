@@ -67,10 +67,18 @@ export const Default = () => {
     }
     if (move.sourceSquare === "a2" && move.targetSquare === "a4" && move.piece === "wP") {
       setModifiedFen("#rnbqkbnr/pppppppp/8/8/P7/8/1PPPPPPP/RNBQKBNR")
-      // setTimeout(() => {
-      //   console.log("setting fen")
-      //   setModifiedFen("#rnbqkbnr/1ppppppp/8/p7/P7/8/1PPPPPPP/RNBQKBNR")
-      // }, 1000)
+      setTimeout(() => {
+        console.log("setting fen")
+        setModifiedFen("#rnbqkbnr/1ppppppp/8/p7/P7/8/1PPPPPPP/RNBQKBNR")
+      }, 1000)
+      return true
+    }
+    if (move.sourceSquare === "h2" && move.targetSquare === "h4" && move.piece === "wP") {
+      setModifiedFen("#rnbqkbnr/1ppppppp/8/p7/P6P/8/1PPPPPP1/RNBQKBNR")
+      setTimeout(() => {
+        console.log("setting fen")
+        setModifiedFen("#rnbqkbnr/1pppppp1/8/p6p/P6P/8/1PPPPPP1/RNBQKBNR")
+      }, 1000)
       return true
     }
     console.log(move)

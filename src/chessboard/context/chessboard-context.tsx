@@ -261,6 +261,7 @@ export const ChessboardProvider = forwardRef(
 
     // handle external position change
     useEffect(() => {
+      //TODO: cleanup unused manual drop and isWaitingForAnimation logic
       // clear any open promotion dialogs
       clearPromotion();
 
@@ -342,6 +343,7 @@ export const ChessboardProvider = forwardRef(
       wasManualDropOverride?: boolean
     ) {
       // TODO: fix how this function is designed too many indendation levels
+      // TODO: cleanup unused manual drop logic
       if (move.type === MoveType.EXTEND) {
         if (onMove.length) {
           const isValidMove = onMove(move)
@@ -395,6 +397,7 @@ export const ChessboardProvider = forwardRef(
           clearPremoves();
           setWasManualDrop(false);
         }
+        boardState.setManualDrop(true); // to avoid animating dnd move again
       } else {
         // delete source piece
         delete newOnDropPosition[move.sourceSquare!];

@@ -291,7 +291,7 @@ export type ChessboardProps = {
   onPromotionCheck?: (
     sourceSquare: Square,
     targetSquare: Square,
-    piece: Piece
+    piece: string
   ) => boolean;
   /**
    * User function that is run when a promotion piece is selected. Must return whether the move was successful or not.

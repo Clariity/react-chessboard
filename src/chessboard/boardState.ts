@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 
 export const NON_EXISTENT_SQUARE = 'E';
 export const EMPTY_SQUARE = 'e';
-
+export const ANIMATION_DURATION = 300;
 // The add unit for the left and right of the chess board
 const HORIZONTAL_ADD_UNIT: AddUnit = { 
     x: 1,
@@ -48,10 +48,10 @@ type AddUnit = {
 }
 
 export interface BoardStateInterface {
+    // Rendering board state
     getNumRows(): number;
     getNumCols(): number;
     getSquare(row: number, col: number): Square;
-    movePiece(from:string, to:string, piece: string): void;
     getPiece(location: string): string;
     isLocationNonExistent(location: string): boolean;
     getBoard(): BoardState;
@@ -59,7 +59,17 @@ export interface BoardStateInterface {
         row: number;
         col: number;
     }[];
+    
+    // Animation state
+    getDiff(): {
+        added: {[key:string]:string}
+        removed: {[key:string]:string}
+    };
+    getIsWaitingForAnimation(): boolean;
+    setManualDrop(wasManualDrop: boolean): void; // when set, it will not trigger animation
 
+    // Moves
+    movePiece(from:string, to:string, piece: string): void;
     materializeUnit(location: string):void
 
 }
@@ -75,11 +85,46 @@ export function useBoardState(modifiedFen: string): BoardStateInterface {
         rows: [[] as Square[]],
         locationToIdx: {}
     } as BoardState);
+    const [diff, setDiff] = useState<{
+        added: {[key:string]:string}
+        removed: {[key:string]:string}
+    }>({
+        added: {},
+        removed: {}
+    });
+    const [isWaitingForAnimation, setIsWaitingForAnimation] = useState(false);
+    const [previousTimeout, setPreviousTimeout] = useState<NodeJS.Timeout | null>(null);
+    const [wasManualDrop, setWasManualDrop] = useState(false);
 
     useEffect(() => {
-        const rows = modifiedFenToObj(modifiedFen);
-        const board = createBoard(rows);
-        setBoard(board);
+        const newRows = modifiedFenToObj(modifiedFen);
+        const newBoard = createBoard(newRows);
+        const newPieceMap = locationToPieceMap(newRows);
+        const oldPieceMap = locationToPieceMap(board.rows);
+        const diff = getDifferences(oldPieceMap, newPieceMap);
+
+        if (wasManualDrop) {
+            setWasManualDrop(false);
+            setBoard(newBoard);
+            return;
+        }
+
+        if (isWaitingForAnimation) {
+            // fen string changed while processing the earlier animation
+            setIsWaitingForAnimation(false);
+            setBoard(newBoard);
+            if (previousTimeout) clearTimeout(previousTimeout);
+            return;
+        }
+        
+        setDiff(diff); // will trigger animation
+        setIsWaitingForAnimation(true);
+        const newTimeout = setTimeout(() => {
+            setIsWaitingForAnimation(false);
+            setBoard(newBoard);
+        }, ANIMATION_DURATION);
+        setPreviousTimeout(newTimeout);
+
     }, [modifiedFen]);
     
     const getNumRows = () => {
@@ -113,6 +158,7 @@ export function useBoardState(modifiedFen: string): BoardStateInterface {
         newRows[fromIdx.row][fromIdx.col].piece = EMPTY_SQUARE;
         newRows[toIdx.row][toIdx.col].piece = piece;
 
+        setWasManualDrop(true);
         setBoard({
             ...board,
             rows: newRows,
@@ -165,6 +211,21 @@ export function useBoardState(modifiedFen: string): BoardStateInterface {
         return board.rows[idx.row][idx.col].piece === NON_EXISTENT_SQUARE;
     }
 
+    const getDiff = (): {
+        added: {[key:string]:string}
+        removed: {[key:string]:string}
+    } => {
+        return diff;
+    }
+    
+    const getIsWaitingForAnimation = (): boolean => {
+        return isWaitingForAnimation;
+    }
+
+    const setManualDrop = (wasManualDrop: boolean): void => {
+        setWasManualDrop(wasManualDrop);
+    }
+
     return {
         getNumRows,
         getNumCols,
@@ -174,7 +235,10 @@ export function useBoardState(modifiedFen: string): BoardStateInterface {
         getBoard,
         materializeUnit,
         getUnitSqIdxs,
-        isLocationNonExistent
+        isLocationNonExistent,
+        getDiff,
+        getIsWaitingForAnimation,
+        setManualDrop,
     }
 
 }
@@ -338,11 +402,11 @@ function createBoard(rawRows:Row[]):BoardState {
         left:HORIZONTAL_ADD_UNIT.x - numNonExistentColsLeftN(rawRows, HORIZONTAL_ADD_UNIT.x),
         right:HORIZONTAL_ADD_UNIT.x - numNonExistentColsRightN(rawRows, HORIZONTAL_ADD_UNIT.x)
     }
-    const newRows = addNesPaddingToRows(rawRows, toAdd)
+    const paddedRows = addNesPaddingToRows(rawRows, toAdd)
     return {
-        rows: newRows,
-        locationToIdx: createLocationToIdx(newRows),
-        locationToUnitSqIdxs: createLocationToUnitSqIdxs(newRows)
+        rows: paddedRows,
+        locationToIdx: createLocationToIdx(paddedRows),
+        locationToUnitSqIdxs: createLocationToUnitSqIdxs(paddedRows)
     }
 }
 
@@ -501,3 +565,44 @@ function getAddUnitByLocPrioVert(file:string, rank: string):AddUnit {
     }
     return HORIZONTAL_ADD_UNIT;
 }
+
+function locationToPieceMap(rows:Row[]):{[key:string]:string} {
+    const locationToPieceMap: {[key:string]:string} = {};
+    rows.forEach((row, rowIdx) => {
+        row.forEach((square, colIdx) => {
+            locationToPieceMap[`${square.file}${square.rank}`] = square.piece;
+        });
+    });
+    return locationToPieceMap;
+}
+
+export function getDifferences(
+    currPieceMap: {[key:string]:string},
+    newPieceMap: {[key:string]:string}
+  ): {
+    added: {[key:string]:string};
+    removed: {[key:string]:string};
+  } {
+    const difference: { added: {[key:string]:string}; removed: {[key:string]:string} } = {
+      removed: {},
+      added: {},
+    };
+  
+    // removed from current
+    (Object.keys(currPieceMap) as Array<keyof typeof currPieceMap>).forEach(
+      (square) => {
+        if (newPieceMap[square] !== currPieceMap[square])
+          difference.removed[square] = currPieceMap[square];
+      }
+    );
+  
+    // added from new
+    (Object.keys(newPieceMap) as Array<keyof typeof newPieceMap>).forEach(
+      (square) => {
+        if (currPieceMap[square] !== newPieceMap[square])
+          difference.added[square] = newPieceMap[square];
+      }
+    );
+  
+    return difference;
+  }
