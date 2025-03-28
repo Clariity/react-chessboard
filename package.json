@@ -37,6 +37,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "storybook": "8.6.8",
+    "storybook-addon-deep-controls": "^0.9.2",
     "typescript": "^5.8.2"
   },
   "peerDependencies": {

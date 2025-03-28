@@ -1,14 +1,23 @@
 import { DndContext, DragEndEvent, DragStartEvent, pointerWithin } from "@dnd-kit/core";
-import { createContext, use, useCallback, useState } from "react";
+import { createContext, use, useCallback, useEffect, useMemo, useState } from "react";
 
 import { generateBoard } from "./utils";
 import { CellDataType, PieceDataType, PieceType } from "./types";
 
 type ContextType = {
+  // chessboard options
+  chessboardRows: ChessboardOptions["chessboardRows"];
+  chessboardColumns: ChessboardOptions["chessboardColumns"];
+  darkSquareColor: ChessboardOptions["darkSquareColor"];
+  lightSquareColor: ChessboardOptions["lightSquareColor"];
+  darkSquareNotationColor: ChessboardOptions["darkSquareNotationColor"];
+  lightSquareNotationColor: ChessboardOptions["lightSquareNotationColor"];
+  alphaNotationStyle: ChessboardOptions["alphaNotationStyle"];
+  numericNotationStyle: ChessboardOptions["numericNotationStyle"];
+  showNotation: ChessboardOptions["showNotation"];
+
+  // internal state
   board: CellDataType[][];
-  chessboardSize: number;
-  darkSquareColor: string;
-  lightSquareColor: string;
   isWrapped: boolean;
   movingPiece: PieceDataType | null;
   setMovingPiece: (piece: PieceDataType | null) => void;
@@ -16,41 +25,61 @@ type ContextType = {
   setPieces: (pieces: PieceDataType[][]) => void;
 };
 
-const ChessboardContext = createContext<ContextType>({
-  board: generateBoard(8),
-  chessboardSize: 8,
-  darkSquareColor: "#B58863",
-  lightSquareColor: "#F0D9B5",
-  isWrapped: false,
-  movingPiece: null,
-  setMovingPiece: () => {},
-  pieces: [[]],
-  setPieces: () => {},
-});
+const ChessboardContext = createContext<ContextType | null>(null);
 
-export const useChessboardContext = () => use(ChessboardContext);
+export const useChessboardContext = () => use(ChessboardContext) as ContextType;
 
 export type ChessboardOptions = {
-  chessboardSize: number;
+  // board dimensions
+  chessboardRows: number;
+  chessboardColumns: number;
+
+  // light and dark squares
   darkSquareColor?: string;
   lightSquareColor?: string;
+
+  // notation
+  darkSquareNotationColor?: string;
+  lightSquareNotationColor?: string;
+  alphaNotationStyle?: React.CSSProperties;
+  numericNotationStyle?: React.CSSProperties;
+  showNotation?: boolean;
 };
+
+// TODO: Take in fen and render it
+// TODO: Write tests early, visual tests too (with chromatic?)
 
 export function ChessboardProvider({
   children,
   options,
 }: React.PropsWithChildren<{ options?: ChessboardOptions }>) {
   const {
-    chessboardSize = 8,
+    chessboardRows = 8,
+    chessboardColumns = 8,
     darkSquareColor = "#B58863",
     lightSquareColor = "#F0D9B5",
+    darkSquareNotationColor = "#F0D9B5",
+    lightSquareNotationColor = "#B58863",
+    alphaNotationStyle = {
+      fontSize: "13px",
+      position: "absolute",
+      top: 2,
+      left: 2,
+    },
+    numericNotationStyle = {
+      fontSize: "13px",
+      position: "absolute",
+      bottom: 1,
+      right: 4,
+    },
+    showNotation = true,
   } = options || {};
 
   const [movingPiece, setMovingPiece] = useState<PieceDataType | null>(null);
   const [pieces, setPieces] = useState(() => {
     const pieces: PieceDataType[][] = Array.from(
-      Array(chessboardSize),
-      () => new Array(chessboardSize)
+      Array(chessboardRows),
+      () => new Array(chessboardColumns)
     );
     pieces[0][0] = {
       id: "0-0",
@@ -61,7 +90,26 @@ export function ChessboardProvider({
     return pieces;
   });
 
-  const board = generateBoard(chessboardSize);
+  // if the dimensions change, we need to recreate the pieces array
+  useEffect(() => {
+    const pieces: PieceDataType[][] = Array.from(
+      Array(chessboardRows),
+      () => new Array(chessboardColumns)
+    );
+    pieces[0][0] = {
+      id: "0-0",
+      position: { x: 0, y: 0 },
+      disabled: false,
+      type: PieceType.wR,
+    };
+    setPieces(pieces);
+  }, [chessboardRows, chessboardColumns]);
+
+  // only redraw the board when the dimensions change
+  const board = useMemo(
+    () => generateBoard(chessboardRows, chessboardColumns),
+    [chessboardRows, chessboardColumns]
+  );
 
   const handleDragCancel = useCallback(() => {
     setMovingPiece(null);
@@ -129,10 +177,19 @@ export function ChessboardProvider({
   return (
     <ChessboardContext.Provider
       value={{
-        board,
-        chessboardSize,
+        // chessboard options
+        chessboardRows,
+        chessboardColumns,
         darkSquareColor,
         lightSquareColor,
+        darkSquareNotationColor,
+        lightSquareNotationColor,
+        alphaNotationStyle,
+        numericNotationStyle,
+        showNotation,
+
+        // internal state
+        board,
         isWrapped: true,
         movingPiece,
         setMovingPiece,

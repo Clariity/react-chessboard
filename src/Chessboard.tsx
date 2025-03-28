@@ -10,7 +10,7 @@ type ChessboardProps = {
 };
 
 export function Chessboard({ options }: ChessboardProps) {
-  const { isWrapped } = useChessboardContext();
+  const { isWrapped } = useChessboardContext() ?? { isWrapped: false };
 
   if (isWrapped) {
     return <Board />;

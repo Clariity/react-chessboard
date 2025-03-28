@@ -57,6 +57,9 @@ importers:
       storybook:
         specifier: 8.6.8
         version: 8.6.8
+      storybook-addon-deep-controls:
+        specifier: ^0.9.2
+        version: 0.9.2(@storybook/addon-controls@8.6.8(storybook@8.6.8))(@storybook/types@8.6.11(storybook@8.6.8))(storybook@8.6.8)
       typescript:
         specifier: ^5.8.2
         version: 5.8.2
@@ -623,6 +626,11 @@ packages:
 
   '@storybook/theming@8.6.8':
     resolution: {integrity: sha512-Lgtmjudkd8s5wTxCbMvZNIY7iWOwnsWI04zejpubxbuNLFvOIvJnICVzrEzxuMYPIDg9cvPVYT3AkuE2NucUVg==}
+    peerDependencies:
+      storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
+
+  '@storybook/types@8.6.11':
+    resolution: {integrity: sha512-Rg8n6cATtZEZtJxxRhMArpbLKoYOHT/eAZTQH5Il3k4JQUUKEyUlTA/3qVnbU3RTGpaLgpiwMDzc9lOd/fdKDQ==}
     peerDependencies:
       storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
 
@@ -1267,6 +1275,13 @@ packages:
   source-map@0.6.1:
     resolution: {integrity: sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g==}
     engines: {node: '>=0.10.0'}
+
+  storybook-addon-deep-controls@0.9.2:
+    resolution: {integrity: sha512-6XE4XJTZ3PevX3gIJUm5cNyF0cpnXTPabpsIXCDHYzm6pQ0p57AFI6l0lTAcL/q+bFR4Qjihq49LmO46qgG1iA==}
+    peerDependencies:
+      '@storybook/addon-controls': 7.x.x || 8.x.x
+      '@storybook/types': 7.x.x || 8.x.x
+      storybook: 7.x.x || 8.x.x
 
   storybook@8.6.8:
     resolution: {integrity: sha512-0Ze7QC0Hqx+ulms/FiQ7PNyaBgmaoxqxLOi8PQc5sOepO1+Ea8nssQGmOHS2QIX1ybb/GW56Fa5eyj+PJgsYDQ==}
@@ -1994,6 +2009,10 @@ snapshots:
     dependencies:
       storybook: 8.6.8
 
+  '@storybook/types@8.6.11(storybook@8.6.8)':
+    dependencies:
+      storybook: 8.6.8
+
   '@testing-library/dom@10.4.0':
     dependencies:
       '@babel/code-frame': 7.26.2
@@ -2645,6 +2664,12 @@ snapshots:
   source-map-js@1.2.1: {}
 
   source-map@0.6.1: {}
+
+  storybook-addon-deep-controls@0.9.2(@storybook/addon-controls@8.6.8(storybook@8.6.8))(@storybook/types@8.6.11(storybook@8.6.8))(storybook@8.6.8):
+    dependencies:
+      '@storybook/addon-controls': 8.6.8(storybook@8.6.8)
+      '@storybook/types': 8.6.11(storybook@8.6.8)
+      storybook: 8.6.8
 
   storybook@8.6.8:
     dependencies:
