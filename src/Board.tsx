@@ -6,31 +6,23 @@ import { Piece } from "./Piece";
 import { useChessboardContext } from "./ChessboardProvider";
 
 export function Board() {
-  const {
-    board,
-    chessboardSize,
-    darkSquareColor,
-    lightSquareColor,
-    movingPiece,
-    pieces,
-  } = useChessboardContext();
+  const { board, chessboardColumns, movingPiece, pieces } = useChessboardContext();
 
   return (
     <>
       <div
-        style={{ display: "grid", gridTemplateColumns: `repeat(${chessboardSize}, 1fr)` }}
+        style={{
+          display: "grid",
+          gridTemplateColumns: `repeat(${chessboardColumns}, 1fr`,
+        }}
       >
         {board.map((row, y) =>
           row.map((cell, x) => {
-            const piece = pieces[y][x];
+            // need to optionally chain in case board size increases and pieces array is not updated yet
+            const piece = pieces[y]?.[x];
 
             return (
-              <Cell
-                key={cell.id}
-                darkSquareColor={darkSquareColor}
-                lightSquareColor={lightSquareColor}
-                {...cell}
-              >
+              <Cell key={cell.id} {...cell}>
                 {piece ? <Piece {...piece} /> : null}
               </Cell>
             );

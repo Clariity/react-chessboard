@@ -1,24 +1,18 @@
 import type { CellDataType } from "./types";
 
-export function generateBoard(BOARD_SIZE: number) {
+export function generateBoard(noOfRows: number, noOfColumns: number) {
   const board: CellDataType[][] = Array.from(
-    Array(BOARD_SIZE),
-    () => new Array(BOARD_SIZE)
+    Array(noOfRows),
+    () => new Array(noOfColumns)
   );
 
-  let isLightSquare = false;
-
-  for (let row = 0; row < BOARD_SIZE; row++) {
-    for (let column = 0; column < BOARD_SIZE; column++) {
-      if (column % BOARD_SIZE !== 0) {
-        isLightSquare = !isLightSquare;
-      }
-
+  for (let row = 0; row < noOfRows; row++) {
+    for (let column = 0; column < noOfColumns; column++) {
       board[row][column] = {
-        id: `${row}-${column}`,
-        isLightSquare,
-        column: columnIndexToChessColumn(column),
-        row: rowIndexToChessRow(row, BOARD_SIZE),
+        id: `${row}-${column}`, // e.g. "0-0"
+        isLightSquare: (row + column) % 2 === 0,
+        column: columnIndexToChessColumn(column), // e.g. a to h
+        row: rowIndexToChessRow(row, noOfRows), // e.g. 1 to 8
       };
     }
   }
@@ -26,8 +20,8 @@ export function generateBoard(BOARD_SIZE: number) {
   return board;
 }
 
-export function rowIndexToChessRow(row: number, BOARD_SIZE: number) {
-  return (BOARD_SIZE - row).toString();
+export function rowIndexToChessRow(row: number, noOfRows: number) {
+  return (noOfRows - row).toString();
 }
 
 export function columnIndexToChessColumn(column: number) {

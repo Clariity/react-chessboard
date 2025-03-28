@@ -1,24 +1,25 @@
 import { useDroppable } from "@dnd-kit/core";
 
+import { useChessboardContext } from "./ChessboardProvider";
+
 type Props = {
   children?: React.ReactNode;
   id: string;
   isLightSquare: boolean;
   column: string;
   row: string;
-  darkSquareColor: string;
-  lightSquareColor: string;
 };
 
-export function Cell({
-  children,
-  id,
-  isLightSquare,
-  column,
-  row,
-  darkSquareColor,
-  lightSquareColor,
-}: Props) {
+export function Cell({ children, id, isLightSquare, column, row }: Props) {
+  const {
+    darkSquareColor,
+    lightSquareColor,
+    darkSquareNotationColor,
+    lightSquareNotationColor,
+    alphaNotationStyle,
+    numericNotationStyle,
+    showNotation,
+  } = useChessboardContext();
   const { isOver, setNodeRef } = useDroppable({
     id,
   });
@@ -38,16 +39,17 @@ export function Cell({
       data-column={column}
       data-row={row}
     >
-      {row === "1" && (
-        <span style={{ position: "absolute", bottom: 1, right: 4, fontSize: "13px" }}>
-          {column}
+      {showNotation ? (
+        <span
+          style={{
+            color: isLightSquare ? lightSquareNotationColor : darkSquareNotationColor,
+          }}
+        >
+          {row === "1" && <span style={numericNotationStyle}>{column}</span>}
+          {column === "a" && <span style={alphaNotationStyle}>{row}</span>}
         </span>
-      )}
-      {column === "a" && (
-        <span style={{ position: "absolute", top: 2, left: 2, fontSize: "13px" }}>
-          {row}
-        </span>
-      )}
+      ) : null}
+
       {children}
     </div>
   );
