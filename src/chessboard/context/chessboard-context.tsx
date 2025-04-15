@@ -225,7 +225,7 @@ export const ChessboardProvider = forwardRef(
     const [wasManualDrop, setWasManualDrop] = useState(false);
 
     // the most recent timeout whilst waiting for animation to complete
-    const [previousTimeout, setPreviousTimeout] = useState<NodeJS.Timeout>();
+    const previousTimeoutRef = useRef<NodeJS.Timeout>();
 
     // if currently waiting for an animation to finish
     const [isWaitingForAnimation, setIsWaitingForAnimation] = useState(false);
@@ -270,8 +270,8 @@ export const ChessboardProvider = forwardRef(
         setCurrentPosition(newPosition);
         setIsWaitingForAnimation(false);
         arePremovesAllowed && attemptPremove(newPieceColour);
-        if (previousTimeout) {
-          clearTimeout(previousTimeout);
+        if (previousTimeoutRef.current) {
+          clearTimeout(previousTimeoutRef.current);
         }
       } else {
         // move was made using drag and drop
@@ -304,7 +304,7 @@ export const ChessboardProvider = forwardRef(
             setIsWaitingForAnimation(false);
             arePremovesAllowed && attemptPremove(newPieceColour);
           }, animationDuration);
-          setPreviousTimeout(newTimeout);
+          previousTimeoutRef.current = newTimeout;
         }
       }
 
@@ -317,7 +317,7 @@ export const ChessboardProvider = forwardRef(
 
       // clear timeout on unmount
       return () => {
-        clearTimeout(previousTimeout);
+        clearTimeout(previousTimeoutRef.current);
       };
     }, [position]);
 
