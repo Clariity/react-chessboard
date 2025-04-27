@@ -40,9 +40,15 @@ export const Arrows = () => {
           boardWidth,
           arrowEndField
         );
-        let ARROW_LENGTH_REDUCER = boardWidth / 32;
+
+        const dx = to.x - from.x;
+        const dy = to.y - from.y;
+        const r = Math.hypot(dy, dx);
 
         const isArrowActive = i === arrows.length;
+        const isKnightMove = r === Math.hypot(1, 2) * (boardWidth / 8);
+
+        let ARROW_LENGTH_REDUCER = boardWidth / 32;
         // if there are different arrows targeting the same square make their length a bit shorter
         if (
           arrows.some(
@@ -53,15 +59,29 @@ export const Arrows = () => {
         ) {
           ARROW_LENGTH_REDUCER = boardWidth / 16;
         }
-        const dx = to.x - from.x;
-        const dy = to.y - from.y;
-
-        const r = Math.hypot(dy, dx);
 
         const end = {
           x: from.x + (dx * (r - ARROW_LENGTH_REDUCER)) / r,
           y: from.y + (dy * (r - ARROW_LENGTH_REDUCER)) / r,
         };
+        // The mid point is only used in Knight move drawing
+        // and here we prioritise drawing along the long edge
+        // by defining the midpoint depending on which is bigger X or Y
+        const mid =
+          Math.abs(dx) < Math.abs(dy)
+            ? {
+                x: from.x,
+                y: end.y,
+              }
+            : {
+                x: end.x,
+                y: from.y,
+              };
+
+        // Define the path, either with or without a mid point
+        let pathD = isKnightMove
+          ? `M${from.x},${from.y} L${mid.x},${mid.y} L${end.x},${end.y}`
+          : `M${from.x},${from.y} L${end.x},${end.y}`;
 
         return (
           <Fragment
@@ -82,17 +102,15 @@ export const Arrows = () => {
                 fill={arrowColor ?? primaryArrowCollor}
               />
             </marker>
-            <line
-              x1={from.x}
-              y1={from.y}
-              x2={end.x}
-              y2={end.y}
+            <path
+              d={pathD}
               opacity={isArrowActive ? "0.5" : "0.65"}
               stroke={arrowColor ?? primaryArrowCollor}
               strokeWidth={
                 isArrowActive ? (0.9 * boardWidth) / 40 : boardWidth / 40
               }
               markerEnd={`url(#arrowhead-${i})`}
+              fill="none"
             />
           </Fragment>
         );
