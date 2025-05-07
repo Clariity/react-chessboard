@@ -86,7 +86,7 @@ export default function App() {
 
 ```jsx
 import { useState } from "react";
-import Chess from "chess.js";
+import { Chess } from "chess.js";
 import { Chessboard } from "react-chessboard";
 
 export default function PlayRandomMoveEngine() {
