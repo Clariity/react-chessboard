@@ -1,9 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
 import { Chessboard } from "..";
-import { SparePiece } from "../Piece";
-import { ChessboardProvider } from "../ChessboardProvider";
-import { PieceType } from "../types";
 
 const meta = {
   title: "Chessboard",
@@ -20,6 +17,7 @@ const meta = {
   ],
   args: {
     options: {
+      position: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR",
       chessboardRows: 8,
       chessboardColumns: 8,
       darkSquareColor: "#B58863",
@@ -48,16 +46,6 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 
-export const SparePieces: Story = {
-  render: () => (
-    <ChessboardProvider>
-      <Chessboard />
-      <div style={{ width: "100px", height: "100px" }}>
-        <SparePiece pieceType={PieceType.wP} />
-      </div>
-      <div style={{ width: "100px", height: "100px" }}>
-        <SparePiece pieceType={PieceType.bB} />
-      </div>
-    </ChessboardProvider>
-  ),
-};
+export { PlayVsRandom } from "./PlayVsRandom";
+export { Position } from "./Position";
+export { SparePieces } from "./SparePieces";

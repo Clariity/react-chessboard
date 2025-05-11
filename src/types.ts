@@ -4,6 +4,7 @@ export type CellDataType = {
 };
 
 export type PieceDataType = {
+  isSparePiece: boolean;
   position: string; // e.g. "a8"
   pieceType: PieceType; // e.g. "wP" for white pawn, "bK" for black king
 };
@@ -12,7 +13,7 @@ export type PositionDataType = {
   [square: string]: PieceDataType;
 };
 
-export type fenPieceString =
+export type FenPieceString =
   | "p"
   | "r"
   | "n"

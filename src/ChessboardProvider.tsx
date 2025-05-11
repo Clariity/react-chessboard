@@ -1,7 +1,15 @@
 import { DndContext, DragEndEvent, DragStartEvent, pointerWithin } from "@dnd-kit/core";
-import { createContext, use, useCallback, useEffect, useMemo, useState } from "react";
+import {
+  createContext,
+  use,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
-import { fenStringToPositionObject, generateBoard } from "./utils";
+import { fenStringToPositionObject, generateBoard, getPositionUpdates } from "./utils";
 import { CellDataType, PieceDataType, PieceType, PositionDataType } from "./types";
 
 type ContextType = {
@@ -14,15 +22,17 @@ type ContextType = {
   lightSquareNotationColor: ChessboardOptions["lightSquareNotationColor"];
   alphaNotationStyle: ChessboardOptions["alphaNotationStyle"];
   numericNotationStyle: ChessboardOptions["numericNotationStyle"];
+  animationDurationInMs: ChessboardOptions["animationDurationInMs"];
+  showAnimations: ChessboardOptions["showAnimations"];
   showNotation: ChessboardOptions["showNotation"];
 
   // internal state
   board: CellDataType[][];
+  isWaitingForAnimation: boolean;
   isWrapped: boolean;
   movingPiece: PieceDataType | null;
-  setMovingPiece: (piece: PieceDataType | null) => void;
   pieces: PositionDataType;
-  setPieces: (pieces: PositionDataType) => void;
+  positionDifferences: ReturnType<typeof getPositionUpdates>;
 };
 
 const ChessboardContext = createContext<ContextType | null>(null);
@@ -47,10 +57,18 @@ export type ChessboardOptions = {
   alphaNotationStyle?: React.CSSProperties;
   numericNotationStyle?: React.CSSProperties;
   showNotation?: boolean;
-};
 
-// TODO: Take in fen and render it
-// TODO: Write tests early, visual tests too (with chromatic?)
+  // animation
+  animationDurationInMs?: number;
+  showAnimations?: boolean;
+
+  // handlers
+  onPieceDrop?: (
+    sourceSquare: string,
+    targetSquare: string,
+    piece: PieceDataType
+  ) => void;
+};
 
 export function ChessboardProvider({
   children,
@@ -76,13 +94,77 @@ export function ChessboardProvider({
       bottom: 1,
       right: 4,
     },
+    animationDurationInMs = 300,
+    showAnimations = true,
     showNotation = true,
+    onPieceDrop,
   } = options || {};
 
+  // the piece currently being dragged
   const [movingPiece, setMovingPiece] = useState<PieceDataType | null>(null);
+
+  // the current position of pieces on the chessboard
   const [pieces, setPieces] = useState(
     fenStringToPositionObject(position, chessboardRows)
   );
+
+  // calculated differences between current and incoming positions
+  const [positionDifferences, setPositionDifferences] = useState<
+    ReturnType<typeof getPositionUpdates>
+  >({});
+
+  // if we are waiting for an animation to complete
+  const [isWaitingForAnimation, setIsWaitingForAnimation] = useState(false);
+
+  // if the latest move was a manual drop
+  const [wasManualDrop, setWasManualDrop] = useState(false);
+
+  // the animation timeout whilst waiting for animation to complete
+  const animationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // if the position changes, we need to recreate the pieces array
+  useEffect(() => {
+    const newPosition = fenStringToPositionObject(position, chessboardRows);
+
+    // new position was a result of a manual drop
+    if (wasManualDrop) {
+      // no animation needed, just set the position and reset the flag
+      setPieces(newPosition);
+      setWasManualDrop(false);
+      return;
+    }
+
+    // new position was a result of an external move
+    // if no animation, just set the position
+    if (!showAnimations) {
+      setPieces(newPosition);
+      return;
+    } else {
+      // animate external move
+      setIsWaitingForAnimation(true);
+
+      // get list of position updates as pieces to animate
+      const positionUpdates = getPositionUpdates(pieces, newPosition);
+      setPositionDifferences(positionUpdates);
+
+      // start animation timeout
+      const newTimeout = setTimeout(() => {
+        setPieces(newPosition);
+        setPositionDifferences({});
+        setIsWaitingForAnimation(false);
+      }, animationDurationInMs);
+
+      // update the ref to the new timeout
+      animationTimeoutRef.current = newTimeout;
+    }
+
+    // clear timeout on unmount
+    return () => {
+      if (animationTimeoutRef.current) {
+        clearTimeout(animationTimeoutRef.current);
+      }
+    };
+  }, [position]);
 
   // if the dimensions change, we need to recreate the pieces array
   useEffect(() => {
@@ -106,27 +188,11 @@ export function ChessboardProvider({
       }
 
       const dropSquare = event.over.id.toString();
-      const potentialExistingPiece = pieces[dropSquare];
 
-      setMovingPiece(null);
-
-      if (event.over && !potentialExistingPiece) {
-        const newPiece: PieceDataType = {
-          ...movingPiece,
-          position: dropSquare,
-        };
-
-        // clone pieces
-        const newPieces = structuredClone(pieces);
-
-        // remove old piece position
-        delete newPieces[movingPiece.position];
-
-        // place new piece position
-        newPieces[dropSquare] = newPiece;
-
-        // set new pieces
-        setPieces(newPieces);
+      if (event.over) {
+        setMovingPiece(null);
+        setWasManualDrop(true);
+        onPieceDrop?.(movingPiece.position, dropSquare, movingPiece);
       }
     },
     [movingPiece, pieces]
@@ -137,10 +203,12 @@ export function ChessboardProvider({
     function handleDragStart({ active }: DragStartEvent) {
       // the id is either the position of the piece on the board if it's on the board (e.g. "a1", "b2", etc.), or the type of the piece if it's a spare piece (e.g. "wP", "bN", etc.)
       const pieceId = active.id.toString();
+      const isSparePiece = active.data.current?.isSparePiece;
 
       // if id is a piece type, it's a spare piece
       if (Object.values(PieceType).includes(pieceId as PieceType)) {
         setMovingPiece({
+          isSparePiece,
           position: active.id as string,
           pieceType: active.id as PieceType,
         });
@@ -168,15 +236,17 @@ export function ChessboardProvider({
         lightSquareNotationColor,
         alphaNotationStyle,
         numericNotationStyle,
+        animationDurationInMs,
+        showAnimations,
         showNotation,
 
         // internal state
         board,
+        isWaitingForAnimation,
         isWrapped: true,
         movingPiece,
-        setMovingPiece,
         pieces,
-        setPieces,
+        positionDifferences,
       }}
     >
       <DndContext
