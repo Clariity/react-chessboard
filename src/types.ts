@@ -1,16 +1,30 @@
 export type CellDataType = {
-  id: string;
+  cellId: string; // e.g. "a8"
   isLightSquare: boolean;
-  column: string;
-  row: string;
 };
 
 export type PieceDataType = {
-  id: string;
-  position?: { x: number; y: number };
-  disabled?: boolean;
-  type: PieceType;
+  position: string; // e.g. "a8"
+  pieceType: PieceType; // e.g. "wP" for white pawn, "bK" for black king
 };
+
+export type PositionDataType = {
+  [square: string]: PieceDataType;
+};
+
+export type fenPieceString =
+  | "p"
+  | "r"
+  | "n"
+  | "b"
+  | "q"
+  | "k"
+  | "P"
+  | "R"
+  | "N"
+  | "B"
+  | "Q"
+  | "K";
 
 export enum PieceType {
   "wP" = "wP",

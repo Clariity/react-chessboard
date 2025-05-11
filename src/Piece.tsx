@@ -1,26 +1,24 @@
 import { useDraggable } from "@dnd-kit/core";
 
 import { defaultPieces } from "./pieces";
-import type { PieceType } from "./types";
+import type { PieceDataType, PieceType } from "./types";
 
 type Props = {
   clone?: boolean;
-  disabled?: boolean;
-  id: string;
-  position?: { x: number; y: number };
-  type: PieceType;
+  position: PieceDataType["position"] | PieceType;
+  pieceType: PieceDataType["pieceType"];
 };
 
-export function Piece({ clone, disabled, id, position, type }: Props) {
+export function Piece({ clone, position, pieceType }: Props) {
   const { attributes, isDragging, listeners, setNodeRef } = useDraggable({
-    id: id,
+    id: position,
   });
 
-  const PieceSvg = defaultPieces[type];
+  const PieceSvg = defaultPieces[pieceType];
 
   return (
     <div
-      id={id as string}
+      id={position}
       ref={setNodeRef}
       style={{
         opacity: isDragging ? 0.5 : undefined,
@@ -38,9 +36,9 @@ export function Piece({ clone, disabled, id, position, type }: Props) {
 }
 
 type SparePieceProps = {
-  type: PieceType;
+  pieceType: PieceType;
 };
 
-export function SparePiece({ type }: SparePieceProps) {
-  return <Piece id={type} type={type} />;
+export function SparePiece({ pieceType }: SparePieceProps) {
+  return <Piece position={pieceType} pieceType={pieceType} />;
 }

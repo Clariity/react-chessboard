@@ -1,8 +1,8 @@
 import { DndContext, DragEndEvent, DragStartEvent, pointerWithin } from "@dnd-kit/core";
 import { createContext, use, useCallback, useEffect, useMemo, useState } from "react";
 
-import { generateBoard } from "./utils";
-import { CellDataType, PieceDataType, PieceType } from "./types";
+import { fenStringToPositionObject, generateBoard } from "./utils";
+import { CellDataType, PieceDataType, PieceType, PositionDataType } from "./types";
 
 type ContextType = {
   // chessboard options
@@ -21,8 +21,8 @@ type ContextType = {
   isWrapped: boolean;
   movingPiece: PieceDataType | null;
   setMovingPiece: (piece: PieceDataType | null) => void;
-  pieces: PieceDataType[][];
-  setPieces: (pieces: PieceDataType[][]) => void;
+  pieces: PositionDataType;
+  setPieces: (pieces: PositionDataType) => void;
 };
 
 const ChessboardContext = createContext<ContextType | null>(null);
@@ -30,9 +30,12 @@ const ChessboardContext = createContext<ContextType | null>(null);
 export const useChessboardContext = () => use(ChessboardContext) as ContextType;
 
 export type ChessboardOptions = {
+  // position
+  position?: string; // FEN string to set up the board
+
   // board dimensions
-  chessboardRows: number;
-  chessboardColumns: number;
+  chessboardRows?: number;
+  chessboardColumns?: number;
 
   // light and dark squares
   darkSquareColor?: string;
@@ -54,6 +57,7 @@ export function ChessboardProvider({
   options,
 }: React.PropsWithChildren<{ options?: ChessboardOptions }>) {
   const {
+    position = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR",
     chessboardRows = 8,
     chessboardColumns = 8,
     darkSquareColor = "#B58863",
@@ -76,33 +80,13 @@ export function ChessboardProvider({
   } = options || {};
 
   const [movingPiece, setMovingPiece] = useState<PieceDataType | null>(null);
-  const [pieces, setPieces] = useState(() => {
-    const pieces: PieceDataType[][] = Array.from(
-      Array(chessboardRows),
-      () => new Array(chessboardColumns)
-    );
-    pieces[0][0] = {
-      id: "0-0",
-      position: { x: 0, y: 0 },
-      disabled: false,
-      type: PieceType.wR,
-    };
-    return pieces;
-  });
+  const [pieces, setPieces] = useState(
+    fenStringToPositionObject(position, chessboardRows)
+  );
 
   // if the dimensions change, we need to recreate the pieces array
   useEffect(() => {
-    const pieces: PieceDataType[][] = Array.from(
-      Array(chessboardRows),
-      () => new Array(chessboardColumns)
-    );
-    pieces[0][0] = {
-      id: "0-0",
-      position: { x: 0, y: 0 },
-      disabled: false,
-      type: PieceType.wR,
-    };
-    setPieces(pieces);
+    setPieces(fenStringToPositionObject(position, chessboardRows));
   }, [chessboardRows, chessboardColumns]);
 
   // only redraw the board when the dimensions change
@@ -121,29 +105,27 @@ export function ChessboardProvider({
         return;
       }
 
-      const { x: movingPieceX, y: movingPieceY } = movingPiece.position;
-      const [cellY, cellX] = event.over.id.toString().split("-").map(Number);
-
-      const potentialExistingPiece = pieces[cellY][cellX];
+      const dropSquare = event.over.id.toString();
+      const potentialExistingPiece = pieces[dropSquare];
 
       setMovingPiece(null);
 
       if (event.over && !potentialExistingPiece) {
         const newPiece: PieceDataType = {
           ...movingPiece,
-          id: `${cellY}-${cellX}`,
-          position: { x: cellX, y: cellY },
+          position: dropSquare,
         };
 
-        // Clone pieces
-        const newPieces = pieces.map((row) => row.slice());
+        // clone pieces
+        const newPieces = structuredClone(pieces);
 
-        // Place new
-        if (movingPieceY !== -1 && movingPieceX !== -1) {
-          delete newPieces[movingPieceY][movingPieceX];
-        }
-        newPieces[cellY][cellX] = newPiece;
+        // remove old piece position
+        delete newPieces[movingPiece.position];
 
+        // place new piece position
+        newPieces[dropSquare] = newPiece;
+
+        // set new pieces
         setPieces(newPieces);
       }
     },
@@ -151,24 +133,24 @@ export function ChessboardProvider({
   );
 
   const handleDragStart = useCallback(
+    // active.id is the id of the piece being dragged
     function handleDragStart({ active }: DragStartEvent) {
-      // handle spare pieces
-      if (Object.values(PieceType).includes(active.id as PieceType)) {
+      // the id is either the position of the piece on the board if it's on the board (e.g. "a1", "b2", etc.), or the type of the piece if it's a spare piece (e.g. "wP", "bN", etc.)
+      const pieceId = active.id.toString();
+
+      // if id is a piece type, it's a spare piece
+      if (Object.values(PieceType).includes(pieceId as PieceType)) {
         setMovingPiece({
-          id: active.id as string,
-          position: { x: -1, y: -1 },
-          type: active.id as PieceType,
+          position: active.id as string,
+          pieceType: active.id as PieceType,
         });
         return;
       }
 
-      for (let row of pieces) {
-        for (let cell of row) {
-          if (cell?.id === active.id) {
-            setMovingPiece(cell);
-            return;
-          }
-        }
+      // if id is a position, it's a piece on the board
+      if (pieces[active.id]) {
+        setMovingPiece(pieces[active.id]);
+        return;
       }
     },
     [pieces]

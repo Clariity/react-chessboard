@@ -53,10 +53,10 @@ export const SparePieces: Story = {
     <ChessboardProvider>
       <Chessboard />
       <div style={{ width: "100px", height: "100px" }}>
-        <SparePiece type={PieceType.wP} />
+        <SparePiece pieceType={PieceType.wP} />
       </div>
       <div style={{ width: "100px", height: "100px" }}>
-        <SparePiece type={PieceType.bB} />
+        <SparePiece pieceType={PieceType.bB} />
       </div>
     </ChessboardProvider>
   ),
