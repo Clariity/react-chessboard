@@ -2,6 +2,7 @@ import { useDroppable } from "@dnd-kit/core";
 
 import { useChessboardContext } from "./ChessboardProvider";
 import { CellDataType } from "./types";
+import { columnIndexToChessColumn } from "./utils";
 
 type Props = {
   children?: React.ReactNode;
@@ -11,6 +12,9 @@ type Props = {
 
 export function Cell({ children, cellId, isLightSquare }: Props) {
   const {
+    boardOrientation,
+    chessboardColumns,
+    chessboardRows,
     darkSquareColor,
     lightSquareColor,
     darkSquareNotationColor,
@@ -48,8 +52,15 @@ export function Cell({ children, cellId, isLightSquare }: Props) {
             color: isLightSquare ? lightSquareNotationColor : darkSquareNotationColor,
           }}
         >
-          {row === "1" && <span style={numericNotationStyle}>{column}</span>}
-          {column === "a" && <span style={alphaNotationStyle}>{row}</span>}
+          {row === (boardOrientation === "white" ? "1" : chessboardRows.toString()) && (
+            <span style={numericNotationStyle}>{column}</span>
+          )}
+          {column ===
+            (boardOrientation === "white"
+              ? "a"
+              : columnIndexToChessColumn(0, chessboardColumns, boardOrientation)) && (
+            <span style={alphaNotationStyle}>{row}</span>
+          )}
         </span>
       ) : null}
 

@@ -1,6 +1,10 @@
 import type { CellDataType, FenPieceString, PieceType, PositionDataType } from "./types";
 
-export function generateBoard(noOfRows: number, noOfColumns: number) {
+export function generateBoard(
+  noOfRows: number,
+  noOfColumns: number,
+  boardOrientation: "white" | "black"
+) {
   const board: CellDataType[][] = Array.from(
     Array(noOfRows),
     () => new Array(noOfColumns)
@@ -9,7 +13,7 @@ export function generateBoard(noOfRows: number, noOfColumns: number) {
   for (let row = 0; row < noOfRows; row++) {
     for (let column = 0; column < noOfColumns; column++) {
       board[row][column] = {
-        cellId: `${columnIndexToChessColumn(column)}${rowIndexToChessRow(row, noOfRows)}`, // e.g. "a8" for row 0, column 0
+        cellId: `${columnIndexToChessColumn(column, noOfColumns, boardOrientation)}${rowIndexToChessRow(row, noOfRows, boardOrientation)}`, // e.g. "a8" for row 0, column 0 in white orientation
         isLightSquare: (row + column) % 2 === 0,
       };
     }
@@ -18,31 +22,54 @@ export function generateBoard(noOfRows: number, noOfColumns: number) {
   return board;
 }
 
-export function rowIndexToChessRow(row: number, noOfRows: number) {
-  return (noOfRows - row).toString();
+export function rowIndexToChessRow(
+  row: number,
+  noOfRows: number,
+  boardOrientation: "white" | "black"
+) {
+  return boardOrientation === "white"
+    ? (noOfRows - row).toString()
+    : (row + 1).toString();
 }
 
-export function columnIndexToChessColumn(column: number) {
-  return String.fromCharCode(97 + column);
+export function columnIndexToChessColumn(
+  column: number,
+  noOfColumns: number,
+  boardOrientation: "white" | "black"
+) {
+  return boardOrientation === "white"
+    ? String.fromCharCode(97 + column)
+    : String.fromCharCode(97 + noOfColumns - column - 1);
 }
 
-function chessColumnToColumnIndex(column: string) {
-  return column.charCodeAt(0) - 97;
+function chessColumnToColumnIndex(
+  column: string,
+  noOfColumns: number,
+  boardOrientation: "white" | "black"
+) {
+  return boardOrientation === "white"
+    ? column.charCodeAt(0) - 97
+    : noOfColumns - (column.charCodeAt(0) - 97) - 1;
 }
 
-export function fenStringToPositionObject(fen: string, noOfRows: number) {
+export function fenStringToPositionObject(
+  fen: string,
+  noOfRows: number,
+  noOfColumns: number
+) {
   const positionObject: PositionDataType = {};
 
   const rows = fen.split(" ")[0].split("/");
 
-  // rows start from top of the board (black rank)
+  // rows start from top of the board (black rank) in white orientation, and bottom of the board (white rank) in black orientation
   for (let row = 0; row < rows.length; row++) {
     let column = 0;
 
     for (const char of rows[row]) {
       // if char is a letter, it is a piece
       if (isNaN(Number(char))) {
-        const position = `${columnIndexToChessColumn(column)}${rowIndexToChessRow(row, noOfRows)}`;
+        // force orientation to flip fen string when black orientation used
+        const position = `${columnIndexToChessColumn(column, noOfColumns, "white")}${rowIndexToChessRow(row, noOfRows, "white")}`;
 
         // set piece at position (e.g. 0-0 for a8 on a normal board)
         positionObject[position] = {
@@ -83,7 +110,9 @@ function fenToPieceCode(piece: FenPieceString) {
  */
 export function getPositionUpdates(
   oldPosition: PositionDataType,
-  newPosition: PositionDataType
+  newPosition: PositionDataType,
+  noOfColumns: number,
+  boardOrientation: "white" | "black"
 ) {
   const updates: { [square: string]: string } = {};
 
@@ -116,18 +145,25 @@ export function getPositionUpdates(
         const candidatePieceType = oldPosition[candidateSquare].pieceType[1];
 
         const columnDifference = Math.abs(
-          chessColumnToColumnIndex(oldPosition[candidateSquare].position[0]) -
-            chessColumnToColumnIndex(newSquare[0])
+          chessColumnToColumnIndex(
+            oldPosition[candidateSquare].position[0],
+            noOfColumns,
+            boardOrientation
+          ) - chessColumnToColumnIndex(newSquare[0], noOfColumns, boardOrientation)
         );
         const rowDifference = Math.abs(
           Number(oldPosition[candidateSquare].position[1]) - Number(newSquare[1])
         );
         const isOldSquareLight =
-          (chessColumnToColumnIndex(candidateSquare[0]) + Number(candidateSquare[1])) %
+          (chessColumnToColumnIndex(candidateSquare[0], noOfColumns, boardOrientation) +
+            Number(candidateSquare[1])) %
             2 ===
           0;
         const isNewSquareLight =
-          (chessColumnToColumnIndex(newSquare[0]) + Number(newSquare[1])) % 2 === 0;
+          (chessColumnToColumnIndex(newSquare[0], noOfColumns, boardOrientation) +
+            Number(newSquare[1])) %
+            2 ===
+          0;
 
         // prioritise pawns on same file
         if (candidatePieceType === "P") {

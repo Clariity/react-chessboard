@@ -12,25 +12,28 @@ import {
 import { fenStringToPositionObject, generateBoard, getPositionUpdates } from "./utils";
 import { CellDataType, PieceDataType, PieceType, PositionDataType } from "./types";
 
+type Defined<T> = T extends undefined ? never : T;
+
 type ContextType = {
   // chessboard options
-  chessboardRows: ChessboardOptions["chessboardRows"];
-  chessboardColumns: ChessboardOptions["chessboardColumns"];
-  darkSquareColor: ChessboardOptions["darkSquareColor"];
-  lightSquareColor: ChessboardOptions["lightSquareColor"];
-  darkSquareNotationColor: ChessboardOptions["darkSquareNotationColor"];
-  lightSquareNotationColor: ChessboardOptions["lightSquareNotationColor"];
-  alphaNotationStyle: ChessboardOptions["alphaNotationStyle"];
-  numericNotationStyle: ChessboardOptions["numericNotationStyle"];
-  animationDurationInMs: ChessboardOptions["animationDurationInMs"];
-  showAnimations: ChessboardOptions["showAnimations"];
-  showNotation: ChessboardOptions["showNotation"];
+  boardOrientation: Defined<ChessboardOptions["boardOrientation"]>;
+  chessboardRows: Defined<ChessboardOptions["chessboardRows"]>;
+  chessboardColumns: Defined<ChessboardOptions["chessboardColumns"]>;
+  darkSquareColor: Defined<ChessboardOptions["darkSquareColor"]>;
+  lightSquareColor: Defined<ChessboardOptions["lightSquareColor"]>;
+  darkSquareNotationColor: Defined<ChessboardOptions["darkSquareNotationColor"]>;
+  lightSquareNotationColor: Defined<ChessboardOptions["lightSquareNotationColor"]>;
+  alphaNotationStyle: Defined<ChessboardOptions["alphaNotationStyle"]>;
+  numericNotationStyle: Defined<ChessboardOptions["numericNotationStyle"]>;
+  animationDurationInMs: Defined<ChessboardOptions["animationDurationInMs"]>;
+  showAnimations: Defined<ChessboardOptions["showAnimations"]>;
+  showNotation: Defined<ChessboardOptions["showNotation"]>;
 
   // internal state
   board: CellDataType[][];
   isWaitingForAnimation: boolean;
   isWrapped: boolean;
-  movingPiece: PieceDataType | null;
+  draggingPiece: PieceDataType | null;
   pieces: PositionDataType;
   positionDifferences: ReturnType<typeof getPositionUpdates>;
 };
@@ -43,7 +46,8 @@ export type ChessboardOptions = {
   // position
   position?: string; // FEN string to set up the board
 
-  // board dimensions
+  // board dimensions and orientation
+  boardOrientation?: "white" | "black";
   chessboardRows?: number;
   chessboardColumns?: number;
 
@@ -70,12 +74,26 @@ export type ChessboardOptions = {
   ) => void;
 };
 
+// isWaitingForAnimation and whether we want to block anything whilst happening, or delete it as we don't need it?
+// handlers (onPieceClick, onPieceDragStart, onPieceDragEnd, onPieceDragCancel etc.)
+// dropOffBoard
+// styling
+// promotion
+// animation needed on manual drop for castling
+// tests
+// docs and stories
+// linting
+// formatting
+// packaging
+// ci/cd
+
 export function ChessboardProvider({
   children,
   options,
 }: React.PropsWithChildren<{ options?: ChessboardOptions }>) {
   const {
     position = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR",
+    boardOrientation = "white",
     chessboardRows = 8,
     chessboardColumns = 8,
     darkSquareColor = "#B58863",
@@ -101,11 +119,11 @@ export function ChessboardProvider({
   } = options || {};
 
   // the piece currently being dragged
-  const [movingPiece, setMovingPiece] = useState<PieceDataType | null>(null);
+  const [draggingPiece, setDraggingPiece] = useState<PieceDataType | null>(null);
 
   // the current position of pieces on the chessboard
   const [pieces, setPieces] = useState(
-    fenStringToPositionObject(position, chessboardRows)
+    fenStringToPositionObject(position, chessboardRows, chessboardColumns)
   );
 
   // calculated differences between current and incoming positions
@@ -124,7 +142,11 @@ export function ChessboardProvider({
 
   // if the position changes, we need to recreate the pieces array
   useEffect(() => {
-    const newPosition = fenStringToPositionObject(position, chessboardRows);
+    const newPosition = fenStringToPositionObject(
+      position,
+      chessboardRows,
+      chessboardColumns
+    );
 
     // new position was a result of a manual drop
     if (wasManualDrop) {
@@ -144,7 +166,12 @@ export function ChessboardProvider({
       setIsWaitingForAnimation(true);
 
       // get list of position updates as pieces to animate
-      const positionUpdates = getPositionUpdates(pieces, newPosition);
+      const positionUpdates = getPositionUpdates(
+        pieces,
+        newPosition,
+        chessboardColumns,
+        boardOrientation
+      );
       setPositionDifferences(positionUpdates);
 
       // start animation timeout
@@ -168,46 +195,46 @@ export function ChessboardProvider({
 
   // if the dimensions change, we need to recreate the pieces array
   useEffect(() => {
-    setPieces(fenStringToPositionObject(position, chessboardRows));
-  }, [chessboardRows, chessboardColumns]);
+    setPieces(fenStringToPositionObject(position, chessboardRows, chessboardColumns));
+    setIsWaitingForAnimation(false); // reset the animation flag
+  }, [chessboardRows, chessboardColumns, boardOrientation]);
 
-  // only redraw the board when the dimensions change
+  // only redraw the board when the dimensions or board orientation change
   const board = useMemo(
-    () => generateBoard(chessboardRows, chessboardColumns),
-    [chessboardRows, chessboardColumns]
+    () => generateBoard(chessboardRows, chessboardColumns, boardOrientation),
+    [chessboardRows, chessboardColumns, boardOrientation]
   );
 
   const handleDragCancel = useCallback(() => {
-    setMovingPiece(null);
+    setDraggingPiece(null);
   }, []);
 
   const handleDragEnd = useCallback(
     function handleDragEnd(event: DragEndEvent) {
-      if (!movingPiece?.position || !event.over?.id) {
+      if (!draggingPiece?.position || !event.over?.id) {
         return;
       }
 
       const dropSquare = event.over.id.toString();
 
       if (event.over) {
-        setMovingPiece(null);
+        setDraggingPiece(null);
         setWasManualDrop(true);
-        onPieceDrop?.(movingPiece.position, dropSquare, movingPiece);
+        onPieceDrop?.(draggingPiece.position, dropSquare, draggingPiece);
       }
     },
-    [movingPiece, pieces]
+    [draggingPiece, pieces]
   );
 
   const handleDragStart = useCallback(
     // active.id is the id of the piece being dragged
     function handleDragStart({ active }: DragStartEvent) {
       // the id is either the position of the piece on the board if it's on the board (e.g. "a1", "b2", etc.), or the type of the piece if it's a spare piece (e.g. "wP", "bN", etc.)
-      const pieceId = active.id.toString();
       const isSparePiece = active.data.current?.isSparePiece;
 
       // if id is a piece type, it's a spare piece
-      if (Object.values(PieceType).includes(pieceId as PieceType)) {
-        setMovingPiece({
+      if (isSparePiece) {
+        setDraggingPiece({
           isSparePiece,
           position: active.id as string,
           pieceType: active.id as PieceType,
@@ -217,7 +244,7 @@ export function ChessboardProvider({
 
       // if id is a position, it's a piece on the board
       if (pieces[active.id]) {
-        setMovingPiece(pieces[active.id]);
+        setDraggingPiece(pieces[active.id]);
         return;
       }
     },
@@ -228,6 +255,7 @@ export function ChessboardProvider({
     <ChessboardContext.Provider
       value={{
         // chessboard options
+        boardOrientation,
         chessboardRows,
         chessboardColumns,
         darkSquareColor,
@@ -244,7 +272,7 @@ export function ChessboardProvider({
         board,
         isWaitingForAnimation,
         isWrapped: true,
-        movingPiece,
+        draggingPiece,
         pieces,
         positionDifferences,
       }}

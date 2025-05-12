@@ -13,7 +13,8 @@ type Props = {
 };
 
 export function Piece({ clone, isSparePiece, position, pieceType }: Props) {
-  const { animationDurationInMs, positionDifferences } = useChessboardContext();
+  const { animationDurationInMs, boardOrientation, positionDifferences } =
+    useChessboardContext();
   const { attributes, isDragging, listeners, setNodeRef } = useDraggable({
     id: position,
     data: {
@@ -29,7 +30,6 @@ export function Piece({ clone, isSparePiece, position, pieceType }: Props) {
       const sourceSquare = position;
       const targetSquare = positionDifferences[position];
 
-      const boardOrientation = "white";
       const squareWidth = document
         .querySelector(`[data-column="a"][data-row="1"]`)
         ?.getBoundingClientRect().width;

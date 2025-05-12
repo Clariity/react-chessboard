@@ -46,6 +46,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 
+export { BoardOrientation } from "./BoardOrientation";
 export { PlayVsRandom } from "./PlayVsRandom";
 export { Position } from "./Position";
 export { SparePieces } from "./SparePieces";

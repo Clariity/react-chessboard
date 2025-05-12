@@ -4,10 +4,9 @@ import { snapCenterToCursor } from "@dnd-kit/modifiers";
 import { Cell } from "./Cell";
 import { Piece } from "./Piece";
 import { useChessboardContext } from "./ChessboardProvider";
-import { columnIndexToChessColumn, rowIndexToChessRow } from "./utils";
 
 export function Board() {
-  const { board, chessboardColumns, movingPiece, pieces } = useChessboardContext();
+  const { board, chessboardColumns, draggingPiece, pieces } = useChessboardContext();
 
   return (
     <>
@@ -17,12 +16,9 @@ export function Board() {
           gridTemplateColumns: `repeat(${chessboardColumns}, 1fr`,
         }}
       >
-        {board.map((row, y) =>
-          row.map((cell, x) => {
-            const piece =
-              pieces[
-                `${columnIndexToChessColumn(x)}${rowIndexToChessRow(y, board.length)}`
-              ];
+        {board.map((row) =>
+          row.map((cell) => {
+            const piece = pieces[cell.cellId];
 
             return (
               <Cell key={cell.cellId} {...cell}>
@@ -34,11 +30,11 @@ export function Board() {
       </div>
 
       <DragOverlay dropAnimation={null} modifiers={[snapCenterToCursor]}>
-        {movingPiece ? (
+        {draggingPiece ? (
           <Piece
             clone
-            position={movingPiece.position}
-            pieceType={movingPiece.pieceType}
+            position={draggingPiece.position}
+            pieceType={draggingPiece.pieceType}
           />
         ) : null}
       </DragOverlay>
