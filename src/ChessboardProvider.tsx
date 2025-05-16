@@ -10,7 +10,12 @@ import {
 } from "react";
 
 import { fenStringToPositionObject, generateBoard, getPositionUpdates } from "./utils";
-import { CellDataType, PieceDataType, PieceType, PositionDataType } from "./types";
+import {
+  CellDataType,
+  DraggingPieceDataType,
+  PieceType,
+  PositionDataType,
+} from "./types";
 
 type Defined<T> = T extends undefined ? never : T;
 
@@ -33,7 +38,7 @@ type ContextType = {
   board: CellDataType[][];
   isWaitingForAnimation: boolean;
   isWrapped: boolean;
-  draggingPiece: PieceDataType | null;
+  draggingPiece: DraggingPieceDataType | null;
   pieces: PositionDataType;
   positionDifferences: ReturnType<typeof getPositionUpdates>;
 };
@@ -44,7 +49,7 @@ export const useChessboardContext = () => use(ChessboardContext) as ContextType;
 
 export type ChessboardOptions = {
   // position
-  position?: string; // FEN string to set up the board
+  position?: string | PositionDataType; // FEN string (or object position) to set up the board
 
   // board dimensions and orientation
   boardOrientation?: "white" | "black";
@@ -70,7 +75,7 @@ export type ChessboardOptions = {
   onPieceDrop?: (
     sourceSquare: string,
     targetSquare: string,
-    piece: PieceDataType
+    piece: DraggingPieceDataType
   ) => void;
 };
 
@@ -78,7 +83,8 @@ export type ChessboardOptions = {
 // handlers (onPieceClick, onPieceDragStart, onPieceDragEnd, onPieceDragCancel etc.)
 // dropOffBoard
 // styling
-// promotion
+// promotion ???
+// premoves ???
 // animation needed on manual drop for castling
 // tests
 // docs and stories
@@ -119,11 +125,13 @@ export function ChessboardProvider({
   } = options || {};
 
   // the piece currently being dragged
-  const [draggingPiece, setDraggingPiece] = useState<PieceDataType | null>(null);
+  const [draggingPiece, setDraggingPiece] = useState<DraggingPieceDataType | null>(null);
 
   // the current position of pieces on the chessboard
   const [pieces, setPieces] = useState(
-    fenStringToPositionObject(position, chessboardRows, chessboardColumns)
+    typeof position === "string"
+      ? fenStringToPositionObject(position, chessboardRows, chessboardColumns)
+      : position
   );
 
   // calculated differences between current and incoming positions
@@ -142,11 +150,10 @@ export function ChessboardProvider({
 
   // if the position changes, we need to recreate the pieces array
   useEffect(() => {
-    const newPosition = fenStringToPositionObject(
-      position,
-      chessboardRows,
-      chessboardColumns
-    );
+    const newPosition =
+      typeof position === "string"
+        ? fenStringToPositionObject(position, chessboardRows, chessboardColumns)
+        : position;
 
     // new position was a result of a manual drop
     if (wasManualDrop) {
@@ -195,7 +202,11 @@ export function ChessboardProvider({
 
   // if the dimensions change, we need to recreate the pieces array
   useEffect(() => {
-    setPieces(fenStringToPositionObject(position, chessboardRows, chessboardColumns));
+    setPieces(
+      typeof position === "string"
+        ? fenStringToPositionObject(position, chessboardRows, chessboardColumns)
+        : position
+    );
     setIsWaitingForAnimation(false); // reset the animation flag
   }, [chessboardRows, chessboardColumns, boardOrientation]);
 
@@ -244,7 +255,10 @@ export function ChessboardProvider({
 
       // if id is a position, it's a piece on the board
       if (pieces[active.id]) {
-        setDraggingPiece(pieces[active.id]);
+        setDraggingPiece({
+          position: active.id as string,
+          pieceType: pieces[active.id].pieceType,
+        });
         return;
       }
     },

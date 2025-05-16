@@ -73,9 +73,7 @@ export function fenStringToPositionObject(
 
         // set piece at position (e.g. 0-0 for a8 on a normal board)
         positionObject[position] = {
-          isSparePiece: false,
           pieceType: fenToPieceCode(char as FenPieceString),
-          position: position,
         };
 
         // increment column for next piece
@@ -146,13 +144,13 @@ export function getPositionUpdates(
 
         const columnDifference = Math.abs(
           chessColumnToColumnIndex(
-            oldPosition[candidateSquare].position[0],
+            candidateSquare.match(/^[a-z]+/)?.[0] ?? "",
             noOfColumns,
             boardOrientation
           ) - chessColumnToColumnIndex(newSquare[0], noOfColumns, boardOrientation)
         );
         const rowDifference = Math.abs(
-          Number(oldPosition[candidateSquare].position[1]) - Number(newSquare[1])
+          Number(candidateSquare.match(/\d+$/)?.[0] ?? "") - Number(newSquare[1])
         );
         const isOldSquareLight =
           (chessColumnToColumnIndex(candidateSquare[0], noOfColumns, boardOrientation) +
@@ -167,7 +165,7 @@ export function getPositionUpdates(
 
         // prioritise pawns on same file
         if (candidatePieceType === "P") {
-          if (oldPosition[candidateSquare].position[0] === newSquare[0]) {
+          if (candidateSquare.match(/^[a-z]+/)?.[0] === newSquare.match(/^[a-z]+/)?.[0]) {
             updates[candidateSquare] = newSquare;
             break;
           }

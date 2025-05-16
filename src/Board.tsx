@@ -22,7 +22,7 @@ export function Board() {
 
             return (
               <Cell key={cell.cellId} {...cell}>
-                {piece ? <Piece {...piece} /> : null}
+                {piece ? <Piece {...piece} position={cell.cellId} /> : null}
               </Cell>
             );
           })

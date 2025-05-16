@@ -4,8 +4,12 @@ export type CellDataType = {
 };
 
 export type PieceDataType = {
-  isSparePiece: boolean;
-  position: string; // e.g. "a8"
+  pieceType: PieceType; // e.g. "wP" for white pawn, "bK" for black king
+};
+
+export type DraggingPieceDataType = {
+  isSparePiece?: boolean;
+  position: string | PieceType; // e.g. "a8" or "wP"
   pieceType: PieceType; // e.g. "wP" for white pawn, "bK" for black king
 };
 

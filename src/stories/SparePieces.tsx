@@ -5,7 +5,7 @@ import { useState } from "react";
 import { Chessboard } from "..";
 import { ChessboardProvider } from "../ChessboardProvider";
 import { SparePiece } from "../Piece";
-import { PieceDataType, PieceType } from "../types";
+import { DraggingPieceDataType, PieceType } from "../types";
 import meta from "./Chessboard.stories";
 
 type Story = StoryObj<typeof meta>;
@@ -19,7 +19,7 @@ export const SparePieces: Story = {
     function onPieceDrop(
       sourceSquare: string,
       targetSquare: string,
-      piece: PieceDataType
+      piece: DraggingPieceDataType
     ) {
       const color = piece.pieceType[0];
       const type = piece.pieceType[1].toLowerCase();

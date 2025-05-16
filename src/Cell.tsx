@@ -28,8 +28,8 @@ export function Cell({ children, cellId, isLightSquare }: Props) {
     id: cellId,
   });
 
-  const column = cellId[0];
-  const row = cellId[1];
+  const column = cellId.match(/^[a-z]+/)?.[0];
+  const row = cellId.match(/\d+$/)?.[0];
 
   return (
     <div

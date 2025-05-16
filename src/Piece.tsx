@@ -2,17 +2,17 @@ import { useDraggable } from "@dnd-kit/core";
 
 import { useChessboardContext } from "./ChessboardProvider";
 import { defaultPieces } from "./pieces";
-import type { PieceDataType, PieceType } from "./types";
+import type { DraggingPieceDataType, PieceDataType, PieceType } from "./types";
 import { useEffect, useState } from "react";
 
 type Props = {
   clone?: boolean;
-  isSparePiece?: PieceDataType["isSparePiece"];
-  position: PieceDataType["position"] | PieceType;
+  isSparePiece?: DraggingPieceDataType["isSparePiece"];
+  position: DraggingPieceDataType["position"];
   pieceType: PieceDataType["pieceType"];
 };
 
-export function Piece({ clone, isSparePiece, position, pieceType }: Props) {
+export function Piece({ clone, isSparePiece = false, position, pieceType }: Props) {
   const { animationDurationInMs, boardOrientation, positionDifferences } =
     useChessboardContext();
   const { attributes, isDragging, listeners, setNodeRef } = useDraggable({
@@ -60,7 +60,8 @@ export function Piece({ clone, isSparePiece, position, pieceType }: Props) {
 
   return (
     <div
-      id={position}
+      id={`${pieceType}-${position}`}
+      data-piece={pieceType}
       ref={setNodeRef}
       style={{
         ...animationStyle,
