@@ -13,9 +13,14 @@ import { fenStringToPositionObject, generateBoard, getPositionUpdates } from "./
 import {
   CellDataType,
   DraggingPieceDataType,
+  PieceDropHandlerArgs,
+  PieceHandlerArgs,
+  PieceRenderObject,
   PieceType,
   PositionDataType,
+  SquareHandlerArgs,
 } from "./types";
+import { defaultPieces } from "./pieces";
 
 type Defined<T> = T extends undefined ? never : T;
 
@@ -24,22 +29,37 @@ type ContextType = {
   boardOrientation: Defined<ChessboardOptions["boardOrientation"]>;
   chessboardRows: Defined<ChessboardOptions["chessboardRows"]>;
   chessboardColumns: Defined<ChessboardOptions["chessboardColumns"]>;
-  darkSquareColor: Defined<ChessboardOptions["darkSquareColor"]>;
-  lightSquareColor: Defined<ChessboardOptions["lightSquareColor"]>;
-  darkSquareNotationColor: Defined<ChessboardOptions["darkSquareNotationColor"]>;
-  lightSquareNotationColor: Defined<ChessboardOptions["lightSquareNotationColor"]>;
+
+  boardStyle: Defined<ChessboardOptions["boardStyle"]>;
+  squareStyle: Defined<ChessboardOptions["squareStyle"]>;
+  darkSquareStyle: Defined<ChessboardOptions["darkSquareStyle"]>;
+  lightSquareStyle: Defined<ChessboardOptions["lightSquareStyle"]>;
+  dropSquareStyle: Defined<ChessboardOptions["dropSquareStyle"]>;
+
+  darkSquareNotationStyle: Defined<ChessboardOptions["darkSquareNotationStyle"]>;
+  lightSquareNotationStyle: Defined<ChessboardOptions["lightSquareNotationStyle"]>;
   alphaNotationStyle: Defined<ChessboardOptions["alphaNotationStyle"]>;
   numericNotationStyle: Defined<ChessboardOptions["numericNotationStyle"]>;
+  showNotation: Defined<ChessboardOptions["showNotation"]>;
+
   animationDurationInMs: Defined<ChessboardOptions["animationDurationInMs"]>;
   showAnimations: Defined<ChessboardOptions["showAnimations"]>;
-  showNotation: Defined<ChessboardOptions["showNotation"]>;
+
+  allowDragging: Defined<ChessboardOptions["allowDragging"]>;
+  allowDragOffBoard: Defined<ChessboardOptions["allowDragOffBoard"]>;
+
+  onMouseOutSquare: ChessboardOptions["onMouseOutSquare"];
+  onMouseOverSquare: ChessboardOptions["onMouseOverSquare"];
+  onPieceClick: ChessboardOptions["onPieceClick"];
+  onSquareClick: ChessboardOptions["onSquareClick"];
+  onSquareRightClick: ChessboardOptions["onSquareRightClick"];
 
   // internal state
   board: CellDataType[][];
   isWaitingForAnimation: boolean;
   isWrapped: boolean;
   draggingPiece: DraggingPieceDataType | null;
-  pieces: PositionDataType;
+  currentPosition: PositionDataType;
   positionDifferences: ReturnType<typeof getPositionUpdates>;
 };
 
@@ -48,7 +68,8 @@ const ChessboardContext = createContext<ContextType | null>(null);
 export const useChessboardContext = () => use(ChessboardContext) as ContextType;
 
 export type ChessboardOptions = {
-  // position
+  // pieces and position
+  pieces?: PieceRenderObject;
   position?: string | PositionDataType; // FEN string (or object position) to set up the board
 
   // board dimensions and orientation
@@ -56,13 +77,17 @@ export type ChessboardOptions = {
   chessboardRows?: number;
   chessboardColumns?: number;
 
-  // light and dark squares
-  darkSquareColor?: string;
-  lightSquareColor?: string;
+  // board and squares styles
+  boardStyle?: React.CSSProperties;
+  squareStyle?: React.CSSProperties;
+  darkSquareStyle?: React.CSSProperties;
+  lightSquareStyle?: React.CSSProperties;
+  dropSquareStyle?: React.CSSProperties;
+  // squareRenderer?: (square: string, piece: PieceDataType) => React.JSX.Element;
 
   // notation
-  darkSquareNotationColor?: string;
-  lightSquareNotationColor?: string;
+  darkSquareNotationStyle?: React.CSSProperties;
+  lightSquareNotationStyle?: React.CSSProperties;
   alphaNotationStyle?: React.CSSProperties;
   numericNotationStyle?: React.CSSProperties;
   showNotation?: boolean;
@@ -71,20 +96,28 @@ export type ChessboardOptions = {
   animationDurationInMs?: number;
   showAnimations?: boolean;
 
+  // drag and drop
+  allowDragging?: boolean;
+  allowDragOffBoard?: boolean;
+
   // handlers
-  onPieceDrop?: (
-    sourceSquare: string,
-    targetSquare: string,
-    piece: DraggingPieceDataType
-  ) => void;
+  onMouseOutSquare?: ({ piece, square }: SquareHandlerArgs) => void;
+  onMouseOverSquare?: ({ piece, square }: SquareHandlerArgs) => void;
+  onPieceClick?: ({ isSparePiece, piece, square }: PieceHandlerArgs) => void;
+  onPieceDragEnd?: ({ isSparePiece, piece, square }: PieceHandlerArgs) => void;
+  onPieceDragStart?: ({ isSparePiece, piece, square }: PieceHandlerArgs) => void;
+  onPieceDrop?: ({ piece, sourceSquare, targetSquare }: PieceDropHandlerArgs) => void;
+  onSquareClick?: ({ piece, square }: SquareHandlerArgs) => void;
+  onSquareRightClick?: ({ piece, square }: SquareHandlerArgs) => void;
 };
 
+// finish handlers
+// if pieceIsDragged and fails, animation cuts, could be why old implementation had a return for onPieceDrop? could determine if a new position comes in?
 // isWaitingForAnimation and whether we want to block anything whilst happening, or delete it as we don't need it?
-// handlers (onPieceClick, onPieceDragStart, onPieceDragEnd, onPieceDragCancel etc.)
-// dropOffBoard
-// styling
+// dropOffBoard (can be done externally, onPieceDrop returns no targetSquare, so can do chess.remove())
 // promotion ???
 // premoves ???
+// arrows ??? (maybe add ability to draw them, but logic for them can be done externally, though would be nice to have it here)
 // animation needed on manual drop for castling
 // tests
 // docs and stories
@@ -92,20 +125,51 @@ export type ChessboardOptions = {
 // formatting
 // packaging
 // ci/cd
+// squareRenderer
 
 export function ChessboardProvider({
   children,
   options,
 }: React.PropsWithChildren<{ options?: ChessboardOptions }>) {
   const {
+    // pieces and position
+    pieces = defaultPieces,
     position = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR",
+
+    // board dimensions and orientation
     boardOrientation = "white",
     chessboardRows = 8,
     chessboardColumns = 8,
-    darkSquareColor = "#B58863",
-    lightSquareColor = "#F0D9B5",
-    darkSquareNotationColor = "#F0D9B5",
-    lightSquareNotationColor = "#B58863",
+
+    // board and squares styles
+    boardStyle = {
+      display: "grid",
+      gridTemplateColumns: `repeat(${chessboardColumns}, 1fr`,
+    },
+    squareStyle = {
+      aspectRatio: "1/1",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      position: "relative",
+    },
+    darkSquareStyle = {
+      backgroundColor: "#B58863",
+    },
+    lightSquareStyle = {
+      backgroundColor: "#F0D9B5",
+    },
+    dropSquareStyle = {
+      border: "1px solid black",
+    },
+
+    // notation
+    darkSquareNotationStyle = {
+      color: "#F0D9B5",
+    },
+    lightSquareNotationStyle = {
+      color: "#B58863",
+    },
     alphaNotationStyle = {
       fontSize: "13px",
       position: "absolute",
@@ -118,17 +182,32 @@ export function ChessboardProvider({
       bottom: 1,
       right: 4,
     },
+    showNotation = true,
+
+    // animation
     animationDurationInMs = 300,
     showAnimations = true,
-    showNotation = true,
+
+    // drag and drop
+    allowDragging = true,
+    allowDragOffBoard = true,
+
+    // handlers
+    onMouseOutSquare,
+    onMouseOverSquare,
+    onPieceClick,
+    onPieceDragEnd,
+    onPieceDragStart,
     onPieceDrop,
+    onSquareClick,
+    onSquareRightClick,
   } = options || {};
 
   // the piece currently being dragged
   const [draggingPiece, setDraggingPiece] = useState<DraggingPieceDataType | null>(null);
 
   // the current position of pieces on the chessboard
-  const [pieces, setPieces] = useState(
+  const [currentPosition, setCurrentPosition] = useState(
     typeof position === "string"
       ? fenStringToPositionObject(position, chessboardRows, chessboardColumns)
       : position
@@ -158,7 +237,7 @@ export function ChessboardProvider({
     // new position was a result of a manual drop
     if (wasManualDrop) {
       // no animation needed, just set the position and reset the flag
-      setPieces(newPosition);
+      setCurrentPosition(newPosition);
       setWasManualDrop(false);
       return;
     }
@@ -166,7 +245,7 @@ export function ChessboardProvider({
     // new position was a result of an external move
     // if no animation, just set the position
     if (!showAnimations) {
-      setPieces(newPosition);
+      setCurrentPosition(newPosition);
       return;
     } else {
       // animate external move
@@ -174,7 +253,7 @@ export function ChessboardProvider({
 
       // get list of position updates as pieces to animate
       const positionUpdates = getPositionUpdates(
-        pieces,
+        currentPosition,
         newPosition,
         chessboardColumns,
         boardOrientation
@@ -183,7 +262,7 @@ export function ChessboardProvider({
 
       // start animation timeout
       const newTimeout = setTimeout(() => {
-        setPieces(newPosition);
+        setCurrentPosition(newPosition);
         setPositionDifferences({});
         setIsWaitingForAnimation(false);
       }, animationDurationInMs);
@@ -202,7 +281,7 @@ export function ChessboardProvider({
 
   // if the dimensions change, we need to recreate the pieces array
   useEffect(() => {
-    setPieces(
+    setCurrentPosition(
       typeof position === "string"
         ? fenStringToPositionObject(position, chessboardRows, chessboardColumns)
         : position
@@ -222,16 +301,32 @@ export function ChessboardProvider({
 
   const handleDragEnd = useCallback(
     function handleDragEnd(event: DragEndEvent) {
-      if (!draggingPiece?.position || !event.over?.id) {
+      if (!draggingPiece) {
         return;
       }
 
-      const dropSquare = event.over.id.toString();
+      const dropSquare = event.over?.id.toString();
+
+      onPieceDragEnd?.({
+        isSparePiece: draggingPiece.isSparePiece,
+        piece: {
+          pieceType: draggingPiece.pieceType,
+        },
+        square: dropSquare ? dropSquare : null,
+      });
+
+      if (!dropSquare) {
+        return;
+      }
 
       if (event.over) {
         setDraggingPiece(null);
         setWasManualDrop(true);
-        onPieceDrop?.(draggingPiece.position, dropSquare, draggingPiece);
+        onPieceDrop?.({
+          piece: draggingPiece,
+          sourceSquare: draggingPiece.position,
+          targetSquare: dropSquare,
+        });
       }
     },
     [draggingPiece, pieces]
@@ -243,26 +338,26 @@ export function ChessboardProvider({
       // the id is either the position of the piece on the board if it's on the board (e.g. "a1", "b2", etc.), or the type of the piece if it's a spare piece (e.g. "wP", "bN", etc.)
       const isSparePiece = active.data.current?.isSparePiece;
 
-      // if id is a piece type, it's a spare piece
-      if (isSparePiece) {
-        setDraggingPiece({
-          isSparePiece,
-          position: active.id as string,
-          pieceType: active.id as PieceType,
-        });
-        return;
-      }
+      onPieceDragStart?.({
+        isSparePiece,
+        piece: isSparePiece
+          ? {
+              pieceType: active.id as PieceType,
+            }
+          : currentPosition[active.id],
+        square: isSparePiece ? (active.id as string) : null,
+      });
 
-      // if id is a position, it's a piece on the board
-      if (pieces[active.id]) {
-        setDraggingPiece({
-          position: active.id as string,
-          pieceType: pieces[active.id].pieceType,
-        });
-        return;
-      }
+      setDraggingPiece({
+        isSparePiece,
+        position: active.id as string,
+        pieceType: isSparePiece
+          ? (active.id as PieceType)
+          : currentPosition[active.id].pieceType,
+      });
+      return;
     },
-    [pieces]
+    [currentPosition]
   );
 
   return (
@@ -272,22 +367,37 @@ export function ChessboardProvider({
         boardOrientation,
         chessboardRows,
         chessboardColumns,
-        darkSquareColor,
-        lightSquareColor,
-        darkSquareNotationColor,
-        lightSquareNotationColor,
+
+        boardStyle,
+        squareStyle,
+        darkSquareStyle,
+        lightSquareStyle,
+        dropSquareStyle,
+
+        darkSquareNotationStyle,
+        lightSquareNotationStyle,
         alphaNotationStyle,
         numericNotationStyle,
+        showNotation,
+
         animationDurationInMs,
         showAnimations,
-        showNotation,
+
+        allowDragging,
+        allowDragOffBoard,
+
+        onMouseOutSquare,
+        onMouseOverSquare,
+        onPieceClick,
+        onSquareClick,
+        onSquareRightClick,
 
         // internal state
         board,
         isWaitingForAnimation,
         isWrapped: true,
         draggingPiece,
-        pieces,
+        currentPosition,
         positionDifferences,
       }}
     >

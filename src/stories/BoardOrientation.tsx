@@ -4,6 +4,7 @@ import { useState } from "react";
 
 import { Chessboard } from "..";
 import meta from "./Chessboard.stories";
+import { PieceDropHandlerArgs } from "../types";
 
 type Story = StoryObj<typeof meta>;
 
@@ -25,7 +26,7 @@ export const BoardOrientation: Story = {
       setChessGame(new Chess(chessGame.fen()));
     }
 
-    function onPieceDrop(sourceSquare: string, targetSquare: string) {
+    function onPieceDrop({ sourceSquare, targetSquare }: PieceDropHandlerArgs) {
       try {
         chessGame.move({
           from: sourceSquare,

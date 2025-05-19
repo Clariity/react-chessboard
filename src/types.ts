@@ -8,7 +8,7 @@ export type PieceDataType = {
 };
 
 export type DraggingPieceDataType = {
-  isSparePiece?: boolean;
+  isSparePiece: boolean;
   position: string | PieceType; // e.g. "a8" or "wP"
   pieceType: PieceType; // e.g. "wP" for white pawn, "bK" for black king
 };
@@ -16,6 +16,25 @@ export type DraggingPieceDataType = {
 export type PositionDataType = {
   [square: string]: PieceDataType;
 };
+
+export type SquareHandlerArgs = {
+  piece: PieceDataType;
+  square: string;
+};
+
+export type PieceHandlerArgs = {
+  isSparePiece: boolean;
+  piece: PieceDataType;
+  square: string | null;
+};
+
+export type PieceDropHandlerArgs = {
+  piece: DraggingPieceDataType;
+  sourceSquare: string;
+  targetSquare: string;
+};
+
+export type PieceRenderObject = Record<PieceType, () => React.JSX.Element>;
 
 export type FenPieceString =
   | "p"

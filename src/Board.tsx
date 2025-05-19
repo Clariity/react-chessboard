@@ -6,19 +6,14 @@ import { Piece } from "./Piece";
 import { useChessboardContext } from "./ChessboardProvider";
 
 export function Board() {
-  const { board, chessboardColumns, draggingPiece, pieces } = useChessboardContext();
+  const { board, boardStyle, currentPosition, draggingPiece } = useChessboardContext();
 
   return (
     <>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: `repeat(${chessboardColumns}, 1fr`,
-        }}
-      >
+      <div style={boardStyle}>
         {board.map((row) =>
           row.map((cell) => {
-            const piece = pieces[cell.cellId];
+            const piece = currentPosition[cell.cellId];
 
             return (
               <Cell key={cell.cellId} {...cell}>

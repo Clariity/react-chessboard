@@ -15,10 +15,12 @@ export function Cell({ children, cellId, isLightSquare }: Props) {
     boardOrientation,
     chessboardColumns,
     chessboardRows,
-    darkSquareColor,
-    lightSquareColor,
-    darkSquareNotationColor,
-    lightSquareNotationColor,
+    squareStyle,
+    darkSquareStyle,
+    lightSquareStyle,
+    dropSquareStyle,
+    darkSquareNotationStyle,
+    lightSquareNotationStyle,
     alphaNotationStyle,
     numericNotationStyle,
     showNotation,
@@ -35,23 +37,15 @@ export function Cell({ children, cellId, isLightSquare }: Props) {
     <div
       ref={setNodeRef}
       style={{
-        aspectRatio: "1/1",
-        backgroundColor: isLightSquare ? lightSquareColor : darkSquareColor,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        position: "relative",
-        border: isOver ? "1px solid black" : "",
+        ...squareStyle,
+        ...(isLightSquare ? lightSquareStyle : darkSquareStyle),
+        ...(isOver ? dropSquareStyle : {}),
       }}
       data-column={column}
       data-row={row}
     >
       {showNotation ? (
-        <span
-          style={{
-            color: isLightSquare ? lightSquareNotationColor : darkSquareNotationColor,
-          }}
-        >
+        <span style={isLightSquare ? lightSquareNotationStyle : darkSquareNotationStyle}>
           {row === (boardOrientation === "white" ? "1" : chessboardRows.toString()) && (
             <span style={numericNotationStyle}>{column}</span>
           )}

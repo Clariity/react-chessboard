@@ -20,10 +20,18 @@ const meta = {
       position: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR",
       chessboardRows: 8,
       chessboardColumns: 8,
-      darkSquareColor: "#B58863",
-      lightSquareColor: "#F0D9B5",
-      darkSquareNotationColor: "#F0D9B5",
-      lightSquareNotationColor: "#B58863",
+      darkSquareStyle: {
+        backgroundColor: "#B58863",
+      },
+      lightSquareStyle: {
+        backgroundColor: "#F0D9B5",
+      },
+      darkSquareNotationStyle: {
+        color: "#F0D9B5",
+      },
+      lightSquareNotationStyle: {
+        color: "#B58863",
+      },
       alphaNotationStyle: {
         fontSize: "13px",
         position: "absolute",

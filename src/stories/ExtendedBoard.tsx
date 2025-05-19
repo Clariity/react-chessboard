@@ -3,7 +3,12 @@ import { useState } from "react";
 
 import { Chessboard } from "..";
 import meta from "./Chessboard.stories";
-import { PositionDataType, PieceType, PieceDataType } from "../types";
+import {
+  PositionDataType,
+  PieceType,
+  PieceDataType,
+  PieceDropHandlerArgs,
+} from "../types";
 
 type Story = StoryObj<typeof meta>;
 
@@ -13,8 +18,8 @@ export const ExtendedBoard: Story = {
       rows: number;
       columns: number;
     }>({
-      rows: 8,
-      columns: 8,
+      rows: 12,
+      columns: 12,
     });
     const [position, setPosition] = useState<PositionDataType>({
       a1: {
@@ -28,11 +33,7 @@ export const ExtendedBoard: Story = {
       },
     });
 
-    function onPieceDrop(
-      sourceSquare: string,
-      targetSquare: string,
-      piece: PieceDataType
-    ) {
+    function onPieceDrop({ sourceSquare, targetSquare, piece }: PieceDropHandlerArgs) {
       const newPosition = { ...position };
       delete newPosition[sourceSquare];
       setPosition({
