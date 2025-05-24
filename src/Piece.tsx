@@ -13,7 +13,7 @@ type Props = {
 };
 
 export function Piece({ clone, isSparePiece = false, position, pieceType }: Props) {
-  const { animationDurationInMs, boardOrientation, positionDifferences } =
+  const { animationDurationInMs, boardOrientation, positionDifferences, onPieceClick } =
     useChessboardContext();
   const { attributes, isDragging, listeners, setNodeRef } = useDraggable({
     id: position,
@@ -71,6 +71,9 @@ export function Piece({ clone, isSparePiece = false, position, pieceType }: Prop
         cursor: clone ? "grabbing" : "grab",
         touchAction: "none",
       }}
+      onClick={() =>
+        onPieceClick?.({ isSparePiece, piece: { pieceType }, square: position })
+      }
       {...attributes}
       {...listeners}
     >

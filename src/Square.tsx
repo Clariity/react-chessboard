@@ -1,20 +1,21 @@
 import { useDroppable } from "@dnd-kit/core";
 
 import { useChessboardContext } from "./ChessboardProvider";
-import { CellDataType } from "./types";
+import { SquareDataType } from "./types";
 import { columnIndexToChessColumn } from "./utils";
 
 type Props = {
   children?: React.ReactNode;
-  cellId: CellDataType["cellId"];
-  isLightSquare: CellDataType["isLightSquare"];
+  squareId: SquareDataType["squareId"];
+  isLightSquare: SquareDataType["isLightSquare"];
 };
 
-export function Cell({ children, cellId, isLightSquare }: Props) {
+export function Square({ children, squareId, isLightSquare }: Props) {
   const {
     boardOrientation,
     chessboardColumns,
     chessboardRows,
+    currentPosition,
     squareStyle,
     darkSquareStyle,
     lightSquareStyle,
@@ -24,14 +25,18 @@ export function Cell({ children, cellId, isLightSquare }: Props) {
     alphaNotationStyle,
     numericNotationStyle,
     showNotation,
+    onMouseOutSquare,
+    onMouseOverSquare,
+    onSquareClick,
+    onSquareRightClick,
   } = useChessboardContext();
 
   const { isOver, setNodeRef } = useDroppable({
-    id: cellId,
+    id: squareId,
   });
 
-  const column = cellId.match(/^[a-z]+/)?.[0];
-  const row = cellId.match(/\d+$/)?.[0];
+  const column = squareId.match(/^[a-z]+/)?.[0];
+  const row = squareId.match(/\d+$/)?.[0];
 
   return (
     <div
@@ -43,6 +48,27 @@ export function Cell({ children, cellId, isLightSquare }: Props) {
       }}
       data-column={column}
       data-row={row}
+      onClick={(e) => {
+        if (e.button === 0) {
+          onSquareClick?.({ piece: currentPosition[squareId] ?? null, square: squareId });
+        }
+      }}
+      onContextMenu={(e) => {
+        e.preventDefault();
+        onSquareRightClick?.({
+          piece: currentPosition[squareId] ?? null,
+          square: squareId,
+        });
+      }}
+      onMouseOver={() =>
+        onMouseOverSquare?.({
+          piece: currentPosition[squareId] ?? null,
+          square: squareId,
+        })
+      }
+      onMouseOut={() =>
+        onMouseOutSquare?.({ piece: currentPosition[squareId] ?? null, square: squareId })
+      }
     >
       {showNotation ? (
         <span style={isLightSquare ? lightSquareNotationStyle : darkSquareNotationStyle}>

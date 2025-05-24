@@ -1,11 +1,16 @@
-import type { CellDataType, FenPieceString, PieceType, PositionDataType } from "./types";
+import type {
+  SquareDataType,
+  FenPieceString,
+  PieceType,
+  PositionDataType,
+} from "./types";
 
 export function generateBoard(
   noOfRows: number,
   noOfColumns: number,
   boardOrientation: "white" | "black"
 ) {
-  const board: CellDataType[][] = Array.from(
+  const board: SquareDataType[][] = Array.from(
     Array(noOfRows),
     () => new Array(noOfColumns)
   );
@@ -13,7 +18,7 @@ export function generateBoard(
   for (let row = 0; row < noOfRows; row++) {
     for (let column = 0; column < noOfColumns; column++) {
       board[row][column] = {
-        cellId: `${columnIndexToChessColumn(column, noOfColumns, boardOrientation)}${rowIndexToChessRow(row, noOfRows, boardOrientation)}`, // e.g. "a8" for row 0, column 0 in white orientation
+        squareId: `${columnIndexToChessColumn(column, noOfColumns, boardOrientation)}${rowIndexToChessRow(row, noOfRows, boardOrientation)}`, // e.g. "a8" for row 0, column 0 in white orientation
         isLightSquare: (row + column) % 2 === 0,
       };
     }

@@ -14,6 +14,7 @@
   },
   "homepage": "https://github.com/Clariity/react-chessboard#readme",
   "scripts": {
+    "build": "rimraf dist && rolldown -c rolldown.config.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
@@ -41,6 +42,9 @@
     "globals": "^16.1.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "rimraf": "^6.0.1",
+    "rolldown": "1.0.0-beta.9",
+    "rollup-plugin-typescript2": "^0.36.0",
     "storybook": "8.6.8",
     "storybook-addon-deep-controls": "^0.9.2",
     "typescript": "^5.8.2",

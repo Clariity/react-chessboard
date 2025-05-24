@@ -1,7 +1,7 @@
 import { DragOverlay } from "@dnd-kit/core";
 import { snapCenterToCursor } from "@dnd-kit/modifiers";
 
-import { Cell } from "./Cell";
+import { Square } from "./Square";
 import { Piece } from "./Piece";
 import { useChessboardContext } from "./ChessboardProvider";
 
@@ -12,13 +12,13 @@ export function Board() {
     <>
       <div style={boardStyle}>
         {board.map((row) =>
-          row.map((cell) => {
-            const piece = currentPosition[cell.cellId];
+          row.map((square) => {
+            const piece = currentPosition[square.squareId];
 
             return (
-              <Cell key={cell.cellId} {...cell}>
-                {piece ? <Piece {...piece} position={cell.cellId} /> : null}
-              </Cell>
+              <Square key={square.squareId} {...square}>
+                {piece ? <Piece {...piece} position={square.squareId} /> : null}
+              </Square>
             );
           })
         )}

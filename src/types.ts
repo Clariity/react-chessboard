@@ -1,5 +1,5 @@
-export type CellDataType = {
-  cellId: string; // e.g. "a8"
+export type SquareDataType = {
+  squareId: string; // e.g. "a8"
   isLightSquare: boolean;
 };
 
@@ -18,7 +18,7 @@ export type PositionDataType = {
 };
 
 export type SquareHandlerArgs = {
-  piece: PieceDataType;
+  piece: PieceDataType | null;
   square: string;
 };
 

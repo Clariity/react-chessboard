@@ -11,7 +11,7 @@ import {
 
 import { fenStringToPositionObject, generateBoard, getPositionUpdates } from "./utils";
 import {
-  CellDataType,
+  SquareDataType,
   DraggingPieceDataType,
   PieceDropHandlerArgs,
   PieceHandlerArgs,
@@ -55,8 +55,7 @@ type ContextType = {
   onSquareRightClick: ChessboardOptions["onSquareRightClick"];
 
   // internal state
-  board: CellDataType[][];
-  isWaitingForAnimation: boolean;
+  board: SquareDataType[][];
   isWrapped: boolean;
   draggingPiece: DraggingPieceDataType | null;
   currentPosition: PositionDataType;
@@ -106,19 +105,15 @@ export type ChessboardOptions = {
   onPieceClick?: ({ isSparePiece, piece, square }: PieceHandlerArgs) => void;
   onPieceDragEnd?: ({ isSparePiece, piece, square }: PieceHandlerArgs) => void;
   onPieceDragStart?: ({ isSparePiece, piece, square }: PieceHandlerArgs) => void;
-  onPieceDrop?: ({ piece, sourceSquare, targetSquare }: PieceDropHandlerArgs) => void;
+  onPieceDrop?: ({ piece, sourceSquare, targetSquare }: PieceDropHandlerArgs) => boolean;
   onSquareClick?: ({ piece, square }: SquareHandlerArgs) => void;
   onSquareRightClick?: ({ piece, square }: SquareHandlerArgs) => void;
 };
 
-// finish handlers
-// if pieceIsDragged and fails, animation cuts, could be why old implementation had a return for onPieceDrop? could determine if a new position comes in?
-// isWaitingForAnimation and whether we want to block anything whilst happening, or delete it as we don't need it?
 // dropOffBoard (can be done externally, onPieceDrop returns no targetSquare, so can do chess.remove())
 // promotion ???
 // premoves ???
 // arrows ??? (maybe add ability to draw them, but logic for them can be done externally, though would be nice to have it here)
-// animation needed on manual drop for castling
 // tests
 // docs and stories
 // linting
@@ -218,11 +213,12 @@ export function ChessboardProvider({
     ReturnType<typeof getPositionUpdates>
   >({});
 
-  // if we are waiting for an animation to complete
-  const [isWaitingForAnimation, setIsWaitingForAnimation] = useState(false);
-
   // if the latest move was a manual drop
-  const [wasManualDrop, setWasManualDrop] = useState(false);
+  const [manuallyDroppedPieceAndSquare, setManuallyDroppedPieceAndSquare] = useState<{
+    piece: PieceType;
+    sourceSquare: string;
+    targetSquare: string;
+  } | null>(null);
 
   // the animation timeout whilst waiting for animation to complete
   const animationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -234,42 +230,68 @@ export function ChessboardProvider({
         ? fenStringToPositionObject(position, chessboardRows, chessboardColumns)
         : position;
 
-    // new position was a result of a manual drop
-    if (wasManualDrop) {
-      // no animation needed, just set the position and reset the flag
-      setCurrentPosition(newPosition);
-      setWasManualDrop(false);
-      return;
-    }
-
-    // new position was a result of an external move
     // if no animation, just set the position
     if (!showAnimations) {
       setCurrentPosition(newPosition);
       return;
-    } else {
-      // animate external move
-      setIsWaitingForAnimation(true);
+    }
 
-      // get list of position updates as pieces to animate
-      const positionUpdates = getPositionUpdates(
-        currentPosition,
-        newPosition,
-        chessboardColumns,
-        boardOrientation
-      );
-      setPositionDifferences(positionUpdates);
+    // get list of position updates as pieces to potentially animate
+    const positionUpdates = getPositionUpdates(
+      currentPosition,
+      newPosition,
+      chessboardColumns,
+      boardOrientation
+    );
 
-      // start animation timeout
+    const multiplePiecesMoved = Object.keys(positionUpdates).length > 1;
+
+    // manually dropped piece caused multiple pieces to move (e.g. castling)
+    if (manuallyDroppedPieceAndSquare && multiplePiecesMoved) {
+      // create a new position with just the dropped piece moved
+      const intermediatePosition = { ...currentPosition };
+      delete intermediatePosition[manuallyDroppedPieceAndSquare.sourceSquare];
+      intermediatePosition[manuallyDroppedPieceAndSquare.targetSquare] = {
+        pieceType: manuallyDroppedPieceAndSquare.piece,
+      };
+      setCurrentPosition(intermediatePosition);
+
+      // create position differences with only the other pieces' movements
+      const otherPiecesUpdates = { ...positionUpdates };
+      delete otherPiecesUpdates[manuallyDroppedPieceAndSquare.sourceSquare];
+      setPositionDifferences(otherPiecesUpdates);
+
+      // animate the other pieces' movements
       const newTimeout = setTimeout(() => {
         setCurrentPosition(newPosition);
         setPositionDifferences({});
-        setIsWaitingForAnimation(false);
+        setManuallyDroppedPieceAndSquare(null);
       }, animationDurationInMs);
 
-      // update the ref to the new timeout
       animationTimeoutRef.current = newTimeout;
+      return;
     }
+
+    // new position was a result of a manual drop
+    if (manuallyDroppedPieceAndSquare) {
+      // no animation needed, just set the position and reset the flag
+      setCurrentPosition(newPosition);
+      setManuallyDroppedPieceAndSquare(null);
+      return;
+    }
+
+    // new position was a result of an external move
+
+    setPositionDifferences(positionUpdates);
+
+    // start animation timeout
+    const newTimeout = setTimeout(() => {
+      setCurrentPosition(newPosition);
+      setPositionDifferences({});
+    }, animationDurationInMs);
+
+    // update the ref to the new timeout
+    animationTimeoutRef.current = newTimeout;
 
     // clear timeout on unmount
     return () => {
@@ -286,7 +308,6 @@ export function ChessboardProvider({
         ? fenStringToPositionObject(position, chessboardRows, chessboardColumns)
         : position
     );
-    setIsWaitingForAnimation(false); // reset the animation flag
   }, [chessboardRows, chessboardColumns, boardOrientation]);
 
   // only redraw the board when the dimensions or board orientation change
@@ -320,13 +341,21 @@ export function ChessboardProvider({
       }
 
       if (event.over) {
-        setDraggingPiece(null);
-        setWasManualDrop(true);
-        onPieceDrop?.({
+        const isDropValid = onPieceDrop?.({
           piece: draggingPiece,
           sourceSquare: draggingPiece.position,
           targetSquare: dropSquare,
         });
+
+        // if the drop is valid, set the manually dropped piece and square
+        if (isDropValid) {
+          setManuallyDroppedPieceAndSquare({
+            piece: draggingPiece.pieceType,
+            sourceSquare: draggingPiece.position,
+            targetSquare: dropSquare,
+          });
+        }
+        setDraggingPiece(null);
       }
     },
     [draggingPiece, pieces]
@@ -394,7 +423,6 @@ export function ChessboardProvider({
 
         // internal state
         board,
-        isWaitingForAnimation,
         isWrapped: true,
         draggingPiece,
         currentPosition,
