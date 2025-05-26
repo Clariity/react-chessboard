@@ -1,14 +1,14 @@
 import type { StoryObj } from "@storybook/react";
 import { useState } from "react";
 
-import { Chessboard } from "..";
-import meta from "./Chessboard.stories";
+import { Chessboard } from "../../src";
+import meta from "./Default.stories";
 import {
   PositionDataType,
   PieceType,
   PieceDataType,
   PieceDropHandlerArgs,
-} from "../types";
+} from "../../src/types";
 
 type Story = StoryObj<typeof meta>;
 

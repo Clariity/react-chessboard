@@ -2,9 +2,9 @@ import type { StoryObj } from "@storybook/react";
 import { Chess } from "chess.js";
 import { useState } from "react";
 
-import { Chessboard } from "..";
-import meta from "./Chessboard.stories";
-import { PieceDropHandlerArgs } from "../types";
+import { Chessboard } from "../../src";
+import meta from "./Default.stories";
+import { PieceDropHandlerArgs } from "../../src/types";
 
 type Story = StoryObj<typeof meta>;
 

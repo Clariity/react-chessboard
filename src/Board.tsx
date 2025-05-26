@@ -4,13 +4,15 @@ import { snapCenterToCursor } from "@dnd-kit/modifiers";
 import { Square } from "./Square";
 import { Piece } from "./Piece";
 import { useChessboardContext } from "./ChessboardProvider";
+import { defaultBoardStyle } from "./styles";
 
 export function Board() {
-  const { board, boardStyle, currentPosition, draggingPiece } = useChessboardContext();
+  const { board, boardStyle, chessboardColumns, currentPosition, draggingPiece } =
+    useChessboardContext();
 
   return (
     <>
-      <div style={boardStyle}>
+      <div style={{ ...defaultBoardStyle(chessboardColumns), ...boardStyle }}>
         {board.map((row) =>
           row.map((square) => {
             const piece = currentPosition[square.squareId];

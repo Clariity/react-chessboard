@@ -31,7 +31,7 @@ export type PieceHandlerArgs = {
 export type PieceDropHandlerArgs = {
   piece: DraggingPieceDataType;
   sourceSquare: string;
-  targetSquare: string;
+  targetSquare: string | null;
 };
 
 export type PieceRenderObject = Record<PieceType, () => React.JSX.Element>;

@@ -1,4 +1,4 @@
 {
   "extends": "./tsconfig.json",
-  "exclude": ["src/stories/**/*", "**/*.stories.tsx", "**/*.stories.ts"]
+  "exclude": ["docs"]
 }

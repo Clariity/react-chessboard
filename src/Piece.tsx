@@ -13,17 +13,27 @@ type Props = {
 };
 
 export function Piece({ clone, isSparePiece = false, position, pieceType }: Props) {
-  const { animationDurationInMs, boardOrientation, positionDifferences, onPieceClick } =
-    useChessboardContext();
+  const {
+    allowDragging,
+    animationDurationInMs,
+    boardOrientation,
+    positionDifferences,
+    onPieceClick,
+  } = useChessboardContext();
   const { attributes, isDragging, listeners, setNodeRef } = useDraggable({
     id: position,
     data: {
       isSparePiece,
       pieceType,
     },
+    disabled: !allowDragging,
   });
-
   const [animationStyle, setAnimationStyle] = useState<React.CSSProperties>({});
+
+  let cursorStyle = clone ? "grabbing" : "grab";
+  if (!allowDragging) {
+    cursorStyle = "pointer";
+  }
 
   useEffect(() => {
     if (positionDifferences[position]) {
@@ -68,8 +78,8 @@ export function Piece({ clone, isSparePiece = false, position, pieceType }: Prop
         opacity: isDragging ? 0.5 : undefined,
         width: "100%",
         height: "100%",
-        cursor: clone ? "grabbing" : "grab",
-        touchAction: "none",
+        cursor: cursorStyle,
+        touchAction: "none", // prevent zooming and scrolling on touch devices
       }}
       onClick={() =>
         onPieceClick?.({ isSparePiece, piece: { pieceType }, square: position })

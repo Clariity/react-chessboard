@@ -1,4 +1,15 @@
-import { DndContext, DragEndEvent, DragStartEvent, pointerWithin } from "@dnd-kit/core";
+import {
+  DndContext,
+  DragEndEvent,
+  DragStartEvent,
+  KeyboardSensor,
+  MouseSensor,
+  PointerSensor,
+  pointerWithin,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
 import {
   createContext,
   use,
@@ -21,6 +32,17 @@ import {
   SquareHandlerArgs,
 } from "./types";
 import { defaultPieces } from "./pieces";
+import {
+  defaultAlphaNotationStyle,
+  defaultBoardStyle,
+  defaultDarkSquareNotationStyle,
+  defaultDarkSquareStyle,
+  defaultDropSquareStyle,
+  defaultLightSquareNotationStyle,
+  defaultLightSquareStyle,
+  defaultNumericNotationStyle,
+  defaultSquareStyle,
+} from "./styles";
 
 type Defined<T> = T extends undefined ? never : T;
 
@@ -103,19 +125,24 @@ export type ChessboardOptions = {
   onMouseOutSquare?: ({ piece, square }: SquareHandlerArgs) => void;
   onMouseOverSquare?: ({ piece, square }: SquareHandlerArgs) => void;
   onPieceClick?: ({ isSparePiece, piece, square }: PieceHandlerArgs) => void;
-  onPieceDragEnd?: ({ isSparePiece, piece, square }: PieceHandlerArgs) => void;
   onPieceDragStart?: ({ isSparePiece, piece, square }: PieceHandlerArgs) => void;
   onPieceDrop?: ({ piece, sourceSquare, targetSquare }: PieceDropHandlerArgs) => boolean;
   onSquareClick?: ({ piece, square }: SquareHandlerArgs) => void;
   onSquareRightClick?: ({ piece, square }: SquareHandlerArgs) => void;
 };
 
-// dropOffBoard (can be done externally, onPieceDrop returns no targetSquare, so can do chess.remove())
+// allowDragOffBoard - https://docs.dndkit.com/api-documentation/modifiers#building-custom-modifiers - CustomDragLayer implementation
+// draggingPieceStyle (so users can style the dragging piece e.g. grow in size)
+
+// docs and stories
+// multiple boards? do we need id?
+// prevent notation highlighting on double click
+// accessibility (may need to revisit sensors)
+// check mobile support
 // promotion ???
 // premoves ???
 // arrows ??? (maybe add ability to draw them, but logic for them can be done externally, though would be nice to have it here)
 // tests
-// docs and stories
 // linting
 // formatting
 // packaging
@@ -137,46 +164,17 @@ export function ChessboardProvider({
     chessboardColumns = 8,
 
     // board and squares styles
-    boardStyle = {
-      display: "grid",
-      gridTemplateColumns: `repeat(${chessboardColumns}, 1fr`,
-    },
-    squareStyle = {
-      aspectRatio: "1/1",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      position: "relative",
-    },
-    darkSquareStyle = {
-      backgroundColor: "#B58863",
-    },
-    lightSquareStyle = {
-      backgroundColor: "#F0D9B5",
-    },
-    dropSquareStyle = {
-      border: "1px solid black",
-    },
+    boardStyle = defaultBoardStyle(chessboardColumns),
+    squareStyle = defaultSquareStyle,
+    darkSquareStyle = defaultDarkSquareStyle,
+    lightSquareStyle = defaultLightSquareStyle,
+    dropSquareStyle = defaultDropSquareStyle,
 
     // notation
-    darkSquareNotationStyle = {
-      color: "#F0D9B5",
-    },
-    lightSquareNotationStyle = {
-      color: "#B58863",
-    },
-    alphaNotationStyle = {
-      fontSize: "13px",
-      position: "absolute",
-      top: 2,
-      left: 2,
-    },
-    numericNotationStyle = {
-      fontSize: "13px",
-      position: "absolute",
-      bottom: 1,
-      right: 4,
-    },
+    darkSquareNotationStyle = defaultDarkSquareNotationStyle,
+    lightSquareNotationStyle = defaultLightSquareNotationStyle,
+    alphaNotationStyle = defaultAlphaNotationStyle,
+    numericNotationStyle = defaultNumericNotationStyle,
     showNotation = true,
 
     // animation
@@ -191,7 +189,6 @@ export function ChessboardProvider({
     onMouseOutSquare,
     onMouseOverSquare,
     onPieceClick,
-    onPieceDragEnd,
     onPieceDragStart,
     onPieceDrop,
     onSquareClick,
@@ -328,15 +325,20 @@ export function ChessboardProvider({
 
       const dropSquare = event.over?.id.toString();
 
-      onPieceDragEnd?.({
-        isSparePiece: draggingPiece.isSparePiece,
-        piece: {
-          pieceType: draggingPiece.pieceType,
-        },
-        square: dropSquare ? dropSquare : null,
-      });
-
+      // dropped outside of droppable area (e.g. off board)
       if (!dropSquare) {
+        onPieceDrop?.({
+          piece: draggingPiece,
+          sourceSquare: draggingPiece.position,
+          targetSquare: null,
+        });
+        // set as manually dropped piece so that no animation is shown
+        setManuallyDroppedPieceAndSquare({
+          piece: draggingPiece.pieceType,
+          sourceSquare: draggingPiece.position,
+          targetSquare: "",
+        });
+        setDraggingPiece(null);
         return;
       }
 
@@ -374,7 +376,7 @@ export function ChessboardProvider({
               pieceType: active.id as PieceType,
             }
           : currentPosition[active.id],
-        square: isSparePiece ? (active.id as string) : null,
+        square: isSparePiece ? null : (active.id as string),
       });
 
       setDraggingPiece({
@@ -387,6 +389,17 @@ export function ChessboardProvider({
       return;
     },
     [currentPosition]
+  );
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 5,
+      },
+    }),
+    useSensor(KeyboardSensor),
+    useSensor(TouchSensor),
+    useSensor(MouseSensor)
   );
 
   return (
@@ -434,6 +447,7 @@ export function ChessboardProvider({
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
         onDragCancel={handleDragCancel}
+        sensors={sensors}
       >
         {children}
       </DndContext>
