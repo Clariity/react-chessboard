@@ -19,16 +19,19 @@ export const OnPieceDragStart: Story = {
     const [draggedPiece, setDraggedPiece] = useState<string>("None");
     const [isSparePiece, setIsSparePiece] = useState<boolean>(false);
 
+    // handle piece drag start
     const onPieceDragStart = ({ square, piece, isSparePiece }: PieceHandlerArgs) => {
       setDraggedSquare(square || "None");
       setDraggedPiece(piece.pieceType);
       setIsSparePiece(isSparePiece);
     };
 
+    // chessboard options
     const chessboardOptions = {
       onPieceDragStart,
     };
 
+    // render
     return (
       <div
         style={{

@@ -53,6 +53,7 @@ export const ChessboardRows: Story = {
       } as PositionDataType,
     };
 
+    // render
     return <Chessboard options={chessboardOptions} />;
   },
 };

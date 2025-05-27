@@ -20,6 +20,7 @@ export const OnPieceDrop: Story = {
     const [droppedPiece, setDroppedPiece] = useState<string>("None");
     const [isSparePiece, setIsSparePiece] = useState<boolean>(false);
 
+    // handle piece drop
     const onPieceDrop = ({ sourceSquare, targetSquare, piece }: PieceDropHandlerArgs) => {
       setSourceSquare(sourceSquare);
       setTargetSquare(targetSquare || "None");
@@ -28,10 +29,12 @@ export const OnPieceDrop: Story = {
       return true; // Allow the drop
     };
 
+    // chessboard options
     const chessboardOptions = {
       onPieceDrop,
     };
 
+    // render
     return (
       <div
         style={{

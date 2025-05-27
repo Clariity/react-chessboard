@@ -8,7 +8,7 @@ import type { PieceDropHandlerArgs } from "../../../src/types";
 
 const meta: Meta<typeof Chessboard> = {
   ...defaultMeta,
-  title: "stories/Options/Animation",
+  title: "stories/Options/AnimationDurationInMs",
 } satisfies Meta<typeof Chessboard>;
 
 export default meta;
@@ -41,6 +41,7 @@ export const AnimationDurationInMs: Story = {
       setChessGame(new Chess(chessGameRef.current.fen()));
     }
 
+    // handle piece drop
     const onPieceDrop = ({ sourceSquare, targetSquare }: PieceDropHandlerArgs) => {
       if (!targetSquare) return false;
 
@@ -70,7 +71,7 @@ export const AnimationDurationInMs: Story = {
       onPieceDrop,
     };
 
-    // render the component
+    // render
     return (
       <div
         style={{

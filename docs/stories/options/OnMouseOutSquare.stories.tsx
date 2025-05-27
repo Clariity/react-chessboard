@@ -18,15 +18,18 @@ export const OnMouseOutSquare: Story = {
     const [lastOutSquare, setLastOutSquare] = useState<string>("None");
     const [lastOutPiece, setLastOutPiece] = useState<string | null>("None");
 
+    // handle mouse out square
     const onMouseOutSquare = ({ square, piece }: SquareHandlerArgs) => {
       setLastOutSquare(square);
       setLastOutPiece(piece?.pieceType || null);
     };
 
+    // chessboard options
     const chessboardOptions = {
       onMouseOutSquare,
     };
 
+    // render
     return (
       <div
         style={{

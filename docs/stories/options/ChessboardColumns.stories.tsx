@@ -18,6 +18,7 @@ export const ChessboardColumns: Story = {
       chessboardColumns: 16,
     };
 
+    // render
     return <Chessboard options={chessboardOptions} />;
   },
 };

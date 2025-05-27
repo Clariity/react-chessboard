@@ -19,13 +19,16 @@ export const Position: Story = {
       "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
     );
 
+    // generate random FEN position
     function generateRandomFen() {
       const pieces = ["r", "n", "b", "q", "k", "p", "R", "N", "B", "Q", "K", "P"];
       let fen = "";
 
+      // create 8 rows of random pieces
       for (let i = 0; i < 8; i++) {
         let emptyCount = 0;
 
+        // create 8 columns of random pieces or empty squares
         for (let j = 0; j < 8; j++) {
           if (Math.random() < 0.2) {
             if (emptyCount > 0) {
@@ -39,23 +42,28 @@ export const Position: Story = {
           }
         }
 
+        // add empty count to FEN string if there are empty squares
         if (emptyCount > 0) {
           fen += emptyCount;
         }
 
+        // add slash between rows
         if (i < 7) {
           fen += "/";
         }
       }
 
+      // set the position
       setPosition(fen);
     }
 
+    // chessboard options
     const chessboardOptions = {
       position,
       showAnimations,
     };
 
+    // render
     return (
       <div
         style={{

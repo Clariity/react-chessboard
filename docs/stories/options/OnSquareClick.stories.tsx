@@ -7,7 +7,7 @@ import type { SquareHandlerArgs } from "../../../src/types";
 
 const meta: Meta<typeof Chessboard> = {
   ...defaultMeta,
-  title: "stories/Options/SquareClick",
+  title: "stories/Options/OnSquareClick",
 } satisfies Meta<typeof Chessboard>;
 
 export default meta;
@@ -18,15 +18,18 @@ export const OnSquareClick: Story = {
     const [clickedSquare, setClickedSquare] = useState<string | null>(null);
     const [clickedPiece, setClickedPiece] = useState<string | null>(null);
 
+    // handle square click
     const onSquareClick = ({ square, piece }: SquareHandlerArgs) => {
       setClickedSquare(square);
       setClickedPiece(piece?.pieceType || null);
     };
 
+    // chessboard options
     const chessboardOptions = {
       onSquareClick,
     };
 
+    // render
     return (
       <div
         style={{

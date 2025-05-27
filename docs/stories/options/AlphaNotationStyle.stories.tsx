@@ -13,6 +13,7 @@ type Story = StoryObj<typeof meta>;
 
 export const AlphaNotationStyle: Story = {
   render: () => {
+    // chessboard options
     const chessboardOptions = {
       alphaNotationStyle: {
         color: "cyan",
@@ -21,6 +22,7 @@ export const AlphaNotationStyle: Story = {
       },
     };
 
+    // render
     return <Chessboard options={chessboardOptions} />;
   },
 };

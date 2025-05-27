@@ -21,7 +21,7 @@ export const BoardOrientation: Story = {
       boardOrientation,
     };
 
-    // render the component
+    // render
     return (
       <div
         style={{

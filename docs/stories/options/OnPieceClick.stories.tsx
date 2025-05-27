@@ -19,17 +19,20 @@ export const OnPieceClick: Story = {
     const [clickedPiece, setClickedPiece] = useState<string>("None");
     const [isSparePiece, setIsSparePiece] = useState<boolean>(false);
 
+    // handle piece click
     const onPieceClick = ({ square, piece, isSparePiece }: PieceHandlerArgs) => {
       setClickedSquare(square || "None");
       setClickedPiece(piece.pieceType);
       setIsSparePiece(isSparePiece);
     };
 
+    // chessboard options
     const chessboardOptions = {
       allowDragging: false,
       onPieceClick,
     };
 
+    // render
     return (
       <div
         style={{

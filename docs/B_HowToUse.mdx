@@ -456,15 +456,13 @@ Callback function triggered when a square is right-clicked.
 
 <Canvas of={OnSquareRightClickStories.OnSquareRightClick} />
 
-// TODO: CONTINUE FROM HERE
-
 ### `options.pieces`
 
-Custom piece renderers for each piece type.
+Custom piece renderers for each piece type. You can use this to fully replace the default piece SVGs, extend the default piece SVGs to add custom piece SVGs for new piece types, or replace individual piece SVGs.
 
-**Default value:** Default chess piece images
+**Default value:** Default chess piece SVGs
 
-**TypeScript type:** `PieceRenderObject`
+**TypeScript type:** `Record<string, () => React.JSX.Element>`
 
 **Standard use case:** Using custom piece designs or implementing different piece sets.
 
@@ -472,11 +470,11 @@ Custom piece renderers for each piece type.
 
 ### `options.position`
 
-The current position of the board in FEN notation.
+The current position of the board in FEN notation or an object of square coordinates to piece type.
 
 **Default value:** `"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"`
 
-**TypeScript type:** `string | PositionDataType`
+**TypeScript type:** `string | { [square: string]: { pieceType: string } }`
 
 **Standard use case:** Setting up specific chess positions or updating the board state.
 
@@ -490,7 +488,7 @@ Controls whether piece movements are animated.
 
 **TypeScript type:** `boolean`
 
-**Standard use case:** Disabling animations for performance or accessibility reasons.
+**Standard use case:** Disabling animations for performance, accessibility, or design reasons.
 
 <Canvas of={ShowAnimationsStories.ShowAnimations} />
 
@@ -508,7 +506,7 @@ Controls whether board coordinates are displayed.
 
 ### `options.squareStyle`
 
-Controls the styling of all squares on the board.
+Controls the styling of all squares on the board, regardless of their colour.
 
 **Default value:**
 
@@ -527,3 +525,11 @@ Controls the styling of all squares on the board.
 **Standard use case:** Customizing the size or appearance of all squares uniformly.
 
 <Canvas of={SquareStyleStories.SquareStyle} />
+
+<div
+  style={{ textAlign: "center", marginTop: "3rem", color: "#666", fontSize: "0.8rem" }}
+>
+  🎉 You made it to the bottom! Here's a fun fact: The number of possible unique chess
+  games is greater than the number of atoms in the observable universe. Keep exploring and
+  happy coding! 🎮
+</div>

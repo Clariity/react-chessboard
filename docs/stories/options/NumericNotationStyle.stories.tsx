@@ -13,6 +13,7 @@ type Story = StoryObj<typeof meta>;
 
 export const NumericNotationStyle: Story = {
   render: () => {
+    // chessboard options
     const chessboardOptions = {
       numericNotationStyle: {
         color: "cyan",
@@ -21,6 +22,7 @@ export const NumericNotationStyle: Story = {
       },
     };
 
+    // render
     return <Chessboard options={chessboardOptions} />;
   },
 };

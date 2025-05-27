@@ -13,12 +13,14 @@ type Story = StoryObj<typeof meta>;
 
 export const DropSquareStyle: Story = {
   render: () => {
+    // chessboard options
     const chessboardOptions = {
       dropSquareStyle: {
         border: "5px solid red",
       },
     };
 
+    // render
     return (
       <div
         style={{

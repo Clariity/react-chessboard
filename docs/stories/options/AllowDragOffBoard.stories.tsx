@@ -3,7 +3,6 @@ import { useState } from "react";
 
 import defaultMeta from "../Default.stories";
 import { Chessboard } from "../../../src";
-import type { PieceDropHandlerArgs } from "../../../src/types";
 
 const meta: Meta<typeof Chessboard> = {
   ...defaultMeta,
@@ -16,30 +15,13 @@ type Story = StoryObj<typeof meta>;
 export const AllowDragOffBoard: Story = {
   render: () => {
     const [allowDragOffBoard, setAllowDragOffBoard] = useState(true);
-    const [position, setPosition] = useState(
-      "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
-    );
 
-    const onPieceDrop = ({ sourceSquare, targetSquare }: PieceDropHandlerArgs) => {
-      // If targetSquare is null, the piece was dropped off the board
-      if (!targetSquare) {
-        // Remove the piece from the source square
-        const newPosition = position
-          .split(" ")[0]
-          .split("/")
-          .map((rank, rankIndex) => {
-            if (rankIndex === 8 - parseInt(sourceSquare[1])) {
-              return rank.replace(sourceSquare[0], "1");
-            }
-            return rank;
-          })
-          .join("/");
-        setPosition(newPosition);
-        return true;
-      }
-      return false;
+    // chessboard options
+    const chessboardOptions = {
+      allowDragOffBoard,
     };
 
+    // render
     return (
       <div
         style={{
@@ -49,27 +31,19 @@ export const AllowDragOffBoard: Story = {
           alignItems: "center",
         }}
       >
-        <div>
-          <label>
-            <input
-              type="checkbox"
-              checked={allowDragOffBoard}
-              onChange={(e) => setAllowDragOffBoard(e.target.checked)}
-            />
-            Allow dragging pieces off board
-          </label>
-        </div>
+        <label>
+          <input
+            type="checkbox"
+            checked={allowDragOffBoard}
+            onChange={(e) => setAllowDragOffBoard(e.target.checked)}
+          />
+          Allow dragging pieces off board
+        </label>
 
-        <Chessboard
-          options={{
-            allowDragOffBoard,
-            position,
-            onPieceDrop,
-          }}
-        />
+        <Chessboard options={chessboardOptions} />
 
         <p style={{ fontSize: "0.8rem", color: "#666" }}>
-          Try dragging a piece off the board when the option is enabled
+          Try dragging a piece off the board when the checkbox is unchecked
         </p>
       </div>
     );

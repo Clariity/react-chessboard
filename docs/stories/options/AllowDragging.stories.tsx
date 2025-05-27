@@ -16,6 +16,12 @@ export const AllowDragging: Story = {
   render: () => {
     const [allowDragging, setAllowDragging] = useState(true);
 
+    // chessboard options
+    const chessboardOptions = {
+      allowDragging,
+    };
+
+    // render
     return (
       <div
         style={{
@@ -34,11 +40,7 @@ export const AllowDragging: Story = {
           Allow dragging pieces
         </label>
 
-        <Chessboard
-          options={{
-            allowDragging,
-          }}
-        />
+        <Chessboard options={chessboardOptions} />
 
         <p style={{ fontSize: "0.8rem", color: "#666" }}>
           Toggle the checkbox to enable/disable piece dragging

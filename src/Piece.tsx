@@ -1,33 +1,41 @@
 import { useDraggable } from "@dnd-kit/core";
+import { memo } from "react";
 
 import { useChessboardContext } from "./ChessboardProvider";
-import { defaultPieces } from "./pieces";
 import type { DraggingPieceDataType, PieceDataType, PieceType } from "./types";
 import { useEffect, useState } from "react";
 
-type Props = {
+type PieceProps = {
   clone?: boolean;
   isSparePiece?: DraggingPieceDataType["isSparePiece"];
   position: DraggingPieceDataType["position"];
   pieceType: PieceDataType["pieceType"];
+  isDragging: boolean;
+  setNodeRef: (element: HTMLElement | null) => void;
+  attributes: any;
+  listeners: any;
 };
 
-export function Piece({ clone, isSparePiece = false, position, pieceType }: Props) {
+// Pure presentation component that can be memoized
+const PieceComponent = memo(function PieceComponent({
+  clone,
+  isSparePiece = false,
+  position,
+  pieceType,
+  isDragging,
+  setNodeRef,
+  attributes,
+  listeners,
+}: PieceProps) {
   const {
     allowDragging,
     animationDurationInMs,
     boardOrientation,
+    pieces,
     positionDifferences,
     onPieceClick,
   } = useChessboardContext();
-  const { attributes, isDragging, listeners, setNodeRef } = useDraggable({
-    id: position,
-    data: {
-      isSparePiece,
-      pieceType,
-    },
-    disabled: !allowDragging,
-  });
+
   const [animationStyle, setAnimationStyle] = useState<React.CSSProperties>({});
 
   let cursorStyle = clone ? "grabbing" : "grab";
@@ -66,13 +74,15 @@ export function Piece({ clone, isSparePiece = false, position, pieceType }: Prop
     }
   }, [positionDifferences]);
 
-  const PieceSvg = defaultPieces[pieceType];
+  const PieceSvg = pieces[pieceType];
 
   return (
     <div
+      ref={setNodeRef}
+      {...attributes}
+      {...listeners}
       id={`${pieceType}-${position}`}
       data-piece={pieceType}
-      ref={setNodeRef}
       style={{
         ...animationStyle,
         opacity: isDragging ? 0.5 : undefined,
@@ -84,11 +94,40 @@ export function Piece({ clone, isSparePiece = false, position, pieceType }: Prop
       onClick={() =>
         onPieceClick?.({ isSparePiece, piece: { pieceType }, square: position })
       }
-      {...attributes}
-      {...listeners}
     >
       <PieceSvg />
     </div>
+  );
+});
+
+// Wrapper component that handles the draggable logic
+export function Piece({
+  clone,
+  isSparePiece = false,
+  position,
+  pieceType,
+}: Omit<PieceProps, "isDragging" | "setNodeRef" | "attributes" | "listeners">) {
+  const { allowDragging } = useChessboardContext();
+  const { isDragging, setNodeRef, attributes, listeners } = useDraggable({
+    id: position,
+    data: {
+      isSparePiece,
+      pieceType,
+    },
+    disabled: !allowDragging,
+  });
+
+  return (
+    <PieceComponent
+      clone={clone}
+      isSparePiece={isSparePiece}
+      position={position}
+      pieceType={pieceType}
+      isDragging={isDragging}
+      setNodeRef={setNodeRef}
+      attributes={attributes}
+      listeners={listeners}
+    />
   );
 }
 

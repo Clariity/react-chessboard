@@ -1,4 +1,5 @@
 import { useDroppable } from "@dnd-kit/core";
+import { memo } from "react";
 
 import { useChessboardContext } from "./ChessboardProvider";
 import {
@@ -14,13 +15,20 @@ import {
 import { SquareDataType } from "./types";
 import { columnIndexToChessColumn } from "./utils";
 
-type Props = {
+type SquareProps = {
   children?: React.ReactNode;
   squareId: SquareDataType["squareId"];
   isLightSquare: SquareDataType["isLightSquare"];
+  isOver: boolean;
 };
 
-export function Square({ children, squareId, isLightSquare }: Props) {
+// Pure presentation component that can be memoized
+const SquareComponent = memo(function SquareComponent({
+  children,
+  squareId,
+  isLightSquare,
+  isOver,
+}: SquareProps) {
   const {
     boardOrientation,
     chessboardColumns,
@@ -41,16 +49,11 @@ export function Square({ children, squareId, isLightSquare }: Props) {
     onSquareRightClick,
   } = useChessboardContext();
 
-  const { isOver, setNodeRef } = useDroppable({
-    id: squareId,
-  });
-
   const column = squareId.match(/^[a-z]+/)?.[0];
   const row = squareId.match(/\d+$/)?.[0];
 
   return (
     <div
-      ref={setNodeRef}
       style={{
         ...defaultSquareStyle,
         ...squareStyle,
@@ -61,6 +64,7 @@ export function Square({ children, squareId, isLightSquare }: Props) {
       }}
       data-column={column}
       data-row={row}
+      data-square={squareId}
       onClick={(e) => {
         if (e.button === 0) {
           onSquareClick?.({ piece: currentPosition[squareId] ?? null, square: squareId });
@@ -108,6 +112,25 @@ export function Square({ children, squareId, isLightSquare }: Props) {
       ) : null}
 
       {children}
+    </div>
+  );
+});
+
+// Wrapper component that handles the droppable logic
+export function Square({
+  children,
+  squareId,
+  isLightSquare,
+}: Omit<SquareProps, "isOver">) {
+  const { isOver, setNodeRef } = useDroppable({
+    id: squareId,
+  });
+
+  return (
+    <div ref={setNodeRef}>
+      <SquareComponent squareId={squareId} isLightSquare={isLightSquare} isOver={isOver}>
+        {children}
+      </SquareComponent>
     </div>
   );
 }

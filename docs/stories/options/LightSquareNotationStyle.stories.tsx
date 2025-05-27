@@ -13,6 +13,7 @@ type Story = StoryObj<typeof meta>;
 
 export const LightSquareNotationStyle: Story = {
   render: () => {
+    // chessboard options
     const chessboardOptions = {
       lightSquareNotationStyle: {
         color: "blue",
@@ -20,6 +21,7 @@ export const LightSquareNotationStyle: Story = {
       },
     };
 
+    // render
     return <Chessboard options={chessboardOptions} />;
   },
 };

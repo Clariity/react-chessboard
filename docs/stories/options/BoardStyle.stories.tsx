@@ -13,6 +13,7 @@ type Story = StoryObj<typeof meta>;
 
 export const BoardStyle: Story = {
   render: () => {
+    // chessboard options
     const chessboardOptions = {
       boardStyle: {
         borderRadius: "10px",
@@ -22,6 +23,7 @@ export const BoardStyle: Story = {
       },
     };
 
+    // render
     return (
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
         <Chessboard options={chessboardOptions} />

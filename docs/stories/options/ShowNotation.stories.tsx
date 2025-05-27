@@ -16,6 +16,12 @@ export const ShowNotation: Story = {
   render: () => {
     const [showNotation, setShowNotation] = useState(true);
 
+    // chessboard options
+    const chessboardOptions = {
+      showNotation,
+    };
+
+    // render
     return (
       <div
         style={{
@@ -25,24 +31,20 @@ export const ShowNotation: Story = {
           alignItems: "center",
         }}
       >
-        <div>
-          <label>
-            <input
-              type="checkbox"
-              checked={showNotation}
-              onChange={(e) => setShowNotation(e.target.checked)}
-            />
-            Show notation
-          </label>
-        </div>
-        <Chessboard
-          options={{
-            showNotation,
-          }}
-        />
-        <div style={{ fontSize: "0.8rem", color: "#666" }}>
+        <label>
+          <input
+            type="checkbox"
+            checked={showNotation}
+            onChange={(e) => setShowNotation(e.target.checked)}
+          />
+          Show notation
+        </label>
+
+        <Chessboard options={chessboardOptions} />
+
+        <p style={{ fontSize: "0.8rem", color: "#666" }}>
           Toggle the checkbox to show/hide board coordinates
-        </div>
+        </p>
       </div>
     );
   },

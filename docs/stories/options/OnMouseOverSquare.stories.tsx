@@ -18,15 +18,18 @@ export const OnMouseOverSquare: Story = {
     const [lastOverSquare, setLastOverSquare] = useState<string>("None");
     const [lastOverPiece, setLastOverPiece] = useState<string | null>("None");
 
+    // handle mouse over square
     const onMouseOverSquare = ({ square, piece }: SquareHandlerArgs) => {
       setLastOverSquare(square);
       setLastOverPiece(piece?.pieceType || null);
     };
 
+    // chessboard options
     const chessboardOptions = {
       onMouseOverSquare,
     };
 
+    // render
     return (
       <div
         style={{

@@ -48,6 +48,8 @@ type Defined<T> = T extends undefined ? never : T;
 
 type ContextType = {
   // chessboard options
+  pieces: Defined<ChessboardOptions["pieces"]>;
+
   boardOrientation: Defined<ChessboardOptions["boardOrientation"]>;
   chessboardRows: Defined<ChessboardOptions["chessboardRows"]>;
   chessboardColumns: Defined<ChessboardOptions["chessboardColumns"]>;
@@ -131,23 +133,24 @@ export type ChessboardOptions = {
   onSquareRightClick?: ({ piece, square }: SquareHandlerArgs) => void;
 };
 
+// scrolling whilst dragging is buggy, look to disable scroll on drag
+
 // allowDragOffBoard - https://docs.dndkit.com/api-documentation/modifiers#building-custom-modifiers - CustomDragLayer implementation
 // draggingPieceStyle (so users can style the dragging piece e.g. grow in size)
-
-// docs and stories
-// multiple boards? do we need id?
 // prevent notation highlighting on double click
 // accessibility (may need to revisit sensors)
-// check mobile support
 // promotion ???
 // premoves ???
 // arrows ??? (maybe add ability to draw them, but logic for them can be done externally, though would be nice to have it here)
+// squareRenderer
+// activationConstraint distance as option, call it dragActivationDistance
+
+// issue and PR templates
 // tests
-// linting
+// linting rules
 // formatting
 // packaging
-// ci/cd
-// squareRenderer
+// ci/cd - beta semantic release
 
 export function ChessboardProvider({
   children,
@@ -394,7 +397,7 @@ export function ChessboardProvider({
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 5,
+        distance: 2,
       },
     }),
     useSensor(KeyboardSensor),
@@ -406,6 +409,8 @@ export function ChessboardProvider({
     <ChessboardContext.Provider
       value={{
         // chessboard options
+        pieces,
+
         boardOrientation,
         chessboardRows,
         chessboardColumns,
