@@ -52,45 +52,92 @@ Once you're ready to contribute, follow these steps:
    git checkout -b your-new-branch-name
    ```
 
+## Commit Guidelines
+
+This project uses [Conventional Commits](https://www.conventionalcommits.org/) for commit messages and [semantic-release](https://semantic-release.gitbook.io/semantic-release/) for automated versioning, release notes, and publishing to npm. All commits are validated using [commitlint](https://commitlint.js.org/).
+
+### Commit Message Format
+
+Each commit message should follow the conventional commit format:
+
+```
+<type>(optional scope): <description>
+
+[optional body]
+
+[optional footer]
+```
+
+Breaking changes should be indicated by a `!` in the type. e.g. `feat!` or `fix!`.
+
+### Types
+
+- `feat`: A new feature (triggers minor version bump)
+- `fix`: A bug fix (triggers patch version bump)
+- `docs`: Documentation changes
+- `refactor`: Code changes that neither fix a bug nor add a feature
+- `test`: Adding or fixing tests
+- `chore`: Changes to the build process or auxiliary tools
+
+### Examples
+
+```bash
+# Feature commit
+git commit -m "feat: add support for custom board themes"
+
+# Bug fix commit
+git commit -m "fix: fix piece dragging on mobile devices"
+
+# Documentation commit
+git commit -m "docs: update installation instructions"
+
+# Breaking change commit
+git commit -m "feat!: change board orientation API"
+```
+
+### Semantic Release
+
+The project uses semantic-release to automatically:
+
+- Determine the next version number based on commit types
+- Generate release notes
+- Publish to npm
+- Create git tags
+
+Version bumps are determined by commit types:
+
+- `feat` commits trigger a minor version bump (1.0.0 -> 1.1.0)
+- `fix` commits trigger a patch version bump (1.0.0 -> 1.0.1)
+- Commits with `feat!` or `fix!` in the type trigger a major version bump (1.1.2 -> 2.0.0)
+
 ## Project guidelines
-
-## Project nuances
-
-### DnD Kit Re-rendering
-
-When using @dnd-kit for drag and drop functionality, it's important to note that all droppable and draggable elements will re-render on each drag event. This is due to how @dnd-kit tracks the position and state of draggable elements.
-
-To optimize performance:
-
-- Use React.memo on draggable/droppable components where possible
-- Keep draggable components lightweight
-- Avoid expensive calculations or operations in draggable components
-- Consider using CSS transforms for animations instead of JavaScript
-
-### Performance Considerations
-
-- Components are memoized to prevent unnecessary re-renders
-- CSS transforms are used for animations instead of JavaScript
-- Drag overlay uses a cloned piece to maintain performance
-- Position updates are batched to minimize re-renders
-- Square and piece components are kept lightweight
 
 ### Dependencies
 
-- less dependencies the better
-- use react 19+
+The project aims to maintain a minimal dependency footprint to ensure optimal performance, smaller bundle size, and reduce potential security risks. Here are our dependency guidelines:
 
-### Future Considerations
+- Keep dependencies to an absolute minimum
+- All dependencies must be actively maintained
+- Dependencies should have permissive licenses (MIT, Apache, etc.)
+- Evaluate each new dependency carefully for:
+  - Bundle size impact
+  - Security implications
+  - Maintenance status
+  - Browser compatibility
 
-The following features are planned or under consideration:
+#### Required Dependencies
 
-- Multiple board support
-- Accessibility improvements
-- Promotion handling
-- Premoves
-- Arrows
-- Comprehensive test suite
-- CI/CD pipeline with semantic versioning
+- `react` ^19.0.0
+- `react-dom` ^19.0.0
+
+#### Development Dependencies
+
+Development dependencies should also be kept minimal but include necessary tooling for:
+
+- Building (rolldown, typescript)
+- Testing (storybook)
+- Code quality (eslint, prettier)
+- Release management (semantic-release)
 
 ### Browser Support
 
@@ -101,13 +148,5 @@ The following features are planned or under consideration:
 ### Accessibility
 
 - Use ARIA attributes for interactive elements
-- Ensure keyboard navigation is available
+- Ensure keyboard interactions are available
 - Provide clear feedback for user actions
-
-## Getting Help
-
-- Open an issue for bugs or feature requests
-- Check existing issues before creating new ones
-- Join our community discussions on GitHub
-
-Remember: Every contribution, no matter how small, helps make react-chessboard better for everyone!

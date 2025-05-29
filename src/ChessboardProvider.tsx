@@ -149,7 +149,6 @@ export type ChessboardOptions = {
   onSquareRightClick?: ({ piece, square }: SquareHandlerArgs) => void;
 };
 
-// contributing guide
 // upgrade guide
 // advanced examples
 
