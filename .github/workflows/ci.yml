@@ -29,7 +29,7 @@ jobs:
         run: pnpm test:static
 
   semantic-release:
-    needs: static-analysis
+    needs: static-test
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/beta')
     runs-on: ubuntu-latest
     steps:
