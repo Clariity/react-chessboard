@@ -26,8 +26,10 @@
     "build": "rimraf dist && rolldown -c rolldown.config.ts",
     "test:static": "tsc && eslint src docs && prettier --check src docs",
     "format": "eslint --fix src docs && prettier --write src docs",
+    "commitlint": "commitlint --edit",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "prepare": "husky"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
@@ -35,6 +37,8 @@
   },
   "devDependencies": {
     "@chromatic-com/storybook": "3",
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
     "@eslint/js": "^9.26.0",
     "@storybook/addon-essentials": "8.6.8",
     "@storybook/addon-interactions": "8.6.8",
@@ -52,6 +56,7 @@
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-react": "^7.37.5",
     "globals": "^16.1.0",
+    "husky": "^9.1.7",
     "prettier": "^3.5.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

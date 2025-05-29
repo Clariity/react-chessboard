@@ -166,8 +166,6 @@ export type ChessboardOptions = {
 
 // tests
 // commit lint
-// packaging
-// ci/cd - beta semantic release
 
 export function ChessboardProvider({
   children,
