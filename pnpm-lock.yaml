@@ -54,6 +54,9 @@ importers:
       chess.js:
         specifier: ^1.2.0
         version: 1.2.0
+      conventional-changelog-conventionalcommits:
+        specifier: ^9.0.0
+        version: 9.0.0
       eslint:
         specifier: ^9.26.0
         version: 9.26.0
@@ -1338,6 +1341,10 @@ packages:
 
   conventional-changelog-angular@8.0.0:
     resolution: {integrity: sha512-CLf+zr6St0wIxos4bmaKHRXWAcsCXrJU6F4VdNDrGRK3B8LDLKoX3zuMV5GhtbGkVR/LohZ6MT6im43vZLSjmA==}
+    engines: {node: '>=18'}
+
+  conventional-changelog-conventionalcommits@9.0.0:
+    resolution: {integrity: sha512-5e48V0+DsWvQBEnnbBFhYQwYDzFPXVrakGPP1uSxekDkr5d7YWrmaWsgJpKFR0SkXmxK6qQr9O42uuLb9wpKxA==}
     engines: {node: '>=18'}
 
   conventional-changelog-writer@8.1.0:
@@ -4816,6 +4823,10 @@ snapshots:
   content-type@1.0.5: {}
 
   conventional-changelog-angular@8.0.0:
+    dependencies:
+      compare-func: 2.0.0
+
+  conventional-changelog-conventionalcommits@9.0.0:
     dependencies:
       compare-func: 2.0.0
 

@@ -38,6 +38,7 @@
     "@types/react": "^19.0.12",
     "@types/react-dom": "^19.0.4",
     "chess.js": "^1.2.0",
+    "conventional-changelog-conventionalcommits": "^9.0.0",
     "eslint": "^9.26.0",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-react": "^7.37.5",
