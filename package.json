@@ -4,7 +4,16 @@
   "description": "The React Chessboard Library",
   "author": "Ryan Gregory <ryangregory.dev@outlook.com>",
   "license": "MIT",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "packageManager": "pnpm@9.4.0",
+  "engines": {
+    "node": ">=20.11.0",
+    "pnpm": ">=9.4.0"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Clariity/react-chessboard.git"
