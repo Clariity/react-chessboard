@@ -1,0 +1,113 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Developers/Contributing to react-chessboard" />
+
+# Contributing to react-chessboard
+
+Thank you for your interest in contributing to react-chessboard! Whether it's improving the documentation, adding new features, or fixing bugs, your contributions are welcome and appreciated. This document will guide you through the process of contributing to this project.
+
+## GitHub contribution guide
+
+Before diving into the technical details, here are some general guidelines for contributing:
+
+- Check existing [issues](https://github.com/Clariity/react-chessboard/issues) and [pull requests](https://github.com/Clariity/react-chessboard/pulls) to avoid duplicating work
+- For major changes, open an issue first to discuss your proposed changes
+- Follow the code style and project guidelines outlined below
+- Include tests and documentation for new features
+- Keep pull requests focused on a single change
+- Be respectful and constructive in discussions
+
+Once you're ready to contribute, follow these steps:
+
+1. Fork the [react-chessboard repository](https://github.com/Clariity/react-chessboard)
+2. Clone your forked repository onto your development machine
+   ```bash
+   git clone https://github.com/YOUR-GITHUB-USERNAME/react-chessboard.git
+   cd react-chessboard
+   ```
+3. Create a branch for your PR
+   ```bash
+   git checkout -b your-branch-name
+   ```
+4. Set upstream remote
+   ```bash
+   git remote add upstream https://github.com/Clariity/react-chessboard.git
+   ```
+5. Make your changes
+6. Test your changes by running storybook
+   ```bash
+   pnpm storybook
+   ```
+7. Push your changes
+   ```bash
+   git add .
+   git commit -m "feat: cool-new-feature"
+   git push --set-upstream origin your-branch-name
+   ```
+8. Create pull request on GitHub
+9. Contribute again
+   ```bash
+   git checkout main
+   git pull upstream main
+   git checkout -b your-new-branch-name
+   ```
+
+## Project guidelines
+
+## Project nuances
+
+### DnD Kit Re-rendering
+
+When using @dnd-kit for drag and drop functionality, it's important to note that all droppable and draggable elements will re-render on each drag event. This is due to how @dnd-kit tracks the position and state of draggable elements.
+
+To optimize performance:
+
+- Use React.memo on draggable/droppable components where possible
+- Keep draggable components lightweight
+- Avoid expensive calculations or operations in draggable components
+- Consider using CSS transforms for animations instead of JavaScript
+
+### Performance Considerations
+
+- Components are memoized to prevent unnecessary re-renders
+- CSS transforms are used for animations instead of JavaScript
+- Drag overlay uses a cloned piece to maintain performance
+- Position updates are batched to minimize re-renders
+- Square and piece components are kept lightweight
+
+### Dependencies
+
+- less dependencies the better
+- use react 19+
+
+### Future Considerations
+
+The following features are planned or under consideration:
+
+- Multiple board support
+- Accessibility improvements
+- Promotion handling
+- Premoves
+- Arrows
+- Comprehensive test suite
+- CI/CD pipeline with semantic versioning
+
+### Browser Support
+
+- Modern browsers (Chrome, Firefox, Safari, Edge)
+- No IE11 support required
+- Mobile browser support for touch events
+
+### Accessibility
+
+- Use ARIA attributes for interactive elements
+- Ensure keyboard navigation is available
+- Provide clear feedback for user actions
+
+## Getting Help
+
+- Open an issue for bugs or feature requests
+- Check existing issues before creating new ones
+- Join our community discussions on GitHub
+
+Remember: Every contribution, no matter how small, helps make react-chessboard better for everyone!
