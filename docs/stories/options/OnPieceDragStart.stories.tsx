@@ -1,13 +1,13 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import { useState } from "react";
+import type { Meta, StoryObj } from '@storybook/react';
+import { useState } from 'react';
 
-import defaultMeta from "../Default.stories";
-import { Chessboard } from "../../../src";
-import type { PieceHandlerArgs } from "../../../src/types";
+import defaultMeta from '../Default.stories';
+import { Chessboard } from '../../../src';
+import type { PieceHandlerArgs } from '../../../src/types';
 
 const meta: Meta<typeof Chessboard> = {
   ...defaultMeta,
-  title: "stories/Options/OnPieceDragStart",
+  title: 'stories/Options/OnPieceDragStart',
 } satisfies Meta<typeof Chessboard>;
 
 export default meta;
@@ -15,13 +15,17 @@ type Story = StoryObj<typeof meta>;
 
 export const OnPieceDragStart: Story = {
   render: () => {
-    const [draggedSquare, setDraggedSquare] = useState<string>("None");
-    const [draggedPiece, setDraggedPiece] = useState<string>("None");
+    const [draggedSquare, setDraggedSquare] = useState<string>('None');
+    const [draggedPiece, setDraggedPiece] = useState<string>('None');
     const [isSparePiece, setIsSparePiece] = useState<boolean>(false);
 
     // handle piece drag start
-    const onPieceDragStart = ({ square, piece, isSparePiece }: PieceHandlerArgs) => {
-      setDraggedSquare(square || "None");
+    const onPieceDragStart = ({
+      square,
+      piece,
+      isSparePiece,
+    }: PieceHandlerArgs) => {
+      setDraggedSquare(square || 'None');
       setDraggedPiece(piece.pieceType);
       setIsSparePiece(isSparePiece);
     };
@@ -35,10 +39,10 @@ export const OnPieceDragStart: Story = {
     return (
       <div
         style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "1rem",
-          alignItems: "center",
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '1rem',
+          alignItems: 'center',
         }}
       >
         <div>
@@ -46,12 +50,12 @@ export const OnPieceDragStart: Story = {
           <br />
           Dragged piece: {draggedPiece}
           <br />
-          Is spare piece: {isSparePiece ? "Yes" : "No"}
+          Is spare piece: {isSparePiece ? 'Yes' : 'No'}
         </div>
 
         <Chessboard options={chessboardOptions} />
 
-        <p style={{ fontSize: "0.8rem", color: "#666" }}>
+        <p style={{ fontSize: '0.8rem', color: '#666' }}>
           Start dragging pieces to see the drag start events
         </p>
       </div>

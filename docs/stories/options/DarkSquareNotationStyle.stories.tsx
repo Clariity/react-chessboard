@@ -1,11 +1,11 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from '@storybook/react';
 
-import defaultMeta from "../Default.stories";
-import { Chessboard } from "../../../src";
+import defaultMeta from '../Default.stories';
+import { Chessboard } from '../../../src';
 
 const meta: Meta<typeof Chessboard> = {
   ...defaultMeta,
-  title: "stories/Options/DarkSquareNotationStyle",
+  title: 'stories/Options/DarkSquareNotationStyle',
 } satisfies Meta<typeof Chessboard>;
 
 export default meta;
@@ -16,8 +16,8 @@ export const DarkSquareNotationStyle: Story = {
     // chessboard options
     const chessboardOptions = {
       darkSquareNotationStyle: {
-        color: "cyan",
-        fontWeight: "bold",
+        color: 'cyan',
+        fontWeight: 'bold',
       },
     };
 

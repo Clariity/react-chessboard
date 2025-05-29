@@ -1,13 +1,13 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import { useState } from "react";
+import type { Meta, StoryObj } from '@storybook/react';
+import { useState } from 'react';
 
-import defaultMeta from "../Default.stories";
-import { Chessboard } from "../../../src";
-import type { SquareHandlerArgs } from "../../../src/types";
+import defaultMeta from '../Default.stories';
+import { Chessboard } from '../../../src';
+import type { SquareHandlerArgs } from '../../../src/types';
 
 const meta: Meta<typeof Chessboard> = {
   ...defaultMeta,
-  title: "stories/Options/OnMouseOutSquare",
+  title: 'stories/Options/OnMouseOutSquare',
 } satisfies Meta<typeof Chessboard>;
 
 export default meta;
@@ -15,8 +15,8 @@ type Story = StoryObj<typeof meta>;
 
 export const OnMouseOutSquare: Story = {
   render: () => {
-    const [lastOutSquare, setLastOutSquare] = useState<string>("None");
-    const [lastOutPiece, setLastOutPiece] = useState<string | null>("None");
+    const [lastOutSquare, setLastOutSquare] = useState<string>('None');
+    const [lastOutPiece, setLastOutPiece] = useState<string | null>('None');
 
     // handle mouse out square
     const onMouseOutSquare = ({ square, piece }: SquareHandlerArgs) => {
@@ -33,10 +33,10 @@ export const OnMouseOutSquare: Story = {
     return (
       <div
         style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "1rem",
-          alignItems: "center",
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '1rem',
+          alignItems: 'center',
         }}
       >
         <div>
@@ -47,7 +47,7 @@ export const OnMouseOutSquare: Story = {
 
         <Chessboard options={chessboardOptions} />
 
-        <p style={{ fontSize: "0.8rem", color: "#666" }}>
+        <p style={{ fontSize: '0.8rem', color: '#666' }}>
           Move your mouse over and out of squares to see the mouse out events
         </p>
       </div>

@@ -1,12 +1,12 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from '@storybook/react';
 
-import defaultMeta from "../Default.stories";
-import { Chessboard, defaultPieces } from "../../../src";
-import type { PieceRenderObject } from "../../../src/types";
+import defaultMeta from '../Default.stories';
+import { Chessboard, defaultPieces } from '../../../src';
+import type { PieceRenderObject } from '../../../src/types';
 
 const meta: Meta<typeof Chessboard> = {
   ...defaultMeta,
-  title: "stories/Options/Pieces",
+  title: 'stories/Options/Pieces',
 } satisfies Meta<typeof Chessboard>;
 
 export default meta;

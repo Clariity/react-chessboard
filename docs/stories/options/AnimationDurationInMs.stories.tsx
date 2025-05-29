@@ -1,14 +1,14 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import { Chess } from "chess.js";
-import { useState, useRef, useEffect } from "react";
+import type { Meta, StoryObj } from '@storybook/react';
+import { Chess } from 'chess.js';
+import { useState, useRef, useEffect } from 'react';
 
-import defaultMeta from "../Default.stories";
-import { Chessboard } from "../../../src";
-import type { PieceDropHandlerArgs } from "../../../src/types";
+import defaultMeta from '../Default.stories';
+import { Chessboard } from '../../../src';
+import type { PieceDropHandlerArgs } from '../../../src/types';
 
 const meta: Meta<typeof Chessboard> = {
   ...defaultMeta,
-  title: "stories/Options/AnimationDurationInMs",
+  title: 'stories/Options/AnimationDurationInMs',
 } satisfies Meta<typeof Chessboard>;
 
 export default meta;
@@ -36,20 +36,24 @@ export const AnimationDurationInMs: Story = {
       }
 
       // make a random move
-      const randomMove = possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
+      const randomMove =
+        possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
       chessGameRef.current.move(randomMove);
       setChessGame(new Chess(chessGameRef.current.fen()));
     }
 
     // handle piece drop
-    const onPieceDrop = ({ sourceSquare, targetSquare }: PieceDropHandlerArgs) => {
+    const onPieceDrop = ({
+      sourceSquare,
+      targetSquare,
+    }: PieceDropHandlerArgs) => {
       if (!targetSquare) return false;
 
       try {
         chessGameRef.current.move({
           from: sourceSquare,
           to: targetSquare,
-          promotion: "q", // always promote to a queen for example simplicity
+          promotion: 'q', // always promote to a queen for example simplicity
         });
 
         // update the game state
@@ -75,13 +79,13 @@ export const AnimationDurationInMs: Story = {
     return (
       <div
         style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "1rem",
-          alignItems: "center",
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '1rem',
+          alignItems: 'center',
         }}
       >
-        <label style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
+        <label style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
           Animation duration (ms):
           <input
             type="range"
@@ -96,8 +100,9 @@ export const AnimationDurationInMs: Story = {
 
         <Chessboard options={chessboardOptions} />
 
-        <p style={{ fontSize: "0.8rem", color: "#666" }}>
-          Play against random moves. Try moving pieces to see the animation effects
+        <p style={{ fontSize: '0.8rem', color: '#666' }}>
+          Play against random moves. Try moving pieces to see the animation
+          effects
         </p>
       </div>
     );

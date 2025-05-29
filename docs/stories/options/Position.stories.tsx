@@ -1,12 +1,12 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import { useState } from "react";
+import type { Meta, StoryObj } from '@storybook/react';
+import { useState } from 'react';
 
-import defaultMeta from "../Default.stories";
-import { Chessboard } from "../../../src";
+import defaultMeta from '../Default.stories';
+import { Chessboard } from '../../../src';
 
 const meta: Meta<typeof Chessboard> = {
   ...defaultMeta,
-  title: "stories/Options/Position",
+  title: 'stories/Options/Position',
 } satisfies Meta<typeof Chessboard>;
 
 export default meta;
@@ -16,13 +16,26 @@ export const Position: Story = {
   render: () => {
     const [showAnimations, setShowAnimations] = useState(true);
     const [position, setPosition] = useState(
-      "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
+      'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR',
     );
 
     // generate random FEN position
     function generateRandomFen() {
-      const pieces = ["r", "n", "b", "q", "k", "p", "R", "N", "B", "Q", "K", "P"];
-      let fen = "";
+      const pieces = [
+        'r',
+        'n',
+        'b',
+        'q',
+        'k',
+        'p',
+        'R',
+        'N',
+        'B',
+        'Q',
+        'K',
+        'P',
+      ];
+      let fen = '';
 
       // create 8 rows of random pieces
       for (let i = 0; i < 8; i++) {
@@ -49,7 +62,7 @@ export const Position: Story = {
 
         // add slash between rows
         if (i < 7) {
-          fen += "/";
+          fen += '/';
         }
       }
 
@@ -67,13 +80,15 @@ export const Position: Story = {
     return (
       <div
         style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "1rem",
-          alignItems: "center",
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '1rem',
+          alignItems: 'center',
         }}
       >
-        <button onClick={generateRandomFen}>Generate random FEN position</button>
+        <button onClick={generateRandomFen}>
+          Generate random FEN position
+        </button>
         <label>
           <input
             type="checkbox"
@@ -86,7 +101,7 @@ export const Position: Story = {
 
         <Chessboard options={chessboardOptions} />
 
-        <p style={{ fontSize: "0.8rem", color: "#666" }}>
+        <p style={{ fontSize: '0.8rem', color: '#666' }}>
           Click on the button to generate a random FEN position
         </p>
       </div>

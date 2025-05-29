@@ -1,16 +1,16 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import { Chess, Color, PieceSymbol, Square } from "chess.js";
-import { useEffect, useState } from "react";
+import type { Meta, StoryObj } from '@storybook/react';
+import { Chess, Color, PieceSymbol, Square } from 'chess.js';
+import { useEffect, useState } from 'react';
 
-import defaultMeta from "./Default.stories";
-import { Chessboard } from "../../src";
-import { ChessboardProvider } from "../../src/ChessboardProvider";
-import { SparePiece } from "../../src/Piece";
-import { PieceDropHandlerArgs, PieceType } from "../../src/types";
+import defaultMeta from './Default.stories';
+import { Chessboard } from '../../src';
+import { ChessboardProvider } from '../../src/ChessboardProvider';
+import { SparePiece } from '../../src/Piece';
+import { PieceDropHandlerArgs, PieceType } from '../../src/types';
 
 const meta: Meta<typeof Chessboard> = {
   ...defaultMeta,
-  title: "stories/SparePieces",
+  title: 'stories/SparePieces',
 } satisfies Meta<typeof Chessboard>;
 
 export default meta;
@@ -20,7 +20,7 @@ type Story = StoryObj<typeof meta>;
 export const SparePieces: Story = {
   render: () => {
     const [chessGame, setChessGame] = useState(
-      new Chess("8/8/8/8/8/8/8/8 w - - 0 1", { skipValidation: true })
+      new Chess('8/8/8/8/8/8/8/8 w - - 0 1', { skipValidation: true }),
     );
     const [squareWidth, setSquareWidth] = useState<number | null>(null);
 
@@ -33,7 +33,11 @@ export const SparePieces: Story = {
     }, []);
 
     // handle piece drop
-    function onPieceDrop({ sourceSquare, targetSquare, piece }: PieceDropHandlerArgs) {
+    function onPieceDrop({
+      sourceSquare,
+      targetSquare,
+      piece,
+    }: PieceDropHandlerArgs) {
       const color = piece.pieceType[0];
       const type = piece.pieceType[1].toLowerCase();
 
@@ -54,13 +58,13 @@ export const SparePieces: Story = {
       // try to place the piece on the board
       const success = chessGame.put(
         { color: color as Color, type: type as PieceSymbol },
-        targetSquare as Square
+        targetSquare as Square,
       );
 
       // show error message if cannot place another king
       if (!success) {
         alert(
-          `The board already contains a ${color === "w" ? "white" : "black"} King piece`
+          `The board already contains a ${color === 'w' ? 'white' : 'black'} King piece`,
         );
         return false;
       }
@@ -74,7 +78,7 @@ export const SparePieces: Story = {
     const blackPieceTypes: PieceType[] = [];
     const whitePieceTypes: PieceType[] = [];
     for (const pieceType of Object.values(PieceType)) {
-      if (pieceType[0] === "b") {
+      if (pieceType[0] === 'b') {
         blackPieceTypes.push(pieceType);
       } else {
         whitePieceTypes.push(pieceType);
@@ -93,10 +97,10 @@ export const SparePieces: Story = {
         {squareWidth ? (
           <div
             style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(6, 1fr)",
-              width: "fit-content",
-              margin: "0 auto",
+              display: 'grid',
+              gridTemplateColumns: 'repeat(6, 1fr)',
+              width: 'fit-content',
+              margin: '0 auto',
             }}
           >
             {blackPieceTypes.map((pieceType) => (
@@ -118,10 +122,10 @@ export const SparePieces: Story = {
         {squareWidth ? (
           <div
             style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(6, 1fr)",
-              width: "fit-content",
-              margin: "0 auto",
+              display: 'grid',
+              gridTemplateColumns: 'repeat(6, 1fr)',
+              width: 'fit-content',
+              margin: '0 auto',
             }}
           >
             {whitePieceTypes.map((pieceType) => (

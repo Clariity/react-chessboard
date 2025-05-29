@@ -1,20 +1,20 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from '@storybook/react';
 
-import { Chessboard } from "../../src";
+import { Chessboard } from '../../src';
 
 const meta: Meta<typeof Chessboard> = {
-  title: "stories/Default",
+  title: 'stories/Default',
   component: Chessboard,
   parameters: {
-    layout: "fullscreen",
+    layout: 'fullscreen',
   },
   decorators: [
     (Story) => (
       <div
         style={{
-          maxWidth: "500px",
-          width: "100%",
-          margin: "0 auto",
+          maxWidth: '500px',
+          width: '100%',
+          margin: '0 auto',
         }}
       >
         <Story />

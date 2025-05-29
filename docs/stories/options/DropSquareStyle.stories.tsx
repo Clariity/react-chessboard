@@ -1,11 +1,11 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from '@storybook/react';
 
-import defaultMeta from "../Default.stories";
-import { Chessboard } from "../../../src";
+import defaultMeta from '../Default.stories';
+import { Chessboard } from '../../../src';
 
 const meta: Meta<typeof Chessboard> = {
   ...defaultMeta,
-  title: "stories/Options/DropSquareStyle",
+  title: 'stories/Options/DropSquareStyle',
 } satisfies Meta<typeof Chessboard>;
 
 export default meta;
@@ -16,7 +16,7 @@ export const DropSquareStyle: Story = {
     // chessboard options
     const chessboardOptions = {
       dropSquareStyle: {
-        border: "5px solid red",
+        border: '5px solid red',
       },
     };
 
@@ -24,15 +24,15 @@ export const DropSquareStyle: Story = {
     return (
       <div
         style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "1rem",
-          alignItems: "center",
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '1rem',
+          alignItems: 'center',
         }}
       >
         <Chessboard options={chessboardOptions} />
 
-        <p style={{ fontSize: "0.8rem", color: "#666" }}>
+        <p style={{ fontSize: '0.8rem', color: '#666' }}>
           Drag a piece to see the drop square style
         </p>
       </div>

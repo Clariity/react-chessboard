@@ -1,14 +1,19 @@
-import { DragOverlay } from "@dnd-kit/core";
-import { snapCenterToCursor } from "@dnd-kit/modifiers";
+import { DragOverlay } from '@dnd-kit/core';
+import { snapCenterToCursor } from '@dnd-kit/modifiers';
 
-import { Square } from "./Square";
-import { Piece } from "./Piece";
-import { useChessboardContext } from "./ChessboardProvider";
-import { defaultBoardStyle } from "./styles";
+import { Square } from './Square';
+import { Piece } from './Piece';
+import { useChessboardContext } from './ChessboardProvider';
+import { defaultBoardStyle } from './styles';
 
 export function Board() {
-  const { board, boardStyle, chessboardColumns, currentPosition, draggingPiece } =
-    useChessboardContext();
+  const {
+    board,
+    boardStyle,
+    chessboardColumns,
+    currentPosition,
+    draggingPiece,
+  } = useChessboardContext();
 
   return (
     <>
@@ -22,7 +27,7 @@ export function Board() {
                 {piece ? <Piece {...piece} position={square.squareId} /> : null}
               </Square>
             );
-          })
+          }),
         )}
       </div>
 

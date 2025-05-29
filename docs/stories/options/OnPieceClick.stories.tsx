@@ -1,13 +1,13 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import { useState } from "react";
+import type { Meta, StoryObj } from '@storybook/react';
+import { useState } from 'react';
 
-import defaultMeta from "../Default.stories";
-import { Chessboard } from "../../../src";
-import type { PieceHandlerArgs } from "../../../src/types";
+import defaultMeta from '../Default.stories';
+import { Chessboard } from '../../../src';
+import type { PieceHandlerArgs } from '../../../src/types';
 
 const meta: Meta<typeof Chessboard> = {
   ...defaultMeta,
-  title: "stories/Options/OnPieceClick",
+  title: 'stories/Options/OnPieceClick',
 } satisfies Meta<typeof Chessboard>;
 
 export default meta;
@@ -15,13 +15,17 @@ type Story = StoryObj<typeof meta>;
 
 export const OnPieceClick: Story = {
   render: () => {
-    const [clickedSquare, setClickedSquare] = useState<string>("None");
-    const [clickedPiece, setClickedPiece] = useState<string>("None");
+    const [clickedSquare, setClickedSquare] = useState<string>('None');
+    const [clickedPiece, setClickedPiece] = useState<string>('None');
     const [isSparePiece, setIsSparePiece] = useState<boolean>(false);
 
     // handle piece click
-    const onPieceClick = ({ square, piece, isSparePiece }: PieceHandlerArgs) => {
-      setClickedSquare(square || "None");
+    const onPieceClick = ({
+      square,
+      piece,
+      isSparePiece,
+    }: PieceHandlerArgs) => {
+      setClickedSquare(square || 'None');
       setClickedPiece(piece.pieceType);
       setIsSparePiece(isSparePiece);
     };
@@ -36,10 +40,10 @@ export const OnPieceClick: Story = {
     return (
       <div
         style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "1rem",
-          alignItems: "center",
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '1rem',
+          alignItems: 'center',
         }}
       >
         <div>
@@ -47,12 +51,12 @@ export const OnPieceClick: Story = {
           <br />
           Clicked piece: {clickedPiece}
           <br />
-          Is spare piece: {isSparePiece ? "Yes" : "No"}
+          Is spare piece: {isSparePiece ? 'Yes' : 'No'}
         </div>
 
         <Chessboard options={chessboardOptions} />
 
-        <p style={{ fontSize: "0.8rem", color: "#666" }}>
+        <p style={{ fontSize: '0.8rem', color: '#666' }}>
           Click on pieces to see the click events
         </p>
       </div>

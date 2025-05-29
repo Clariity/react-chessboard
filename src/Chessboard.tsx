@@ -1,9 +1,9 @@
-import { Board } from "./Board";
+import { Board } from './Board';
 import {
   ChessboardOptions,
   ChessboardProvider,
   useChessboardContext,
-} from "./ChessboardProvider";
+} from './ChessboardProvider';
 
 type ChessboardProps = {
   options?: ChessboardOptions;

@@ -9,7 +9,7 @@ import {
   TouchSensor,
   useSensor,
   useSensors,
-} from "@dnd-kit/core";
+} from '@dnd-kit/core';
 import {
   createContext,
   use,
@@ -18,9 +18,13 @@ import {
   useMemo,
   useRef,
   useState,
-} from "react";
+} from 'react';
 
-import { fenStringToPositionObject, generateBoard, getPositionUpdates } from "./utils";
+import {
+  fenStringToPositionObject,
+  generateBoard,
+  getPositionUpdates,
+} from './utils';
 import {
   SquareDataType,
   DraggingPieceDataType,
@@ -30,8 +34,8 @@ import {
   PieceType,
   PositionDataType,
   SquareHandlerArgs,
-} from "./types";
-import { defaultPieces } from "./pieces";
+} from './types';
+import { defaultPieces } from './pieces';
 import {
   defaultAlphaNotationStyle,
   defaultBoardStyle,
@@ -42,41 +46,45 @@ import {
   defaultLightSquareStyle,
   defaultNumericNotationStyle,
   defaultSquareStyle,
-} from "./styles";
+} from './styles';
 
 type Defined<T> = T extends undefined ? never : T;
 
 type ContextType = {
   // chessboard options
-  pieces: Defined<ChessboardOptions["pieces"]>;
+  pieces: Defined<ChessboardOptions['pieces']>;
 
-  boardOrientation: Defined<ChessboardOptions["boardOrientation"]>;
-  chessboardRows: Defined<ChessboardOptions["chessboardRows"]>;
-  chessboardColumns: Defined<ChessboardOptions["chessboardColumns"]>;
+  boardOrientation: Defined<ChessboardOptions['boardOrientation']>;
+  chessboardRows: Defined<ChessboardOptions['chessboardRows']>;
+  chessboardColumns: Defined<ChessboardOptions['chessboardColumns']>;
 
-  boardStyle: Defined<ChessboardOptions["boardStyle"]>;
-  squareStyle: Defined<ChessboardOptions["squareStyle"]>;
-  darkSquareStyle: Defined<ChessboardOptions["darkSquareStyle"]>;
-  lightSquareStyle: Defined<ChessboardOptions["lightSquareStyle"]>;
-  dropSquareStyle: Defined<ChessboardOptions["dropSquareStyle"]>;
+  boardStyle: Defined<ChessboardOptions['boardStyle']>;
+  squareStyle: Defined<ChessboardOptions['squareStyle']>;
+  darkSquareStyle: Defined<ChessboardOptions['darkSquareStyle']>;
+  lightSquareStyle: Defined<ChessboardOptions['lightSquareStyle']>;
+  dropSquareStyle: Defined<ChessboardOptions['dropSquareStyle']>;
 
-  darkSquareNotationStyle: Defined<ChessboardOptions["darkSquareNotationStyle"]>;
-  lightSquareNotationStyle: Defined<ChessboardOptions["lightSquareNotationStyle"]>;
-  alphaNotationStyle: Defined<ChessboardOptions["alphaNotationStyle"]>;
-  numericNotationStyle: Defined<ChessboardOptions["numericNotationStyle"]>;
-  showNotation: Defined<ChessboardOptions["showNotation"]>;
+  darkSquareNotationStyle: Defined<
+    ChessboardOptions['darkSquareNotationStyle']
+  >;
+  lightSquareNotationStyle: Defined<
+    ChessboardOptions['lightSquareNotationStyle']
+  >;
+  alphaNotationStyle: Defined<ChessboardOptions['alphaNotationStyle']>;
+  numericNotationStyle: Defined<ChessboardOptions['numericNotationStyle']>;
+  showNotation: Defined<ChessboardOptions['showNotation']>;
 
-  animationDurationInMs: Defined<ChessboardOptions["animationDurationInMs"]>;
-  showAnimations: Defined<ChessboardOptions["showAnimations"]>;
+  animationDurationInMs: Defined<ChessboardOptions['animationDurationInMs']>;
+  showAnimations: Defined<ChessboardOptions['showAnimations']>;
 
-  allowDragging: Defined<ChessboardOptions["allowDragging"]>;
-  allowDragOffBoard: Defined<ChessboardOptions["allowDragOffBoard"]>;
+  allowDragging: Defined<ChessboardOptions['allowDragging']>;
+  allowDragOffBoard: Defined<ChessboardOptions['allowDragOffBoard']>;
 
-  onMouseOutSquare: ChessboardOptions["onMouseOutSquare"];
-  onMouseOverSquare: ChessboardOptions["onMouseOverSquare"];
-  onPieceClick: ChessboardOptions["onPieceClick"];
-  onSquareClick: ChessboardOptions["onSquareClick"];
-  onSquareRightClick: ChessboardOptions["onSquareRightClick"];
+  onMouseOutSquare: ChessboardOptions['onMouseOutSquare'];
+  onMouseOverSquare: ChessboardOptions['onMouseOverSquare'];
+  onPieceClick: ChessboardOptions['onPieceClick'];
+  onSquareClick: ChessboardOptions['onSquareClick'];
+  onSquareRightClick: ChessboardOptions['onSquareRightClick'];
 
   // internal state
   board: SquareDataType[][];
@@ -96,7 +104,7 @@ export type ChessboardOptions = {
   position?: string | PositionDataType; // FEN string (or object position) to set up the board
 
   // board dimensions and orientation
-  boardOrientation?: "white" | "black";
+  boardOrientation?: 'white' | 'black';
   chessboardRows?: number;
   chessboardColumns?: number;
 
@@ -127,17 +135,28 @@ export type ChessboardOptions = {
   onMouseOutSquare?: ({ piece, square }: SquareHandlerArgs) => void;
   onMouseOverSquare?: ({ piece, square }: SquareHandlerArgs) => void;
   onPieceClick?: ({ isSparePiece, piece, square }: PieceHandlerArgs) => void;
-  onPieceDragStart?: ({ isSparePiece, piece, square }: PieceHandlerArgs) => void;
-  onPieceDrop?: ({ piece, sourceSquare, targetSquare }: PieceDropHandlerArgs) => boolean;
+  onPieceDragStart?: ({
+    isSparePiece,
+    piece,
+    square,
+  }: PieceHandlerArgs) => void;
+  onPieceDrop?: ({
+    piece,
+    sourceSquare,
+    targetSquare,
+  }: PieceDropHandlerArgs) => boolean;
   onSquareClick?: ({ piece, square }: SquareHandlerArgs) => void;
   onSquareRightClick?: ({ piece, square }: SquareHandlerArgs) => void;
 };
 
-// scrolling whilst dragging is buggy, look to disable scroll on drag
+// contributing guide
+// upgrade guide
+// advanced examples
 
-// allowDragOffBoard - https://docs.dndkit.com/api-documentation/modifiers#building-custom-modifiers - CustomDragLayer implementation
 // draggingPieceStyle (so users can style the dragging piece e.g. grow in size)
 // prevent notation highlighting on double click
+// scrolling whilst dragging is buggy, look to disable scroll on drag
+// allowDragOffBoard - https://docs.dndkit.com/api-documentation/modifiers#building-custom-modifiers - CustomDragLayer implementation
 // accessibility (may need to revisit sensors)
 // promotion ???
 // premoves ???
@@ -145,10 +164,8 @@ export type ChessboardOptions = {
 // squareRenderer
 // activationConstraint distance as option, call it dragActivationDistance
 
-// issue and PR templates
 // tests
-// linting rules
-// formatting
+// commit lint
 // packaging
 // ci/cd - beta semantic release
 
@@ -159,10 +176,10 @@ export function ChessboardProvider({
   const {
     // pieces and position
     pieces = defaultPieces,
-    position = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR",
+    position = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR',
 
     // board dimensions and orientation
-    boardOrientation = "white",
+    boardOrientation = 'white',
     chessboardRows = 8,
     chessboardColumns = 8,
 
@@ -199,13 +216,14 @@ export function ChessboardProvider({
   } = options || {};
 
   // the piece currently being dragged
-  const [draggingPiece, setDraggingPiece] = useState<DraggingPieceDataType | null>(null);
+  const [draggingPiece, setDraggingPiece] =
+    useState<DraggingPieceDataType | null>(null);
 
   // the current position of pieces on the chessboard
   const [currentPosition, setCurrentPosition] = useState(
-    typeof position === "string"
+    typeof position === 'string'
       ? fenStringToPositionObject(position, chessboardRows, chessboardColumns)
-      : position
+      : position,
   );
 
   // calculated differences between current and incoming positions
@@ -214,11 +232,12 @@ export function ChessboardProvider({
   >({});
 
   // if the latest move was a manual drop
-  const [manuallyDroppedPieceAndSquare, setManuallyDroppedPieceAndSquare] = useState<{
-    piece: PieceType;
-    sourceSquare: string;
-    targetSquare: string;
-  } | null>(null);
+  const [manuallyDroppedPieceAndSquare, setManuallyDroppedPieceAndSquare] =
+    useState<{
+      piece: PieceType;
+      sourceSquare: string;
+      targetSquare: string;
+    } | null>(null);
 
   // the animation timeout whilst waiting for animation to complete
   const animationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -226,7 +245,7 @@ export function ChessboardProvider({
   // if the position changes, we need to recreate the pieces array
   useEffect(() => {
     const newPosition =
-      typeof position === "string"
+      typeof position === 'string'
         ? fenStringToPositionObject(position, chessboardRows, chessboardColumns)
         : position;
 
@@ -241,7 +260,7 @@ export function ChessboardProvider({
       currentPosition,
       newPosition,
       chessboardColumns,
-      boardOrientation
+      boardOrientation,
     );
 
     const multiplePiecesMoved = Object.keys(positionUpdates).length > 1;
@@ -304,16 +323,16 @@ export function ChessboardProvider({
   // if the dimensions change, we need to recreate the pieces array
   useEffect(() => {
     setCurrentPosition(
-      typeof position === "string"
+      typeof position === 'string'
         ? fenStringToPositionObject(position, chessboardRows, chessboardColumns)
-        : position
+        : position,
     );
   }, [chessboardRows, chessboardColumns, boardOrientation]);
 
   // only redraw the board when the dimensions or board orientation change
   const board = useMemo(
     () => generateBoard(chessboardRows, chessboardColumns, boardOrientation),
-    [chessboardRows, chessboardColumns, boardOrientation]
+    [chessboardRows, chessboardColumns, boardOrientation],
   );
 
   const handleDragCancel = useCallback(() => {
@@ -339,7 +358,7 @@ export function ChessboardProvider({
         setManuallyDroppedPieceAndSquare({
           piece: draggingPiece.pieceType,
           sourceSquare: draggingPiece.position,
-          targetSquare: "",
+          targetSquare: '',
         });
         setDraggingPiece(null);
         return;
@@ -363,7 +382,7 @@ export function ChessboardProvider({
         setDraggingPiece(null);
       }
     },
-    [draggingPiece, pieces]
+    [draggingPiece, pieces],
   );
 
   const handleDragStart = useCallback(
@@ -391,7 +410,7 @@ export function ChessboardProvider({
       });
       return;
     },
-    [currentPosition]
+    [currentPosition],
   );
 
   const sensors = useSensors(
@@ -402,7 +421,7 @@ export function ChessboardProvider({
     }),
     useSensor(KeyboardSensor),
     useSensor(TouchSensor),
-    useSensor(MouseSensor)
+    useSensor(MouseSensor),
   );
 
   return (

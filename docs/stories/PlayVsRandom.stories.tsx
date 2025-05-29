@@ -1,14 +1,14 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import { Chess } from "chess.js";
-import { useState, useRef, useEffect } from "react";
+import type { Meta, StoryObj } from '@storybook/react';
+import { Chess } from 'chess.js';
+import { useState, useRef, useEffect } from 'react';
 
-import defaultMeta from "./Default.stories";
-import { Chessboard } from "../../src";
-import { PieceDropHandlerArgs } from "../../src/types";
+import defaultMeta from './Default.stories';
+import { Chessboard } from '../../src';
+import { PieceDropHandlerArgs } from '../../src/types';
 
 const meta: Meta<typeof Chessboard> = {
   ...defaultMeta,
-  title: "stories/PlayVsRandom",
+  title: 'stories/PlayVsRandom',
 } satisfies Meta<typeof Chessboard>;
 
 export default meta;
@@ -36,7 +36,8 @@ export const PlayVsRandom: Story = {
       }
 
       // make a random move
-      const randomMove = possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
+      const randomMove =
+        possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
       chessGameRef.current.move(randomMove);
       setChessGame(new Chess(chessGameRef.current.fen()));
     }
@@ -53,7 +54,7 @@ export const PlayVsRandom: Story = {
         chessGameRef.current.move({
           from: sourceSquare,
           to: targetSquare,
-          promotion: "q", // always promote to a queen for example simplicity
+          promotion: 'q', // always promote to a queen for example simplicity
         });
 
         // update the game state

@@ -1,12 +1,12 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import { useState } from "react";
+import type { Meta, StoryObj } from '@storybook/react';
+import { useState } from 'react';
 
-import defaultMeta from "../Default.stories";
-import { Chessboard } from "../../../src";
+import defaultMeta from '../Default.stories';
+import { Chessboard } from '../../../src';
 
 const meta: Meta<typeof Chessboard> = {
   ...defaultMeta,
-  title: "stories/Options/AllowDragOffBoard",
+  title: 'stories/Options/AllowDragOffBoard',
 } satisfies Meta<typeof Chessboard>;
 
 export default meta;
@@ -25,10 +25,10 @@ export const AllowDragOffBoard: Story = {
     return (
       <div
         style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "1rem",
-          alignItems: "center",
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '1rem',
+          alignItems: 'center',
         }}
       >
         <label>
@@ -42,7 +42,7 @@ export const AllowDragOffBoard: Story = {
 
         <Chessboard options={chessboardOptions} />
 
-        <p style={{ fontSize: "0.8rem", color: "#666" }}>
+        <p style={{ fontSize: '0.8rem', color: '#666' }}>
           Try dragging a piece off the board when the checkbox is unchecked
         </p>
       </div>

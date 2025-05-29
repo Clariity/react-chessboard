@@ -1,7 +1,7 @@
-import { useDroppable } from "@dnd-kit/core";
-import { memo } from "react";
+import { useDroppable } from '@dnd-kit/core';
+import { memo } from 'react';
 
-import { useChessboardContext } from "./ChessboardProvider";
+import { useChessboardContext } from './ChessboardProvider';
 import {
   defaultAlphaNotationStyle,
   defaultDarkSquareNotationStyle,
@@ -11,14 +11,14 @@ import {
   defaultLightSquareStyle,
   defaultNumericNotationStyle,
   defaultSquareStyle,
-} from "./styles";
-import { SquareDataType } from "./types";
-import { columnIndexToChessColumn } from "./utils";
+} from './styles';
+import { SquareDataType } from './types';
+import { columnIndexToChessColumn } from './utils';
 
 type SquareProps = {
   children?: React.ReactNode;
-  squareId: SquareDataType["squareId"];
-  isLightSquare: SquareDataType["isLightSquare"];
+  squareId: SquareDataType['squareId'];
+  isLightSquare: SquareDataType['isLightSquare'];
   isOver: boolean;
 };
 
@@ -67,7 +67,10 @@ const SquareComponent = memo(function SquareComponent({
       data-square={squareId}
       onClick={(e) => {
         if (e.button === 0) {
-          onSquareClick?.({ piece: currentPosition[squareId] ?? null, square: squareId });
+          onSquareClick?.({
+            piece: currentPosition[squareId] ?? null,
+            square: squareId,
+          });
         }
       }}
       onContextMenu={(e) => {
@@ -84,27 +87,50 @@ const SquareComponent = memo(function SquareComponent({
         })
       }
       onMouseLeave={() =>
-        onMouseOutSquare?.({ piece: currentPosition[squareId] ?? null, square: squareId })
+        onMouseOutSquare?.({
+          piece: currentPosition[squareId] ?? null,
+          square: squareId,
+        })
       }
     >
       {showNotation ? (
         <span
           style={
             isLightSquare
-              ? { ...defaultLightSquareNotationStyle, ...lightSquareNotationStyle }
-              : { ...defaultDarkSquareNotationStyle, ...darkSquareNotationStyle }
+              ? {
+                  ...defaultLightSquareNotationStyle,
+                  ...lightSquareNotationStyle,
+                }
+              : {
+                  ...defaultDarkSquareNotationStyle,
+                  ...darkSquareNotationStyle,
+                }
           }
         >
-          {row === (boardOrientation === "white" ? "1" : chessboardRows.toString()) && (
-            <span style={{ ...defaultAlphaNotationStyle, ...alphaNotationStyle }}>
+          {row ===
+            (boardOrientation === 'white'
+              ? '1'
+              : chessboardRows.toString()) && (
+            <span
+              style={{ ...defaultAlphaNotationStyle, ...alphaNotationStyle }}
+            >
               {column}
             </span>
           )}
           {column ===
-            (boardOrientation === "white"
-              ? "a"
-              : columnIndexToChessColumn(0, chessboardColumns, boardOrientation)) && (
-            <span style={{ ...defaultNumericNotationStyle, ...numericNotationStyle }}>
+            (boardOrientation === 'white'
+              ? 'a'
+              : columnIndexToChessColumn(
+                  0,
+                  chessboardColumns,
+                  boardOrientation,
+                )) && (
+            <span
+              style={{
+                ...defaultNumericNotationStyle,
+                ...numericNotationStyle,
+              }}
+            >
               {row}
             </span>
           )}
@@ -121,14 +147,18 @@ export function Square({
   children,
   squareId,
   isLightSquare,
-}: Omit<SquareProps, "isOver">) {
+}: Omit<SquareProps, 'isOver'>) {
   const { isOver, setNodeRef } = useDroppable({
     id: squareId,
   });
 
   return (
     <div ref={setNodeRef}>
-      <SquareComponent squareId={squareId} isLightSquare={isLightSquare} isOver={isOver}>
+      <SquareComponent
+        squareId={squareId}
+        isLightSquare={isLightSquare}
+        isOver={isOver}
+      >
         {children}
       </SquareComponent>
     </div>
