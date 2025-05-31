@@ -92,7 +92,14 @@ export type PromotionPieceOption =
   | "bR"
   | "bN"
   | "bB";
-export type PromotionStyle = "default" | "vertical" | "modal";
+
+export const PromotionDialogVariantsEnum = {
+  Default: "default",
+  Vertical: "vertical",
+  Modal: "modal"
+} as const;
+
+export type PromotionDialogVariant = typeof PromotionDialogVariantsEnum[keyof typeof PromotionDialogVariantsEnum];
 
 export type CustomSquareProps = {
   children: ReactNode;
@@ -365,7 +372,7 @@ export type ChessboardProps = {
    * Style of promotion dialog.
    * @default default
    */
-  promotionDialogVariant?: PromotionStyle;
+  promotionDialogVariant?: PromotionDialogVariant;
   /**
    * The square to promote a piece to.
    * @default null

@@ -46,7 +46,7 @@ export function PromotionOption({ option }: Props) {
           onPromotionPieceSelect(
             option,
             promoteFromSquare ?? undefined,
-            promoteToSquare ?? undefined
+            promoteToSquare ?? undefined,
           )
         )
           handleSetPosition(promoteFromSquare!, promoteToSquare!, option, true);
@@ -55,6 +55,7 @@ export function PromotionOption({ option }: Props) {
       onMouseOut={() => setIsHover(false)}
       data-piece={option}
       style={{
+        display: "flex",
         cursor: "pointer",
         backgroundColor: isHover ? backgroundColor() : `${backgroundColor()}aa`,
         borderRadius: "4px",

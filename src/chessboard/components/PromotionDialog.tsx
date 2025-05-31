@@ -1,7 +1,69 @@
+import { CSSProperties } from "react";
 import { useChessboard } from "../context/chessboard-context";
 import { getRelativeCoords } from "../functions";
-import { PromotionPieceOption } from "../types";
+import {
+  PromotionPieceOption,
+  PromotionDialogVariantsEnum,
+  PromotionDialogVariant,
+  Square,
+  BoardOrientation,
+} from "../types";
 import { PromotionOption } from "./PromotionOption";
+
+type GetDialogStylesByVariantFn = (props: {
+  promotionDialogVariant: PromotionDialogVariant;
+  promoteToSquare: Square;
+  boardWidth: number;
+  boardOrientation: BoardOrientation;
+  dialogCoords: {
+    x: number;
+    y: number;
+  };
+}) => CSSProperties;
+
+const getDialogStylesByVariant: GetDialogStylesByVariantFn = ({
+  promotionDialogVariant,
+  promoteToSquare,
+  boardWidth,
+  boardOrientation,
+  dialogCoords,
+}: any) => {
+  switch (promotionDialogVariant) {
+    case PromotionDialogVariantsEnum.Default:
+      return {
+        display: "grid",
+        gridTemplateColumns: "1fr 1fr",
+        transform: `translate(${-boardWidth / 8}px, ${-boardWidth / 8}px)`,
+      };
+    case PromotionDialogVariantsEnum.Vertical:
+      const isPromotionOnTheBottomRank =
+        (boardOrientation === "black" && promoteToSquare[1] === "8") ||
+        (boardOrientation === "white" && promoteToSquare[1] === "1");
+
+      return {
+        display: "flex",
+        flexDirection: isPromotionOnTheBottomRank ? "column-reverse" : "column",
+        transform: `translate(${-boardWidth / 16}px, ${-boardWidth / 16}px)`,
+        top: isPromotionOnTheBottomRank
+          ? `${dialogCoords.y - 0.375 * boardWidth}px`
+          : `${dialogCoords.y}px`,
+      };
+    case PromotionDialogVariantsEnum.Modal:
+      return {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        transform: `translate(0px, ${(3 * boardWidth) / 8}px)`,
+        width: "100%",
+        height: `${boardWidth / 4}px`,
+        top: 0,
+        backgroundColor: "white",
+        left: 0,
+      };
+    default:
+      return {};
+  }
+};
 
 export function PromotionDialog() {
   const {
@@ -11,6 +73,8 @@ export function PromotionDialog() {
     promoteToSquare,
   } = useChessboard();
 
+  if (!promoteToSquare) return null;
+
   const promotePieceColor = promoteToSquare?.[1] === "1" ? "b" : "w";
   const promotionOptions: PromotionPieceOption[] = [
     `${promotePieceColor ?? "w"}Q`,
@@ -19,42 +83,26 @@ export function PromotionDialog() {
     `${promotePieceColor ?? "w"}B`,
   ];
 
-  const dialogStyles = {
-    default: {
-      display: "grid",
-      gridTemplateColumns: "1fr 1fr",
-      transform: `translate(${-boardWidth / 8}px, ${-boardWidth / 8}px)`,
-    },
-    vertical: {
-      transform: `translate(${-boardWidth / 16}px, ${-boardWidth / 16}px)`,
-    },
-    modal: {
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      transform: `translate(0px, ${(3 * boardWidth) / 8}px)`,
-      width: "100%",
-      height: `${boardWidth / 4}px`,
-      top: 0,
-      backgroundColor: "white",
-      left: 0,
-    },
-  };
-
   const dialogCoords = getRelativeCoords(
     boardOrientation,
     boardWidth,
-    promoteToSquare || "a8"
+    promoteToSquare,
   );
 
   return (
     <div
       style={{
         position: "absolute",
-        top: `${dialogCoords?.y}px`,
-        left: `${dialogCoords?.x}px`,
+        top: `${dialogCoords.y}px`,
+        left: `${dialogCoords.x}px`,
         zIndex: 1000,
-        ...dialogStyles[promotionDialogVariant],
+        ...getDialogStylesByVariant({
+          promotionDialogVariant,
+          boardWidth,
+          promoteToSquare,
+          dialogCoords,
+          boardOrientation,
+        }),
       }}
       title="Choose promotion piece"
     >
