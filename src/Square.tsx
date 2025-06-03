@@ -35,6 +35,7 @@ const SquareComponent = memo(function SquareComponent({
     chessboardRows,
     currentPosition,
     squareStyle,
+    squareStyles,
     darkSquareStyle,
     lightSquareStyle,
     dropSquareStyle,
@@ -137,7 +138,15 @@ const SquareComponent = memo(function SquareComponent({
         </span>
       ) : null}
 
-      {children}
+      <div
+        style={{
+          width: '100%',
+          height: '100%',
+          ...squareStyles[squareId],
+        }}
+      >
+        {children}
+      </div>
     </div>
   );
 });

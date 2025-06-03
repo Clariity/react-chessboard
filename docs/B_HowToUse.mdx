@@ -3,6 +3,7 @@ import { Canvas, Meta } from '@storybook/blocks';
 import * as DefaultStories from './stories/Default.stories';
 import * as PlayVsRandomStories from './stories/PlayVsRandom.stories';
 import * as SparePiecesStories from './stories/SparePieces.stories';
+import * as PremovesStories from './stories/Premoves.stories';
 
 import * as AllowDraggingStories from './stories/options/AllowDragging.stories';
 import * as AllowDragOffBoardStories from './stories/options/AllowDragOffBoard.stories';
@@ -10,6 +11,7 @@ import * as AlphaNotationStyleStories from './stories/options/AlphaNotationStyle
 import * as AnimationDurationInMsStories from './stories/options/AnimationDurationInMs.stories';
 import * as BoardOrientationStories from './stories/options/BoardOrientation.stories';
 import * as BoardStyleStories from './stories/options/BoardStyle.stories';
+import * as CanDragPieceStories from './stories/options/CanDragPiece.stories';
 import * as ChessboardColumnsStories from './stories/options/ChessboardColumns.stories';
 import * as ChessboardRowsStories from './stories/options/ChessboardRows.stories';
 import * as DarkSquareNotationStyleStories from './stories/options/DarkSquareNotationStyle.stories';
@@ -30,6 +32,7 @@ import * as PositionStories from './stories/options/Position.stories';
 import * as ShowAnimationsStories from './stories/options/ShowAnimations.stories';
 import * as ShowNotationStories from './stories/options/ShowNotation.stories';
 import * as SquareStyleStories from './stories/options/SquareStyle.stories';
+import * as SquareStylesStories from './stories/options/SquareStyles.stories';
 
 <Meta title="How to use" />
 
@@ -55,6 +58,7 @@ This page will show you how to use React Chessboard. It includes some basic and 
   - [`options.animationDurationInMs`](#optionsanimationdurationinms)
   - [`options.boardOrientation`](#optionsboardorientation)
   - [`options.boardStyle`](#optionsboardstyle)
+  - [`options.canDragPiece`](#optionscandragpiece)
   - [`options.chessboardColumns`](#optionschessboardcolumns)
   - [`options.chessboardRows`](#optionschessboardrows)
   - [`options.darkSquareNotationStyle`](#optionsdarksquarenotationstyle)
@@ -75,6 +79,7 @@ This page will show you how to use React Chessboard. It includes some basic and 
   - [`options.showAnimations`](#optionsshowanimations)
   - [`options.showNotation`](#optionsshownotation)
   - [`options.squareStyle`](#optionssquarestyle)
+  - [`options.squareStyles`](#optionssquarestyles)
 
 ## Basic and common examples
 
@@ -122,7 +127,9 @@ TODO
 
 ### Premoves
 
-TODO
+This example shows you how can you implement premoves with the component. Premoves are when you make a move and then before your opponent makes their move, you make a move to be played automatically after your opponent's move.
+
+<Canvas of={PremovesStories.Premoves} />
 
 ### Promotion piece selection
 
@@ -174,6 +181,7 @@ If you wish to display different styles of notation on different coloured square
   position: "absolute",
   bottom: 1,
   right: 4,
+  userSelect: 'none',
 }
 ```
 
@@ -226,6 +234,18 @@ Controls the styling of the entire chessboard container.
 **Standard use case:** Adding custom styling like borders, shadows, or rounded corners to the board.
 
 <Canvas of={BoardStyleStories.BoardStyle} />
+
+### `options.canDragPiece`
+
+Controls whether a piece can be dragged.
+
+**Default value:** `undefined`
+
+**TypeScript type:** `({ isSparePiece: boolean, piece: { pieceType: string }, square: string | null }) => boolean`
+
+**Standard use case:** Restricting piece dragging to certain pieces or squares.
+
+<Canvas of={CanDragPieceStories.CanDragPiece} />
 
 ### `options.chessboardColumns`
 
@@ -363,6 +383,7 @@ If you wish to display different styles of notation on different coloured square
   position: "absolute",
   top: 2,
   left: 2,
+  userSelect: 'none',
 }
 ```
 
@@ -525,6 +546,18 @@ Controls the styling of all squares on the board, regardless of their colour.
 **Standard use case:** Customizing the size or appearance of all squares uniformly.
 
 <Canvas of={SquareStyleStories.SquareStyle} />
+
+### `options.squareStyles`
+
+Controls the styling of individual squares on the board. This style will go over the top of any existing styles set with the [`squareStyle`](#optionssquarestyle) prop. This allows you to achieve effects like a background color over light and dark squares without needing to know whether the square is light or dark.
+
+**Default value:** `{}`
+
+**TypeScript type:** `Record<string, React.CSSProperties>`
+
+**Standard use case:** Customizing the appearance of specific squares such as for right clicks on squares or premoves.
+
+<Canvas of={SquareStylesStories.SquareStyles} />
 
 <div
   style={{

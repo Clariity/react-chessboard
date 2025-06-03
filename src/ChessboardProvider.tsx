@@ -60,6 +60,7 @@ type ContextType = {
 
   boardStyle: Defined<ChessboardOptions['boardStyle']>;
   squareStyle: Defined<ChessboardOptions['squareStyle']>;
+  squareStyles: Defined<ChessboardOptions['squareStyles']>;
   darkSquareStyle: Defined<ChessboardOptions['darkSquareStyle']>;
   lightSquareStyle: Defined<ChessboardOptions['lightSquareStyle']>;
   dropSquareStyle: Defined<ChessboardOptions['dropSquareStyle']>;
@@ -80,6 +81,7 @@ type ContextType = {
   allowDragging: Defined<ChessboardOptions['allowDragging']>;
   allowDragOffBoard: Defined<ChessboardOptions['allowDragOffBoard']>;
 
+  canDragPiece: ChessboardOptions['canDragPiece'];
   onMouseOutSquare: ChessboardOptions['onMouseOutSquare'];
   onMouseOverSquare: ChessboardOptions['onMouseOverSquare'];
   onPieceClick: ChessboardOptions['onPieceClick'];
@@ -111,6 +113,7 @@ export type ChessboardOptions = {
   // board and squares styles
   boardStyle?: React.CSSProperties;
   squareStyle?: React.CSSProperties;
+  squareStyles?: Record<string, React.CSSProperties>;
   darkSquareStyle?: React.CSSProperties;
   lightSquareStyle?: React.CSSProperties;
   dropSquareStyle?: React.CSSProperties;
@@ -132,6 +135,7 @@ export type ChessboardOptions = {
   allowDragOffBoard?: boolean;
 
   // handlers
+  canDragPiece?: ({ isSparePiece, piece, square }: PieceHandlerArgs) => boolean;
   onMouseOutSquare?: ({ piece, square }: SquareHandlerArgs) => void;
   onMouseOverSquare?: ({ piece, square }: SquareHandlerArgs) => void;
   onPieceClick?: ({ isSparePiece, piece, square }: PieceHandlerArgs) => void;
@@ -150,21 +154,24 @@ export type ChessboardOptions = {
 };
 
 // upgrade guide
+// add new options - canDragPiece, squareStyles
 // advanced examples
 
 // draggingPieceStyle (so users can style the dragging piece e.g. grow in size)
-// prevent notation highlighting on double click
 // scrolling whilst dragging is buggy, look to disable scroll on drag
 // allowDragOffBoard - https://docs.dndkit.com/api-documentation/modifiers#building-custom-modifiers - CustomDragLayer implementation
 // accessibility (may need to revisit sensors)
 // promotion ???
-// premoves ???
 // arrows ??? (maybe add ability to draw them, but logic for them can be done externally, though would be nice to have it here)
 // squareRenderer
-// activationConstraint distance as option, call it dragActivationDistance
+// activationConstraint distance as option, call it dragActivationDistance (note that setting to 0 will causes issues with onPieceClick)
 
 // tests
-// commit lint
+// discord server (repurpose chessopenings discord server)
+// full example doc (step by step build up rather than all at once, showing a custom board, with premoves and promotion, right click squares, adding sounds on moves, etc)
+// utils doc
+// multiplayer with 2 boards (side by side)
+// storybook 9
 
 export function ChessboardProvider({
   children,
@@ -183,6 +190,7 @@ export function ChessboardProvider({
     // board and squares styles
     boardStyle = defaultBoardStyle(chessboardColumns),
     squareStyle = defaultSquareStyle,
+    squareStyles = {},
     darkSquareStyle = defaultDarkSquareStyle,
     lightSquareStyle = defaultLightSquareStyle,
     dropSquareStyle = defaultDropSquareStyle,
@@ -203,6 +211,7 @@ export function ChessboardProvider({
     allowDragOffBoard = true,
 
     // handlers
+    canDragPiece,
     onMouseOutSquare,
     onMouseOverSquare,
     onPieceClick,
@@ -433,6 +442,7 @@ export function ChessboardProvider({
 
         boardStyle,
         squareStyle,
+        squareStyles,
         darkSquareStyle,
         lightSquareStyle,
         dropSquareStyle,
@@ -449,6 +459,7 @@ export function ChessboardProvider({
         allowDragging,
         allowDragOffBoard,
 
+        canDragPiece,
         onMouseOutSquare,
         onMouseOverSquare,
         onPieceClick,

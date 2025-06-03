@@ -35,6 +35,7 @@ const PieceComponent = memo(function PieceComponent({
     allowDragging,
     animationDurationInMs,
     boardOrientation,
+    canDragPiece,
     pieces,
     positionDifferences,
     onPieceClick,
@@ -43,7 +44,11 @@ const PieceComponent = memo(function PieceComponent({
   const [animationStyle, setAnimationStyle] = useState<React.CSSProperties>({});
 
   let cursorStyle = clone ? 'grabbing' : 'grab';
-  if (!allowDragging) {
+  if (
+    !allowDragging ||
+    (canDragPiece &&
+      !canDragPiece({ piece: { pieceType }, isSparePiece, square: position }))
+  ) {
     cursorStyle = 'pointer';
   }
 
@@ -71,6 +76,7 @@ const PieceComponent = memo(function PieceComponent({
           squareWidth
         }px)`,
         transition: `transform ${animationDurationInMs}ms`,
+        position: 'relative', // creates a new stacking context so the piece stays above squares during animation
         zIndex: 10,
       });
     } else {
@@ -111,14 +117,21 @@ export function Piece({
   position,
   pieceType,
 }: Omit<PieceProps, 'isDragging' | 'setNodeRef' | 'attributes' | 'listeners'>) {
-  const { allowDragging } = useChessboardContext();
+  const { allowDragging, canDragPiece } = useChessboardContext();
   const { isDragging, setNodeRef, attributes, listeners } = useDraggable({
     id: position,
     data: {
       isSparePiece,
       pieceType,
     },
-    disabled: !allowDragging,
+    disabled:
+      !allowDragging ||
+      (canDragPiece &&
+        !canDragPiece({
+          piece: { pieceType },
+          isSparePiece,
+          square: position,
+        })),
   });
 
   return (

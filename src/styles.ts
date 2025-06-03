@@ -41,6 +41,7 @@ export const defaultAlphaNotationStyle: React.CSSProperties = {
   position: 'absolute',
   bottom: 1,
   right: 4,
+  userSelect: 'none',
 };
 
 export const defaultNumericNotationStyle: React.CSSProperties = {
@@ -48,4 +49,5 @@ export const defaultNumericNotationStyle: React.CSSProperties = {
   position: 'absolute',
   top: 2,
   left: 2,
+  userSelect: 'none',
 };
