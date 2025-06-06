@@ -164,6 +164,7 @@ export type ChessboardOptions = {
 
 // upgrade guide
 // advanced examples
+// nextjs? remember to add use client at the top of the file
 
 // scrolling whilst dragging is buggy, look to disable scroll on drag
 // allowDragOffBoard - https://docs.dndkit.com/api-documentation/modifiers#building-custom-modifiers - CustomDragLayer implementation
