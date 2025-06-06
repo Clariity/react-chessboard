@@ -51,3 +51,11 @@ export const defaultNumericNotationStyle: React.CSSProperties = {
   left: 2,
   userSelect: 'none',
 };
+
+export const defaultDraggingPieceStyle: React.CSSProperties = {
+  transform: 'scale(1.2)',
+};
+
+export const defaultDraggingPieceGhostStyle: React.CSSProperties = {
+  opacity: 0.5,
+};

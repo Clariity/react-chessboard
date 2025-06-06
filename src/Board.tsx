@@ -1,8 +1,9 @@
 import { DragOverlay } from '@dnd-kit/core';
 import { snapCenterToCursor } from '@dnd-kit/modifiers';
 
-import { Square } from './Square';
+import { Draggable } from './Draggable';
 import { Piece } from './Piece';
+import { Square } from './Square';
 import { useChessboardContext } from './ChessboardProvider';
 import { defaultBoardStyle } from './styles';
 
@@ -24,7 +25,15 @@ export function Board() {
 
             return (
               <Square key={square.squareId} {...square}>
-                {piece ? <Piece {...piece} position={square.squareId} /> : null}
+                {piece ? (
+                  <Draggable
+                    isSparePiece={false}
+                    position={square.squareId}
+                    pieceType={piece.pieceType}
+                  >
+                    <Piece {...piece} position={square.squareId} />
+                  </Draggable>
+                ) : null}
               </Square>
             );
           }),

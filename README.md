@@ -23,6 +23,7 @@ A modern, responsive chessboard component for React applications.
 - 🔄 Event handling
 - 📱 Mobile support
 - 📱 Responsive
+- ⌨️ Accessible
 - 🔷 TypeScript support
 - ✨ And more!
 

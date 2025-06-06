@@ -16,6 +16,9 @@ import * as ChessboardColumnsStories from './stories/options/ChessboardColumns.s
 import * as ChessboardRowsStories from './stories/options/ChessboardRows.stories';
 import * as DarkSquareNotationStyleStories from './stories/options/DarkSquareNotationStyle.stories';
 import * as DarkSquareStyleStories from './stories/options/DarkSquareStyle.stories';
+import * as DragActivationDistanceStories from './stories/options/DragActivationDistance.stories';
+import * as DraggingPieceStyleStories from './stories/options/DraggingPieceStyle.stories';
+import * as DraggingPieceGhostStyleStories from './stories/options/DraggingPieceGhostStyle.stories';
 import * as DropSquareStyleStories from './stories/options/DropSquareStyle.stories';
 import * as LightSquareNotationStyleStories from './stories/options/LightSquareNotationStyle.stories';
 import * as LightSquareStyleStories from './stories/options/LightSquareStyle.stories';
@@ -63,6 +66,9 @@ This page will show you how to use React Chessboard. It includes some basic and 
   - [`options.chessboardRows`](#optionschessboardrows)
   - [`options.darkSquareNotationStyle`](#optionsdarksquarenotationstyle)
   - [`options.darkSquareStyle`](#optionsdarksquarestyle)
+  - [`options.dragActivationDistance`](#optionsdragactivationdistance)
+  - [`options.draggingPieceStyle`](#optionsdraggingpiecestyle)
+  - [`options.draggingPieceGhostStyle`](#optionsdraggingpieceghoststyle)
   - [`options.dropSquareStyle`](#optionsdropsquarestyle)
   - [`options.lightSquareNotationStyle`](#optionslightsquarenotationstyle)
   - [`options.lightSquareStyle`](#optionslightsquarestyle)
@@ -310,6 +316,54 @@ Controls the styling of dark squares on the board.
 **Standard use case:** Customizing the appearance of dark squares to match your application's theme.
 
 <Canvas of={DarkSquareStyleStories.DarkSquareStyle} />
+
+### `options.dragActivationDistance`
+
+Controls the distance in pixels that the mouse needs to move before a piece can be dragged. Note that setting this to `0` will cause issues with the `onPieceClick` event firing because the click will be registered as a drag instead.
+
+**Default value:** `2`
+
+**TypeScript type:** `number`
+
+**Standard use case:** Preventing accidental piece dragging when clicking on a piece.
+
+<Canvas of={DragActivationDistanceStories.DragActivationDistance} />
+
+### `options.draggingPieceStyle`
+
+Controls the styling of the piece being dragged. This allows you to customise the appearance of the piece while it's being dragged, such as scaling it up, adding a shadow, or rotating it.
+
+**Default value:**
+
+```tsx
+{
+  transform: 'scale(1.2)',
+}
+```
+
+**TypeScript type:** `React.CSSProperties`
+
+**Standard use case:** Enhancing the visual feedback when dragging pieces, such as making the dragged piece larger or adding effects to make it stand out.
+
+<Canvas of={DraggingPieceStyleStories.DraggingPieceStyle} />
+
+### `options.draggingPieceGhostStyle`
+
+Controls the styling of the ghost piece that remains in the original square while dragging. This allows you to customize the appearance of the ghost piece, such as its opacity or blur effect.
+
+**Default value:**
+
+```tsx
+{
+  opacity: 0.5,
+}
+```
+
+**TypeScript type:** `React.CSSProperties`
+
+**Standard use case:** Customizing the visual feedback of the ghost piece to make it more or less prominent while dragging.
+
+<Canvas of={DraggingPieceGhostStyleStories.DraggingPieceGhostStyle} />
 
 ### `options.dropSquareStyle`
 

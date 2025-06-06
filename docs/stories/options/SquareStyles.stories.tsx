@@ -7,7 +7,7 @@ import { SquareHandlerArgs } from '../../../src/types';
 
 const meta: Meta<typeof Chessboard> = {
   ...defaultMeta,
-  title: 'stories/Options/SquareStyle',
+  title: 'stories/Options/SquareStyles',
 } satisfies Meta<typeof Chessboard>;
 
 export default meta;

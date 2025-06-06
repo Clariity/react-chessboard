@@ -6,7 +6,7 @@ import { PieceHandlerArgs } from '../../../src/types';
 
 const meta: Meta<typeof Chessboard> = {
   ...defaultMeta,
-  title: 'stories/Options/AllowDragging',
+  title: 'stories/Options/CanDragPiece',
 } satisfies Meta<typeof Chessboard>;
 
 export default meta;

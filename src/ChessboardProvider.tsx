@@ -41,6 +41,8 @@ import {
   defaultBoardStyle,
   defaultDarkSquareNotationStyle,
   defaultDarkSquareStyle,
+  defaultDraggingPieceGhostStyle,
+  defaultDraggingPieceStyle,
   defaultDropSquareStyle,
   defaultLightSquareNotationStyle,
   defaultLightSquareStyle,
@@ -64,6 +66,10 @@ type ContextType = {
   darkSquareStyle: Defined<ChessboardOptions['darkSquareStyle']>;
   lightSquareStyle: Defined<ChessboardOptions['lightSquareStyle']>;
   dropSquareStyle: Defined<ChessboardOptions['dropSquareStyle']>;
+  draggingPieceStyle: Defined<ChessboardOptions['draggingPieceStyle']>;
+  draggingPieceGhostStyle: Defined<
+    ChessboardOptions['draggingPieceGhostStyle']
+  >;
 
   darkSquareNotationStyle: Defined<
     ChessboardOptions['darkSquareNotationStyle']
@@ -117,6 +123,8 @@ export type ChessboardOptions = {
   darkSquareStyle?: React.CSSProperties;
   lightSquareStyle?: React.CSSProperties;
   dropSquareStyle?: React.CSSProperties;
+  draggingPieceStyle?: React.CSSProperties;
+  draggingPieceGhostStyle?: React.CSSProperties;
   // squareRenderer?: (square: string, piece: PieceDataType) => React.JSX.Element;
 
   // notation
@@ -133,6 +141,7 @@ export type ChessboardOptions = {
   // drag and drop
   allowDragging?: boolean;
   allowDragOffBoard?: boolean;
+  dragActivationDistance?: number;
 
   // handlers
   canDragPiece?: ({ isSparePiece, piece, square }: PieceHandlerArgs) => boolean;
@@ -154,17 +163,14 @@ export type ChessboardOptions = {
 };
 
 // upgrade guide
-// add new options - canDragPiece, squareStyles
 // advanced examples
 
-// draggingPieceStyle (so users can style the dragging piece e.g. grow in size)
 // scrolling whilst dragging is buggy, look to disable scroll on drag
 // allowDragOffBoard - https://docs.dndkit.com/api-documentation/modifiers#building-custom-modifiers - CustomDragLayer implementation
 // accessibility (may need to revisit sensors)
 // promotion ???
 // arrows ??? (maybe add ability to draw them, but logic for them can be done externally, though would be nice to have it here)
 // squareRenderer
-// activationConstraint distance as option, call it dragActivationDistance (note that setting to 0 will causes issues with onPieceClick)
 
 // tests
 // discord server (repurpose chessopenings discord server)
@@ -172,6 +178,7 @@ export type ChessboardOptions = {
 // utils doc
 // multiplayer with 2 boards (side by side)
 // storybook 9
+// add own "read next" links to docs
 
 export function ChessboardProvider({
   children,
@@ -194,6 +201,8 @@ export function ChessboardProvider({
     darkSquareStyle = defaultDarkSquareStyle,
     lightSquareStyle = defaultLightSquareStyle,
     dropSquareStyle = defaultDropSquareStyle,
+    draggingPieceStyle = defaultDraggingPieceStyle,
+    draggingPieceGhostStyle = defaultDraggingPieceGhostStyle,
 
     // notation
     darkSquareNotationStyle = defaultDarkSquareNotationStyle,
@@ -209,6 +218,7 @@ export function ChessboardProvider({
     // drag and drop
     allowDragging = true,
     allowDragOffBoard = true,
+    dragActivationDistance = 2,
 
     // handlers
     canDragPiece,
@@ -422,7 +432,7 @@ export function ChessboardProvider({
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 2,
+        distance: dragActivationDistance,
       },
     }),
     useSensor(KeyboardSensor),
@@ -446,6 +456,8 @@ export function ChessboardProvider({
         darkSquareStyle,
         lightSquareStyle,
         dropSquareStyle,
+        draggingPieceStyle,
+        draggingPieceGhostStyle,
 
         darkSquareNotationStyle,
         lightSquareNotationStyle,

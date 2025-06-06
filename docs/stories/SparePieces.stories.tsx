@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import defaultMeta from './Default.stories';
 import { Chessboard } from '../../src';
 import { ChessboardProvider } from '../../src/ChessboardProvider';
-import { SparePiece } from '../../src/Piece';
+import { SparePiece } from '../../src/';
 import { PieceDropHandlerArgs, PieceType } from '../../src/types';
 
 const meta: Meta<typeof Chessboard> = {
