@@ -5,6 +5,7 @@
   "author": "Ryan Gregory <ryangregory.dev@outlook.com>",
   "license": "MIT",
   "main": "dist/index.js",
+  "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist"
