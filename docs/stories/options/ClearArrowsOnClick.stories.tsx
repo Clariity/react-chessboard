@@ -6,20 +6,25 @@ import { Chessboard } from '../../../src';
 
 const meta: Meta<typeof Chessboard> = {
   ...defaultMeta,
-  title: 'stories/Options/DragActivationDistance',
+  title: 'stories/Options/ClearArrowsOnClick',
 } satisfies Meta<typeof Chessboard>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const DragActivationDistance: Story = {
+export const ClearArrowsOnClick: Story = {
   render: () => {
-    const [dragActivationDistance, setDragActivationDistance] = useState(2);
+    const [clearArrowsOnClick, setClearArrowsOnClick] = useState(true);
+    const [arrows] = useState([
+      { startSquare: 'e2', endSquare: 'e4', color: 'red' },
+      { startSquare: 'g1', endSquare: 'f3', color: 'blue' },
+    ]);
 
     // chessboard options
     const chessboardOptions = {
-      dragActivationDistance,
-      id: 'drag-activation-distance',
+      arrows,
+      clearArrowsOnClick,
+      id: 'clear-arrows-on-click',
     };
 
     // render
@@ -32,24 +37,20 @@ export const DragActivationDistance: Story = {
           alignItems: 'center',
         }}
       >
-        <label style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-          Drag activation distance:
+        <label>
           <input
-            type="range"
-            min="0"
-            max="20"
-            step="1"
-            value={dragActivationDistance}
-            onChange={(e) => setDragActivationDistance(Number(e.target.value))}
+            type="checkbox"
+            checked={clearArrowsOnClick}
+            onChange={(e) => setClearArrowsOnClick(e.target.checked)}
           />
-          {dragActivationDistance}px
+          Clear arrows on click
         </label>
 
         <Chessboard options={chessboardOptions} />
 
         <p style={{ fontSize: '0.8rem', color: '#666' }}>
-          Adjust the slider to change how far you need to drag a piece before it
-          starts moving
+          Toggle the checkbox to enable/disable clearing arrows when clicking on
+          a square
         </p>
       </div>
     );

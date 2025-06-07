@@ -160,6 +160,7 @@ export const Premoves: Story = {
       position,
       showAnimations,
       squareStyles,
+      id: 'premoves',
     };
 
     // render the chessboard

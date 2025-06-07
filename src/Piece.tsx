@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import {
   defaultDraggingPieceGhostStyle,
   defaultDraggingPieceStyle,
-} from './styles';
+} from './defaults';
 
 type PieceProps = {
   clone?: boolean;
@@ -23,6 +23,7 @@ export const Piece = memo(function PieceComponent({
   pieceType,
 }: PieceProps) {
   const {
+    id,
     allowDragging,
     animationDurationInMs,
     boardOrientation,
@@ -82,7 +83,7 @@ export const Piece = memo(function PieceComponent({
 
   return (
     <div
-      id={`${pieceType}-${position}`}
+      id={`${id}-piece-${pieceType}-${position}`}
       data-piece={pieceType}
       style={{
         ...animationStyle,

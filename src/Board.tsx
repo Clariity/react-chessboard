@@ -1,11 +1,13 @@
 import { DragOverlay } from '@dnd-kit/core';
 import { snapCenterToCursor } from '@dnd-kit/modifiers';
 
+import { Arrows } from './Arrows';
 import { Draggable } from './Draggable';
 import { Piece } from './Piece';
 import { Square } from './Square';
 import { useChessboardContext } from './ChessboardProvider';
-import { defaultBoardStyle } from './styles';
+import { defaultBoardStyle } from './defaults';
+import { useEffect, useRef, useState } from 'react';
 
 export function Board() {
   const {
@@ -14,11 +16,36 @@ export function Board() {
     chessboardColumns,
     currentPosition,
     draggingPiece,
+    id,
   } = useChessboardContext();
+  const boardRef = useRef<HTMLDivElement>(null);
+  const [boardWidth, setBoardWidth] = useState(boardRef.current?.clientWidth);
+  const [boardHeight, setBoardHeight] = useState(
+    boardRef.current?.clientHeight,
+  );
+
+  // if the board dimensions change, update the board width and height
+  useEffect(() => {
+    if (boardRef.current) {
+      const resizeObserver = new ResizeObserver(() => {
+        setBoardWidth(boardRef.current?.clientWidth as number);
+        setBoardHeight(boardRef.current?.clientHeight as number);
+      });
+      resizeObserver.observe(boardRef.current);
+
+      return () => {
+        resizeObserver.disconnect();
+      };
+    }
+  }, [boardRef.current]);
 
   return (
     <>
-      <div style={{ ...defaultBoardStyle(chessboardColumns), ...boardStyle }}>
+      <div
+        id={`${id}-board`}
+        ref={boardRef}
+        style={{ ...defaultBoardStyle(chessboardColumns), ...boardStyle }}
+      >
         {board.map((row) =>
           row.map((square) => {
             const piece = currentPosition[square.squareId];
@@ -38,6 +65,8 @@ export function Board() {
             );
           }),
         )}
+
+        <Arrows boardWidth={boardWidth} boardHeight={boardHeight} />
       </div>
 
       <DragOverlay dropAnimation={null} modifiers={[snapCenterToCursor]}>

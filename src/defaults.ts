@@ -7,6 +7,7 @@ export function defaultBoardStyle(
     overflow: 'hidden',
     width: '100%',
     height: '100%',
+    position: 'relative',
   };
 }
 
@@ -60,4 +61,16 @@ export const defaultDraggingPieceStyle: React.CSSProperties = {
 
 export const defaultDraggingPieceGhostStyle: React.CSSProperties = {
   opacity: 0.5,
+};
+
+export const defaultArrowSettings = {
+  color: '#ffaa00', // color if no modifiers are held down when drawing an arrow
+  secondaryColor: '#4caf50', // color if shift is held down when drawing an arrow
+  tertiaryColor: '#f44336', // color if control is held down when drawing an arrow
+  arrowLengthReducerDenominator: 8, // the lower the denominator, the greater the arrow length reduction (e.g. 8 = 1/8 of a square width removed, 4 = 1/4 of a square width removed)
+  sameTargetArrowLengthReducerDenominator: 4, // as above but for arrows targeting the same square (a greater reduction is used to avoid overlaps)
+  arrowWidthDenominator: 5, // the lower the denominator, the greater the arrow width (e.g. 5 = 1/5 of a square width, 10 = 1/10 of a square width)
+  activeArrowWidthMultiplier: 0.9, // the multiplier for the arrow width when it is being drawn
+  opacity: 0.65, // opacity of arrow when not being drawn
+  activeOpacity: 0.5, // opacity of arrow when it is being drawn
 };

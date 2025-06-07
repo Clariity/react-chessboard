@@ -11,7 +11,7 @@ import {
   defaultLightSquareStyle,
   defaultNumericNotationStyle,
   defaultSquareStyle,
-} from './styles';
+} from './defaults';
 import { SquareDataType } from './types';
 import { columnIndexToChessColumn } from './utils';
 
@@ -30,6 +30,8 @@ const SquareComponent = memo(function SquareComponent({
   isOver,
 }: SquareProps) {
   const {
+    id,
+    allowDrawingArrows,
     boardOrientation,
     chessboardColumns,
     chessboardRows,
@@ -48,6 +50,11 @@ const SquareComponent = memo(function SquareComponent({
     onMouseOverSquare,
     onSquareClick,
     onSquareRightClick,
+    newArrowStartSquare,
+    setNewArrowStartSquare,
+    setNewArrowOverSquare,
+    drawArrow,
+    clearArrows,
   } = useChessboardContext();
 
   const column = squareId.match(/^[a-z]+/)?.[0];
@@ -55,6 +62,7 @@ const SquareComponent = memo(function SquareComponent({
 
   return (
     <div
+      id={`${id}-square-${squareId}`}
       style={{
         ...defaultSquareStyle,
         ...squareStyle,
@@ -81,12 +89,37 @@ const SquareComponent = memo(function SquareComponent({
           square: squareId,
         });
       }}
-      onMouseOver={() =>
+      onMouseDown={(e) => {
+        if (e.button === 0) {
+          clearArrows();
+        }
+        if (e.button === 2 && allowDrawingArrows) {
+          setNewArrowStartSquare(squareId);
+        }
+      }}
+      onMouseUp={(e) => {
+        if (e.button === 2) {
+          if (newArrowStartSquare) {
+            drawArrow(squareId, {
+              shiftKey: e.shiftKey,
+              ctrlKey: e.ctrlKey,
+            });
+          }
+        }
+      }}
+      onMouseOver={(e) => {
+        // right mouse button is held down and we are drawing an arrow
+        if (e.buttons === 2 && newArrowStartSquare) {
+          setNewArrowOverSquare(squareId, {
+            shiftKey: e.shiftKey,
+            ctrlKey: e.ctrlKey,
+          });
+        }
         onMouseOverSquare?.({
           piece: currentPosition[squareId] ?? null,
           square: squareId,
-        })
-      }
+        });
+      }}
       onMouseLeave={() =>
         onMouseOutSquare?.({
           piece: currentPosition[squareId] ?? null,

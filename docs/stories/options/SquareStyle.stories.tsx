@@ -22,6 +22,7 @@ export const SquareStyle: Story = {
           'linear-gradient(45deg, rgba(255,255,255,0.1), rgba(255,255,255,0.2))',
         boxShadow: 'inset 2px 2px 5px rgba(0,0,0,0.1)',
       },
+      id: 'square-style',
     };
 
     // render

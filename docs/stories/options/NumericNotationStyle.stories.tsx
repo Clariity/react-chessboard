@@ -20,6 +20,7 @@ export const NumericNotationStyle: Story = {
         fontSize: '20px',
         fontWeight: 'bold',
       },
+      id: 'numeric-notation-style',
     };
 
     // render

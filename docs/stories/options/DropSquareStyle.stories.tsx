@@ -18,6 +18,7 @@ export const DropSquareStyle: Story = {
       dropSquareStyle: {
         border: '5px solid red',
       },
+      id: 'drop-square-style',
     };
 
     // render

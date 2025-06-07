@@ -51,6 +51,7 @@ export const ChessboardRows: Story = {
         h15: { pieceType: 'bP' },
         h16: { pieceType: 'bR' },
       } as PositionDataType,
+      id: 'chessboard-rows',
     };
 
     // render

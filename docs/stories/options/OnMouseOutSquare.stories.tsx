@@ -27,6 +27,7 @@ export const OnMouseOutSquare: Story = {
     // chessboard options
     const chessboardOptions = {
       onMouseOutSquare,
+      id: 'on-mouse-out-square',
     };
 
     // render

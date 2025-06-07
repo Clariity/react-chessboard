@@ -75,6 +75,7 @@ export const PlayVsRandom: Story = {
     const chessboardOptions = {
       position: chessGame.fen(),
       onPieceDrop,
+      id: 'play-vs-random',
     };
 
     // render the chessboard

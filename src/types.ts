@@ -1,3 +1,9 @@
+export type Arrow = {
+  startSquare: string; // e.g. "a8"
+  endSquare: string; // e.g. "a7"
+  color: string; // e.g. "#000000"
+};
+
 export type SquareDataType = {
   squareId: string; // e.g. "a8"
   isLightSquare: boolean;

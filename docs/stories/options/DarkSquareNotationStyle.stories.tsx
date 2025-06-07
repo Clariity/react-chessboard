@@ -19,6 +19,7 @@ export const DarkSquareNotationStyle: Story = {
         color: 'cyan',
         fontWeight: 'bold',
       },
+      id: 'dark-square-notation-style',
     };
 
     // render

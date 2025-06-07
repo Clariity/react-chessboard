@@ -33,6 +33,7 @@ export const OnPieceDragStart: Story = {
     // chessboard options
     const chessboardOptions = {
       onPieceDragStart,
+      id: 'on-piece-drag-start',
     };
 
     // render

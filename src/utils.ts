@@ -57,6 +57,16 @@ function chessColumnToColumnIndex(
     : noOfColumns - (column.charCodeAt(0) - 97) - 1;
 }
 
+export function chessRowToRowIndex(
+  row: string,
+  noOfRows: number,
+  boardOrientation: 'white' | 'black',
+) {
+  return boardOrientation === 'white'
+    ? noOfRows - Number(row)
+    : Number(row) - 1;
+}
+
 export function fenStringToPositionObject(
   fen: string,
   noOfRows: number,
@@ -262,4 +272,35 @@ export function getPositionUpdates(
   }
 
   return updates;
+}
+
+/**
+ * Retrieves the coordinates at the centre of the requested square, relative to the top left of the board (0, 0).
+ */
+export function getRelativeCoords(
+  boardOrientation: 'white' | 'black',
+  boardWidth: number,
+  chessboardColumns: number,
+  chessboardRows: number,
+  square: string,
+) {
+  const squareWidth = boardWidth / chessboardColumns;
+
+  const x =
+    chessColumnToColumnIndex(
+      square.match(/^[a-z]+/)?.[0] ?? '',
+      chessboardColumns,
+      boardOrientation,
+    ) *
+      squareWidth +
+    squareWidth / 2;
+  const y =
+    chessRowToRowIndex(
+      square.match(/\d+$/)?.[0] ?? '',
+      chessboardRows,
+      boardOrientation,
+    ) *
+      squareWidth +
+    squareWidth / 2;
+  return { x, y };
 }

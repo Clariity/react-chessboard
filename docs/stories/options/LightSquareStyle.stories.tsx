@@ -18,6 +18,7 @@ export const LightSquareStyle: Story = {
       lightSquareStyle: {
         backgroundColor: 'cyan',
       },
+      id: 'light-square-style',
     };
 
     // render

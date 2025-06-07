@@ -23,6 +23,7 @@ export const DraggingPieceGhostStyle: Story = {
         opacity,
         filter: `blur(${blur}px)`,
       },
+      id: 'dragging-piece-ghost-style',
     };
 
     // render

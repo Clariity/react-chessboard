@@ -31,6 +31,7 @@ export const OnSquareRightClick: Story = {
     // chessboard options
     const chessboardOptions = {
       onSquareRightClick,
+      id: 'on-square-right-click',
     };
 
     // render

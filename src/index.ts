@@ -1,6 +1,7 @@
 export * from './Chessboard';
-export { ChessboardProvider } from './ChessboardProvider';
-export { defaultPieces } from './pieces';
+export * from './ChessboardProvider';
+export * from './defaults';
+export * from './pieces';
 export * from './SparePiece';
 export * from './types';
 export * from './utils';

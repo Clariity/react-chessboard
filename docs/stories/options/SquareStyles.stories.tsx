@@ -47,6 +47,7 @@ export const SquareStyles: Story = {
       onSquareClick,
       onSquareRightClick,
       squareStyles,
+      id: 'square-styles',
     };
 
     // render

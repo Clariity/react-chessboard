@@ -6,20 +6,20 @@ import { Chessboard } from '../../../src';
 
 const meta: Meta<typeof Chessboard> = {
   ...defaultMeta,
-  title: 'stories/Options/DragActivationDistance',
+  title: 'stories/Options/AllowDrawingArrows',
 } satisfies Meta<typeof Chessboard>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const DragActivationDistance: Story = {
+export const AllowDrawingArrows: Story = {
   render: () => {
-    const [dragActivationDistance, setDragActivationDistance] = useState(2);
+    const [allowDrawingArrows, setAllowDrawingArrows] = useState(true);
 
     // chessboard options
     const chessboardOptions = {
-      dragActivationDistance,
-      id: 'drag-activation-distance',
+      allowDrawingArrows,
+      id: 'allow-drawing-arrows',
     };
 
     // render
@@ -32,24 +32,20 @@ export const DragActivationDistance: Story = {
           alignItems: 'center',
         }}
       >
-        <label style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-          Drag activation distance:
+        <label>
           <input
-            type="range"
-            min="0"
-            max="20"
-            step="1"
-            value={dragActivationDistance}
-            onChange={(e) => setDragActivationDistance(Number(e.target.value))}
+            type="checkbox"
+            checked={allowDrawingArrows}
+            onChange={(e) => setAllowDrawingArrows(e.target.checked)}
           />
-          {dragActivationDistance}px
+          Allow drawing arrows
         </label>
 
         <Chessboard options={chessboardOptions} />
 
         <p style={{ fontSize: '0.8rem', color: '#666' }}>
-          Adjust the slider to change how far you need to drag a piece before it
-          starts moving
+          Toggle the checkbox to enable/disable drawing arrows by holding right
+          click and dragging
         </p>
       </div>
     );

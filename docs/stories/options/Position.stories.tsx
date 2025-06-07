@@ -74,6 +74,7 @@ export const Position: Story = {
     const chessboardOptions = {
       position,
       showAnimations,
+      id: 'position',
     };
 
     // render

@@ -16,6 +16,7 @@ export const ChessboardColumns: Story = {
     // chessboard options
     const chessboardOptions = {
       chessboardColumns: 16,
+      id: 'chessboard-columns',
     };
 
     // render

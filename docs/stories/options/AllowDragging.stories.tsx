@@ -19,6 +19,7 @@ export const AllowDragging: Story = {
     // chessboard options
     const chessboardOptions = {
       allowDragging,
+      id: 'allow-dragging',
     };
 
     // render

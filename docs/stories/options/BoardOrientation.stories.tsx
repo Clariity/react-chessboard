@@ -21,6 +21,7 @@ export const BoardOrientation: Story = {
     // chessboard options
     const chessboardOptions = {
       boardOrientation,
+      id: 'board-orientation',
     };
 
     // render

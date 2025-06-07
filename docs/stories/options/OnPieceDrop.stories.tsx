@@ -36,6 +36,7 @@ export const OnPieceDrop: Story = {
     // chessboard options
     const chessboardOptions = {
       onPieceDrop,
+      id: 'on-piece-drop',
     };
 
     // render

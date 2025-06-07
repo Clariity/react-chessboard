@@ -7,13 +7,17 @@ import * as PremovesStories from './stories/Premoves.stories';
 
 import * as AllowDraggingStories from './stories/options/AllowDragging.stories';
 import * as AllowDragOffBoardStories from './stories/options/AllowDragOffBoard.stories';
+import * as AllowDrawingArrowsStories from './stories/options/AllowDrawingArrows.stories';
 import * as AlphaNotationStyleStories from './stories/options/AlphaNotationStyle.stories';
 import * as AnimationDurationInMsStories from './stories/options/AnimationDurationInMs.stories';
+import * as ArrowsStories from './stories/options/Arrows.stories';
+import * as ArrowSettingsStories from './stories/options/ArrowSettings.stories';
 import * as BoardOrientationStories from './stories/options/BoardOrientation.stories';
 import * as BoardStyleStories from './stories/options/BoardStyle.stories';
 import * as CanDragPieceStories from './stories/options/CanDragPiece.stories';
 import * as ChessboardColumnsStories from './stories/options/ChessboardColumns.stories';
 import * as ChessboardRowsStories from './stories/options/ChessboardRows.stories';
+import * as ClearArrowsOnClickStories from './stories/options/ClearArrowsOnClick.stories';
 import * as DarkSquareNotationStyleStories from './stories/options/DarkSquareNotationStyle.stories';
 import * as DarkSquareStyleStories from './stories/options/DarkSquareStyle.stories';
 import * as DragActivationDistanceStories from './stories/options/DragActivationDistance.stories';
@@ -56,20 +60,24 @@ This page will show you how to use React Chessboard. It includes some basic and 
   - [Promotion piece selection](#promotion-piece-selection)
 - [Component options](#component-options)
   - [`options.allowDragging`](#optionsallowdragging)
-  - [`options.allowDragOffBoard`](#optionsallowdragoffboard)
+  - [`options.allowDrawingArrows`](#optionsallowdrawingarrows)
   - [`options.alphaNotationStyle`](#optionsalphanotationstyle)
   - [`options.animationDurationInMs`](#optionsanimationdurationinms)
+  - [`options.arrows`](#optionsarrows)
+  - [`options.arrowSettings`](#optionsarrowsettings)
   - [`options.boardOrientation`](#optionsboardorientation)
   - [`options.boardStyle`](#optionsboardstyle)
   - [`options.canDragPiece`](#optionscandragpiece)
   - [`options.chessboardColumns`](#optionschessboardcolumns)
   - [`options.chessboardRows`](#optionschessboardrows)
+  - [`options.clearArrowsOnClick`](#optionscleararrowsonclick)
   - [`options.darkSquareNotationStyle`](#optionsdarksquarenotationstyle)
   - [`options.darkSquareStyle`](#optionsdarksquarestyle)
   - [`options.dragActivationDistance`](#optionsdragactivationdistance)
   - [`options.draggingPieceStyle`](#optionsdraggingpiecestyle)
   - [`options.draggingPieceGhostStyle`](#optionsdraggingpieceghoststyle)
   - [`options.dropSquareStyle`](#optionsdropsquarestyle)
+  - [`options.id`](#optionsid)
   - [`options.lightSquareNotationStyle`](#optionslightsquarenotationstyle)
   - [`options.lightSquareStyle`](#optionslightsquarestyle)
   - [`options.numericNotationStyle`](#optionsnumericnotationstyle)
@@ -157,21 +165,21 @@ When set to true, pieces can be dragged and dropped, and by default will have `c
 
 **TypeScript type:** `boolean`
 
-**Standard use case:** Disabling drag and drop functionality.
+**Standard use case:** Disabling drag and drop functionality for the entire board.
 
 <Canvas of={AllowDraggingStories.AllowDragging} />
 
-### `options.allowDragOffBoard`
+### `options.allowDrawingArrows`
 
-Controls whether pieces can be dragged off the board.
+Controls whether additional arrows can be added by holding down the right mouse button and dragging the mouse over the board.
 
 **Default value:** `true`
 
 **TypeScript type:** `boolean`
 
-**Standard use case:** Restricting piece dragging to be within the board.
+**Standard use case:** Disabling the ability to add arrows to the board.
 
-<Canvas of={AllowDragOffBoardStories.AllowDragOffBoard} />
+<Canvas of={AllowDrawingArrowsStories.AllowDrawingArrows} />
 
 ### `options.alphaNotationStyle`
 
@@ -209,6 +217,73 @@ Controls the duration of piece movement animations in milliseconds.
 
 <Canvas of={AnimationDurationInMsStories.AnimationDurationInMs} />
 
+### `options.arrows`
+
+Controls the base set of arrows on the board. By default, additional arrows can be added by holding down the right mouse button and dragging the mouse over the board. You can disable this by setting [`allowDrawingArrows`](#optionsallowdrawingarrows) to `false`.
+
+By default, these arrows will not be automatically cleared when a square is clicked or a piece is dragged. Instead, you will need to clear them manually using the [`onSquareClick`](#optionsonsquareclick) or [`onPieceDragStart`](#optionsonpiecedragstart) prop and pass in a new value for this prop.
+
+**Default value:** `[]`
+
+**TypeScript type:** `{ startSquare: string, endSquare: string, color: string }[]`
+
+**Standard use case:** Adding arrows to the board to indicate possible moves or attacks.
+
+<Canvas of={ArrowsStories.Arrows} />
+
+### `options.arrowSettings`
+
+Controls the appearance and behavior of arrows on the board. This includes settings for arrow colors, width, length, and opacity.
+
+#### Arrow colors
+
+- `color`: Sets the default arrow color when no modifiers are held down when drawing an arrow
+- `secondaryColor`: Sets the arrow color when shift is held down when drawing an arrow
+- `tertiaryColor`: Sets the arrow color when control is held down when drawing an arrow
+
+When drawing an arrow, you can hold down modifier keys to change the arrow color:
+
+- Hold Shift to use `secondaryColor`
+- Hold Control to use `tertiaryColor`
+- If both Shift and Control are held down, Shift takes precedence
+
+#### Arrow length
+
+- `arrowLengthReducerDenominator`: Controls how much the arrow length is reduced. The lower the denominator, the greater the reduction (e.g. 8 = 1/8 of a square width removed, 4 = 1/4 of a square width removed)
+- `sameTargetArrowLengthReducerDenominator`: Works the same way but specifically for arrows targeting the same square, using a greater reduction to avoid overlaps
+
+#### Arrow width
+
+- `arrowWidthDenominator`: Controls the width of the arrow. The lower the denominator, the greater the width (e.g. 5 = 1/5 of a square width, 10 = 1/10 of a square width)
+- `activeArrowWidthMultiplier`: Sets the multiplier for the arrow width when it is being drawn
+
+#### Arrow opacity
+
+- `opacity`: Controls the opacity of arrows when not being drawn
+- `activeOpacity`: Controls the opacity of arrows when they are being drawn
+
+**Default value:**
+
+```tsx
+{
+  color: "#ffaa00", // yellow
+  secondaryColor: "#4caf50", // green
+  tertiaryColor: "#f44336", // red
+  arrowLengthReducerDenominator: 8,
+  sameTargetArrowLengthReducerDenominator: 4,
+  arrowWidthDenominator: 5,
+  activeArrowWidthMultiplier: 0.9,
+  opacity: 0.65,
+  activeOpacity: 0.5,
+}
+```
+
+**TypeScript type:** `{ color: string, secondaryColor: string, tertiaryColor: string, arrowLengthReducerDenominator: number, sameTargetArrowLengthReducerDenominator: number, arrowWidthDenominator: number, activeArrowWidthMultiplier: number, opacity: number, activeOpacity: number }`
+
+**Standard use case:** Customizing the appearance of arrows to match your application's theme or to make them more or less prominent.
+
+<Canvas of={ArrowSettingsStories.ArrowSettings} />
+
 ### `options.boardOrientation`
 
 Controls the orientation of the board. When set to "black", the board is flipped so black pieces are at the bottom.
@@ -234,6 +309,7 @@ Controls the styling of the entire chessboard container.
   overflow: "hidden",
   width: '100%',
   height: '100%',
+  position: 'relative',
 }
 ```
 
@@ -278,6 +354,18 @@ Controls the number of rows on the chessboard. If you set either of the row or c
 **Standard use case:** Creating custom chess variants with different board sizes.
 
 <Canvas of={ChessboardRowsStories.ChessboardRows} />
+
+### `options.clearArrowsOnClick`
+
+Controls whether internal arrows are cleared when a square is clicked. If you are passing in external arrows via the [`arrows`](#optionsarrows) prop, these will not be automatically cleared when a square is clicked. Instead, you will need to clear them manually using the [`onSquareClick`](#optionsonsquareclick) prop and pass in a new value for the [`arrows`](#optionsarrows) prop.
+
+**Default value:** `true`
+
+**TypeScript type:** `boolean`
+
+**Standard use case:** Disabling the ability to clear internal arrows when a square is clicked.
+
+<Canvas of={ClearArrowsOnClickStories.ClearArrowsOnClick} />
 
 ### `options.darkSquareNotationStyle`
 
@@ -384,6 +472,16 @@ Controls the styling of squares when a piece is being dragged over them.
 **Standard use case:** Making it clear to users which squares are valid drop targets.
 
 <Canvas of={DropSquareStyleStories.DropSquareStyle} />
+
+### `options.id`
+
+Sets the id of the chessboard component. This is useful for handling multiple chessboards on the same page or directly targeting the chessboard component with JS or CSS.
+
+**Default value:** `"chessboard"`
+
+**TypeScript type:** `string`
+
+**Standard use case:** Handling multiple chessboards on the same page or directly targeting the chessboard component with JS or CSS.
 
 ### `options.lightSquareNotationStyle`
 

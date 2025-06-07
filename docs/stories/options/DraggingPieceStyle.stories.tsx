@@ -22,6 +22,7 @@ export const DraggingPieceStyle: Story = {
       draggingPieceStyle: {
         transform: `scale(${scale}) rotate(${rotate}deg)`,
       },
+      id: 'dragging-piece-style',
     };
 
     // render

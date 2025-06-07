@@ -19,6 +19,7 @@ export const ShowNotation: Story = {
     // chessboard options
     const chessboardOptions = {
       showNotation,
+      id: 'show-notation',
     };
 
     // render

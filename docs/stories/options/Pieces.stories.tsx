@@ -31,6 +31,7 @@ export const Pieces: Story = {
     // chessboard options
     const chessboardOptions = {
       pieces: customPieces,
+      id: 'pieces',
     };
 
     // render

@@ -19,6 +19,7 @@ export const LightSquareNotationStyle: Story = {
         color: 'blue',
         fontWeight: 'bold',
       },
+      id: 'light-square-notation-style',
     };
 
     // render

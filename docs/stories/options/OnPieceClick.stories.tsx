@@ -34,6 +34,7 @@ export const OnPieceClick: Story = {
     const chessboardOptions = {
       allowDragging: false,
       onPieceClick,
+      id: 'on-piece-click',
     };
 
     // render

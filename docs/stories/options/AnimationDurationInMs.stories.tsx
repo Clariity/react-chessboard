@@ -73,6 +73,7 @@ export const AnimationDurationInMs: Story = {
       animationDurationInMs: animationDuration,
       position: chessGame.fen(),
       onPieceDrop,
+      id: 'animation-duration-in-ms',
     };
 
     // render

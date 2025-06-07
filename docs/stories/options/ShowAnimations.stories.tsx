@@ -75,6 +75,7 @@ export const ShowAnimations: Story = {
       allowDragging: false,
       position,
       showAnimations,
+      id: 'show-animations',
     };
 
     // render

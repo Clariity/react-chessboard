@@ -18,6 +18,7 @@ export const DarkSquareStyle: Story = {
       darkSquareStyle: {
         backgroundColor: 'cyan',
       },
+      id: 'dark-square-style',
     };
 
     // render

@@ -21,6 +21,7 @@ export const CanDragPiece: Story = {
     // chessboard options
     const chessboardOptions = {
       canDragPiece,
+      id: 'can-drag-piece',
     };
 
     // render

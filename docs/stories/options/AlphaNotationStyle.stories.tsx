@@ -20,6 +20,7 @@ export const AlphaNotationStyle: Story = {
         fontSize: '20px',
         fontWeight: 'bold',
       },
+      id: 'alpha-notation-style',
     };
 
     // render

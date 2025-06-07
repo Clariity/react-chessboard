@@ -21,6 +21,7 @@ export const BoardStyle: Story = {
         border: '1px solid #000',
         margin: '20px 0',
       },
+      id: 'board-style',
     };
 
     // render

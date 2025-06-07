@@ -19,6 +19,7 @@ export const AllowDragOffBoard: Story = {
     // chessboard options
     const chessboardOptions = {
       allowDragOffBoard,
+      id: 'allow-drag-off-board',
     };
 
     // render

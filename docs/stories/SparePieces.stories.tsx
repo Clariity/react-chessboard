@@ -89,6 +89,7 @@ export const SparePieces: Story = {
     const chessboardOptions = {
       position: chessGame.fen(),
       onPieceDrop,
+      id: 'spare-pieces',
     };
 
     // render the chessboard and spare pieces

@@ -26,6 +26,7 @@ import {
   getPositionUpdates,
 } from './utils';
 import {
+  Arrow,
   SquareDataType,
   DraggingPieceDataType,
   PieceDropHandlerArgs,
@@ -38,6 +39,7 @@ import {
 import { defaultPieces } from './pieces';
 import {
   defaultAlphaNotationStyle,
+  defaultArrowSettings,
   defaultBoardStyle,
   defaultDarkSquareNotationStyle,
   defaultDarkSquareStyle,
@@ -48,11 +50,14 @@ import {
   defaultLightSquareStyle,
   defaultNumericNotationStyle,
   defaultSquareStyle,
-} from './styles';
+} from './defaults';
 
 type Defined<T> = T extends undefined ? never : T;
 
 type ContextType = {
+  // id
+  id: Defined<ChessboardOptions['id']>;
+
   // chessboard options
   pieces: Defined<ChessboardOptions['pieces']>;
 
@@ -87,6 +92,10 @@ type ContextType = {
   allowDragging: Defined<ChessboardOptions['allowDragging']>;
   allowDragOffBoard: Defined<ChessboardOptions['allowDragOffBoard']>;
 
+  allowDrawingArrows: Defined<ChessboardOptions['allowDrawingArrows']>;
+  arrows: Defined<ChessboardOptions['arrows']>;
+  arrowSettings: Defined<ChessboardOptions['arrowSettings']>;
+
   canDragPiece: ChessboardOptions['canDragPiece'];
   onMouseOutSquare: ChessboardOptions['onMouseOutSquare'];
   onMouseOverSquare: ChessboardOptions['onMouseOverSquare'];
@@ -100,6 +109,19 @@ type ContextType = {
   draggingPiece: DraggingPieceDataType | null;
   currentPosition: PositionDataType;
   positionDifferences: ReturnType<typeof getPositionUpdates>;
+  newArrowStartSquare: string | null;
+  newArrowOverSquare: { square: string; color: string } | null;
+  setNewArrowStartSquare: (square: string) => void;
+  setNewArrowOverSquare: (
+    square: string,
+    modifiers?: { shiftKey: boolean; ctrlKey: boolean },
+  ) => void;
+  internalArrows: Arrow[];
+  drawArrow: (
+    newArrowEndSquare: string,
+    modifiers?: { shiftKey: boolean; ctrlKey: boolean },
+  ) => void;
+  clearArrows: () => void;
 };
 
 const ChessboardContext = createContext<ContextType | null>(null);
@@ -107,6 +129,9 @@ const ChessboardContext = createContext<ContextType | null>(null);
 export const useChessboardContext = () => use(ChessboardContext) as ContextType;
 
 export type ChessboardOptions = {
+  // id
+  id?: string;
+
   // pieces and position
   pieces?: PieceRenderObject;
   position?: string | PositionDataType; // FEN string (or object position) to set up the board
@@ -143,6 +168,12 @@ export type ChessboardOptions = {
   allowDragOffBoard?: boolean;
   dragActivationDistance?: number;
 
+  // arrows
+  allowDrawingArrows?: boolean;
+  arrows?: Arrow[];
+  arrowSettings?: typeof defaultArrowSettings;
+  clearArrowsOnClick?: boolean;
+
   // handlers
   canDragPiece?: ({ isSparePiece, piece, square }: PieceHandlerArgs) => boolean;
   onMouseOutSquare?: ({ piece, square }: SquareHandlerArgs) => void;
@@ -169,7 +200,6 @@ export type ChessboardOptions = {
 // allowDragOffBoard - https://docs.dndkit.com/api-documentation/modifiers#building-custom-modifiers - CustomDragLayer implementation
 // accessibility (may need to revisit sensors)
 // promotion ???
-// arrows ??? (maybe add ability to draw them, but logic for them can be done externally, though would be nice to have it here)
 // squareRenderer
 
 // tests
@@ -185,6 +215,9 @@ export function ChessboardProvider({
   options,
 }: React.PropsWithChildren<{ options?: ChessboardOptions }>) {
   const {
+    // id
+    id = 'chessboard',
+
     // pieces and position
     pieces = defaultPieces,
     position = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR',
@@ -220,6 +253,12 @@ export function ChessboardProvider({
     allowDragOffBoard = true,
     dragActivationDistance = 2,
 
+    // arrows
+    allowDrawingArrows = true,
+    arrows = [],
+    arrowSettings = defaultArrowSettings,
+    clearArrowsOnClick = true,
+
     // handlers
     canDragPiece,
     onMouseOutSquare,
@@ -254,6 +293,16 @@ export function ChessboardProvider({
       sourceSquare: string;
       targetSquare: string;
     } | null>(null);
+
+  // arrows
+  const [newArrowStartSquare, setNewArrowStartSquare] = useState<string | null>(
+    null,
+  );
+  const [newArrowOverSquare, setNewArrowOverSquare] = useState<{
+    square: string;
+    color: string;
+  } | null>(null);
+  const [internalArrows, setInternalArrows] = useState<Arrow[]>([]);
 
   // the animation timeout whilst waiting for animation to complete
   const animationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -351,6 +400,89 @@ export function ChessboardProvider({
     [chessboardRows, chessboardColumns, boardOrientation],
   );
 
+  const drawArrow = useCallback(
+    (
+      newArrowEndSquare: string,
+      modifiers?: { shiftKey: boolean; ctrlKey: boolean },
+    ) => {
+      if (!allowDrawingArrows) {
+        return;
+      }
+
+      const arrowExistsIndex = internalArrows.findIndex(
+        (arrow) =>
+          arrow.startSquare === newArrowStartSquare &&
+          arrow.endSquare === newArrowEndSquare,
+      );
+      const arrowExistsExternally = arrows.some(
+        (arrow) =>
+          arrow.startSquare === newArrowStartSquare &&
+          arrow.endSquare === newArrowEndSquare,
+      );
+
+      // if the arrow already exists externally, don't add it to the internal arrows
+      if (arrowExistsExternally) {
+        setNewArrowStartSquare(null);
+        setNewArrowOverSquare(null);
+        return;
+      }
+
+      // new arrow with different start and end square, add to internal arrows or remove if it already exists
+      if (newArrowStartSquare && newArrowStartSquare !== newArrowEndSquare) {
+        const arrowColor = modifiers?.shiftKey
+          ? arrowSettings.secondaryColor
+          : modifiers?.ctrlKey
+            ? arrowSettings.tertiaryColor
+            : arrowSettings.color;
+
+        setInternalArrows((prevArrows) =>
+          arrowExistsIndex === -1
+            ? [
+                ...prevArrows,
+                {
+                  startSquare: newArrowStartSquare,
+                  endSquare: newArrowEndSquare,
+                  color: arrowColor,
+                },
+              ]
+            : prevArrows.filter((_, index) => index !== arrowExistsIndex),
+        );
+        setNewArrowStartSquare(null);
+        setNewArrowOverSquare(null);
+      }
+    },
+    [
+      allowDrawingArrows,
+      arrows,
+      arrowSettings.color,
+      arrowSettings.secondaryColor,
+      arrowSettings.tertiaryColor,
+      internalArrows,
+      newArrowStartSquare,
+      newArrowOverSquare,
+    ],
+  );
+
+  const clearArrows = useCallback(() => {
+    if (clearArrowsOnClick) {
+      setInternalArrows([]);
+      setNewArrowStartSquare(null);
+      setNewArrowOverSquare(null);
+    }
+  }, [clearArrowsOnClick]);
+
+  const setNewArrowOverSquareWithModifiers = useCallback(
+    (square: string, modifiers?: { shiftKey: boolean; ctrlKey: boolean }) => {
+      const color = modifiers?.shiftKey
+        ? arrowSettings.secondaryColor
+        : modifiers?.ctrlKey
+          ? arrowSettings.tertiaryColor
+          : arrowSettings.color;
+      setNewArrowOverSquare({ square, color });
+    },
+    [arrowSettings],
+  );
+
   const handleDragCancel = useCallback(() => {
     setDraggingPiece(null);
   }, []);
@@ -444,6 +576,8 @@ export function ChessboardProvider({
     <ChessboardContext.Provider
       value={{
         // chessboard options
+        id,
+
         pieces,
 
         boardOrientation,
@@ -471,6 +605,10 @@ export function ChessboardProvider({
         allowDragging,
         allowDragOffBoard,
 
+        allowDrawingArrows,
+        arrows,
+        arrowSettings,
+
         canDragPiece,
         onMouseOutSquare,
         onMouseOverSquare,
@@ -484,6 +622,13 @@ export function ChessboardProvider({
         draggingPiece,
         currentPosition,
         positionDifferences,
+        newArrowStartSquare,
+        newArrowOverSquare,
+        setNewArrowStartSquare,
+        setNewArrowOverSquare: setNewArrowOverSquareWithModifiers,
+        internalArrows,
+        drawArrow,
+        clearArrows,
       }}
     >
       <DndContext
