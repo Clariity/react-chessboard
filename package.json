@@ -5,13 +5,13 @@
   "author": "Ryan Gregory <ryangregory.dev@outlook.com>",
   "license": "MIT",
   "main": "dist/index.js",
-  "module": "dist/index.js",
+  "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
   "type": "module",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
+      "import": "./dist/index.esm.js",
       "require": "./dist/index.js"
     }
   },
@@ -32,7 +32,7 @@
   },
   "homepage": "https://github.com/Clariity/react-chessboard#readme",
   "scripts": {
-    "build": "rimraf dist && rolldown -c rolldown.config.ts",
+    "build": "rimraf dist && rollup -c",
     "test:static": "tsc && eslint src docs && prettier --check src docs",
     "format": "eslint --fix src docs && prettier --write src docs",
     "commitlint": "commitlint --edit",
@@ -49,6 +49,8 @@
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
     "@eslint/js": "^9.26.0",
+    "@rollup/plugin-commonjs": "^28.0.3",
+    "@rollup/plugin-node-resolve": "^16.0.1",
     "@storybook/addon-docs": "^8.6.8",
     "@storybook/addon-essentials": "8.6.8",
     "@storybook/addon-interactions": "8.6.8",
@@ -73,7 +75,7 @@
     "react-dom": "^19.0.0",
     "remark-gfm": "^4.0.1",
     "rimraf": "^6.0.1",
-    "rolldown": "1.0.0-beta.9",
+    "rollup": "^4.42.0",
     "rollup-plugin-typescript2": "^0.36.0",
     "semantic-release": "^24.2.5",
     "storybook": "8.6.8",
