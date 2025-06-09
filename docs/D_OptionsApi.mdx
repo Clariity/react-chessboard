@@ -1,9 +1,5 @@
 import { Canvas, Meta } from '@storybook/blocks';
-
-import * as DefaultStories from './stories/Default.stories';
-import * as PlayVsRandomStories from './stories/PlayVsRandom.stories';
-import * as SparePiecesStories from './stories/SparePieces.stories';
-import * as PremovesStories from './stories/Premoves.stories';
+import { DocNavigation } from './components/DocNavigation';
 
 import * as AllowDraggingStories from './stories/options/AllowDragging.stories';
 import * as AllowDragOffBoardStories from './stories/options/AllowDragOffBoard.stories';
@@ -11,7 +7,7 @@ import * as AllowDrawingArrowsStories from './stories/options/AllowDrawingArrows
 import * as AlphaNotationStyleStories from './stories/options/AlphaNotationStyle.stories';
 import * as AnimationDurationInMsStories from './stories/options/AnimationDurationInMs.stories';
 import * as ArrowsStories from './stories/options/Arrows.stories';
-import * as ArrowSettingsStories from './stories/options/ArrowSettings.stories';
+import * as ArrowOptionsStories from './stories/options/ArrowOptions.stories';
 import * as BoardOrientationStories from './stories/options/BoardOrientation.stories';
 import * as BoardStyleStories from './stories/options/BoardStyle.stories';
 import * as CanDragPieceStories from './stories/options/CanDragPiece.stories';
@@ -41,119 +37,55 @@ import * as ShowNotationStories from './stories/options/ShowNotation.stories';
 import * as SquareStyleStories from './stories/options/SquareStyle.stories';
 import * as SquareStylesStories from './stories/options/SquareStyles.stories';
 
-<Meta title="How to use" />
+<Meta title="How to use/Options API" />
 
-# How to use
+# Options API
 
-This page will show you how to use React Chessboard. It includes some basic and common examples, as well as sections for each option for the component that also contain relevant examples of how to use them.
-
-## Table of contents
-
-- [Basic and common examples](#basic-and-common-examples)
-  - [Default chessboard component](#default-chessboard-component)
-  - [Using with chess.js](#using-with-chessjs)
-  - [Spare pieces](#spare-pieces)
-- [Advanced examples](#advanced-examples)
-  - [Analysis board](#analysis-board)
-  - [Fully customised board](#fully-customised-board)
-  - [Premoves](#premoves)
-  - [Promotion piece selection](#promotion-piece-selection)
-- [Component options](#component-options)
-  - [`options.allowDragging`](#optionsallowdragging)
-  - [`options.allowDrawingArrows`](#optionsallowdrawingarrows)
-  - [`options.alphaNotationStyle`](#optionsalphanotationstyle)
-  - [`options.animationDurationInMs`](#optionsanimationdurationinms)
-  - [`options.arrows`](#optionsarrows)
-  - [`options.arrowSettings`](#optionsarrowsettings)
-  - [`options.boardOrientation`](#optionsboardorientation)
-  - [`options.boardStyle`](#optionsboardstyle)
-  - [`options.canDragPiece`](#optionscandragpiece)
-  - [`options.chessboardColumns`](#optionschessboardcolumns)
-  - [`options.chessboardRows`](#optionschessboardrows)
-  - [`options.clearArrowsOnClick`](#optionscleararrowsonclick)
-  - [`options.darkSquareNotationStyle`](#optionsdarksquarenotationstyle)
-  - [`options.darkSquareStyle`](#optionsdarksquarestyle)
-  - [`options.dragActivationDistance`](#optionsdragactivationdistance)
-  - [`options.draggingPieceStyle`](#optionsdraggingpiecestyle)
-  - [`options.draggingPieceGhostStyle`](#optionsdraggingpieceghoststyle)
-  - [`options.dropSquareStyle`](#optionsdropsquarestyle)
-  - [`options.id`](#optionsid)
-  - [`options.lightSquareNotationStyle`](#optionslightsquarenotationstyle)
-  - [`options.lightSquareStyle`](#optionslightsquarestyle)
-  - [`options.numericNotationStyle`](#optionsnumericnotationstyle)
-  - [`options.onMouseOutSquare`](#optionsonmouseoutsquare)
-  - [`options.onMouseOverSquare`](#optionsonmouseoversquare)
-  - [`options.onPieceClick`](#optionsonpiececlick)
-  - [`options.onPieceDragStart`](#optionsonpiecedragstart)
-  - [`options.onPieceDrop`](#optionsonpiecedrop)
-  - [`options.onSquareClick`](#optionsonsquareclick)
-  - [`options.onSquareRightClick`](#optionsonsquarerightclick)
-  - [`options.pieces`](#optionspieces)
-  - [`options.position`](#optionsposition)
-  - [`options.showAnimations`](#optionsshowanimations)
-  - [`options.showNotation`](#optionsshownotation)
-  - [`options.squareStyle`](#optionssquarestyle)
-  - [`options.squareStyles`](#optionssquarestyles)
-
-## Basic and common examples
-
-These examples demonstrate basic and common use cases for React Chessboard. Each example includes explanations of key concepts and code snippets showing how to implement them.
-
-The code for these examples can be viewed by clicking the "Show code" button in the bottom right of the interactive examples. The code can also be viewed in the [GitHub repository](https://github.com/Clariity/react-chessboard/tree/main/docs/stories).
-
-### Default chessboard component
-
-The default component is a simple chessboard with default pieces. It is unlikely that you will need to use this component in this state without any customisation or properties supplied. It is shown here for reference and as a starting point for your own customisation.
-
-<Canvas of={DefaultStories.Default} />
-
-### Using with chess.js
-
-This example shows basic usage of the component with the chess.js library. It demonstrates how to handle piece drops and safely update the board position when a move is made.
-
-This utilises the `onPieceDrop` prop to handle the piece drop event and the `position` prop to update the board position when a move is made.
-
-A `chessGameRef` is used to prevent stale closures when making moves. Without it, functions like `onPieceDrop` would capture an outdated version of `chessGame` in their closure, leading to incorrect game state. The ref ensures we always access the latest game state, even in callbacks and timeouts. The `useEffect` hook is used to update the ref when the game state changes to keep the ref and state in sync. This scenario is quite specific to this example where there is a closure over old game states and the game state is updated in a timeout.
-
-<Canvas of={PlayVsRandomStories.PlayVsRandom} />
-
-### Spare pieces
-
-This example shows how to use spare pieces with the chessboard component. Spare pieces are pieces that can be dragged onto the board from outside the main chessboard component. This is useful for setting up custom positions or creating chess puzzles.
-
-The spare pieces functionality requires wrapping your chessboard and spare pieces in the `ChessboardProvider` component. All props that would normally be passed to the `Chessboard` component must instead be passed to the `ChessboardProvider` via its `options` prop.
-
-When using spare pieces, you can drag pieces both onto and off the board. The `onPieceDrop` handler receives information about whether the piece was dropped on a valid square (via the `targetSquare` parameter) or off the board (`targetSquare` will be null). This allows you to implement custom logic for handling pieces being removed from the board.
-
-<Canvas of={SparePiecesStories.SparePieces} />
-
-## Advanced examples
-
-These examples demonstrate more complex use cases for React Chessboard.
-
-### Analysis board
-
-TODO
-
-### Fully customised board
-
-TODO
-
-### Premoves
-
-This example shows you how can you implement premoves with the component. Premoves are when you make a move and then before your opponent makes their move, you make a move to be played automatically after your opponent's move.
-
-<Canvas of={PremovesStories.Premoves} />
-
-### Promotion piece selection
-
-TODO
-
-## Component options
+This page will explain how to use the options API for React Chessboard. It includes sections for each option for the component that also contain relevant examples of how to use them.
 
 The component has a number of options that you can use to customise the component. These are passed in via the `options` prop to the `Chessboard` component. (or the `ChessboardProvider` component if you are using spare pieces).
 
 The code for these examples can be viewed by clicking the "Show code" button in the bottom right of the interactive examples. The code can also be viewed in the [GitHub repository](https://github.com/Clariity/react-chessboard/tree/main/docs/stories/options).
+
+| Option                                                       | Description                                                         |
+| ------------------------------------------------------------ | ------------------------------------------------------------------- |
+| [allowDragging](#optionsallowdragging)                       | Controls whether pieces can be dragged on the board                 |
+| [allowDrawingArrows](#optionsallowdrawingarrows)             | Controls whether arrows can be drawn by right-clicking and dragging |
+| [alphaNotationStyle](#optionsalphanotationstyle)             | Controls styling of the alpha notation (a-h)                        |
+| [animationDurationInMs](#optionsanimationdurationinms)       | Controls duration of piece movement animations                      |
+| [arrows](#optionsarrows)                                     | Array of arrows to display on the board                             |
+| [arrowOptions](#optionsarrowoptions)                         | Controls styling and behavior of arrows                             |
+| [boardOrientation](#optionsboardorientation)                 | Sets orientation of the board ('white' or 'black')                  |
+| [boardStyle](#optionsboardstyle)                             | Controls styling of the main board container                        |
+| [canDragPiece](#optionscandragpiece)                         | Function to determine if a piece can be dragged                     |
+| [chessboardColumns](#optionschessboardcolumns)               | Number of columns on the board                                      |
+| [chessboardRows](#optionschessboardrows)                     | Number of rows on the board                                         |
+| [clearArrowsOnClick](#optionscleararrowsonclick)             | Controls whether arrows are cleared on board click                  |
+| [darkSquareNotationStyle](#optionsdarksquarenotationstyle)   | Controls styling of notation on dark squares                        |
+| [darkSquareStyle](#optionsdarksquarestyle)                   | Controls styling of dark squares                                    |
+| [dragActivationDistance](#optionsdragactivationdistance)     | Distance in pixels before drag activation                           |
+| [draggingPieceGhostStyle](#optionsdraggingpieceghoststyle)   | Controls styling of ghost piece while dragging                      |
+| [draggingPieceStyle](#optionsdraggingpiecestyle)             | Controls styling of piece being dragged                             |
+| [dropSquareStyle](#optionsdropsquarestyle)                   | Controls styling of squares when dragging over them                 |
+| [id](#optionsid)                                             | Sets the id of the chessboard component                             |
+| [lightSquareNotationStyle](#optionslightsquarenotationstyle) | Controls styling of notation on light squares                       |
+| [lightSquareStyle](#optionslightsquarestyle)                 | Controls styling of light squares                                   |
+| [numericNotationStyle](#optionsnumericnotationstyle)         | Controls styling of numeric notation (1-8)                          |
+| [onMouseOutSquare](#optionsonmouseoutsquare)                 | Handler for mouse leaving a square                                  |
+| [onMouseOverSquare](#optionsonmouseoversquare)               | Handler for mouse entering a square                                 |
+| [onPieceClick](#optionsonpiececlick)                         | Handler for clicking a piece                                        |
+| [onPieceDragStart](#optionsonpiecedragstart)                 | Handler for starting to drag a piece                                |
+| [onPieceDrop](#optionsonpiecedrop)                           | Handler for dropping a piece                                        |
+| [onSquareClick](#optionsonsquareclick)                       | Handler for clicking a square                                       |
+| [onSquareRightClick](#optionsonsquarerightclick)             | Handler for right-clicking a square                                 |
+| [pieces](#optionspieces)                                     | Object mapping piece types to React components                      |
+| [position](#optionsposition)                                 | Current position on the board (FEN string or position object)       |
+| [showAnimations](#optionsshowanimations)                     | Controls whether piece movements are animated                       |
+| [showNotation](#optionsshownotation)                         | Controls whether board notation is displayed                        |
+| [squareStyle](#optionssquarestyle)                           | Base styling applied to all squares                                 |
+| [squareStyles](#optionssquarestyles)                         | Object mapping squares to custom styles                             |
+
+## Options
 
 ### `options.allowDragging`
 
@@ -225,13 +157,22 @@ By default, these arrows will not be automatically cleared when a square is clic
 
 **Default value:** `[]`
 
-**TypeScript type:** `{ startSquare: string, endSquare: string, color: string }[]`
+**TypeScript type:**
+
+```typescript
+{
+  startSquare: string;
+  endSquare: string;
+  color: string;
+}
+[];
+```
 
 **Standard use case:** Adding arrows to the board to indicate possible moves or attacks.
 
 <Canvas of={ArrowsStories.Arrows} />
 
-### `options.arrowSettings`
+### `options.arrowOptions`
 
 Controls the appearance and behavior of arrows on the board. This includes settings for arrow colors, width, length, and opacity.
 
@@ -278,11 +219,25 @@ When drawing an arrow, you can hold down modifier keys to change the arrow color
 }
 ```
 
-**TypeScript type:** `{ color: string, secondaryColor: string, tertiaryColor: string, arrowLengthReducerDenominator: number, sameTargetArrowLengthReducerDenominator: number, arrowWidthDenominator: number, activeArrowWidthMultiplier: number, opacity: number, activeOpacity: number }`
+**TypeScript type:**
+
+```typescript
+{
+  color: string,
+  secondaryColor: string,
+  tertiaryColor: string,
+  arrowLengthReducerDenominator: number,
+  sameTargetArrowLengthReducerDenominator: number,
+  arrowWidthDenominator: number,
+  activeArrowWidthMultiplier: number,
+  opacity: number,
+  activeOpacity: number
+}
+```
 
 **Standard use case:** Customizing the appearance of arrows to match your application's theme or to make them more or less prominent.
 
-<Canvas of={ArrowSettingsStories.ArrowSettings} />
+<Canvas of={ArrowOptionsStories.ArrowOptions} />
 
 ### `options.boardOrientation`
 
@@ -325,7 +280,15 @@ Controls whether a piece can be dragged.
 
 **Default value:** `undefined`
 
-**TypeScript type:** `({ isSparePiece: boolean, piece: { pieceType: string }, square: string | null }) => boolean`
+**TypeScript type:**
+
+```typescript
+({
+  isSparePiece: boolean;
+  piece: { pieceType: string };
+  square: string | null;
+}) => boolean;
+```
 
 **Standard use case:** Restricting piece dragging to certain pieces or squares.
 
@@ -553,7 +516,14 @@ Callback function triggered when the mouse leaves a square. Entering a drag stat
 
 **Default value:** `undefined`
 
-**TypeScript type:** `({ piece: { pieceType: string } | null, square: string }) => void`
+**TypeScript type:**
+
+```typescript
+({
+  piece: { pieceType: string } | null;
+  square: string;
+}) => void;
+```
 
 **Standard use case:** Implementing hover effects or tooltips for squares.
 
@@ -565,7 +535,14 @@ Callback function triggered when the mouse enters a square.
 
 **Default value:** `undefined`
 
-**TypeScript type:** `({ piece: { pieceType: string } | null, square: string }) => void`
+**TypeScript type:**
+
+```typescript
+({
+  piece: { pieceType: string } | null;
+  square: string;
+}) => void;
+```
 
 **Standard use case:** Implementing hover effects or tooltips for squares.
 
@@ -577,7 +554,15 @@ Callback function triggered when a piece is clicked. This callback will only be 
 
 **Default value:** `undefined`
 
-**TypeScript type:** `({ isSparePiece: boolean, piece: { pieceType: string }, square: string | null }) => void`
+**TypeScript type:**
+
+```typescript
+({
+  isSparePiece: boolean;
+  piece: { pieceType: string };
+  square: string | null;
+}) => void;
+```
 
 **Standard use case:** Implementing custom piece selection or movement logic such as click to move.
 
@@ -589,7 +574,15 @@ Callback function triggered when a piece drag operation starts.
 
 **Default value:** `undefined`
 
-**TypeScript type:** `({ isSparePiece: boolean, piece: { pieceType: string }, square: string | null }) => void`
+**TypeScript type:**
+
+```typescript
+({
+  isSparePiece: boolean;
+  piece: { pieceType: string };
+  square: string | null;
+}) => void;
+```
 
 **Standard use case:** Implementing custom drag and drop behavior or validation.
 
@@ -601,7 +594,15 @@ Callback function triggered when a piece is dropped. Return `true` to indicate a
 
 **Default value:** `undefined`
 
-**TypeScript type:** `({ piece: { isSparePiece: boolean, pieceType: string, position: string }, sourceSquare: string, targetSquare: string | null }) => boolean`
+**TypeScript type:**
+
+```typescript
+({
+  piece: { isSparePiece: boolean, pieceType: string, position: string };
+  sourceSquare: string;
+  targetSquare: string | null;
+}) => boolean;
+```
 
 **Standard use case:** Validating moves or implementing custom move logic.
 
@@ -613,7 +614,14 @@ Callback function triggered when a square is clicked.
 
 **Default value:** `undefined`
 
-**TypeScript type:** `({ piece: string | null, square: string }) => void`
+**TypeScript type:**
+
+```typescript
+({
+  piece: { pieceType: string } | null;
+  square: string;
+}) => void;
+```
 
 **Standard use case:** Implementing custom square selection or movement logic.
 
@@ -625,7 +633,14 @@ Callback function triggered when a square is right-clicked.
 
 **Default value:** `undefined`
 
-**TypeScript type:** `({ piece: string | null, square: string }) => void`
+**TypeScript type:**
+
+```typescript
+({
+  piece: { pieceType: string } | null;
+  square: string;
+}) => void;
+```
 
 **Standard use case:** Implementing context menus or alternative interaction methods.
 
@@ -712,6 +727,16 @@ Controls the styling of individual squares on the board. This style will go over
 **Standard use case:** Customizing the appearance of specific squares such as for right clicks on squares or premoves.
 
 <Canvas of={SquareStylesStories.SquareStyles} />
+
+## Continue reading
+
+<DocNavigation
+  prev={{
+    href: '../?path=/docs/how-to-use-advanced-examples--docs',
+    title: 'Advanced Examples',
+    description: 'Explore advanced features and complex implementations',
+  }}
+/>
 
 <div
   style={{

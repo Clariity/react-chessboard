@@ -12,7 +12,7 @@ export function Arrows({ boardWidth, boardHeight }: Props) {
   const {
     id,
     arrows,
-    arrowSettings,
+    arrowOptions,
     boardOrientation,
     chessboardColumns,
     chessboardRows,
@@ -71,7 +71,7 @@ export function Arrows({ boardWidth, boardHeight }: Props) {
         // we want to shorten the arrow length so the tip of the arrow is more central to the target square instead of running over the center
         const squareWidth = boardWidth / chessboardColumns;
         let ARROW_LENGTH_REDUCER =
-          squareWidth / arrowSettings.arrowLengthReducerDenominator;
+          squareWidth / arrowOptions.arrowLengthReducerDenominator;
 
         const isArrowActive =
           currentlyDrawingArrow && i === arrowsToDraw.length - 1;
@@ -86,7 +86,7 @@ export function Arrows({ boardWidth, boardHeight }: Props) {
           !isArrowActive
         ) {
           ARROW_LENGTH_REDUCER =
-            squareWidth / arrowSettings.sameTargetArrowLengthReducerDenominator;
+            squareWidth / arrowOptions.sameTargetArrowLengthReducerDenominator;
         }
 
         // Calculate the difference in x and y coordinates between start and end points
@@ -133,15 +133,15 @@ export function Arrows({ boardWidth, boardHeight }: Props) {
               y2={end.y}
               opacity={
                 isArrowActive
-                  ? arrowSettings.activeOpacity
-                  : arrowSettings.opacity
+                  ? arrowOptions.activeOpacity
+                  : arrowOptions.opacity
               }
               stroke={arrow.color}
               strokeWidth={
                 isArrowActive
-                  ? arrowSettings.activeArrowWidthMultiplier *
-                    (squareWidth / arrowSettings.arrowWidthDenominator)
-                  : squareWidth / arrowSettings.arrowWidthDenominator
+                  ? arrowOptions.activeArrowWidthMultiplier *
+                    (squareWidth / arrowOptions.arrowWidthDenominator)
+                  : squareWidth / arrowOptions.arrowWidthDenominator
               }
               markerEnd={`url(#${id}-arrowhead-${i}-${arrow.startSquare}-${arrow.endSquare})`}
             />

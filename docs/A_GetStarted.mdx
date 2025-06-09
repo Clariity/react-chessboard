@@ -1,4 +1,5 @@
 import { Meta } from '@storybook/blocks';
+import { DocNavigation } from './components/DocNavigation';
 
 <Meta title="Get started" />
 
@@ -24,7 +25,7 @@ import { Meta } from '@storybook/blocks';
 
 React Chessboard is a React component that provides chessboard functionality to your web application. It is a simple and easy-to-use component allowing you to create a custom and flexible chessboard experience with a wide range of features.
 
-The component is purely a UI component and does not include any logic for the game of chess. The chess game logic should be independent to the component. This flexibility enables you to use the component in any project, regardless of the chess logic or chess variant you wish to build with. For example, you can use the [chess.js](https://www.npmjs.com/package/chess.js) library to handle the game logic. Example usages of the component with chess.js are shown in the [How to use](../?path=/docs/how-to-use--docs) documentation.
+The component is purely a UI component and does not include any logic for the game of chess. The chess game logic should be independent to the component. This flexibility enables you to use the component in any project, regardless of the chess logic or chess variant you wish to build with. For example, you can use the [chess.js](https://www.npmjs.com/package/chess.js) library to handle the game logic. Example usages of the component with chess.js are shown in the [How to use](../?path=/docs/how-to-use-basic-examples--docs) documentation.
 
 ## Features
 
@@ -33,6 +34,7 @@ The package includes the many helpful features, such as:
 - Drag and drop
 - Custom pieces
 - Spare pieces
+- Arrows
 - Custom styling
 - Animation
 - Custom board dimensions
@@ -56,3 +58,14 @@ yarn add react-chessboard
 ```bash
 npm i react-chessboard
 ```
+
+## Continue reading
+
+<DocNavigation
+  next={{
+    href: '../?path=/docs/how-to-use-basic-examples--docs',
+    title: 'Basic Examples',
+    description:
+      'Learn how to implement basic chessboard functionality with simple examples',
+  }}
+/>

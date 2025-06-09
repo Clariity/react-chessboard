@@ -63,7 +63,7 @@ export const defaultDraggingPieceGhostStyle: React.CSSProperties = {
   opacity: 0.5,
 };
 
-export const defaultArrowSettings = {
+export const defaultArrowOptions = {
   color: '#ffaa00', // color if no modifiers are held down when drawing an arrow
   secondaryColor: '#4caf50', // color if shift is held down when drawing an arrow
   tertiaryColor: '#f44336', // color if control is held down when drawing an arrow

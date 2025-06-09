@@ -39,7 +39,7 @@ import {
 import { defaultPieces } from './pieces';
 import {
   defaultAlphaNotationStyle,
-  defaultArrowSettings,
+  defaultArrowOptions,
   defaultBoardStyle,
   defaultDarkSquareNotationStyle,
   defaultDarkSquareStyle,
@@ -94,7 +94,7 @@ type ContextType = {
 
   allowDrawingArrows: Defined<ChessboardOptions['allowDrawingArrows']>;
   arrows: Defined<ChessboardOptions['arrows']>;
-  arrowSettings: Defined<ChessboardOptions['arrowSettings']>;
+  arrowOptions: Defined<ChessboardOptions['arrowOptions']>;
 
   canDragPiece: ChessboardOptions['canDragPiece'];
   onMouseOutSquare: ChessboardOptions['onMouseOutSquare'];
@@ -171,7 +171,7 @@ export type ChessboardOptions = {
   // arrows
   allowDrawingArrows?: boolean;
   arrows?: Arrow[];
-  arrowSettings?: typeof defaultArrowSettings;
+  arrowOptions?: typeof defaultArrowOptions;
   clearArrowsOnClick?: boolean;
 
   // handlers
@@ -194,7 +194,8 @@ export type ChessboardOptions = {
 };
 
 // upgrade guide
-// advanced examples
+// end of contributing guide
+// advanced examples (multiplayer (will we need to promisify onPieceDrop?), analysis, 4 player (may need to change board orientation), mini puzzles (like the app with all the mates in two),etc)
 // nextjs? remember to add use client at the top of the file
 
 // allowDragOffBoard - https://docs.dndkit.com/api-documentation/modifiers#building-custom-modifiers - CustomDragLayer implementation
@@ -205,10 +206,8 @@ export type ChessboardOptions = {
 // tests
 // discord server (repurpose chessopenings discord server)
 // full example doc (step by step build up rather than all at once, showing a custom board, with premoves and promotion, right click squares, adding sounds on moves, etc)
-// utils doc
-// multiplayer with 2 boards (side by side)
+// utils and types doc
 // storybook 9
-// add own "read next" links to docs
 
 export function ChessboardProvider({
   children,
@@ -256,7 +255,7 @@ export function ChessboardProvider({
     // arrows
     allowDrawingArrows = true,
     arrows = [],
-    arrowSettings = defaultArrowSettings,
+    arrowOptions = defaultArrowOptions,
     clearArrowsOnClick = true,
 
     // handlers
@@ -430,10 +429,10 @@ export function ChessboardProvider({
       // new arrow with different start and end square, add to internal arrows or remove if it already exists
       if (newArrowStartSquare && newArrowStartSquare !== newArrowEndSquare) {
         const arrowColor = modifiers?.shiftKey
-          ? arrowSettings.secondaryColor
+          ? arrowOptions.secondaryColor
           : modifiers?.ctrlKey
-            ? arrowSettings.tertiaryColor
-            : arrowSettings.color;
+            ? arrowOptions.tertiaryColor
+            : arrowOptions.color;
 
         setInternalArrows((prevArrows) =>
           arrowExistsIndex === -1
@@ -454,9 +453,9 @@ export function ChessboardProvider({
     [
       allowDrawingArrows,
       arrows,
-      arrowSettings.color,
-      arrowSettings.secondaryColor,
-      arrowSettings.tertiaryColor,
+      arrowOptions.color,
+      arrowOptions.secondaryColor,
+      arrowOptions.tertiaryColor,
       internalArrows,
       newArrowStartSquare,
       newArrowOverSquare,
@@ -474,13 +473,13 @@ export function ChessboardProvider({
   const setNewArrowOverSquareWithModifiers = useCallback(
     (square: string, modifiers?: { shiftKey: boolean; ctrlKey: boolean }) => {
       const color = modifiers?.shiftKey
-        ? arrowSettings.secondaryColor
+        ? arrowOptions.secondaryColor
         : modifiers?.ctrlKey
-          ? arrowSettings.tertiaryColor
-          : arrowSettings.color;
+          ? arrowOptions.tertiaryColor
+          : arrowOptions.color;
       setNewArrowOverSquare({ square, color });
     },
-    [arrowSettings],
+    [arrowOptions],
   );
 
   const handleDragCancel = useCallback(() => {
@@ -607,7 +606,7 @@ export function ChessboardProvider({
 
         allowDrawingArrows,
         arrows,
-        arrowSettings,
+        arrowOptions,
 
         canDragPiece,
         onMouseOutSquare,

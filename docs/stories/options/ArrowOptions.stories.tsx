@@ -6,16 +6,16 @@ import { Chessboard } from '../../../src';
 
 const meta: Meta<typeof Chessboard> = {
   ...defaultMeta,
-  title: 'stories/Options/ArrowSettings',
+  title: 'stories/Options/ArrowOptions',
 } satisfies Meta<typeof Chessboard>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const ArrowSettings: Story = {
+export const ArrowOptions: Story = {
   render: () => {
     // default arrow settings
-    const defaultArrowSettings = {
+    const defaultArrowOptions = {
       color: '#ffaa00',
       secondaryColor: '#ffaa00',
       tertiaryColor: '#000000',
@@ -37,12 +37,12 @@ export const ArrowSettings: Story = {
     ];
 
     // arrow settings
-    const [arrowSettings, setArrowSettings] = useState(defaultArrowSettings);
+    const [arrowOptions, setarrowOptions] = useState(defaultArrowOptions);
 
     // chessboard options
     const chessboardOptions = {
       arrows,
-      arrowSettings,
+      arrowOptions,
       id: 'arrow-settings',
     };
 
@@ -70,9 +70,9 @@ export const ArrowSettings: Story = {
             <label>Primary Color:</label>
             <input
               type="color"
-              value={arrowSettings.color}
+              value={arrowOptions.color}
               onChange={(e) =>
-                setArrowSettings({ ...arrowSettings, color: e.target.value })
+                setarrowOptions({ ...arrowOptions, color: e.target.value })
               }
             />
           </div>
@@ -80,10 +80,10 @@ export const ArrowSettings: Story = {
             <label>Secondary Color:</label>
             <input
               type="color"
-              value={arrowSettings.secondaryColor}
+              value={arrowOptions.secondaryColor}
               onChange={(e) =>
-                setArrowSettings({
-                  ...arrowSettings,
+                setarrowOptions({
+                  ...arrowOptions,
                   secondaryColor: e.target.value,
                 })
               }
@@ -93,10 +93,10 @@ export const ArrowSettings: Story = {
             <label>Tertiary Color:</label>
             <input
               type="color"
-              value={arrowSettings.tertiaryColor}
+              value={arrowOptions.tertiaryColor}
               onChange={(e) =>
-                setArrowSettings({
-                  ...arrowSettings,
+                setarrowOptions({
+                  ...arrowOptions,
                   tertiaryColor: e.target.value,
                 })
               }
@@ -106,16 +106,16 @@ export const ArrowSettings: Story = {
           {/* Lengths */}
           <div>
             <label>
-              Arrow Length (1/{arrowSettings.arrowLengthReducerDenominator}):
+              Arrow Length (1/{arrowOptions.arrowLengthReducerDenominator}):
             </label>
             <input
               type="range"
               min="2"
               max="16"
-              value={arrowSettings.arrowLengthReducerDenominator}
+              value={arrowOptions.arrowLengthReducerDenominator}
               onChange={(e) =>
-                setArrowSettings({
-                  ...arrowSettings,
+                setarrowOptions({
+                  ...arrowOptions,
                   arrowLengthReducerDenominator: Number(e.target.value),
                 })
               }
@@ -124,16 +124,16 @@ export const ArrowSettings: Story = {
           <div>
             <label>
               Same Target Arrow Length (1/
-              {arrowSettings.sameTargetArrowLengthReducerDenominator}):
+              {arrowOptions.sameTargetArrowLengthReducerDenominator}):
             </label>
             <input
               type="range"
               min="2"
               max="16"
-              value={arrowSettings.sameTargetArrowLengthReducerDenominator}
+              value={arrowOptions.sameTargetArrowLengthReducerDenominator}
               onChange={(e) =>
-                setArrowSettings({
-                  ...arrowSettings,
+                setarrowOptions({
+                  ...arrowOptions,
                   sameTargetArrowLengthReducerDenominator: Number(
                     e.target.value,
                   ),
@@ -142,17 +142,15 @@ export const ArrowSettings: Story = {
             />
           </div>
           <div>
-            <label>
-              Arrow Width (1/{arrowSettings.arrowWidthDenominator}):
-            </label>
+            <label>Arrow Width (1/{arrowOptions.arrowWidthDenominator}):</label>
             <input
               type="range"
               min="2"
               max="20"
-              value={arrowSettings.arrowWidthDenominator}
+              value={arrowOptions.arrowWidthDenominator}
               onChange={(e) =>
-                setArrowSettings({
-                  ...arrowSettings,
+                setarrowOptions({
+                  ...arrowOptions,
                   arrowWidthDenominator: Number(e.target.value),
                 })
               }
@@ -161,32 +159,32 @@ export const ArrowSettings: Story = {
 
           {/* Opacity and Active Settings */}
           <div>
-            <label>Opacity ({arrowSettings.opacity}):</label>
+            <label>Opacity ({arrowOptions.opacity}):</label>
             <input
               type="range"
               min="0"
               max="1"
               step="0.05"
-              value={arrowSettings.opacity}
+              value={arrowOptions.opacity}
               onChange={(e) =>
-                setArrowSettings({
-                  ...arrowSettings,
+                setarrowOptions({
+                  ...arrowOptions,
                   opacity: Number(e.target.value),
                 })
               }
             />
           </div>
           <div>
-            <label>Active Opacity ({arrowSettings.activeOpacity}):</label>
+            <label>Active Opacity ({arrowOptions.activeOpacity}):</label>
             <input
               type="range"
               min="0"
               max="1"
               step="0.05"
-              value={arrowSettings.activeOpacity}
+              value={arrowOptions.activeOpacity}
               onChange={(e) =>
-                setArrowSettings({
-                  ...arrowSettings,
+                setarrowOptions({
+                  ...arrowOptions,
                   activeOpacity: Number(e.target.value),
                 })
               }
@@ -194,18 +192,18 @@ export const ArrowSettings: Story = {
           </div>
           <div>
             <label>
-              Active Width Multiplier (
-              {arrowSettings.activeArrowWidthMultiplier}x):
+              Active Width Multiplier ({arrowOptions.activeArrowWidthMultiplier}
+              x):
             </label>
             <input
               type="range"
               min="0.1"
               max="2"
               step="0.1"
-              value={arrowSettings.activeArrowWidthMultiplier}
+              value={arrowOptions.activeArrowWidthMultiplier}
               onChange={(e) =>
-                setArrowSettings({
-                  ...arrowSettings,
+                setarrowOptions({
+                  ...arrowOptions,
                   activeArrowWidthMultiplier: Number(e.target.value),
                 })
               }
@@ -213,7 +211,7 @@ export const ArrowSettings: Story = {
           </div>
         </div>
 
-        <button onClick={() => setArrowSettings(defaultArrowSettings)}>
+        <button onClick={() => setarrowOptions(defaultArrowOptions)}>
           Reset to Default Settings
         </button>
 

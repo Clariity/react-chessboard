@@ -1,0 +1,53 @@
+import { Canvas, Meta } from '@storybook/blocks';
+import { DocNavigation } from './components/DocNavigation';
+
+import * as PremovesStories from './stories/Premoves.stories';
+
+<Meta title="How to use/Advanced examples" />
+
+# Advanced examples
+
+These examples demonstrate more complex use cases for React Chessboard. Each example includes explanations of key concepts and code snippets showing how to implement them.
+
+The code for these examples can be viewed by clicking the "Show code" button in the bottom right of the interactive examples. The code can also be viewed in the [GitHub repository](https://github.com/Clariity/react-chessboard/tree/main/docs/stories).
+
+## Table of contents
+
+- [Analysis board](#analysis-board)
+- [Fully customised board](#fully-customised-board)
+- [Premoves](#premoves)
+- [Promotion piece selection](#promotion-piece-selection)
+
+### Analysis board
+
+TODO
+
+### Fully customised board
+
+TODO
+
+### Premoves
+
+This example shows you how can you implement premoves with the component. Premoves are when you make a move and then before your opponent makes their move, you make a move to be played automatically after your opponent's move.
+
+<Canvas of={PremovesStories.Premoves} />
+
+### Promotion piece selection
+
+TODO
+
+## Continue reading
+
+<DocNavigation
+  prev={{
+    href: '../?path=/docs/how-to-use-basic-examples--docs',
+    title: 'Basic Examples',
+    description:
+      'Learn how to implement basic chessboard functionality with simple examples',
+  }}
+  next={{
+    href: '../?path=/docs/how-to-use-options-api--docs',
+    title: 'Options API',
+    description: 'Explore all available configuration options',
+  }}
+/>
