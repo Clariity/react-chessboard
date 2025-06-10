@@ -1,7 +1,10 @@
 import { Canvas, Meta } from '@storybook/blocks';
 import { DocNavigation } from './components/DocNavigation';
+import { HintMessage } from './components/HintMessage';
 
-import * as PremovesStories from './stories/Premoves.stories';
+import * as AnalysisBoardStories from './stories/advanced-examples/AnalysisBoard.stories';
+import * as PremovesStories from './stories/advanced-examples/Premoves.stories';
+import * as PiecePromotionStories from './stories/advanced-examples/PiecePromotion.stories';
 
 <Meta title="How to use/Advanced examples" />
 
@@ -9,7 +12,14 @@ import * as PremovesStories from './stories/Premoves.stories';
 
 These examples demonstrate more complex use cases for React Chessboard. Each example includes explanations of key concepts and code snippets showing how to implement them.
 
-The code for these examples can be viewed by clicking the "Show code" button in the bottom right of the interactive examples. The code can also be viewed in the [GitHub repository](https://github.com/Clariity/react-chessboard/tree/main/docs/stories).
+<HintMessage>
+  The code shown in the "Show code" dropdowns for each example does show the
+  full code where possible, but it is not formatted in an ideal way and hides
+  any helpful import statements. It is highly recommended to view the code in
+  the [GitHub
+  repository](https://github.com/Clariity/react-chessboard/tree/main/docs/stories/advanced-examples)
+  to see the code in a more readable format.
+</HintMessage>
 
 ## Table of contents
 
@@ -20,7 +30,34 @@ The code for these examples can be viewed by clicking the "Show code" button in 
 
 ### Analysis board
 
-TODO
+This example shows you how to implement an analysis board with the component. The analysis board is a board that shows a chess engine's evaluation of the current position and the best move it thinks can be played.
+
+The engine used in this example is [Stockfish](https://stockfishchess.org/), which is a free and open-source chess engine. In this example we are using the [stockfish.wasm](https://github.com/lichess-org/stockfish.wasm) library by Lichess, which is a WebAssembly build of Stockfish.
+
+To implement the analysis board, there are a few key requirements:
+
+1. **Web Worker Implementation**: The chess engine runs in a web worker to prevent blocking the main thread. This ensures the UI remains responsive while the engine is calculating moves. You can learn more about web workers in the [MDN documentation](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers).
+
+2. **Required Files**: You'll need to include two essential files in your project:
+
+   - `stockfish.wasm.js`: The JavaScript wrapper for the WebAssembly engine
+   - `stockfish.wasm`: The actual WebAssembly binary of the Stockfish engine
+
+   These files should be placed in your public directory so they can be accessed by the web worker. You can download these files from the [react-chessboard repository](https://github.com/Clariity/react-chessboard/tree/main/docs/stockfish):
+
+   - [stockfish.wasm.js](https://github.com/Clariity/react-chessboard/blob/main/docs/stockfish/stockfish.wasm.js)
+   - [stockfish.wasm](https://github.com/Clariity/react-chessboard/blob/main/docs/stockfish/stockfish.wasm)
+
+3. **Engine Helper Class**: The example uses a helper class called `Engine` to simplify interaction with the Stockfish engine. This class:
+
+   - Initializes the web worker
+   - Handles communication with the engine
+   - Provides methods for position evaluation and move calculation
+   - Manages the engine's lifecycle
+
+   You can find the complete implementation of the Engine class in the [react-chessboard repository](https://github.com/Clariity/react-chessboard/blob/main/docs/stockfish/engine.ts).
+
+<Canvas of={AnalysisBoardStories.AnalysisBoard} />
 
 ### Fully customised board
 
@@ -34,7 +71,9 @@ This example shows you how can you implement premoves with the component. Premov
 
 ### Promotion piece selection
 
-TODO
+This example shows you how to implement promotion piece selection with the component by using the `onPieceDrop` prop to capture the promotion move, show a dialog to select the piece that the pawn will be promoted to, and then update the board `position` prop to update the board position to the promotion move.
+
+<Canvas of={PiecePromotionStories.PiecePromotion} />
 
 ## Continue reading
 

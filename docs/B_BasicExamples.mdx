@@ -1,10 +1,11 @@
 import { Canvas, Meta } from '@storybook/blocks';
 import { DocNavigation } from './components/DocNavigation';
+import { HintMessage } from './components/HintMessage';
 import { ImportantMessage } from './components/ImportantMessage';
 
-import * as DefaultStories from './stories/Default.stories';
-import * as PlayVsRandomStories from './stories/PlayVsRandom.stories';
-import * as SparePiecesStories from './stories/SparePieces.stories';
+import * as DefaultStories from './stories/basic-examples/Default.stories';
+import * as PlayVsRandomStories from './stories/basic-examples/PlayVsRandom.stories';
+import * as SparePiecesStories from './stories/basic-examples/SparePieces.stories';
 
 <Meta title="How to use/Basic examples" />
 
@@ -12,7 +13,13 @@ import * as SparePiecesStories from './stories/SparePieces.stories';
 
 These examples demonstrate basic and common use cases for React Chessboard. Each example includes explanations of key concepts and code snippets showing how to implement them.
 
-The code for these examples can be viewed by clicking the "Show code" button in the bottom right of the interactive examples. The code can also be viewed in the [GitHub repository](https://github.com/Clariity/react-chessboard/tree/main/docs/stories).
+<HintMessage>
+  The code shown in the "Show code" dropdowns for each example does show the
+  full code but it is not formatted in an ideal way and hides any helpful import
+  statements. It is highly recommended to view the code in the [GitHub
+  repository](https://github.com/Clariity/react-chessboard/tree/main/docs/stories/basic-examples)
+  to see the code in a more readable format.
+</HintMessage>
 
 ## Table of contents
 

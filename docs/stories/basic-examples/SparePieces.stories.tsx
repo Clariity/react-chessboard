@@ -3,10 +3,13 @@ import { Chess, Color, PieceSymbol, Square } from 'chess.js';
 import { useEffect, useState } from 'react';
 
 import defaultMeta from './Default.stories';
-import { Chessboard } from '../../src';
-import { ChessboardProvider } from '../../src/ChessboardProvider';
-import { SparePiece } from '../../src/';
-import { PieceDropHandlerArgs, PieceType } from '../../src/types';
+import {
+  Chessboard,
+  ChessboardProvider,
+  PieceDropHandlerArgs,
+  PieceType,
+  SparePiece,
+} from '../../../src';
 
 const meta: Meta<typeof Chessboard> = {
   ...defaultMeta,

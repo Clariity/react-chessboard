@@ -15,4 +15,5 @@ export default {
   semi: true, // Include semicolons at the end of statements
   tabWidth: 2, // Set tab width to 2 spaces
   useTabs: false, // Use spaces instead of tabs
+  ignoreFiles: ['**/stockfish.wasm.js'],
 };

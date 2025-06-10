@@ -3,8 +3,7 @@ import { Chess } from 'chess.js';
 import { useState, useRef, useEffect } from 'react';
 
 import defaultMeta from './Default.stories';
-import { Chessboard } from '../../src';
-import { PieceDropHandlerArgs } from '../../src/types';
+import { Chessboard, PieceDropHandlerArgs } from '../../../src';
 
 const meta: Meta<typeof Chessboard> = {
   ...defaultMeta,

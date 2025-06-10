@@ -6,6 +6,9 @@ import globals from 'globals';
 import typescript from 'typescript-eslint';
 
 export default defineConfig([
+  {
+    ignores: ['**/stockfish.wasm.js'],
+  },
   eslint.configs.recommended,
   typescript.configs.recommended,
   react.configs.flat.recommended,

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { Chess } from 'chess.js';
 import { useState, useRef, useEffect } from 'react';
 
-import defaultMeta from '../Default.stories';
+import defaultMeta from '../basic-examples/Default.stories';
 import { Chessboard } from '../../../src';
 import type { PieceDropHandlerArgs } from '../../../src/types';
 

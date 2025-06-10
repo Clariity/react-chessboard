@@ -195,19 +195,7 @@ export type ChessboardOptions = {
 
 // upgrade guide
 // end of contributing guide
-// advanced examples (multiplayer (will we need to promisify onPieceDrop?), analysis, 4 player (may need to change board orientation), mini puzzles (like the app with all the mates in two),etc)
-// nextjs? remember to add use client at the top of the file
-
-// allowDragOffBoard - https://docs.dndkit.com/api-documentation/modifiers#building-custom-modifiers - CustomDragLayer implementation
-// accessibility (may need to revisit sensors)
-// promotion ???
-// squareRenderer
-
-// tests
 // discord server (repurpose chessopenings discord server)
-// full example doc (step by step build up rather than all at once, showing a custom board, with premoves and promotion, right click squares, adding sounds on moves, etc)
-// utils and types doc
-// storybook 9
 
 export function ChessboardProvider({
   children,

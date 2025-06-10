@@ -23,7 +23,7 @@ const config: StorybookConfig = {
     name: '@storybook/react-vite',
     options: {},
   },
-  staticDirs: ['../docs/assets'],
+  staticDirs: ['../docs/assets', '../docs/stockfish'],
   docs: {
     docsMode: true,
   },

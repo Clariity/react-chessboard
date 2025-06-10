@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
 
-import defaultMeta from '../Default.stories';
+import defaultMeta from '../basic-examples/Default.stories';
 import { Chessboard } from '../../../src';
 
 const meta: Meta<typeof Chessboard> = {
@@ -43,7 +43,7 @@ export const ArrowOptions: Story = {
     const chessboardOptions = {
       arrows,
       arrowOptions,
-      id: 'arrow-settings',
+      id: 'arrow-options',
     };
 
     // render

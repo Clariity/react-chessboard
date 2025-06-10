@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { Chessboard } from '../../src';
+import { Chessboard } from '../../../src';
 
 const meta: Meta<typeof Chessboard> = {
   title: 'stories/Default',

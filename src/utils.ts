@@ -47,7 +47,7 @@ export function columnIndexToChessColumn(
     : String.fromCharCode(97 + noOfColumns - column - 1);
 }
 
-function chessColumnToColumnIndex(
+export function chessColumnToColumnIndex(
   column: string,
   noOfColumns: number,
   boardOrientation: 'white' | 'black',
@@ -166,31 +166,31 @@ export function getPositionUpdates(
             boardOrientation,
           ) -
             chessColumnToColumnIndex(
-              newSquare[0],
+              newSquare.match(/^[a-z]+/)?.[0] ?? '',
               noOfColumns,
               boardOrientation,
             ),
         );
         const rowDifference = Math.abs(
           Number(candidateSquare.match(/\d+$/)?.[0] ?? '') -
-            Number(newSquare[1]),
+            Number(newSquare.match(/\d+$/)?.[0] ?? ''),
         );
         const isOldSquareLight =
           (chessColumnToColumnIndex(
-            candidateSquare[0],
+            candidateSquare.match(/^[a-z]+/)?.[0] ?? '',
             noOfColumns,
             boardOrientation,
           ) +
-            Number(candidateSquare[1])) %
+            Number(candidateSquare.match(/\d+$/)?.[0] ?? '')) %
             2 ===
           0;
         const isNewSquareLight =
           (chessColumnToColumnIndex(
-            newSquare[0],
+            newSquare.match(/^[a-z]+/)?.[0] ?? '',
             noOfColumns,
             boardOrientation,
           ) +
-            Number(newSquare[1])) %
+            Number(newSquare.match(/\d+$/)?.[0] ?? '')) %
             2 ===
           0;
 
