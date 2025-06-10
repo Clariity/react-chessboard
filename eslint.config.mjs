@@ -1,14 +1,12 @@
 import eslint from '@eslint/js';
-import { defineConfig } from 'eslint/config';
+import { defineConfig, globalIgnores } from 'eslint/config';
 import prettier from 'eslint-config-prettier/flat';
 import react from 'eslint-plugin-react';
 import globals from 'globals';
 import typescript from 'typescript-eslint';
 
 export default defineConfig([
-  {
-    ignores: ['**/stockfish.wasm.js'],
-  },
+  globalIgnores(['**/stockfish.wasm.js']),
   eslint.configs.recommended,
   typescript.configs.recommended,
   react.configs.flat.recommended,
