@@ -53,7 +53,7 @@ export const Piece = memo(function PieceComponent({
       const targetSquare = positionDifferences[position];
 
       const squareWidth = document
-        .querySelector(`[data-column="a"][data-row="1"]`)
+        .querySelector(`#${id}-square-${sourceSquare}`)
         ?.getBoundingClientRect().width;
 
       if (!squareWidth) {

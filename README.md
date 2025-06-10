@@ -78,6 +78,8 @@ Keen to contribute? Here is the current list of things we want to get done:
 
 ### Documentation
 
+- **Additional basic examples**
+  - Click to move with drag disabled
 - **Additional advanced examples**
   - **Multiplayer Support**
     - Example of 2 chessboards next to each other (or on top if on mobile), one from white's perspective, the other from black's.
@@ -87,8 +89,6 @@ Keen to contribute? Here is the current list of things we want to get done:
   - **4-Player Chess**
     - Not necessarily adding the game logic, but instead adding the chessboard with 4 different coloured pieces.
     - May have to consider changes to `boardOrientation` prop to allow for more than 2 orientations, perhaps a degree of rotation?
-  - **Mini Puzzles**
-    - Small mate-in-two puzzle example on a small board, similar to the Pocket Chess phone application.
 - **Full Example Documentation**
   - Build step-by-step tutorial
   - Cover custom board implementation
@@ -106,7 +106,7 @@ Keen to contribute? Here is the current list of things we want to get done:
 ### Infrastructure
 
 - **Testing**
-  - Add test suite full of unit test and visual tests
+  - Add test suite full of unit tests for utils and all options stories, and visual tests
 - **Storybook**
   - Upgrade to Storybook 9
 

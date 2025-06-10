@@ -3,6 +3,7 @@ import { DocNavigation } from './components/DocNavigation';
 import { HintMessage } from './components/HintMessage';
 
 import * as AnalysisBoardStories from './stories/advanced-examples/AnalysisBoard.stories';
+import * as MiniPuzzlesStories from './stories/advanced-examples/MiniPuzzles.stories';
 import * as PremovesStories from './stories/advanced-examples/Premoves.stories';
 import * as PiecePromotionStories from './stories/advanced-examples/PiecePromotion.stories';
 
@@ -25,6 +26,7 @@ These examples demonstrate more complex use cases for React Chessboard. Each exa
 
 - [Analysis board](#analysis-board)
 - [Fully customised board](#fully-customised-board)
+- [Mini puzzles](#mini-puzzles)
 - [Premoves](#premoves)
 - [Promotion piece selection](#promotion-piece-selection)
 
@@ -62,6 +64,12 @@ To implement the analysis board, there are a few key requirements:
 ### Fully customised board
 
 TODO
+
+### Mini puzzles
+
+This example shows you how to implement a mini puzzle with the component. This example is inspired from the mate in two puzzles in the [Pocket Chess](https://play.google.com/store/apps/details?id=com.dkxqzbfkjt.pocketchess&hl=en_GB&pli=1) app. It highlights the ability to create non-standard boards with logic following predefined moves.
+
+<Canvas of={MiniPuzzlesStories.MiniPuzzles} />
 
 ### Premoves
 
