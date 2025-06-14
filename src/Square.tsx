@@ -1,4 +1,3 @@
-import { useDroppable } from '@dnd-kit/core';
 import { memo } from 'react';
 
 import { useChessboardContext } from './ChessboardProvider';
@@ -22,8 +21,7 @@ type SquareProps = {
   isOver: boolean;
 };
 
-// Pure presentation component that can be memoized
-const SquareComponent = memo(function SquareComponent({
+export const Square = memo(function Square({
   children,
   squareId,
   isLightSquare,
@@ -183,26 +181,3 @@ const SquareComponent = memo(function SquareComponent({
     </div>
   );
 });
-
-// Wrapper component that handles the droppable logic
-export function Square({
-  children,
-  squareId,
-  isLightSquare,
-}: Omit<SquareProps, 'isOver'>) {
-  const { isOver, setNodeRef } = useDroppable({
-    id: squareId,
-  });
-
-  return (
-    <div ref={setNodeRef}>
-      <SquareComponent
-        squareId={squareId}
-        isLightSquare={isLightSquare}
-        isOver={isOver}
-      >
-        {children}
-      </SquareComponent>
-    </div>
-  );
-}

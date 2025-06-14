@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Chess } from 'chess.js';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 
 import defaultMeta from '../basic-examples/Default.stories';
 import {
@@ -21,32 +21,31 @@ type Story = StoryObj<typeof meta>;
 
 export const Premoves: Story = {
   render: () => {
-    const [chessGame, setChessGame] = useState(new Chess());
+    // create a chess game using a ref to always have access to the latest game state within closures and maintain the game state across renders
+    const chessGameRef = useRef(new Chess());
+    const chessGame = chessGameRef.current;
+
+    // track the current position of the chess game in state to trigger a re-render of the chessboard
+    const [chessPosition, setChessPosition] = useState(chessGame.fen());
     const [premoves, setPremoves] = useState<PieceDropHandlerArgs[]>([]);
     const [showAnimations, setShowAnimations] = useState(true);
-    const chessGameRef = useRef(chessGame);
     const premovesRef = useRef<PieceDropHandlerArgs[]>([]);
-
-    // update the ref when the game state changes
-    useEffect(() => {
-      chessGameRef.current = chessGame;
-    }, [chessGame]);
 
     // make a random "CPU" move
     function makeRandomMove() {
       // get all possible moves
-      const possibleMoves = chessGameRef.current.moves();
+      const possibleMoves = chessGame.moves();
 
       // exit if the game is over
-      if (chessGameRef.current.isGameOver()) {
+      if (chessGame.isGameOver()) {
         return;
       }
 
       // make a random move
       const randomMove =
         possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
-      chessGameRef.current.move(randomMove);
-      setChessGame(new Chess(chessGameRef.current.fen()));
+      chessGame.move(randomMove);
+      setChessPosition(chessGame.fen());
 
       // if there is a premove, remove it from the list and make it once animation is complete
       if (premovesRef.current.length > 0) {
@@ -90,7 +89,7 @@ export const Premoves: Story = {
 
       // check if a premove (piece isn't the color of the current player's turn)
       const pieceColor = piece.pieceType[0]; // 'w' or 'b'
-      if (chessGameRef.current.turn() !== pieceColor) {
+      if (chessGame.turn() !== pieceColor) {
         premovesRef.current.push({ sourceSquare, targetSquare, piece });
         setPremoves([...premovesRef.current]);
         // return early to stop processing the move and return true to not animate the move
@@ -99,22 +98,22 @@ export const Premoves: Story = {
 
       // try to make the move
       try {
-        chessGameRef.current.move({
+        chessGame.move({
           from: sourceSquare,
           to: targetSquare,
           promotion: 'q', // always promote to a queen for example simplicity
         });
 
-        // update the game state
-        setChessGame(new Chess(chessGameRef.current.fen()));
+        // update the position state
+        setChessPosition(chessGame.fen());
 
         // make random cpu move after a slightly longer delay to allow user to premove
         setTimeout(makeRandomMove, 3000);
 
-        // return true if the move was successful
+        // return true as the move was successful
         return true;
       } catch {
-        // return false if the move was not successful
+        // return false as the move was not successful
         return false;
       }
     }
@@ -139,7 +138,7 @@ export const Premoves: Story = {
     }
 
     // create a position object from the fen string to split the premoves from the game state
-    const position = fenStringToPositionObject(chessGame.fen(), 8, 8);
+    const position = fenStringToPositionObject(chessPosition, 8, 8);
     const squareStyles: Record<string, React.CSSProperties> = {};
 
     // add premoves to the position object to show them on the board

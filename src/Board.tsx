@@ -1,13 +1,14 @@
 import { DragOverlay } from '@dnd-kit/core';
 import { snapCenterToCursor } from '@dnd-kit/modifiers';
+import { useEffect, useRef, useState } from 'react';
 
 import { Arrows } from './Arrows';
 import { Draggable } from './Draggable';
+import { Droppable } from './Droppable';
 import { Piece } from './Piece';
 import { Square } from './Square';
 import { useChessboardContext } from './ChessboardProvider';
 import { defaultBoardStyle } from './defaults';
-import { useEffect, useRef, useState } from 'react';
 
 export function Board() {
   const {
@@ -51,17 +52,21 @@ export function Board() {
             const piece = currentPosition[square.squareId];
 
             return (
-              <Square key={square.squareId} {...square}>
-                {piece ? (
-                  <Draggable
-                    isSparePiece={false}
-                    position={square.squareId}
-                    pieceType={piece.pieceType}
-                  >
-                    <Piece {...piece} position={square.squareId} />
-                  </Draggable>
-                ) : null}
-              </Square>
+              <Droppable key={square.squareId} squareId={square.squareId}>
+                {({ isOver }) => (
+                  <Square isOver={isOver} {...square}>
+                    {piece ? (
+                      <Draggable
+                        isSparePiece={false}
+                        position={square.squareId}
+                        pieceType={piece.pieceType}
+                      >
+                        <Piece {...piece} position={square.squareId} />
+                      </Draggable>
+                    ) : null}
+                  </Square>
+                )}
+              </Droppable>
             );
           }),
         )}

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Chess } from 'chess.js';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 
 import defaultMeta from '../basic-examples/Default.stories';
 import { Chessboard } from '../../../src';
@@ -16,30 +16,35 @@ type Story = StoryObj<typeof meta>;
 
 export const AnimationDurationInMs: Story = {
   render: () => {
-    const [animationDuration, setAnimationDuration] = useState(300);
-    const [chessGame, setChessGame] = useState(new Chess());
-    const chessGameRef = useRef(chessGame);
+    // create a chess game using a ref to always have access to the latest game state within closures and maintain the game state across renders
+    const chessGameRef = useRef(new Chess());
+    const chessGame = chessGameRef.current;
 
-    // update the ref when the game state changes
-    useEffect(() => {
-      chessGameRef.current = chessGame;
-    }, [chessGame]);
+    // track the animation duration in state
+    const [animationDuration, setAnimationDuration] = useState(300);
+
+    // track the current position of the chess game in state to trigger a re-render of the chessboard
+    const [chessPosition, setChessPosition] = useState(chessGame.fen());
 
     // make a random "CPU" move
     function makeRandomMove() {
       // get all possible moves
-      const possibleMoves = chessGameRef.current.moves();
+      const possibleMoves = chessGame.moves();
 
       // exit if the game is over
-      if (chessGameRef.current.isGameOver()) {
+      if (chessGame.isGameOver()) {
         return;
       }
 
-      // make a random move
+      // pick a random move
       const randomMove =
         possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
-      chessGameRef.current.move(randomMove);
-      setChessGame(new Chess(chessGameRef.current.fen()));
+
+      // make the move
+      chessGame.move(randomMove);
+
+      // update the position state
+      setChessPosition(chessGame.fen());
     }
 
     // handle piece drop
@@ -50,20 +55,22 @@ export const AnimationDurationInMs: Story = {
       if (!targetSquare) return false;
 
       try {
-        chessGameRef.current.move({
+        chessGame.move({
           from: sourceSquare,
           to: targetSquare,
           promotion: 'q', // always promote to a queen for example simplicity
         });
 
-        // update the game state
-        setChessGame(new Chess(chessGameRef.current.fen()));
+        // update the position state
+        setChessPosition(chessGame.fen());
 
         // make random cpu move after a short delay
         setTimeout(makeRandomMove, 500);
 
+        // return true as the move was successful
         return true;
       } catch {
+        // return false as the move was not successful
         return false;
       }
     };
@@ -71,7 +78,7 @@ export const AnimationDurationInMs: Story = {
     // chessboard options
     const chessboardOptions = {
       animationDurationInMs: animationDuration,
-      position: chessGame.fen(),
+      position: chessPosition,
       onPieceDrop,
       id: 'animation-duration-in-ms',
     };

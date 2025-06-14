@@ -28,7 +28,7 @@ export const defaultLightSquareStyle: React.CSSProperties = {
 };
 
 export const defaultDropSquareStyle: React.CSSProperties = {
-  border: '1px solid black',
+  boxShadow: 'inset 0px 0px 0px 1px black',
 };
 
 export const defaultDarkSquareNotationStyle: React.CSSProperties = {

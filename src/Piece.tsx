@@ -15,8 +15,7 @@ type PieceProps = {
   pieceType: PieceDataType['pieceType'];
 };
 
-// Pure presentation component that can be memoized
-export const Piece = memo(function PieceComponent({
+export const Piece = memo(function Piece({
   clone,
   isSparePiece = false,
   position,

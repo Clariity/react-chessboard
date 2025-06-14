@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Chess } from 'chess.js';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 
 import defaultMeta from './Default.stories';
 import { Chessboard, PieceDropHandlerArgs } from '../../../src';
@@ -16,29 +16,32 @@ type Story = StoryObj<typeof meta>;
 
 export const PlayVsRandom: Story = {
   render: () => {
-    const [chessGame, setChessGame] = useState(new Chess());
-    const chessGameRef = useRef(chessGame);
+    // create a chess game using a ref to always have access to the latest game state within closures and maintain the game state across renders
+    const chessGameRef = useRef(new Chess());
+    const chessGame = chessGameRef.current;
 
-    // update the ref when the game state changes
-    useEffect(() => {
-      chessGameRef.current = chessGame;
-    }, [chessGame]);
+    // track the current position of the chess game in state to trigger a re-render of the chessboard
+    const [chessPosition, setChessPosition] = useState(chessGame.fen());
 
     // make a random "CPU" move
     function makeRandomMove() {
       // get all possible moves`
-      const possibleMoves = chessGameRef.current.moves();
+      const possibleMoves = chessGame.moves();
 
       // exit if the game is over
-      if (chessGameRef.current.isGameOver()) {
+      if (chessGame.isGameOver()) {
         return;
       }
 
-      // make a random move
+      // pick a random move
       const randomMove =
         possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
-      chessGameRef.current.move(randomMove);
-      setChessGame(new Chess(chessGameRef.current.fen()));
+
+      // make the move
+      chessGame.move(randomMove);
+
+      // update the position state
+      setChessPosition(chessGame.fen());
     }
 
     // handle piece drop
@@ -48,31 +51,31 @@ export const PlayVsRandom: Story = {
         return false;
       }
 
-      // try to make the move
+      // try to make the move according to chess.js logic
       try {
-        chessGameRef.current.move({
+        chessGame.move({
           from: sourceSquare,
           to: targetSquare,
           promotion: 'q', // always promote to a queen for example simplicity
         });
 
-        // update the game state
-        setChessGame(new Chess(chessGameRef.current.fen()));
+        // update the position state upon successful move to trigger a re-render of the chessboard
+        setChessPosition(chessGame.fen());
 
         // make random cpu move after a short delay
         setTimeout(makeRandomMove, 500);
 
-        // return true if the move was successful
+        // return true as the move was successful
         return true;
       } catch {
-        // return false if the move was not successful
+        // return false as the move was not successful
         return false;
       }
     }
 
     // set the chessboard options
     const chessboardOptions = {
-      position: chessGame.fen(),
+      position: chessPosition,
       onPieceDrop,
       id: 'play-vs-random',
     };

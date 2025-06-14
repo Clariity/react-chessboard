@@ -39,7 +39,7 @@ This example shows basic usage of the component with the chess.js library. It de
 
 This utilises the `onPieceDrop` prop to handle the piece drop event and the `position` prop to update the board position when a move is made.
 
-A `chessGameRef` is used to prevent stale closures when making moves. Without it, functions like `onPieceDrop` would capture an outdated version of `chessGame` in their closure, leading to incorrect game state. The ref ensures we always access the latest game state, even in callbacks and timeouts. The `useEffect` hook is used to update the ref when the game state changes to keep the ref and state in sync. This scenario is quite specific to this example where there is a closure over old game states and the game state is updated in a timeout.
+A `chessGameRef` is used to prevent stale closures when making moves. Without it, functions like `onPieceDrop` would capture an outdated version of `chessGame` in their closure, leading to incorrect game state. The ref ensures we always access the latest game state, even in callbacks and timeouts. This scenario is quite specific to this example where there is a closure over old game states and the game state is updated in a timeout.
 
 <Canvas of={PlayVsRandomStories.PlayVsRandom} />
 

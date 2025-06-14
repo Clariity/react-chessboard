@@ -9,6 +9,7 @@ import {
   TouchSensor,
   useSensor,
   useSensors,
+  rectIntersection,
 } from '@dnd-kit/core';
 import {
   createContext,
@@ -192,10 +193,6 @@ export type ChessboardOptions = {
   onSquareClick?: ({ piece, square }: SquareHandlerArgs) => void;
   onSquareRightClick?: ({ piece, square }: SquareHandlerArgs) => void;
 };
-
-// upgrade guide
-// end of contributing guide
-// discord server (repurpose chessopenings discord server)
 
 export function ChessboardProvider({
   children,
@@ -559,6 +556,20 @@ export function ChessboardProvider({
     useSensor(MouseSensor),
   );
 
+  // collision detection that first tries pointer-based detection and then falls back to rectangle intersection for keyboards
+  function collisionDetection(args: Parameters<typeof pointerWithin>[0]) {
+    // first try pointer-based collision detection
+    const pointerCollisions = pointerWithin(args);
+
+    // if we found collisions with the pointer, return those
+    if (pointerCollisions.length > 0) {
+      return pointerCollisions;
+    }
+
+    // otherwise fall back to rectangle intersection
+    return rectIntersection(args);
+  }
+
   return (
     <ChessboardContext.Provider
       value={{
@@ -619,7 +630,7 @@ export function ChessboardProvider({
       }}
     >
       <DndContext
-        collisionDetection={pointerWithin}
+        collisionDetection={collisionDetection}
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
         onDragCancel={handleDragCancel}

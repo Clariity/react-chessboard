@@ -24,6 +24,7 @@ Once you're ready to contribute, follow these steps:
    ```bash
    git clone https://github.com/YOUR-GITHUB-USERNAME/react-chessboard.git
    cd react-chessboard
+   pnpm i
    ```
 3. Create a branch for your PR
    ```bash
@@ -41,7 +42,7 @@ Once you're ready to contribute, follow these steps:
 7. Push your changes
    ```bash
    git add .
-   git commit -m "feat: cool-new-feature"
+   git commit -m "feat: cool new feature"
    git push --set-upstream origin your-branch-name
    ```
 8. Create pull request on GitHub
@@ -54,7 +55,7 @@ Once you're ready to contribute, follow these steps:
 
 ## Commit Guidelines
 
-This project uses [Conventional Commits](https://www.conventionalcommits.org/) for commit messages and [semantic-release](https://semantic-release.gitbook.io/semantic-release/) for automated versioning, release notes, and publishing to npm. All commits are validated using [commitlint](https://commitlint.js.org/).
+This project uses [Conventional Commits](https://www.conventionalcommits.org/) for commit messages and [semantic-release](https://semantic-release.gitbook.io/semantic-release/) for automated versioning, release notes, and publishing to npm. All commits are validated using [commitlint](https://commitlint.js.org/), so if your commit message does not follow the format, the commit will fail.
 
 ### Commit Message Format
 
@@ -134,10 +135,10 @@ The project aims to maintain a minimal dependency footprint to ensure optimal pe
 
 Development dependencies should also be kept minimal but include necessary tooling for:
 
-- Building (rolldown, typescript)
+- Building (rollup, typescript)
 - Testing (storybook)
 - Code quality (eslint, prettier)
-- Release management (semantic-release)
+- Release management (commitlint, semantic-release)
 
 ### Browser Support
 

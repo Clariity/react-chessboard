@@ -5,6 +5,7 @@
 ![npm version](https://img.shields.io/npm/v/react-chessboard)
 ![npm downloads](https://img.shields.io/npm/dm/react-chessboard)
 ![license](https://img.shields.io/npm/l/react-chessboard)
+![bundlesize](https://img.shields.io/bundlephobia/minzip/react-chessboard)
 
 A modern, responsive chessboard component for React applications.
 
@@ -61,17 +62,14 @@ For detailed documentation, examples, and API reference, visit our documentation
 
 Contributions are welcome! Please read our [contribution guide](https://react-chessboard.vercel.app/?path=/docs/developers-contributing-to-react-chessboard--docs) before submitting a Pull Request.
 
-Keen to contribute? Here is the current list of things we want to get done:
+Keen to contribute? Here is the current list of things we want to get done / are interested in adding if there is desire for it:
 
 ### Features
 
 - **Drag and Drop Enhancements**
-  - Add `allowDragOffBoard` prop to allow consumers to prevent users from dragging the pieces outside of the board area.
-  - Implement custom drag layer using dndkit modifiers - https://docs.dndkit.com/api-documentation/modifiers#building-custom-modifiers
+  - Add `dropAnimation` prop to allow override of DragOverlay dropAnimation prop that is currently set to null. This will be for animating drag overlays back to their position on failed drops for example, instead of snapping back.
 - **Accessibility Improvements**
-  - Review and enhance sensor implementations and accessibility for screen readers
-  - Allow users to drag and drop using keyboard. This is native to dndkit however something is currently preventing us from dropping pieces.
-  - Improve overall accessibility features.
+  - Review and enhance sensor implementations and accessibility.
 - **UI Customization**
   - Add `squareRenderer` prop for custom square rendering. Add 3D board and pieces example once implemented.
   - Improve arrows so that for all Knight moves it is a right angled arrow instead of a straight one.
@@ -109,6 +107,18 @@ Keen to contribute? Here is the current list of things we want to get done:
   - Add test suite full of unit tests for utils and all options stories, and visual tests
 - **Storybook**
   - Upgrade to Storybook 9
+
+## Join the community of developers
+
+Join the community of developers on the [Discord server](https://discord.gg/mTBuwNSNn5)!
+
+Whether you're:
+
+- building something cool with the component and want to show it off
+- struggling to implement something and need some help
+- have an idea for a new feature
+
+We'd love to have you join our growing community!
 
 ## 📄 License
 
