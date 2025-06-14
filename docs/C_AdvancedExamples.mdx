@@ -4,8 +4,10 @@ import { HintMessage } from './components/HintMessage';
 
 import * as AnalysisBoardStories from './stories/advanced-examples/AnalysisBoard.stories';
 import * as MiniPuzzlesStories from './stories/advanced-examples/MiniPuzzles.stories';
+import * as MultiplayerStories from './stories/advanced-examples/Multiplayer.stories';
 import * as PremovesStories from './stories/advanced-examples/Premoves.stories';
 import * as PiecePromotionStories from './stories/advanced-examples/PiecePromotion.stories';
+import * as FourPlayerChessStories from './stories/advanced-examples/FourPlayerChess.stories';
 
 <Meta title="How to use/Advanced examples" />
 
@@ -27,8 +29,10 @@ These examples demonstrate more complex use cases for React Chessboard. Each exa
 - [Analysis board](#analysis-board)
 - [Fully customised board](#fully-customised-board)
 - [Mini puzzles](#mini-puzzles)
+- [Multiplayer](#multiplayer)
 - [Premoves](#premoves)
 - [Promotion piece selection](#promotion-piece-selection)
+- [Four player chess](#four-player-chess)
 
 ### Analysis board
 
@@ -71,6 +75,14 @@ This example shows you how to implement a mini puzzle with the component. This e
 
 <Canvas of={MiniPuzzlesStories.MiniPuzzles} />
 
+### Multiplayer
+
+This example demonstrates how to implement a multiplayer chess experience with the component. This aims to highlight a centralised game state where each player can see the board from their own perspective.
+
+In examples where the game is played over a network, the player should have a local game state and a remote game state. The local game state is the game state that the player sees on their own board, and the remote game state is the game state that the player sees on the opponent's board. These should be kept in sync by sending the game state to the opponent over the network. In this scenario, the local player would immediately see their board update, and the remote player would receive that update with a delay equal to the time it takes to send the game state to the opponent over the network.
+
+<Canvas of={MultiplayerStories.Multiplayer} />
+
 ### Premoves
 
 This example shows you how can you implement premoves with the component. Premoves are when you make a move and then before your opponent makes their move, you make a move to be played automatically after your opponent's move.
@@ -82,6 +94,12 @@ This example shows you how can you implement premoves with the component. Premov
 This example shows you how to implement promotion piece selection with the component by using the `onPieceDrop` prop to capture the promotion move, show a dialog to select the piece that the pawn will be promoted to, and then update the board `position` prop to update the board position to the promotion move.
 
 <Canvas of={PiecePromotionStories.PiecePromotion} />
+
+### Four player chess
+
+This example shows you how to implement a four player chess game with the component. This example is inspired from the [Four Player Chess](https://www.chess.com/variants/4-player-chess) variant on Chess.com. It highlights the ability to create a non-standard board with multiple orientations and piece colours.
+
+<Canvas of={FourPlayerChessStories.FourPlayerChess} />
 
 ## Continue reading
 

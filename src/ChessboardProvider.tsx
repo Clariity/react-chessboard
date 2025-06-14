@@ -33,7 +33,6 @@ import {
   PieceDropHandlerArgs,
   PieceHandlerArgs,
   PieceRenderObject,
-  PieceType,
   PositionDataType,
   SquareHandlerArgs,
 } from './types';
@@ -273,7 +272,7 @@ export function ChessboardProvider({
   // if the latest move was a manual drop
   const [manuallyDroppedPieceAndSquare, setManuallyDroppedPieceAndSquare] =
     useState<{
-      piece: PieceType;
+      piece: string;
       sourceSquare: string;
       targetSquare: string;
     } | null>(null);
@@ -319,8 +318,10 @@ export function ChessboardProvider({
       // create a new position with just the dropped piece moved
       const intermediatePosition = { ...currentPosition };
       delete intermediatePosition[manuallyDroppedPieceAndSquare.sourceSquare];
-      intermediatePosition[manuallyDroppedPieceAndSquare.targetSquare] = {
-        pieceType: manuallyDroppedPieceAndSquare.piece,
+      intermediatePosition[
+        manuallyDroppedPieceAndSquare.targetSquare as string
+      ] = {
+        pieceType: manuallyDroppedPieceAndSquare.piece as string,
       };
       setCurrentPosition(intermediatePosition);
 
@@ -527,7 +528,7 @@ export function ChessboardProvider({
         isSparePiece,
         piece: isSparePiece
           ? {
-              pieceType: active.id as PieceType,
+              pieceType: active.id as string,
             }
           : currentPosition[active.id],
         square: isSparePiece ? null : (active.id as string),
@@ -537,7 +538,7 @@ export function ChessboardProvider({
         isSparePiece,
         position: active.id as string,
         pieceType: isSparePiece
-          ? (active.id as PieceType)
+          ? (active.id as string)
           : currentPosition[active.id].pieceType,
       });
       return;

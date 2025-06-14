@@ -1,9 +1,8 @@
 import { Draggable } from './Draggable';
 import { Piece } from './Piece';
-import { PieceType } from './types';
 
 type SparePieceProps = {
-  pieceType: PieceType;
+  pieceType: string;
 };
 
 export function SparePiece({ pieceType }: SparePieceProps) {

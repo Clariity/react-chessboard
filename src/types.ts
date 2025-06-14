@@ -10,13 +10,13 @@ export type SquareDataType = {
 };
 
 export type PieceDataType = {
-  pieceType: PieceType; // e.g. "wP" for white pawn, "bK" for black king
+  pieceType: string; // e.g. "wP" for white pawn, "bK" for black king
 };
 
 export type DraggingPieceDataType = {
   isSparePiece: boolean;
-  position: string | PieceType; // e.g. "a8" or "wP"
-  pieceType: PieceType; // e.g. "wP" for white pawn, "bK" for black king
+  position: string | string; // e.g. "a8" or "wP"
+  pieceType: string; // e.g. "wP" for white pawn, "bK" for black king
 };
 
 export type PositionDataType = {
@@ -40,7 +40,13 @@ export type PieceDropHandlerArgs = {
   targetSquare: string | null;
 };
 
-export type PieceRenderObject = Record<PieceType, () => React.JSX.Element>;
+export type PieceRenderObject = Record<
+  string,
+  (props?: {
+    fill?: string;
+    svgStyle?: React.CSSProperties;
+  }) => React.JSX.Element
+>;
 
 export type FenPieceString =
   | 'p'
@@ -55,18 +61,3 @@ export type FenPieceString =
   | 'B'
   | 'Q'
   | 'K';
-
-export enum PieceType {
-  'wP' = 'wP',
-  'wN' = 'wN',
-  'wB' = 'wB',
-  'wR' = 'wR',
-  'wQ' = 'wQ',
-  'wK' = 'wK',
-  'bP' = 'bP',
-  'bN' = 'bN',
-  'bB' = 'bB',
-  'bR' = 'bR',
-  'bQ' = 'bQ',
-  'bK' = 'bK',
-}

@@ -76,17 +76,6 @@ Keen to contribute? Here is the current list of things we want to get done / are
 
 ### Documentation
 
-- **Additional basic examples**
-  - Click to move with drag disabled
-- **Additional advanced examples**
-  - **Multiplayer Support**
-    - Example of 2 chessboards next to each other (or on top if on mobile), one from white's perspective, the other from black's.
-    - Only one player can move at a time when it's their turn.
-    - Utilising a single centralised game logic.
-    - Consider promisifying `onPieceDrop` for better async handling, perhaps mocking a network delay of .1 seconds to ensure it works.
-  - **4-Player Chess**
-    - Not necessarily adding the game logic, but instead adding the chessboard with 4 different coloured pieces.
-    - May have to consider changes to `boardOrientation` prop to allow for more than 2 orientations, perhaps a degree of rotation?
 - **Full Example Documentation**
   - Build step-by-step tutorial
   - Cover custom board implementation

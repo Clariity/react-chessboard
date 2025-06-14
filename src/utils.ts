@@ -1,9 +1,4 @@
-import type {
-  SquareDataType,
-  FenPieceString,
-  PieceType,
-  PositionDataType,
-} from './types';
+import type { SquareDataType, FenPieceString, PositionDataType } from './types';
 
 export function generateBoard(
   noOfRows: number,
@@ -109,11 +104,11 @@ export function fenStringToPositionObject(
 function fenToPieceCode(piece: FenPieceString) {
   // lower case is black piece
   if (piece.toLowerCase() === piece) {
-    return ('b' + piece.toUpperCase()) as PieceType;
+    return 'b' + piece.toUpperCase();
   }
 
   // upper case is white piece
-  return ('w' + piece.toUpperCase()) as PieceType;
+  return 'w' + piece.toUpperCase();
 }
 
 // todo: if already in updates, find next candidate
