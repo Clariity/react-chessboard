@@ -35,6 +35,7 @@
     "build": "rimraf dist && rollup -c",
     "test:static": "tsc && eslint src docs && prettier --check src docs",
     "format": "eslint --fix src docs && prettier --write src docs",
+    "prettier:fix": "prettier --write src docs",
     "commitlint": "commitlint --edit",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",

@@ -6,8 +6,8 @@ import defaultMeta from './Default.stories';
 import {
   Chessboard,
   ChessboardProvider,
+  defaultPieces,
   PieceDropHandlerArgs,
-  PieceType,
   SparePiece,
 } from '../../../src';
 
@@ -78,13 +78,13 @@ export const SparePieces: Story = {
     }
 
     // get the piece types for the black and white spare pieces
-    const blackPieceTypes: PieceType[] = [];
-    const whitePieceTypes: PieceType[] = [];
-    for (const pieceType of Object.values(PieceType)) {
+    const blackPieceTypes: string[] = [];
+    const whitePieceTypes: string[] = [];
+    for (const pieceType of Object.keys(defaultPieces)) {
       if (pieceType[0] === 'b') {
-        blackPieceTypes.push(pieceType);
+        blackPieceTypes.push(pieceType as string);
       } else {
-        whitePieceTypes.push(pieceType);
+        whitePieceTypes.push(pieceType as string);
       }
     }
 
