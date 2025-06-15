@@ -6,12 +6,7 @@ import { Meta } from '@storybook/blocks';
 
 This guide will help you upgrade your react-chessboard implementation from v4 to v5. The new version is a ground up rewrite that includes several breaking changes and new features that you'll need to be aware of.
 
-TODO:
-
-- v4.7.4 = 97.4kB minified / 25.5kB minified + gzipped
-- v5.0.0 = 71.1kB minified / 20.7kB minified + gzipped
-- v5 is 27% smaller minified and 19% smaller gzipped
-- less dependencies
+React Chessboard v5 is **27% smaller** minified and **19% smaller** gzipped. With fewer dependencies, many more customisation options, and less opinionated internal logic.
 
 ## Breaking Changes
 
@@ -36,148 +31,95 @@ TODO:
 
 The v5 release includes significant changes to the API. Here's a detailed comparison of the changes:
 
-### Props Renamed/Removed
+### Props Renamed/Removed/Changed
 
-| v4 Prop                         | v5 Change                                                                                                      | Notes                                                              |
-| ------------------------------- | -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| `allowDragOutsideBoard`         | Renamed to `allowDragOffBoard`                                                                                 | Same functionality, new name                                       |
-| `animationDuration`             | Renamed to `animationDurationInMs`                                                                             | Same functionality, more explicit name                             |
-| `areArrowsAllowed`              | Removed                                                                                                        | Drawing arrows is not currently supported in v5                    |
-| `arePremovesAllowed`            | Removed                                                                                                        | Premove functionality has been removed                             |
-| `arePiecesDraggable`            | Renamed to `allowDragging`                                                                                     | Same functionality, new name                                       |
-| `autoPromoteToQueen`            | Removed                                                                                                        | Promotion logic has been removed from internal functionality       |
-| `boardWidth`                    | Removed                                                                                                        | Use CSS to control board dimensions                                |
-| `clearPremovesOnRightClick`     | Removed                                                                                                        | Premove functionality has been removed from internal functionality |
-| `customArrowColor`              | Removed                                                                                                        | Drawing arrows is not currently supported in v5                    |
-| `customArrows`                  | Removed                                                                                                        | Drawing arrows is not currently supported in v5                    |
-| `customBoardStyle`              | Renamed to `boardStyle`                                                                                        | Same functionality, simplified name                                |
-| `customDarkSquareStyle`         | Renamed to `darkSquareStyle`                                                                                   | Same functionality, simplified name                                |
-| `customDndBackend`              | Removed                                                                                                        | No longer required with move to @dnd-kit/core                      |
-| `customDndBackendOptions`       | Removed                                                                                                        | No longer required with move to @dnd-kit/core                      |
-| `customDropSquareStyle`         | Renamed to `dropSquareStyle`                                                                                   | Same functionality, simplified name                                |
-| `customLightSquareStyle`        | Renamed to `lightSquareStyle`                                                                                  | Same functionality, simplified name                                |
-| `customNotationStyle`           | Split into `alphaNotationStyle`, `numericNotationStyle`, `darkSquareNotationStyle`, `lightSquareNotationStyle` | More granular control over notation styling                        |
-| `customPieces`                  | Renamed to `pieces`                                                                                            | Same functionality, simplified name                                |
-| `customPremoveDarkSquareStyle`  | Removed                                                                                                        | Premove functionality has been removed from internal functionality |
-| `customPremoveLightSquareStyle` | Removed                                                                                                        | Premove functionality has been removed from internal functionality |
-| `customSquare`                  | Removed                                                                                                        | Custom square rendering is not currently supported in v5           |
-| `customSquareStyles`            | Renamed to `squareStyle`                                                                                       | Same functionality, simplified name                                |
-| `getPositionObject`             | Removed                                                                                                        | Removed until desired use case arises                              |
-| `id`                            | Removed                                                                                                        | No longer required                                                 |
-| `isDraggablePiece`              | Removed                                                                                                        | Individual piece drag toggling is not currently supported in v5    |
-| `onArrowsChange`                | Removed                                                                                                        | Drawing arrows is not currently supported in v5                    |
-| `onDragOverSquare`              | Removed                                                                                                        | Removed until desired use case arises                              |
-| `onPieceDragBegin`              | Renamed to `onPieceDrag`                                                                                       | Same functionality, new name                                       |
-| `onPieceDragEnd`                | Removed                                                                                                        | Redundant, can use onPieceDrop instead                             |
-| `onPromotionCheck`              | Removed                                                                                                        | Promotion handling has been removed from internal functionality    |
-| `onPromotionPieceSelect`        | Removed                                                                                                        | Promotion handling has been removed from internal functionality    |
-| `promotionDialogVariant`        | Removed                                                                                                        | Promotion handling has been removed from internal functionality    |
-| `promotionToSquare`             | Removed                                                                                                        | Promotion handling has been removed from internal functionality    |
-| `showBoardNotation`             | Renamed to `showNotation`                                                                                      | Same functionality, simplified name                                |
-| `showPromotionDialog`           | Removed                                                                                                        | Promotion handling has been removed from internal functionality    |
-| `snapToCursor`                  | Removed                                                                                                        | Piece snapping is now default                                      |
+| v4 Prop                         | v5 Change                                                                                                      | Notes                                                                            |
+| ------------------------------- | -------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `allowDragOutsideBoard`         | Removed                                                                                                        | Removed until desired use case arises                                            |
+| `animationDuration`             | Renamed to `animationDurationInMs`                                                                             | Same functionality, more explicit name                                           |
+| `areArrowsAllowed`              | Renamed to `allowDrawingArrows`                                                                                | Same functionality, new name                                                     |
+| `arePiecesDraggable`            | Renamed to `allowDragging`                                                                                     | Same functionality, new name                                                     |
+| `arePremovesAllowed`            | Removed                                                                                                        | Premoves should now be handled externally                                        |
+| `autoPromoteToQueen`            | Removed                                                                                                        | Promotion logic should now be handled externally                                 |
+| `boardOrientation`              | Unchanged                                                                                                      | -                                                                                |
+| `boardWidth`                    | Removed                                                                                                        | The board is now responsive, CSS can be used to control board width              |
+| `clearPremovesOnRightClick`     | Removed                                                                                                        | Premove functionality should now be handled externally                           |
+| `customArrows`                  | Renamed to `arrows` with new type                                                                              | See [API](../?path=/docs/how-to-use-options-api--docs#optionsarrows)             |
+| `customArrowColor`              | Renamed and moved to be part of `arrowOptions`                                                                 | See [API](../?path=/docs/how-to-use-options-api--docs#optionsarrowoptions)       |
+| `customBoardStyle`              | Renamed to `boardStyle`                                                                                        | Same functionality, simplified name                                              |
+| `customDarkSquareStyle`         | Renamed to `darkSquareStyle`                                                                                   | Same functionality, simplified name                                              |
+| `customDndBackend`              | Removed                                                                                                        | No longer required with move to @dnd-kit/core                                    |
+| `customDndBackendOptions`       | Removed                                                                                                        | No longer required with move to @dnd-kit/core                                    |
+| `customDropSquareStyle`         | Renamed to `dropSquareStyle`                                                                                   | Same functionality, simplified name                                              |
+| `customLightSquareStyle`        | Renamed to `lightSquareStyle`                                                                                  | Same functionality, simplified name                                              |
+| `customNotationStyle`           | Split into `alphaNotationStyle`, `numericNotationStyle`, `darkSquareNotationStyle`, `lightSquareNotationStyle` | More granular control over notation styling                                      |
+| `customPieces`                  | Renamed to `pieces` with new type                                                                              | See [API](../?path=/docs/how-to-use-options-api--docs#optionspieces)             |
+| `customPremoveDarkSquareStyle`  | Removed                                                                                                        | Premove functionality should now be handled externally                           |
+| `customPremoveLightSquareStyle` | Removed                                                                                                        | Premove functionality should now be handled externally                           |
+| `customSquare`                  | Renamed to `squareRenderer` with new type                                                                      | See [API](../?path=/docs/how-to-use-options-api--docs#optionssquarerenderer)     |
+| `customSquareStyles`            | Renamed to `squareStyle`                                                                                       | Same functionality, simplified name                                              |
+| `dropOffBoardAction`            | Removed                                                                                                        | Functionality should now be handled externally                                   |
+| `getPositionObject`             | Removed                                                                                                        | Removed until desired use case arises                                            |
+| `id`                            | Unchanged                                                                                                      | -                                                                                |
+| `isDraggablePiece`              | Renamed to `canDragPiece` with new type                                                                        | See [API](../?path=/docs/how-to-use-options-api--docs#optionscandragpiece)       |
+| `onArrowsChange`                | Removed                                                                                                        | Removed until desired use case arises                                            |
+| `onDragOverSquare`              | Removed                                                                                                        | Removed until desired use case arises                                            |
+| `onMouseOutSquare`              | New type                                                                                                       | See [API](../?path=/docs/how-to-use-options-api--docs#optionsonmouseoutsquare)   |
+| `onMouseOverSquare`             | New type                                                                                                       | See [API](../?path=/docs/how-to-use-options-api--docs#optionsonmouseoversquare)  |
+| `onPieceClick`                  | New type                                                                                                       | See [API](../?path=/docs/how-to-use-options-api--docs#optionsonpiececlick)       |
+| `onPieceDragBegin`              | Renamed to `onPieceDrag` with new type                                                                         | See [API](../?path=/docs/how-to-use-options-api--docs#optionsonpiecedrag)        |
+| `onPieceDragEnd`                | Removed                                                                                                        | Redundant, can use onPieceDrop instead                                           |
+| `onPieceDrop`                   | New type                                                                                                       | See [API](../?path=/docs/how-to-use-options-api--docs#optionsonpiecedrop)        |
+| `onPieceDropOffBoard`           | Removed                                                                                                        | Redundant, can use onPieceDrop instead with null targetSquare                    |
+| `onPromotionCheck`              | Removed                                                                                                        | Promotion handling should now be handled externally                              |
+| `onPromotionPieceSelect`        | Removed                                                                                                        | Promotion handling should now be handled externally                              |
+| `onSparePieceDrop`              | Removed                                                                                                        | Redundant, can use onPieceDrop instead with piece.isSparePiece = true            |
+| `onSquareClick`                 | New type                                                                                                       | See [API](../?path=/docs/how-to-use-options-api--docs#optionsonsquareclick)      |
+| `onSquareRightClick`            | New type                                                                                                       | See [API](../?path=/docs/how-to-use-options-api--docs#optionsonsquarerightclick) |
+| `position`                      | New type                                                                                                       | See [API](../?path=/docs/how-to-use-options-api--docs#optionsposition)           |
+| `promotionDialogVariant`        | Removed                                                                                                        | Promotion handling should now be handled externally                              |
+| `promotionToSquare`             | Removed                                                                                                        | Promotion handling should now be handled externally                              |
+| `showBoardNotation`             | Renamed to `showNotation`                                                                                      | Same functionality, simplified name                                              |
+| `showPromotionDialog`           | Removed                                                                                                        | Promotion handling should now be handled externally                              |
+| `snapToCursor`                  | Removed                                                                                                        | Piece snapping is now default                                                    |
 
-### Unchanged Props
-
-| v4 Prop              | Default Value                                   | Description                                                                        |
-| -------------------- | ----------------------------------------------- | ---------------------------------------------------------------------------------- |
-| `boardOrientation`   | `'white'`                                       | The orientation of the board, the chosen colour will be at the bottom of the board |
-| `onMouseOutSquare`   | `undefined`                                     | User function that is run when mouse leaves a square                               |
-| `onMouseOverSquare`  | `undefined`                                     | User function that is run when mouse is over a square                              |
-| `onPieceClick`       | `undefined`                                     | User function that is run when piece is clicked                                    |
-| `onSquareClick`      | `undefined`                                     | User function that is run when a square is clicked                                 |
-| `onSquareRightClick` | `undefined`                                     | User function that is run when a square is right clicked                           |
-| `position`           | `'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR'` | FEN string or position object notating where the chess pieces are on the board     |
-
-### Handler Argument Type Changes
-
-The following handlers now receive more consistent argument types with additional properties:
-
-| Handler              | v4 Arguments                          | v5 Arguments                                                                                                                      | Changes                                             |
-| -------------------- | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
-| `onPieceClick`       | `(piece, square)`                     | `({ piece: { pieceType: string }, square: string })`                                                                              | Now receives an object with structured piece data   |
-| `onPieceDrag`        | `(piece, sourceSquare)`               | `({ isSparePiece: boolean, piece: { pieceType: string }, square: string \| null })`                                               | Added `isSparePiece` flag and structured piece data |
-| `onPieceDrop`        | `(sourceSquare, targetSquare, piece)` | `({ piece: { isSparePiece: boolean, pieceType: string, position: string }, sourceSquare: string, targetSquare: string \| null })` | Added `isSparePiece` flag and structured piece data |
-| `onSquareClick`      | `(square, piece)`                     | `({ piece: string \| null, square: string })`                                                                                     | Now receives an object with consistent structure    |
-| `onSquareRightClick` | `(square)`                            | `({ piece: string \| null, square: string })`                                                                                     | Added piece information to the arguments            |
-
-### New Features
+### New Props
 
 - `chessboardRows` and `chessboardColumns`: Control board dimensions
+- `clearArrowsOnClick`: Control whether to clear arrows when clicking on the board
+- `dragActivationDistance`: Control the distance from the cursor to the piece to activate dragging
+- `draggingPieceGhostStyle`: Style the ghost piece while being dragged
 - `draggingPieceStyle`: Style the piece while being dragged
-- Improved TypeScript support with better type definitions
-- Better mobile and touch device support
-- Enhanced animation system
 
 ## Migration Steps
 
 1. Update Dependencies
 
    ```bash
-   npm install react-chessboard@latest
+   pnpm i react-chessboard@latest
    # or
    yarn add react-chessboard@latest
    # or
-   pnpm add react-chessboard@latest
+   npm i react-chessboard@latest
    ```
 
 2. Update React Version
 
    ```bash
-   pnpm add react@^19.0.0 react-dom@^19.0.0
+   pnpm i react@^19.0.0 react-dom@^19.0.0
    # or
    yarn add react@^19.0.0 react-dom@^19.0.0
    # or
-   npm install react@^19.0.0 react-dom@^19.0.0
+   npm i react@^19.0.0 react-dom@^19.0.0
    ```
 
 3. Review Your Implementation
 
    - Update prop names to match new API
-   - Remove any usage of removed features
-   - Update event handlers to use new names
+   - Remove/update any usage of removed features
+   - Update event handlers to use new names and types
    - Review styling implementation to use new style props
-
-4. Update TypeScript Configurations
-   - Ensure your tsconfig.json is compatible with React 19
-   - Update any custom type definitions to match the new types
-
-## Common Issues and Solutions
-
-### Drag and Drop Issues
-
-If you experience issues with drag and drop functionality:
-
-- Check that you're using the latest version of @dnd-kit/core
-- Review the `allowDragOffBoard` option if pieces are being dragged off the board unexpectedly
-- Ensure touch events are working correctly on mobile devices
-
-### Animation Problems
-
-If animations aren't working as expected:
-
-- Verify the `showAnimations` option is set correctly
-- Adjust `animationDurationInMs` if animations are too fast or slow
-- Check for any CSS conflicts that might affect animations
-
-### Styling Conflicts
-
-If you notice styling issues:
-
-- Review the new style options in the documentation
-- Update any custom styles to use the new style properties
-- Check for any CSS specificity conflicts
 
 ## Need Help?
 
-If you encounter any issues during the upgrade process:
-
-1. Check the [GitHub issues](https://github.com/Clariity/react-chessboard/issues) for similar problems
-2. Review the [documentation](https://react-chessboard.vercel.app/) for detailed information
-3. Create a new issue if you can't find a solution
-
-## Additional Resources
-
-- [Full Documentation](https://react-chessboard.vercel.app/)
-- [GitHub Repository](https://github.com/Clariity/react-chessboard)
-- [Example Implementations](https://react-chessboard.vercel.app/?path=/docs/how-to-use--docs)
+If you encounter any issues during the upgrade process, the best place to get help is the [Discord server](https://discord.gg/mTBuwNSNn5).
