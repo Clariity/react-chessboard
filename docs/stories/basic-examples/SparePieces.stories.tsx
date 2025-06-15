@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Chess, Color, PieceSymbol, Square } from 'chess.js';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import defaultMeta from './Default.stories';
 import {
@@ -22,9 +22,14 @@ type Story = StoryObj<typeof meta>;
 
 export const SparePieces: Story = {
   render: () => {
-    const [chessGame, setChessGame] = useState(
+    // create a chess game using a ref to always have access to the latest game state within closures and maintain the game state across renders
+    const chessGameRef = useRef(
       new Chess('8/8/8/8/8/8/8/8 w - - 0 1', { skipValidation: true }),
     );
+    const chessGame = chessGameRef.current;
+
+    // track the current position of the chess game in state to trigger a re-render of the chessboard
+    const [chessPosition, setChessPosition] = useState(chessGame.fen());
     const [squareWidth, setSquareWidth] = useState<number | null>(null);
 
     // get the width of a square to use for the spare piece sizes
@@ -47,7 +52,7 @@ export const SparePieces: Story = {
       // if the piece is dropped off the board, we need to remove it from the board
       if (!targetSquare) {
         chessGame.remove(sourceSquare as Square);
-        setChessGame(new Chess(chessGame.fen(), { skipValidation: true }));
+        setChessPosition(chessGame.fen());
 
         // successful drop off board
         return true;
@@ -73,7 +78,7 @@ export const SparePieces: Story = {
       }
 
       // update the game state and return true if successful
-      setChessGame(new Chess(chessGame.fen(), { skipValidation: true }));
+      setChessPosition(chessGame.fen());
       return true;
     }
 
@@ -90,7 +95,7 @@ export const SparePieces: Story = {
 
     // set the chessboard options
     const chessboardOptions = {
-      position: chessGame.fen(),
+      position: chessPosition,
       onPieceDrop,
       id: 'spare-pieces',
     };

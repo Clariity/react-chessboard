@@ -43,6 +43,7 @@ The package includes the many helpful features, such as:
 - Responsive
 - Accessible
 - TypeScript support
+- Helpful utility functions
 - And more!
 
 ## Installation
@@ -57,6 +58,22 @@ yarn add react-chessboard
 
 ```bash
 npm i react-chessboard
+```
+
+## Quick Start
+
+Here is a quick example of how to use the component. You will need to configure the component with the `options` prop. See the [Options API](../?path=/docs/how-to-use-options-api--docs) documentation for more information on the available options. You can also see the [Basic Examples](../?path=/docs/how-to-use-basic-examples--docs) documentation for more examples of how to use the component.
+
+```tsx
+import { Chessboard } from 'react-chessboard';
+
+function App() {
+  const chessboardOptions = {
+    // your config options here
+  };
+
+  return <Chessboard options={chessboardOptions} />;
+}
 ```
 
 ## Join the community of developers

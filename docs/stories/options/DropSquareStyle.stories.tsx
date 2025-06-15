@@ -16,7 +16,7 @@ export const DropSquareStyle: Story = {
     // chessboard options
     const chessboardOptions = {
       dropSquareStyle: {
-        border: '5px solid red',
+        boxShadow: 'inset 0px 0px 0px 5px red',
       },
       id: 'drop-square-style',
     };
@@ -34,7 +34,7 @@ export const DropSquareStyle: Story = {
         <Chessboard options={chessboardOptions} />
 
         <p style={{ fontSize: '0.8rem', color: '#666' }}>
-          Drag a piece to see the drop square style
+          Drag a piece to see a custom drop square style
         </p>
       </div>
     );

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Chess, Square } from 'chess.js';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import defaultMeta from '../basic-examples/Default.stories';
 import { Chessboard, PieceDropHandlerArgs } from '../../../src';
@@ -17,27 +17,39 @@ type Story = StoryObj<typeof meta>;
 
 export const AnalysisBoard: Story = {
   render: () => {
+    // initialise the engine
     const engine = useMemo(() => new Engine(), []);
-    const [chessGame, setChessGame] = useState(new Chess());
 
+    // create a chess game using a ref to always have access to the latest game state within closures and maintain the game state across renders
+    const chessGameRef = useRef(new Chess());
+    const chessGame = chessGameRef.current;
+
+    // track the current position of the chess game in state to trigger a re-render of the chessboard
+    const [chessPosition, setChessPosition] = useState(chessGame.fen());
+
+    // store engine variables
     const [positionEvaluation, setPositionEvaluation] = useState(0);
     const [depth, setDepth] = useState(10);
     const [bestLine, setBestLine] = useState('');
     const [possibleMate, setPossibleMate] = useState('');
 
+    // when the chess game position changes, find the best move
     useEffect(() => {
       if (!chessGame.isGameOver() || chessGame.isDraw()) {
         findBestMove();
       }
     }, [chessGame.fen()]);
 
+    // find the best move
     function findBestMove() {
       engine.evaluatePosition(chessGame.fen(), 18);
       engine.onMessage(({ positionEvaluation, possibleMate, pv, depth }) => {
+        // ignore messages with a depth less than 10
         if (depth && depth < 10) {
           return;
         }
 
+        // update the position evaluation
         if (positionEvaluation) {
           setPositionEvaluation(
             ((chessGame.turn() === 'w' ? 1 : -1) * Number(positionEvaluation)) /
@@ -45,6 +57,7 @@ export const AnalysisBoard: Story = {
           );
         }
 
+        // update the possible mate, depth and best line
         if (possibleMate) {
           setPossibleMate(possibleMate);
         }
@@ -75,24 +88,31 @@ export const AnalysisBoard: Story = {
         setPossibleMate('');
 
         // update the game state
-        setChessGame(new Chess(chessGame.fen()));
+        setChessPosition(chessGame.fen());
 
+        // stop the engine (it will be restarted by the useEffect running findBestMove)
         engine.stop();
+
+        // reset the best line
         setBestLine('');
+
+        // if the game is over, return false
         if (chessGame.isGameOver() || chessGame.isDraw()) {
           return false;
         }
 
-        // return true if the move was successful
+        // return true as the move was successful
         return true;
       } catch {
-        // return false if the move was not successful
+        // return false as the move was not successful
         return false;
       }
     }
 
+    // get the best move
     const bestMove = bestLine?.split(' ')?.[0];
 
+    // set the chessboard options, using arrows to show the best move
     const chessboardOptions = {
       arrows: bestMove
         ? [
@@ -103,11 +123,12 @@ export const AnalysisBoard: Story = {
             },
           ]
         : undefined,
-      position: chessGame.fen(),
+      position: chessPosition,
       onPieceDrop,
       id: 'analysis-board',
     };
 
+    // render the chessboard
     return (
       <div
         style={{

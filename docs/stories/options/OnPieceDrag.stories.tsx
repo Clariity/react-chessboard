@@ -7,24 +7,20 @@ import type { PieceHandlerArgs } from '../../../src/types';
 
 const meta: Meta<typeof Chessboard> = {
   ...defaultMeta,
-  title: 'stories/Options/OnPieceDragStart',
+  title: 'stories/Options/OnPieceDrag',
 } satisfies Meta<typeof Chessboard>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const OnPieceDragStart: Story = {
+export const OnPieceDrag: Story = {
   render: () => {
     const [draggedSquare, setDraggedSquare] = useState<string>('None');
     const [draggedPiece, setDraggedPiece] = useState<string>('None');
     const [isSparePiece, setIsSparePiece] = useState<boolean>(false);
 
     // handle piece drag start
-    const onPieceDragStart = ({
-      square,
-      piece,
-      isSparePiece,
-    }: PieceHandlerArgs) => {
+    const onPieceDrag = ({ square, piece, isSparePiece }: PieceHandlerArgs) => {
       setDraggedSquare(square || 'None');
       setDraggedPiece(piece.pieceType);
       setIsSparePiece(isSparePiece);
@@ -32,7 +28,7 @@ export const OnPieceDragStart: Story = {
 
     // chessboard options
     const chessboardOptions = {
-      onPieceDragStart,
+      onPieceDrag,
       id: 'on-piece-drag-start',
     };
 

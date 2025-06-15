@@ -8,6 +8,7 @@ import * as MultiplayerStories from './stories/advanced-examples/Multiplayer.sto
 import * as PremovesStories from './stories/advanced-examples/Premoves.stories';
 import * as PiecePromotionStories from './stories/advanced-examples/PiecePromotion.stories';
 import * as FourPlayerChessStories from './stories/advanced-examples/FourPlayerChess.stories';
+import * as ThreeDBoardStories from './stories/advanced-examples/3DBoard.stories';
 
 <Meta title="How to use/Advanced examples" />
 
@@ -27,12 +28,12 @@ These examples demonstrate more complex use cases for React Chessboard. Each exa
 ## Table of contents
 
 - [Analysis board](#analysis-board)
-- [Fully customised board](#fully-customised-board)
 - [Mini puzzles](#mini-puzzles)
 - [Multiplayer](#multiplayer)
 - [Premoves](#premoves)
 - [Promotion piece selection](#promotion-piece-selection)
 - [Four player chess](#four-player-chess)
+- [3D board](#3d-board)
 
 ### Analysis board
 
@@ -44,7 +45,7 @@ To implement the analysis board, there are a few key requirements:
 
 1. **Web Worker Implementation**: The chess engine runs in a web worker to prevent blocking the main thread. This ensures the UI remains responsive while the engine is calculating moves. You can learn more about web workers in the [MDN documentation](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers).
 
-2. **Required Files**: You'll need to include two essential files in your project:
+2. **Required Files**: You'll need to include two additional files in your project:
 
    - `stockfish.wasm.js`: The JavaScript wrapper for the WebAssembly engine
    - `stockfish.wasm`: The actual WebAssembly binary of the Stockfish engine
@@ -64,10 +65,6 @@ To implement the analysis board, there are a few key requirements:
    You can find the complete implementation of the Engine class in the [react-chessboard repository](https://github.com/Clariity/react-chessboard/blob/main/docs/stockfish/engine.ts).
 
 <Canvas of={AnalysisBoardStories.AnalysisBoard} />
-
-### Fully customised board
-
-TODO
 
 ### Mini puzzles
 
@@ -100,6 +97,12 @@ This example shows you how to implement promotion piece selection with the compo
 This example shows you how to implement a four player chess game with the component. This example is inspired from the [Four Player Chess](https://www.chess.com/variants/4-player-chess) variant on Chess.com. It highlights the ability to create a non-standard board with multiple orientations and piece colours.
 
 <Canvas of={FourPlayerChessStories.FourPlayerChess} />
+
+### 3D board
+
+This example shows you how to implement a 3D chessboard with the component by using the `boardStyle` prop to create a 3D board and the `pieces` prop to create 3D pieces with images.
+
+<Canvas of={ThreeDBoardStories.ThreeDBoard} />
 
 ## Continue reading
 

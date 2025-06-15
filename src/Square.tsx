@@ -48,6 +48,7 @@ export const Square = memo(function Square({
     onMouseOverSquare,
     onSquareClick,
     onSquareRightClick,
+    squareRenderer,
     newArrowStartSquare,
     setNewArrowStartSquare,
     setNewArrowOverSquare,
@@ -169,15 +170,21 @@ export const Square = memo(function Square({
         </span>
       ) : null}
 
-      <div
-        style={{
-          width: '100%',
-          height: '100%',
-          ...squareStyles[squareId],
-        }}
-      >
-        {children}
-      </div>
+      {squareRenderer?.({
+        piece: currentPosition[squareId] ?? null,
+        square: squareId,
+        children,
+      }) || (
+        <div
+          style={{
+            width: '100%',
+            height: '100%',
+            ...squareStyles[squareId],
+          }}
+        >
+          {children}
+        </div>
+      )}
     </div>
   );
 });

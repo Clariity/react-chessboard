@@ -25,7 +25,7 @@ import * as NumericNotationStyleStories from './stories/options/NumericNotationS
 import * as OnMouseOutSquareStories from './stories/options/OnMouseOutSquare.stories';
 import * as OnMouseOverSquareStories from './stories/options/OnMouseOverSquare.stories';
 import * as OnPieceClickStories from './stories/options/OnPieceClick.stories';
-import * as OnPieceDragStartStories from './stories/options/OnPieceDragStart.stories';
+import * as OnPieceDragStories from './stories/options/OnPieceDrag.stories';
 import * as OnPieceDropStories from './stories/options/OnPieceDrop.stories';
 import * as OnSquareClickStories from './stories/options/OnSquareClick.stories';
 import * as OnSquareRightClickStories from './stories/options/OnSquareRightClick.stories';
@@ -33,6 +33,7 @@ import * as PiecesStories from './stories/options/Pieces.stories';
 import * as PositionStories from './stories/options/Position.stories';
 import * as ShowAnimationsStories from './stories/options/ShowAnimations.stories';
 import * as ShowNotationStories from './stories/options/ShowNotation.stories';
+import * as SquareRendererStories from './stories/options/SquareRenderer.stories';
 import * as SquareStyleStories from './stories/options/SquareStyle.stories';
 import * as SquareStylesStories from './stories/options/SquareStyles.stories';
 
@@ -42,7 +43,7 @@ import * as SquareStylesStories from './stories/options/SquareStyles.stories';
 
 This page will explain how to use the options API for React Chessboard. It includes sections for each option for the component that also contain relevant examples of how to use them.
 
-The component has a number of options that you can use to customise the component. These are passed in via the `options` prop to the `Chessboard` component. (or the `ChessboardProvider` component if you are using spare pieces).
+The component has a number of options that you can use to customise the component. These are passed in via the `options` prop to the `Chessboard` component. (or the `ChessboardProvider` component if you are using spare pieces or other features that require the context provider).
 
 The code for these examples can be viewed by clicking the "Show code" button in the bottom right of the interactive examples. The code can also be viewed in the [GitHub repository](https://github.com/Clariity/react-chessboard/tree/main/docs/stories/options).
 
@@ -73,7 +74,7 @@ The code for these examples can be viewed by clicking the "Show code" button in 
 | [onMouseOutSquare](#optionsonmouseoutsquare)                 | Handler for mouse leaving a square                                  |
 | [onMouseOverSquare](#optionsonmouseoversquare)               | Handler for mouse entering a square                                 |
 | [onPieceClick](#optionsonpiececlick)                         | Handler for clicking a piece                                        |
-| [onPieceDragStart](#optionsonpiecedragstart)                 | Handler for starting to drag a piece                                |
+| [onPieceDrag](#optionsonpiecedrag)                           | Handler for starting to drag a piece                                |
 | [onPieceDrop](#optionsonpiecedrop)                           | Handler for dropping a piece                                        |
 | [onSquareClick](#optionsonsquareclick)                       | Handler for clicking a square                                       |
 | [onSquareRightClick](#optionsonsquarerightclick)             | Handler for right-clicking a square                                 |
@@ -81,6 +82,7 @@ The code for these examples can be viewed by clicking the "Show code" button in 
 | [position](#optionsposition)                                 | Current position on the board (FEN string or position object)       |
 | [showAnimations](#optionsshowanimations)                     | Controls whether piece movements are animated                       |
 | [showNotation](#optionsshownotation)                         | Controls whether board notation is displayed                        |
+| [squareRenderer](#optionssquarerenderer)                     | Controls the rendering of squares on the board                      |
 | [squareStyle](#optionssquarestyle)                           | Base styling applied to all squares                                 |
 | [squareStyles](#optionssquarestyles)                         | Object mapping squares to custom styles                             |
 
@@ -152,7 +154,7 @@ Controls the duration of piece movement animations in milliseconds.
 
 Controls the base set of arrows on the board. By default, additional arrows can be added by holding down the right mouse button and dragging the mouse over the board. You can disable this by setting [`allowDrawingArrows`](#optionsallowdrawingarrows) to `false`.
 
-By default, these arrows will not be automatically cleared when a square is clicked or a piece is dragged. Instead, you will need to clear them manually using the [`onSquareClick`](#optionsonsquareclick) or [`onPieceDragStart`](#optionsonpiecedragstart) prop and pass in a new value for this prop.
+By default, these arrows will not be automatically cleared when a square is clicked or a piece is dragged. Instead, you will need to clear them manually using the [`onSquareClick`](#optionsonsquareclick) or [`onPieceDrag`](#optionsonpiecedrag) prop and pass in a new value for this prop.
 
 **Default value:** `[]`
 
@@ -319,7 +321,7 @@ Controls the number of rows on the chessboard. If you set either of the row or c
 
 ### `options.clearArrowsOnClick`
 
-Controls whether internal arrows are cleared when a square is clicked. If you are passing in external arrows via the [`arrows`](#optionsarrows) prop, these will not be automatically cleared when a square is clicked. Instead, you will need to clear them manually using the [`onSquareClick`](#optionsonsquareclick) prop and pass in a new value for the [`arrows`](#optionsarrows) prop.
+Controls whether **internal** arrows are cleared when a square is clicked. If you are passing in external arrows via the [`arrows`](#optionsarrows) prop, these will not be automatically cleared when a square is clicked. Instead, you will need to clear them manually using the [`onSquareClick`](#optionsonsquareclick) prop and pass in a new value for the [`arrows`](#optionsarrows) prop.
 
 **Default value:** `true`
 
@@ -373,7 +375,7 @@ Controls the styling of dark squares on the board.
 
 Controls the distance in pixels that the mouse needs to move before a piece can be dragged. Note that setting this to `0` will cause issues with the `onPieceClick` event firing because the click will be registered as a drag instead.
 
-**Default value:** `2`
+**Default value:** `1`
 
 **TypeScript type:** `number`
 
@@ -425,7 +427,7 @@ Controls the styling of squares when a piece is being dragged over them.
 
 ```tsx
 {
-  border: "1px solid black",
+  boxShadow: 'inset 0px 0px 0px 1px black',
 }
 ```
 
@@ -567,7 +569,7 @@ Callback function triggered when a piece is clicked. This callback will only be 
 
 <Canvas of={OnPieceClickStories.OnPieceClick} />
 
-### `options.onPieceDragStart`
+### `options.onPieceDrag`
 
 Callback function triggered when a piece drag operation starts.
 
@@ -585,7 +587,7 @@ Callback function triggered when a piece drag operation starts.
 
 **Standard use case:** Implementing custom drag and drop behavior or validation.
 
-<Canvas of={OnPieceDragStartStories.OnPieceDragStart} />
+<Canvas of={OnPieceDragStories.OnPieceDrag} />
 
 ### `options.onPieceDrop`
 
@@ -693,6 +695,26 @@ Controls whether board coordinates are displayed.
 
 <Canvas of={ShowNotationStories.ShowNotation} />
 
+### `options.squareRenderer`
+
+Controls the rendering of squares on the board. This allows you to fully replace the default square rendering with your own custom rendering.
+
+**Default value:** `undefined`
+
+**TypeScript type:**
+
+```typescript
+({
+  piece: { pieceType: string } | null;
+  square: string;
+  children?: React.ReactNode;
+}) => React.JSX.Element;
+```
+
+**Standard use case:** Customizing the appearance of squares to match your application's theme.
+
+<Canvas of={SquareRendererStories.SquareRenderer} />
+
 ### `options.squareStyle`
 
 Controls the styling of all squares on the board, regardless of their colour.
@@ -734,6 +756,11 @@ Controls the styling of individual squares on the board. This style will go over
     href: '../?path=/docs/how-to-use-advanced-examples--docs',
     title: 'Advanced Examples',
     description: 'Explore advanced features and complex implementations',
+  }}
+  next={{
+    href: '../?path=/docs/how-to-use-functions-and-types--docs',
+    title: 'Functions and Types',
+    description: 'Learn about the utility functions and types',
   }}
 />
 

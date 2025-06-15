@@ -102,6 +102,7 @@ type ContextType = {
   onPieceClick: ChessboardOptions['onPieceClick'];
   onSquareClick: ChessboardOptions['onSquareClick'];
   onSquareRightClick: ChessboardOptions['onSquareRightClick'];
+  squareRenderer: ChessboardOptions['squareRenderer'];
 
   // internal state
   board: SquareDataType[][];
@@ -179,11 +180,7 @@ export type ChessboardOptions = {
   onMouseOutSquare?: ({ piece, square }: SquareHandlerArgs) => void;
   onMouseOverSquare?: ({ piece, square }: SquareHandlerArgs) => void;
   onPieceClick?: ({ isSparePiece, piece, square }: PieceHandlerArgs) => void;
-  onPieceDragStart?: ({
-    isSparePiece,
-    piece,
-    square,
-  }: PieceHandlerArgs) => void;
+  onPieceDrag?: ({ isSparePiece, piece, square }: PieceHandlerArgs) => void;
   onPieceDrop?: ({
     piece,
     sourceSquare,
@@ -191,6 +188,11 @@ export type ChessboardOptions = {
   }: PieceDropHandlerArgs) => boolean;
   onSquareClick?: ({ piece, square }: SquareHandlerArgs) => void;
   onSquareRightClick?: ({ piece, square }: SquareHandlerArgs) => void;
+  squareRenderer?: ({
+    piece,
+    square,
+    children,
+  }: SquareHandlerArgs & { children?: React.ReactNode }) => React.JSX.Element;
 };
 
 export function ChessboardProvider({
@@ -234,7 +236,7 @@ export function ChessboardProvider({
     // drag and drop
     allowDragging = true,
     allowDragOffBoard = true,
-    dragActivationDistance = 2,
+    dragActivationDistance = 1,
 
     // arrows
     allowDrawingArrows = true,
@@ -247,10 +249,11 @@ export function ChessboardProvider({
     onMouseOutSquare,
     onMouseOverSquare,
     onPieceClick,
-    onPieceDragStart,
+    onPieceDrag,
     onPieceDrop,
     onSquareClick,
     onSquareRightClick,
+    squareRenderer,
   } = options || {};
 
   // the piece currently being dragged
@@ -524,7 +527,7 @@ export function ChessboardProvider({
       // the id is either the position of the piece on the board if it's on the board (e.g. "a1", "b2", etc.), or the type of the piece if it's a spare piece (e.g. "wP", "bN", etc.)
       const isSparePiece = active.data.current?.isSparePiece;
 
-      onPieceDragStart?.({
+      onPieceDrag?.({
         isSparePiece,
         piece: isSparePiece
           ? {
@@ -614,6 +617,7 @@ export function ChessboardProvider({
         onPieceClick,
         onSquareClick,
         onSquareRightClick,
+        squareRenderer,
 
         // internal state
         board,

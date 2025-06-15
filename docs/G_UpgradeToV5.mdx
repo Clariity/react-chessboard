@@ -6,6 +6,13 @@ import { Meta } from '@storybook/blocks';
 
 This guide will help you upgrade your react-chessboard implementation from v4 to v5. The new version is a ground up rewrite that includes several breaking changes and new features that you'll need to be aware of.
 
+TODO:
+
+- v4.7.4 = 97.4kB minified / 25.5kB minified + gzipped
+- v5.0.0 = 71.1kB minified / 20.7kB minified + gzipped
+- v5 is 27% smaller minified and 19% smaller gzipped
+- less dependencies
+
 ## Breaking Changes
 
 ### React Version Requirement
@@ -60,7 +67,7 @@ The v5 release includes significant changes to the API. Here's a detailed compar
 | `isDraggablePiece`              | Removed                                                                                                        | Individual piece drag toggling is not currently supported in v5    |
 | `onArrowsChange`                | Removed                                                                                                        | Drawing arrows is not currently supported in v5                    |
 | `onDragOverSquare`              | Removed                                                                                                        | Removed until desired use case arises                              |
-| `onPieceDragBegin`              | Renamed to `onPieceDragStart`                                                                                  | Same functionality, new name                                       |
+| `onPieceDragBegin`              | Renamed to `onPieceDrag`                                                                                       | Same functionality, new name                                       |
 | `onPieceDragEnd`                | Removed                                                                                                        | Redundant, can use onPieceDrop instead                             |
 | `onPromotionCheck`              | Removed                                                                                                        | Promotion handling has been removed from internal functionality    |
 | `onPromotionPieceSelect`        | Removed                                                                                                        | Promotion handling has been removed from internal functionality    |
@@ -89,7 +96,7 @@ The following handlers now receive more consistent argument types with additiona
 | Handler              | v4 Arguments                          | v5 Arguments                                                                                                                      | Changes                                             |
 | -------------------- | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
 | `onPieceClick`       | `(piece, square)`                     | `({ piece: { pieceType: string }, square: string })`                                                                              | Now receives an object with structured piece data   |
-| `onPieceDragStart`   | `(piece, sourceSquare)`               | `({ isSparePiece: boolean, piece: { pieceType: string }, square: string \| null })`                                               | Added `isSparePiece` flag and structured piece data |
+| `onPieceDrag`        | `(piece, sourceSquare)`               | `({ isSparePiece: boolean, piece: { pieceType: string }, square: string \| null })`                                               | Added `isSparePiece` flag and structured piece data |
 | `onPieceDrop`        | `(sourceSquare, targetSquare, piece)` | `({ piece: { isSparePiece: boolean, pieceType: string, position: string }, sourceSquare: string, targetSquare: string \| null })` | Added `isSparePiece` flag and structured piece data |
 | `onSquareClick`      | `(square, piece)`                     | `({ piece: string \| null, square: string })`                                                                                     | Now receives an object with consistent structure    |
 | `onSquareRightClick` | `(square)`                            | `({ piece: string \| null, square: string })`                                                                                     | Added piece information to the arguments            |

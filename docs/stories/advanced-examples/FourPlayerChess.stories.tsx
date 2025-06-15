@@ -132,19 +132,19 @@ export const FourPlayerChess: Story = {
     // define the styles for each player colour and the rotation of the pieces
     const yellowStyle = {
       fill: '#FFD700',
-      svgStyle: { transform: `rotate(${360 - orientation}deg)` },
+      svgStyle: { transform: `rotate(${-orientation}deg)` },
     };
     const greenStyle = {
       fill: '#00A86B',
-      svgStyle: { transform: `rotate(${360 - orientation}deg)` },
+      svgStyle: { transform: `rotate(${-orientation}deg)` },
     };
     const redStyle = {
       fill: '#D7263D',
-      svgStyle: { transform: `rotate(${360 - orientation}deg)` },
+      svgStyle: { transform: `rotate(${-orientation}deg)` },
     };
     const blueStyle = {
       fill: '#1E90FF',
-      svgStyle: { transform: `rotate(${360 - orientation}deg)` },
+      svgStyle: { transform: `rotate(${-orientation}deg)` },
     };
 
     // define the pieces for each player colour
@@ -171,12 +171,12 @@ export const FourPlayerChess: Story = {
       rQ: () => defaultPieces.wQ(redStyle),
       rK: () => defaultPieces.wK(redStyle),
       // Blue (left)
-      bP: () => defaultPieces.bP(blueStyle),
-      bR: () => defaultPieces.bR(blueStyle),
-      bN: () => defaultPieces.bN(blueStyle),
-      bB: () => defaultPieces.bB(blueStyle),
-      bQ: () => defaultPieces.bQ(blueStyle),
-      bK: () => defaultPieces.bK(blueStyle),
+      bP: () => defaultPieces.wP(blueStyle),
+      bR: () => defaultPieces.wR(blueStyle),
+      bN: () => defaultPieces.wN(blueStyle),
+      bB: () => defaultPieces.wB(blueStyle),
+      bQ: () => defaultPieces.wQ(blueStyle),
+      bK: () => defaultPieces.wK(blueStyle),
     } as const;
 
     // set the chessboard options

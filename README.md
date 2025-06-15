@@ -26,6 +26,7 @@ A modern, responsive chessboard component for React applications.
 - 📱 Responsive
 - ⌨️ Accessible
 - 🔷 TypeScript support
+- 🛠️ Helpful utility functions
 - ✨ And more!
 
 ## 📦 Installation
@@ -71,24 +72,13 @@ Keen to contribute? Here is the current list of things we want to get done / are
 - **Accessibility Improvements**
   - Review and enhance sensor implementations and accessibility.
 - **UI Customization**
-  - Add `squareRenderer` prop for custom square rendering. Add 3D board and pieces example once implemented.
-  - Improve arrows so that for all Knight moves it is a right angled arrow instead of a straight one.
+  - Improve arrows so that for all Knight moves it is a right angled arrow instead of a straight one. Extending from and implementing the suggestions from an [existing PR](https://github.com/Clariity/react-chessboard/pull/128).
 
 ### Documentation
 
-- **Full Example Documentation**
-  - Build step-by-step tutorial
-  - Cover custom board implementation
-  - Include premoves and promotion
-  - Add right-click square functionality
-  - Implement move sounds
-  - and more...
-- **Utils and Types Documentation**
-  - Document utility functions
-  - Add type definitions documentation
 - **Framework Integrations**
   - Add framework specific documentation, Next.js, Vite, Remix
-  - Include `use client` directive examples
+  - e.g. for Next.js, include `use client` directive at the top of the component consuming the Chessboard component.
 
 ### Infrastructure
 

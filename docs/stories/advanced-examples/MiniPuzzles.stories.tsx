@@ -109,7 +109,7 @@ export const MiniPuzzles: Story = {
       };
 
       // make the cpu move
-      setTimeout(makeCpuMove, 500);
+      setTimeout(makeCpuMove, 200);
 
       // return true as the move was successful
       return true;

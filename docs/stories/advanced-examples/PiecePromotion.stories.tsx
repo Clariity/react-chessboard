@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Chess, Square, PieceSymbol } from 'chess.js';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import defaultMeta from '../basic-examples/Default.stories';
 import {
@@ -22,13 +22,18 @@ type Story = StoryObj<typeof meta>;
 
 export const PiecePromotion: Story = {
   render: () => {
+    // create a chess game using a ref to always have access to the latest game state within closures and maintain the game state across renders
+    const chessGameRef = useRef(new Chess('8/P7/7K/8/8/8/8/k7 w - - 0 1'));
+    const chessGame = chessGameRef.current;
+
+    // track the current position of the chess game in state to trigger a re-render of the chessboard
+    const [chessPosition, setChessPosition] = useState(chessGame.fen());
+
+    // track the promotion move
     const [promotionMove, setPromotionMove] = useState<Omit<
       PieceDropHandlerArgs,
       'piece'
     > | null>(null);
-    const [chessGame, setChessGame] = useState(
-      new Chess('8/P7/7K/8/8/8/8/k7 w - - 0 1'),
-    );
 
     // handle piece drop
     function onPieceDrop({ sourceSquare, targetSquare }: PieceDropHandlerArgs) {
@@ -65,7 +70,7 @@ export const PiecePromotion: Story = {
         });
 
         // update the game state
-        setChessGame(new Chess(chessGame.fen()));
+        setChessPosition(chessGame.fen());
 
         // return true if the move was successful
         return true;
@@ -85,7 +90,7 @@ export const PiecePromotion: Story = {
         });
 
         // update the game state
-        setChessGame(new Chess(chessGame.fen()));
+        setChessPosition(chessGame.fen());
       } catch {
         // do nothing
       }
@@ -110,7 +115,7 @@ export const PiecePromotion: Story = {
 
     // set the chessboard options
     const chessboardOptions = {
-      position: chessGame.fen(),
+      position: chessPosition,
       onPieceDrop,
       id: 'piece-promotion',
     };
@@ -127,7 +132,8 @@ export const PiecePromotion: Story = {
       >
         <button
           onClick={() => {
-            setChessGame(new Chess('8/P7/7K/8/8/8/8/k7 w - - 0 1'));
+            chessGameRef.current = new Chess('8/P7/7K/8/8/8/8/k7 w - - 0 1');
+            setChessPosition(chessGame.fen());
             setPromotionMove(null);
           }}
         >
