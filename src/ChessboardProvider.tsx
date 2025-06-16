@@ -518,7 +518,7 @@ export function ChessboardProvider({
         setDraggingPiece(null);
       }
     },
-    [draggingPiece, pieces],
+    [draggingPiece],
   );
 
   const handleDragStart = useCallback(

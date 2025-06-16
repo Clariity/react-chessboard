@@ -1,7 +1,7 @@
 import { Canvas, Meta } from '@storybook/blocks';
 import { DocNavigation } from './components/DocNavigation';
 import { HintMessage } from './components/HintMessage';
-import { ImportantMessage } from './components/ImportantMessage';
+import { WarningMessage } from './components/WarningMessage';
 
 import * as DefaultStories from './stories/basic-examples/Default.stories';
 import * as PlayVsRandomStories from './stories/basic-examples/PlayVsRandom.stories';
@@ -49,12 +49,12 @@ A `chessGameRef` is used to prevent stale closures when making moves. Without it
 
 This example shows how to use spare pieces with the chessboard component. Spare pieces are pieces that can be dragged onto the board from outside the main chessboard component. This is useful for setting up custom positions or creating chess puzzles.
 
-<ImportantMessage>
+<WarningMessage>
   The spare pieces functionality requires wrapping your chessboard and spare
   pieces in the `ChessboardProvider` component. All props that would normally be
   passed to the `Chessboard` component must instead be passed to the
   `ChessboardProvider` via its `options` prop.
-</ImportantMessage>
+</WarningMessage>
 
 When using spare pieces, you can drag pieces both onto and off the board. The `onPieceDrop` handler receives information about whether the piece was dropped on a valid square (via the `targetSquare` parameter) or off the board (`targetSquare` will be null). This allows you to implement custom logic for handling pieces being removed from the board.
 

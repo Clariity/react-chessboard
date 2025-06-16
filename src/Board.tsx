@@ -9,9 +9,11 @@ import { Piece } from './Piece';
 import { Square } from './Square';
 import { useChessboardContext } from './ChessboardProvider';
 import { defaultBoardStyle } from './defaults';
+import { preventDragOffBoard } from './modifiers';
 
 export function Board() {
   const {
+    allowDragOffBoard,
     board,
     boardStyle,
     chessboardColumns,
@@ -74,7 +76,15 @@ export function Board() {
         <Arrows boardWidth={boardWidth} boardHeight={boardHeight} />
       </div>
 
-      <DragOverlay dropAnimation={null} modifiers={[snapCenterToCursor]}>
+      <DragOverlay
+        dropAnimation={null}
+        modifiers={[
+          snapCenterToCursor,
+          ...(allowDragOffBoard
+            ? []
+            : [preventDragOffBoard(id, draggingPiece?.position || '')]),
+        ]}
+      >
         {draggingPiece ? (
           <Piece
             clone

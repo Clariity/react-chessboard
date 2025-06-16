@@ -1,7 +1,9 @@
 import { Canvas, Meta } from '@storybook/blocks';
 import { DocNavigation } from './components/DocNavigation';
+import { WarningMessage } from './components/WarningMessage';
 
 import * as AllowDraggingStories from './stories/options/AllowDragging.stories';
+import * as AllowDragOffBoardStories from './stories/options/AllowDragOffBoard.stories';
 import * as AllowDrawingArrowsStories from './stories/options/AllowDrawingArrows.stories';
 import * as AlphaNotationStyleStories from './stories/options/AlphaNotationStyle.stories';
 import * as AnimationDurationInMsStories from './stories/options/AnimationDurationInMs.stories';
@@ -50,6 +52,7 @@ The code for these examples can be viewed by clicking the "Show code" button in 
 | Option                                                       | Description                                                         |
 | ------------------------------------------------------------ | ------------------------------------------------------------------- |
 | [allowDragging](#optionsallowdragging)                       | Controls whether pieces can be dragged on the board                 |
+| [allowDragOffBoard](#optionsallowdragoffboard)               | Controls whether pieces can be dragged off the board                |
 | [allowDrawingArrows](#optionsallowdrawingarrows)             | Controls whether arrows can be drawn by right-clicking and dragging |
 | [alphaNotationStyle](#optionsalphanotationstyle)             | Controls styling of the alpha notation (a-h)                        |
 | [animationDurationInMs](#optionsanimationdurationinms)       | Controls duration of piece movement animations                      |
@@ -101,6 +104,32 @@ When set to true, pieces can be dragged and dropped, and by default will have `c
 **Standard use case:** Disabling drag and drop functionality for the entire board.
 
 <Canvas of={AllowDraggingStories.AllowDragging} />
+
+### `options.allowDragOffBoard`
+
+Controls whether pieces can be dragged off the board.
+
+**Default value:** `true`
+
+**TypeScript type:** `boolean`
+
+**Standard use case:** Disabling the ability to drag pieces off the board.
+
+<WarningMessage>
+  <p>
+    Due to how Storybook renders canvases in iframes, and how the
+    `preventDragOffBoard` modifier works by calculating the position of the
+    piece and the board,{' '}
+    <strong>this story example will not work in the Storybook preview</strong>.
+  </p>
+  <p>
+    As a result, if your application adjusts the position of the board in a
+    similar way with iframes, you may face similar issues. To see the example in
+    action, please run the example in your own project.
+  </p>
+</WarningMessage>
+
+<Canvas of={AllowDragOffBoardStories.AllowDragOffBoard} />
 
 ### `options.allowDrawingArrows`
 

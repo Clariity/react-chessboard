@@ -1,10 +1,10 @@
 import React from 'react';
 
-type ImportantMessageProps = {
+type WarningMessageProps = {
   children: React.ReactNode;
 };
 
-export function ImportantMessage({ children }: ImportantMessageProps) {
+export function WarningMessage({ children }: WarningMessageProps) {
   return (
     <div
       style={{
@@ -35,7 +35,7 @@ export function ImportantMessage({ children }: ImportantMessageProps) {
       </div>
 
       <div>
-        <h4 style={{ margin: '0 0 0.5rem 0', color: '#b38600' }}>Important</h4>
+        <h4 style={{ margin: '0 0 0.5rem 0', color: '#b38600' }}>Warning</h4>
         <div style={{ color: '#4d3800' }}>{children}</div>
       </div>
     </div>
