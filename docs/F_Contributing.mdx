@@ -1,0 +1,153 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Developers/Contributing to react-chessboard" />
+
+# Contributing to react-chessboard
+
+Thank you for your interest in contributing to react-chessboard! Whether it's improving the documentation, adding new features, or fixing bugs, your contributions are welcome and appreciated. This document will guide you through the process of contributing to this project.
+
+## GitHub contribution guide
+
+Before diving into the technical details, here are some general guidelines for contributing:
+
+- Check existing [issues](https://github.com/Clariity/react-chessboard/issues) and [pull requests](https://github.com/Clariity/react-chessboard/pulls) to avoid duplicating work
+- For major changes, open an issue first to discuss your proposed changes
+- Follow the code style and project guidelines outlined below
+- Include tests and documentation for new features
+- Keep pull requests focused on a single change
+- Be respectful and constructive in discussions
+
+Once you're ready to contribute, follow these steps:
+
+1. Fork the [react-chessboard repository](https://github.com/Clariity/react-chessboard)
+2. Clone your forked repository onto your development machine
+   ```bash
+   git clone https://github.com/YOUR-GITHUB-USERNAME/react-chessboard.git
+   cd react-chessboard
+   pnpm i
+   ```
+3. Create a branch for your PR
+   ```bash
+   git checkout -b your-branch-name
+   ```
+4. Set upstream remote
+   ```bash
+   git remote add upstream https://github.com/Clariity/react-chessboard.git
+   ```
+5. Make your changes
+6. Test your changes by running storybook
+   ```bash
+   pnpm storybook
+   ```
+7. Push your changes
+   ```bash
+   git add .
+   git commit -m "feat: cool new feature"
+   git push --set-upstream origin your-branch-name
+   ```
+8. Create pull request on GitHub
+9. Contribute again
+   ```bash
+   git checkout main
+   git pull upstream main
+   git checkout -b your-new-branch-name
+   ```
+
+## Commit Guidelines
+
+This project uses [Conventional Commits](https://www.conventionalcommits.org/) for commit messages and [semantic-release](https://semantic-release.gitbook.io/semantic-release/) for automated versioning, release notes, and publishing to npm. All commits are validated using [commitlint](https://commitlint.js.org/), so if your commit message does not follow the format, the commit will fail.
+
+### Commit Message Format
+
+Each commit message should follow the conventional commit format:
+
+```
+<type>(optional scope): <description>
+
+[optional body]
+
+[optional footer]
+```
+
+Breaking changes should be indicated by a `!` in the type. e.g. `feat!` or `fix!`.
+
+### Types
+
+- `feat`: A new feature (triggers minor version bump)
+- `fix`: A bug fix (triggers patch version bump)
+- `docs`: Documentation changes
+- `refactor`: Code changes that neither fix a bug nor add a feature
+- `test`: Adding or fixing tests
+- `chore`: Changes to the build process or auxiliary tools
+
+### Examples
+
+```bash
+# Feature commit
+git commit -m "feat: add support for custom board themes"
+
+# Bug fix commit
+git commit -m "fix: fix piece dragging on mobile devices"
+
+# Documentation commit
+git commit -m "docs: update installation instructions"
+
+# Breaking change commit
+git commit -m "feat!: change board orientation API"
+```
+
+### Semantic Release
+
+The project uses semantic-release to automatically:
+
+- Determine the next version number based on commit types
+- Generate release notes
+- Publish to npm
+- Create git tags
+
+Version bumps are determined by commit types:
+
+- `feat` commits trigger a minor version bump (1.0.0 -> 1.1.0)
+- `fix` commits trigger a patch version bump (1.0.0 -> 1.0.1)
+- Commits with `feat!` or `fix!` in the type trigger a major version bump (1.1.2 -> 2.0.0)
+
+## Project guidelines
+
+### Dependencies
+
+The project aims to maintain a minimal dependency footprint to ensure optimal performance, smaller bundle size, and reduce potential security risks. Here are our dependency guidelines:
+
+- Keep dependencies to an absolute minimum
+- All dependencies must be actively maintained
+- Dependencies should have permissive licenses (MIT, Apache, etc.)
+- Evaluate each new dependency carefully for:
+  - Bundle size impact
+  - Security implications
+  - Maintenance status
+  - Browser compatibility
+
+#### Required Dependencies
+
+- `react` ^19.0.0
+- `react-dom` ^19.0.0
+
+#### Development Dependencies
+
+Development dependencies should also be kept minimal but include necessary tooling for:
+
+- Building (rollup, typescript)
+- Testing (storybook)
+- Code quality (eslint, prettier)
+- Release management (commitlint, semantic-release)
+
+### Browser Support
+
+- Modern browsers (Chrome, Firefox, Safari, Edge)
+- No IE11 support required
+- Mobile browser support for touch events
+
+### Accessibility
+
+- Use ARIA attributes for interactive elements
+- Ensure keyboard interactions are available
+- Provide clear feedback for user actions

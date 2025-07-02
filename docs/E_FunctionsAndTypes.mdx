@@ -1,0 +1,526 @@
+import { Meta } from '@storybook/blocks';
+import { DocNavigation } from './components/DocNavigation';
+
+<Meta title="How to use/Functions and Types" />
+
+# Utility Functions
+
+React Chessboard exports several utility functions and types to help you work with the chessboard component. The functions handle various aspects of chess notation, board generation, and position management, and whilst not necessary to use the component, they may prove useful for consumers.
+
+## Table of Contents
+
+- [Board Generation](#board-generation)
+  - [generateBoard](#generateboard)
+- [Chess Notation Conversion](#chess-notation-conversion)
+  - [rowIndexToChessRow](#rowindextochessrow)
+  - [columnIndexToChessColumn](#columnindextochesscolumn)
+  - [chessColumnToColumnIndex](#chesscolumntocolumnindex)
+  - [chessRowToRowIndex](#chessrowtorowindex)
+- [Position Management](#position-management)
+  - [fenStringToPositionObject](#fenstringtopositionobject)
+  - [getPositionUpdates](#getpositionupdates)
+- [Coordinate Calculation](#coordinate-calculation)
+  - [getRelativeCoords](#getrelativecoords)
+- [Types](#types)
+  - [Arrow](#arrow)
+  - [SquareDataType](#squareDataType)
+  - [PieceDataType](#pieceDataType)
+  - [DraggingPieceDataType](#draggingPiecedataType)
+  - [PositionDataType](#positionDataType)
+  - [SquareHandlerArgs](#squareHandlerArgs)
+  - [PieceHandlerArgs](#pieceHandlerArgs)
+  - [PieceDropHandlerArgs](#pieceDropHandlerArgs)
+  - [PieceRenderObject](#pieceRenderObject)
+  - [FenPieceString](#fenpiecestring)
+
+## Board Generation
+
+### `generateBoard`
+
+Generates a 2D array representing the chessboard with square information.
+
+```typescript
+function generateBoard(
+  noOfRows: number,
+  noOfColumns: number,
+  boardOrientation: 'white' | 'black',
+): SquareDataType[][];
+```
+
+**Parameters:**
+
+- `noOfRows`: Number of rows in the board
+- `noOfColumns`: Number of columns in the board
+- `boardOrientation`: Board orientation ('white' or 'black')
+
+**Returns:** A 2D array where each element contains:
+
+- `squareId`: The chess notation for the square (e.g., "a8")
+- `isLightSquare`: Boolean indicating if the square is light-colored
+
+**Example:**
+
+```typescript
+// Generate a standard 8x8 chessboard in white orientation
+const board = generateBoard(8, 8, 'white');
+
+// Result for the first row (top row in white orientation):
+[
+  [
+    { squareId: 'a8', isLightSquare: true },
+    { squareId: 'b8', isLightSquare: false },
+    { squareId: 'c8', isLightSquare: true },
+    // ... and so on
+  ],
+  // ... remaining rows
+];
+```
+
+## Chess Notation Conversion
+
+### `rowIndexToChessRow`
+
+Converts a row index to chess notation row number.
+
+```typescript
+function rowIndexToChessRow(
+  row: number,
+  noOfRows: number,
+  boardOrientation: 'white' | 'black',
+): string;
+```
+
+**Example:**
+
+```typescript
+// Convert row index 0 to chess notation in white orientation
+rowIndexToChessRow(0, 8, 'white'); // Returns "8"
+
+// Convert row index 0 to chess notation in black orientation
+rowIndexToChessRow(0, 8, 'black'); // Returns "1"
+```
+
+### `columnIndexToChessColumn`
+
+Converts a column index to chess notation column letter.
+
+```typescript
+function columnIndexToChessColumn(
+  column: number,
+  noOfColumns: number,
+  boardOrientation: 'white' | 'black',
+): string;
+```
+
+**Example:**
+
+```typescript
+// Convert column index 0 to chess notation in white orientation
+columnIndexToChessColumn(0, 8, 'white'); // Returns "a"
+
+// Convert column index 0 to chess notation in black orientation
+columnIndexToChessColumn(0, 8, 'black'); // Returns "h"
+```
+
+### `chessColumnToColumnIndex`
+
+Converts a chess notation column letter to column index.
+
+```typescript
+function chessColumnToColumnIndex(
+  column: string,
+  noOfColumns: number,
+  boardOrientation: 'white' | 'black',
+): number;
+```
+
+**Example:**
+
+```typescript
+// Convert chess notation "a" to column index in white orientation
+chessColumnToColumnIndex('a', 8, 'white'); // Returns 0
+
+// Convert chess notation "a" to column index in black orientation
+chessColumnToColumnIndex('a', 8, 'black'); // Returns 7
+```
+
+### `chessRowToRowIndex`
+
+Converts a chess notation row number to row index.
+
+```typescript
+function chessRowToRowIndex(
+  row: string,
+  noOfRows: number,
+  boardOrientation: 'white' | 'black',
+): number;
+```
+
+**Example:**
+
+```typescript
+// Convert chess notation "1" to row index in white orientation
+chessRowToRowIndex('1', 8, 'white'); // Returns 7
+
+// Convert chess notation "1" to row index in black orientation
+chessRowToRowIndex('1', 8, 'black'); // Returns 0
+```
+
+## Position Management
+
+### `fenStringToPositionObject`
+
+Converts a FEN string to a position object.
+
+```typescript
+function fenStringToPositionObject(
+  fen: string,
+  noOfRows: number,
+  noOfColumns: number,
+): PositionDataType;
+```
+
+**Parameters:**
+
+- `fen`: FEN string representing the chess position
+- `noOfRows`: Number of rows in the board
+- `noOfColumns`: Number of columns in the board
+
+**Returns:** An object where keys are square positions (e.g., "e2") and values contain piece information.
+
+**Example:**
+
+```typescript
+// Convert starting position FEN to position object
+const position = fenStringToPositionObject(
+  'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR',
+  8,
+  8
+);
+
+// Result:
+{
+  'a8': { pieceType: 'bR' },
+  'b8': { pieceType: 'bN' },
+  'c8': { pieceType: 'bB' },
+  // ... and so on
+}
+```
+
+### `getPositionUpdates`
+
+Calculates the moves made between two positions.
+
+```typescript
+function getPositionUpdates(
+  oldPosition: PositionDataType,
+  newPosition: PositionDataType,
+  noOfColumns: number,
+  boardOrientation: 'white' | 'black',
+): { [square: string]: string };
+```
+
+**Parameters:**
+
+- `oldPosition`: Previous position object
+- `newPosition`: New position object
+- `noOfColumns`: Number of columns in the board
+- `boardOrientation`: Board orientation ('white' or 'black')
+
+**Returns:** An object where keys are source squares and values are destination squares.
+
+**Example:**
+
+```typescript
+// Calculate moves from e2e4
+const updates = getPositionUpdates(
+  {
+    'e2': { pieceType: 'wP' }
+  },
+  {
+    'e4': { pieceType: 'wP' }
+  },
+  8,
+  'white'
+);
+
+// Result:
+{
+  'e2': 'e4'
+}
+```
+
+## Coordinate Calculation
+
+### `getRelativeCoords`
+
+Calculates the center coordinates of a square relative to the board's top-left corner.
+
+```typescript
+function getRelativeCoords(
+  boardOrientation: 'white' | 'black',
+  boardWidth: number,
+  chessboardColumns: number,
+  chessboardRows: number,
+  square: string,
+): { x: number; y: number };
+```
+
+**Parameters:**
+
+- `boardOrientation`: Board orientation ('white' or 'black')
+- `boardWidth`: Width of the board in pixels
+- `chessboardColumns`: Number of columns in the board
+- `chessboardRows`: Number of rows in the board
+- `square`: Chess notation for the square (e.g., "e2")
+
+**Returns:** An object containing the x and y coordinates of the square's center.
+
+**Example:**
+
+```typescript
+// Get coordinates for square e2 on a 400px wide board
+const coords = getRelativeCoords('white', 400, 8, 8, 'e2');
+
+// Result:
+{
+  x: 225, // center of the e file (4.5 * 50px)
+  y: 350  // center of the 2nd rank (7 * 50px)
+}
+```
+
+## Types
+
+### `Arrow`
+
+Represents an arrow on the chessboard.
+
+```typescript
+type Arrow = {
+  startSquare: string; // e.g. "a8"
+  endSquare: string; // e.g. "a7"
+  color: string; // e.g. "#000000"
+};
+```
+
+**Example:**
+
+```typescript
+const arrow: Arrow = {
+  startSquare: 'e2',
+  endSquare: 'e4',
+  color: '#000000',
+};
+```
+
+### `SquareDataType`
+
+Represents a square on the chessboard.
+
+```typescript
+type SquareDataType = {
+  squareId: string; // e.g. "a8"
+  isLightSquare: boolean;
+};
+```
+
+**Example:**
+
+```typescript
+const square: SquareDataType = {
+  squareId: 'e4',
+  isLightSquare: true,
+};
+```
+
+### `PieceDataType`
+
+Represents a chess piece.
+
+```typescript
+type PieceDataType = {
+  pieceType: string; // e.g. "wP" for white pawn, "bK" for black king
+};
+```
+
+**Example:**
+
+```typescript
+const piece: PieceDataType = {
+  pieceType: 'wP', // white pawn
+};
+```
+
+### `DraggingPieceDataType`
+
+Represents a piece being dragged on the board.
+
+```typescript
+type DraggingPieceDataType = {
+  isSparePiece: boolean;
+  position: string; // e.g. "a8" or "wP"
+  pieceType: string; // e.g. "wP" for white pawn, "bK" for black king
+};
+```
+
+**Example:**
+
+```typescript
+const draggingPiece: DraggingPieceDataType = {
+  isSparePiece: false,
+  position: 'e2',
+  pieceType: 'wP',
+};
+```
+
+### `PositionDataType`
+
+Represents the current position of all pieces on the board.
+
+```typescript
+type PositionDataType = {
+  [square: string]: PieceDataType;
+};
+```
+
+**Example:**
+
+```typescript
+const position: PositionDataType = {
+  e4: { pieceType: 'wP' },
+  e5: { pieceType: 'bP' },
+};
+```
+
+### `SquareHandlerArgs`
+
+Arguments passed to square click handlers.
+
+```typescript
+type SquareHandlerArgs = {
+  piece: PieceDataType | null;
+  square: string;
+};
+```
+
+**Example:**
+
+```typescript
+const args: SquareHandlerArgs = {
+  piece: { pieceType: 'wP' },
+  square: 'e4',
+};
+```
+
+### `PieceHandlerArgs`
+
+Arguments passed to piece click handlers.
+
+```typescript
+type PieceHandlerArgs = {
+  isSparePiece: boolean;
+  piece: PieceDataType;
+  square: string | null;
+};
+```
+
+**Example:**
+
+```typescript
+const args: PieceHandlerArgs = {
+  isSparePiece: false,
+  piece: { pieceType: 'wP' },
+  square: 'e4',
+};
+```
+
+### `PieceDropHandlerArgs`
+
+Arguments passed to piece drop handlers.
+
+```typescript
+type PieceDropHandlerArgs = {
+  piece: DraggingPieceDataType;
+  sourceSquare: string;
+  targetSquare: string | null;
+};
+```
+
+**Example:**
+
+```typescript
+const args: PieceDropHandlerArgs = {
+  piece: {
+    isSparePiece: false,
+    position: 'e2',
+    pieceType: 'wP',
+  },
+  sourceSquare: 'e2',
+  targetSquare: 'e4',
+};
+```
+
+### `PieceRenderObject`
+
+Type for custom piece rendering functions.
+
+```typescript
+type PieceRenderObject = Record<
+  string,
+  (props?: {
+    fill?: string;
+    svgStyle?: React.CSSProperties;
+  }) => React.JSX.Element
+>;
+```
+
+**Example:**
+
+```typescript
+const customPieces: PieceRenderObject = {
+  wP: ({ fill, svgStyle }) => (
+    <svg viewBox="0 0 45 45" style={svgStyle}>
+      <path
+        d="M22.5 9c-2.21 0-4 1.79-4 4 0 .24.04.47.09.71-1.25.27-2.36.84-3.25 1.6-.89-.76-2-1.33-3.25-1.6.05-.24.09-.47.09-.71 0-2.21-1.79-4-4-4s-4 1.79-4 4c0 .24.04.47.09.71-1.25.27-2.36.84-3.25 1.6-.89-.76-2-1.33-3.25-1.6.05-.24.09-.47.09-.71 0-2.21-1.79-4-4-4s-4 1.79-4 4c0 2.21 1.79 4 4 4h.5v12h-1v2h3v-2h-1v-12h.5c2.21 0 4-1.79 4-4 0-.24-.04-.47-.09-.71 1.25-.27 2.36-.84 3.25-1.6.89.76 2 1.33 3.25 1.6-.05.24-.09.47-.09.71 0 2.21 1.79 4 4 4s4-1.79 4-4c0-.24-.04-.47-.09-.71 1.25-.27 2.36-.84 3.25-1.6.89.76 2 1.33 3.25 1.6-.05.24-.09.47-.09.71 0 2.21 1.79 4 4 4s4-1.79 4-4c0-2.21-1.79-4-4-4z"
+        fill={fill}
+      />
+    </svg>
+  )
+};
+```
+
+### `FenPieceString`
+
+A string type representing a piece in FEN notation.
+
+```typescript
+type FenPieceString =
+  | 'p' // black pawn
+  | 'r' // black rook
+  | 'n' // black knight
+  | 'b' // black bishop
+  | 'q' // black queen
+  | 'k' // black king
+  | 'P' // white pawn
+  | 'R' // white rook
+  | 'N' // white knight
+  | 'B' // white bishop
+  | 'Q' // white queen
+  | 'K'; // white king
+```
+
+**Example:**
+
+```typescript
+const piece: FenPieceString = 'N'; // represents a white knight
+```
+
+## Continue reading
+
+<DocNavigation
+  prev={{
+    href: '../?path=/docs/how-to-use-options-api--docs',
+    title: 'Options API',
+    description: 'Explore all available configuration options',
+  }}
+/>

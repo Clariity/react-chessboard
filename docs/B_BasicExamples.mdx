@@ -1,0 +1,82 @@
+import { Canvas, Meta } from '@storybook/blocks';
+import { DocNavigation } from './components/DocNavigation';
+import { HintMessage } from './components/HintMessage';
+import { WarningMessage } from './components/WarningMessage';
+
+import * as DefaultStories from './stories/basic-examples/Default.stories';
+import * as PlayVsRandomStories from './stories/basic-examples/PlayVsRandom.stories';
+import * as SparePiecesStories from './stories/basic-examples/SparePieces.stories';
+import * as ClickToMoveStories from './stories/basic-examples/ClickToMove.stories';
+
+<Meta title="How to use/Basic examples" />
+
+# Basic examples
+
+These examples demonstrate basic and common use cases for React Chessboard. Each example includes explanations of key concepts and code snippets showing how to implement them.
+
+<HintMessage>
+  The code shown in the "Show code" dropdowns for each example does show the
+  full code but it is not formatted in an ideal way and hides any helpful import
+  statements. It is highly recommended to view the code in the [GitHub
+  repository](https://github.com/Clariity/react-chessboard/tree/main/docs/stories/basic-examples)
+  to see the code in a more readable format.
+</HintMessage>
+
+## Table of contents
+
+- [Default chessboard component](#default-chessboard-component)
+- [Using with chess.js](#using-with-chessjs)
+- [Spare pieces](#spare-pieces)
+- [Click to move](#click-to-move)
+
+### Default chessboard component
+
+The default component is a simple chessboard with default pieces. It is unlikely that you will need to use this component in this state without any customisation or properties supplied. It is shown here for reference and as a starting point for your own customisation.
+
+<Canvas of={DefaultStories.Default} />
+
+### Using with chess.js
+
+This example shows basic usage of the component with the chess.js library. It demonstrates how to handle piece drops and safely update the board position when a move is made.
+
+This utilises the `onPieceDrop` prop to handle the piece drop event and the `position` prop to update the board position when a move is made.
+
+A `chessGameRef` is used to prevent stale closures when making moves. Without it, functions like `onPieceDrop` would capture an outdated version of `chessGame` in their closure, leading to incorrect game state. The ref ensures we always access the latest game state, even in callbacks and timeouts. This scenario is quite specific to this example where there is a closure over old game states and the game state is updated in a timeout.
+
+<Canvas of={PlayVsRandomStories.PlayVsRandom} />
+
+### Spare pieces
+
+This example shows how to use spare pieces with the chessboard component. Spare pieces are pieces that can be dragged onto the board from outside the main chessboard component. This is useful for setting up custom positions or creating chess puzzles.
+
+<WarningMessage>
+  The spare pieces functionality requires wrapping your chessboard and spare
+  pieces in the `ChessboardProvider` component. All props that would normally be
+  passed to the `Chessboard` component must instead be passed to the
+  `ChessboardProvider` via its `options` prop.
+</WarningMessage>
+
+When using spare pieces, you can drag pieces both onto and off the board. The `onPieceDrop` handler receives information about whether the piece was dropped on a valid square (via the `targetSquare` parameter) or off the board (`targetSquare` will be null). This allows you to implement custom logic for handling pieces being removed from the board.
+
+<Canvas of={SparePiecesStories.SparePieces} />
+
+### Click to move
+
+This example shows how to use the `onSquareClick` prop to handle square clicks. This is useful for implementing custom move logic, such as allowing the user to click on a piece to move it to a new square, instead of dragging the piece to the new square.
+
+<Canvas of={ClickToMoveStories.ClickToMove} />
+
+## Continue reading
+
+<DocNavigation
+  prev={{
+    href: '../?path=/docs/get-started--docs',
+    title: 'Get Started',
+    description: 'Learn about React Chessboard and its features',
+  }}
+  next={{
+    href: '../?path=/docs/how-to-use-advanced-examples--docs',
+    title: 'Advanced Examples',
+    description: 'Explore advanced features and complex implementations',
+  }}
+/>

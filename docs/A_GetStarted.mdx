@@ -1,0 +1,100 @@
+import { Meta } from '@storybook/blocks';
+import { DocNavigation } from './components/DocNavigation';
+
+<Meta title="Get started" />
+
+<div style={{ display: 'flex', justifyContent: 'center' }}>
+  <h1>React Chessboard</h1>
+</div>
+
+<div
+  style={{
+    display: 'flex',
+    justifyContent: 'center',
+    marginBottom: '3rem',
+  }}
+>
+  <img
+    src="chessboard.png"
+    alt="React Chessboard"
+    style={{ maxWidth: '400px', width: '100%' }}
+  />
+</div>
+
+## What is React Chessboard?
+
+React Chessboard is a React component that provides chessboard functionality to your web application. It is a simple and easy-to-use component allowing you to create a custom and flexible chessboard experience with a wide range of features.
+
+The component is purely a UI component and does not include any logic for the game of chess. The chess game logic should be independent to the component. This flexibility enables you to use the component in any project, regardless of the chess logic or chess variant you wish to build with. For example, you can use the [chess.js](https://www.npmjs.com/package/chess.js) library to handle the game logic. Example usages of the component with chess.js are shown in the [How to use](../?path=/docs/how-to-use-basic-examples--docs) documentation.
+
+## Features
+
+The package includes the many helpful features, such as:
+
+- Drag and drop
+- Custom pieces
+- Spare pieces
+- Arrows
+- Custom styling
+- Animation
+- Custom board dimensions
+- Event handling
+- Mobile support
+- Responsive
+- Accessible
+- TypeScript support
+- Helpful utility functions
+- And more!
+
+## Installation
+
+```bash
+pnpm add react-chessboard
+```
+
+```bash
+yarn add react-chessboard
+```
+
+```bash
+npm i react-chessboard
+```
+
+## Quick Start
+
+Here is a quick example of how to use the component. You will need to configure the component with the `options` prop. See the [Options API](../?path=/docs/how-to-use-options-api--docs) documentation for more information on the available options. You can also see the [Basic Examples](../?path=/docs/how-to-use-basic-examples--docs) documentation for more examples of how to use the component.
+
+```tsx
+import { Chessboard } from 'react-chessboard';
+
+function App() {
+  const chessboardOptions = {
+    // your config options here
+  };
+
+  return <Chessboard options={chessboardOptions} />;
+}
+```
+
+## Join the community of developers
+
+Join the community of developers on the [Discord server](https://discord.gg/mTBuwNSNn5).
+
+Whether you're:
+
+- building something cool with the component and want to show it off
+- struggling to implement something and need some help
+- have an idea for a new feature
+
+We'd love to have you join our growing community!
+
+## Continue reading
+
+<DocNavigation
+  next={{
+    href: '../?path=/docs/how-to-use-basic-examples--docs',
+    title: 'Basic Examples',
+    description:
+      'Learn how to implement basic chessboard functionality with simple examples',
+  }}
+/>

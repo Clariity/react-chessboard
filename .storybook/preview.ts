@@ -1,4 +1,5 @@
 import type { Preview } from "@storybook/react";
+import "./preview.css";
 
 const preview: Preview = {
   parameters: {
@@ -8,6 +9,7 @@ const preview: Preview = {
         date: /Date$/i,
       },
     },
+    deepControls: { enabled: true },
   },
 };
 
