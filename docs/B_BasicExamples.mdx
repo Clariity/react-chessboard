@@ -7,6 +7,7 @@ import * as DefaultStories from './stories/basic-examples/Default.stories';
 import * as PlayVsRandomStories from './stories/basic-examples/PlayVsRandom.stories';
 import * as SparePiecesStories from './stories/basic-examples/SparePieces.stories';
 import * as ClickToMoveStories from './stories/basic-examples/ClickToMove.stories';
+import * as ClickOrDragToMoveStories from './stories/basic-examples/ClickOrDragToMove.stories';
 
 <Meta title="How to use/Basic examples" />
 
@@ -28,6 +29,7 @@ These examples demonstrate basic and common use cases for React Chessboard. Each
 - [Using with chess.js](#using-with-chessjs)
 - [Spare pieces](#spare-pieces)
 - [Click to move](#click-to-move)
+- [Click or drag to move](#click-or-drag-to-move)
 
 ### Default chessboard component
 
@@ -65,6 +67,12 @@ When using spare pieces, you can drag pieces both onto and off the board. The `o
 This example shows how to use the `onSquareClick` prop to handle square clicks. This is useful for implementing custom move logic, such as allowing the user to click on a piece to move it to a new square, instead of dragging the piece to the new square.
 
 <Canvas of={ClickToMoveStories.ClickToMove} />
+
+### Click or drag to move
+
+This example shows how to use the `onSquareClick` prop in tandem with the `onPieceDrop` prop to handle square click movement as well as drag movement.
+
+<Canvas of={ClickOrDragToMoveStories.ClickOrDragToMove} />
 
 ## Continue reading
 
