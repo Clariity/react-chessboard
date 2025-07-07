@@ -15,7 +15,7 @@ export type PieceDataType = {
 
 export type DraggingPieceDataType = {
   isSparePiece: boolean;
-  position: string | string; // e.g. "a8" or "wP"
+  position: string; // e.g. "a8" or "wP" (for spare pieces)
   pieceType: string; // e.g. "wP" for white pawn, "bK" for black king
 };
 

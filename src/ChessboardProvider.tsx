@@ -151,7 +151,6 @@ export type ChessboardOptions = {
   dropSquareStyle?: React.CSSProperties;
   draggingPieceStyle?: React.CSSProperties;
   draggingPieceGhostStyle?: React.CSSProperties;
-  // squareRenderer?: (square: string, piece: PieceDataType) => React.JSX.Element;
 
   // notation
   darkSquareNotationStyle?: React.CSSProperties;
@@ -290,6 +289,10 @@ export function ChessboardProvider({
   } | null>(null);
   const [internalArrows, setInternalArrows] = useState<Arrow[]>([]);
 
+  // position we are animating to, if a new position comes in before the animation completes, we will use this to set the new position
+  const [waitingForAnimationPosition, setWaitingForAnimationPosition] =
+    useState<PositionDataType | null>(null);
+
   // the animation timeout whilst waiting for animation to complete
   const animationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -306,9 +309,18 @@ export function ChessboardProvider({
       return;
     }
 
+    // save copy of the waiting for animation position so we can use it later but clear it from state so we don't use it in the next animation
+    const currentWaitingForAnimationPosition = waitingForAnimationPosition;
+
+    // if we are waiting for an animation to complete from a previous move, set the saved position to immediately end the animation
+    if (currentWaitingForAnimationPosition) {
+      setCurrentPosition(currentWaitingForAnimationPosition);
+      setWaitingForAnimationPosition(null);
+    }
+
     // get list of position updates as pieces to potentially animate
     const positionUpdates = getPositionUpdates(
-      currentPosition,
+      currentWaitingForAnimationPosition ?? currentPosition, // use the saved position if it exists, otherwise use the current position
       newPosition,
       chessboardColumns,
       boardOrientation,
@@ -355,11 +367,13 @@ export function ChessboardProvider({
     // new position was a result of an external move
 
     setPositionDifferences(positionUpdates);
+    setWaitingForAnimationPosition(newPosition);
 
     // start animation timeout
     const newTimeout = setTimeout(() => {
       setCurrentPosition(newPosition);
       setPositionDifferences({});
+      setWaitingForAnimationPosition(null);
     }, animationDurationInMs);
 
     // update the ref to the new timeout
