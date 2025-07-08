@@ -176,6 +176,7 @@ export type ChessboardOptions = {
 
   // handlers
   canDragPiece?: ({ isSparePiece, piece, square }: PieceHandlerArgs) => boolean;
+  onArrowsChange?: ({ arrows }: { arrows: Arrow[] }) => void;
   onMouseOutSquare?: ({ piece, square }: SquareHandlerArgs) => void;
   onMouseOverSquare?: ({ piece, square }: SquareHandlerArgs) => void;
   onPieceClick?: ({ isSparePiece, piece, square }: PieceHandlerArgs) => void;
@@ -245,6 +246,7 @@ export function ChessboardProvider({
 
     // handlers
     canDragPiece,
+    onArrowsChange,
     onMouseOutSquare,
     onMouseOverSquare,
     onPieceClick,
@@ -395,6 +397,11 @@ export function ChessboardProvider({
         : position,
     );
   }, [chessboardRows, chessboardColumns, boardOrientation]);
+
+  // if the arrows change, call the onArrowsChange callback
+  useEffect(() => {
+    onArrowsChange?.({ arrows: internalArrows });
+  }, [internalArrows]);
 
   // only redraw the board when the dimensions or board orientation change
   const board = useMemo(

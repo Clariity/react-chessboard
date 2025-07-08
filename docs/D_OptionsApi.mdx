@@ -24,6 +24,7 @@ import * as DropSquareStyleStories from './stories/options/DropSquareStyle.stori
 import * as LightSquareNotationStyleStories from './stories/options/LightSquareNotationStyle.stories';
 import * as LightSquareStyleStories from './stories/options/LightSquareStyle.stories';
 import * as NumericNotationStyleStories from './stories/options/NumericNotationStyle.stories';
+import * as OnArrowsChangeStories from './stories/options/OnArrowsChange.stories';
 import * as OnMouseOutSquareStories from './stories/options/OnMouseOutSquare.stories';
 import * as OnMouseOverSquareStories from './stories/options/OnMouseOverSquare.stories';
 import * as OnPieceClickStories from './stories/options/OnPieceClick.stories';
@@ -74,6 +75,7 @@ The code for these examples can be viewed by clicking the "Show code" button in 
 | [lightSquareNotationStyle](#optionslightsquarenotationstyle) | Controls styling of notation on light squares                       |
 | [lightSquareStyle](#optionslightsquarestyle)                 | Controls styling of light squares                                   |
 | [numericNotationStyle](#optionsnumericnotationstyle)         | Controls styling of numeric notation (1-8)                          |
+| [onArrowsChange](#optionsonarrowschange)                     | Handler for when internal arrows change                             |
 | [onMouseOutSquare](#optionsonmouseoutsquare)                 | Handler for mouse leaving a square                                  |
 | [onMouseOverSquare](#optionsonmouseoversquare)               | Handler for mouse entering a square                                 |
 | [onPieceClick](#optionsonpiececlick)                         | Handler for clicking a piece                                        |
@@ -539,6 +541,24 @@ If you wish to display different styles of notation on different coloured square
 **Standard use case:** Customizing the appearance of the board notation coordinates.
 
 <Canvas of={NumericNotationStyleStories.NumericNotationStyle} />
+
+### `options.onArrowsChange`
+
+Handler for when internal arrows change. This is useful for updating external state or re-rendering when arrows are added or removed.
+
+**Default value:** `undefined`
+
+**TypeScript type:**
+
+```typescript
+({
+  arrows: Arrow[];
+}) => void;
+```
+
+**Standard use case:** Updating the state of arrows when they are added or removed.
+
+<Canvas of={OnArrowsChangeStories.OnArrowsChange} />
 
 ### `options.onMouseOutSquare`
 
