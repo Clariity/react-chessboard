@@ -89,14 +89,14 @@ export const Square = memo(function Square({
         });
       }}
       onMouseDown={(e) => {
-        if (e.button === 0) {
-          clearArrows();
-        }
         if (e.button === 2 && allowDrawingArrows) {
           setNewArrowStartSquare(squareId);
         }
       }}
       onMouseUp={(e) => {
+        if (e.button === 0) {
+          clearArrows();
+        }
         if (e.button === 2) {
           if (newArrowStartSquare) {
             drawArrow(squareId, {
