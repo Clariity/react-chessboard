@@ -166,6 +166,7 @@ export type ChessboardOptions = {
   // drag and drop
   allowDragging?: boolean;
   allowDragOffBoard?: boolean;
+  allowAutoScroll?: boolean;
   dragActivationDistance?: number;
 
   // arrows
@@ -236,6 +237,7 @@ export function ChessboardProvider({
     // drag and drop
     allowDragging = true,
     allowDragOffBoard = true,
+    allowAutoScroll = false,
     dragActivationDistance = 1,
 
     // arrows
@@ -656,6 +658,7 @@ export function ChessboardProvider({
       }}
     >
       <DndContext
+        autoScroll={allowAutoScroll}
         collisionDetection={collisionDetection}
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
