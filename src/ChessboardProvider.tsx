@@ -574,9 +574,9 @@ export function ChessboardProvider({
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
-      activationConstraint: {
+      activationConstraint: dragActivationDistance > 0 ? {
         distance: dragActivationDistance,
-      },
+      } : undefined,
     }),
     useSensor(KeyboardSensor),
     useSensor(TouchSensor),
