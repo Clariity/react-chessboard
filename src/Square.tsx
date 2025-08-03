@@ -81,6 +81,14 @@ export const Square = memo(function Square({
           });
         }
       }}
+      onTouchEnd={(e) => {
+        // Prevent default to avoid double-firing with onClick on some devices
+        e.preventDefault();
+        onSquareClick?.({
+          piece: currentPosition[squareId] ?? null,
+          square: squareId,
+        });
+      }}
       onContextMenu={(e) => {
         e.preventDefault();
         onSquareRightClick?.({
