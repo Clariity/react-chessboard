@@ -97,18 +97,61 @@ export function Arrows({ boardWidth, boardHeight }: Props) {
         // This gives us the length of the arrow if it went from center to center
         const r = Math.hypot(dy, dx);
 
-        // Calculate the new end point for the arrow
-        // We subtract ARROW_LENGTH_REDUCER from the total distance to make the arrow
-        // stop before reaching the center of the target square
-        const end = {
-          // Calculate new end x coordinate by:
-          // 1. Taking the original x direction (dx)
-          // 2. Scaling it by (r - ARROW_LENGTH_REDUCER) / r to shorten it
-          // 3. Adding to the starting x coordinate
-          x: from.x + (dx * (r - ARROW_LENGTH_REDUCER)) / r,
-          // Same calculation for y coordinate
-          y: from.y + (dy * (r - ARROW_LENGTH_REDUCER)) / r,
-        };
+        let pathD: string;
+
+        // Is Knight move
+        if (r === Math.hypot(1, 2) * squareWidth) {
+          // The mid point is only used in Knight move drawing
+          // and here we prioritise drawing along the long edge
+          // by defining the midpoint depending on which is bigger X or Y
+          const mid =
+            Math.abs(dx) < Math.abs(dy)
+              ? {
+                  x: from.x,
+                  y: to.y,
+                }
+              : {
+                  x: to.x,
+                  y: from.y,
+                };
+
+          // Calculate the difference in x and y coordinates between mid and end points
+          const dxEnd = to.x - mid.x;
+          const dyEnd = to.y - mid.y;
+
+          // End arrow distance is always one squareWidth for Knight moves
+          const rEnd = squareWidth;
+
+          // Calculate the new end point for the arrow
+          // We subtract ARROW_LENGTH_REDUCER from the end line distance to make the arrow
+          // stop before reaching the center of the target square
+          const end = {
+            // Calculate new end x coordinate by:
+            // 1. Taking the mid->end x direction (dxEnd)
+            // 2. Scaling it by (rEnd - ARROW_LENGTH_REDUCER) / rEnd to shorten it
+            // 3. Adding to the mid x coordinate
+            x: mid.x + (dxEnd * (rEnd - ARROW_LENGTH_REDUCER)) / rEnd,
+            // Same calculation for y coordinate
+            y: mid.y + (dyEnd * (rEnd - ARROW_LENGTH_REDUCER)) / rEnd,
+          };
+
+          pathD = `M${from.x},${from.y} L${mid.x},${mid.y} L${end.x},${end.y}`;
+        } else {
+          // Calculate the new end point for the arrow
+          // We subtract ARROW_LENGTH_REDUCER from the total distance to make the arrow
+          // stop before reaching the center of the target square
+          const end = {
+            // Calculate new end x coordinate by:
+            // 1. Taking the original x direction (dx)
+            // 2. Scaling it by (r - ARROW_LENGTH_REDUCER) / r to shorten it
+            // 3. Adding to the starting x coordinate
+            x: from.x + (dx * (r - ARROW_LENGTH_REDUCER)) / r,
+            // Same calculation for y coordinate
+            y: from.y + (dy * (r - ARROW_LENGTH_REDUCER)) / r,
+          };
+
+          pathD = `M${from.x},${from.y} L${end.x},${end.y}`;
+        }
 
         return (
           <Fragment
@@ -126,11 +169,9 @@ export function Arrows({ boardWidth, boardHeight }: Props) {
             >
               <polygon points="0.3 0, 2 1.25, 0.3 2.5" fill={arrow.color} />
             </marker>
-            <line
-              x1={from.x}
-              y1={from.y}
-              x2={end.x}
-              y2={end.y}
+            <path
+              d={pathD}
+              fill="none"
               opacity={
                 isArrowActive
                   ? arrowOptions.activeOpacity
