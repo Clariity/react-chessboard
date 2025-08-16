@@ -1,6 +1,5 @@
 import { DragOverlay } from '@dnd-kit/core';
 import { snapCenterToCursor } from '@dnd-kit/modifiers';
-import { useEffect, useRef, useState } from 'react';
 
 import { Arrows } from './Arrows';
 import { Draggable } from './Draggable';
@@ -21,32 +20,11 @@ export function Board() {
     draggingPiece,
     id,
   } = useChessboardContext();
-  const boardRef = useRef<HTMLDivElement>(null);
-  const [boardWidth, setBoardWidth] = useState(boardRef.current?.clientWidth);
-  const [boardHeight, setBoardHeight] = useState(
-    boardRef.current?.clientHeight,
-  );
-
-  // if the board dimensions change, update the board width and height
-  useEffect(() => {
-    if (boardRef.current) {
-      const resizeObserver = new ResizeObserver(() => {
-        setBoardWidth(boardRef.current?.clientWidth as number);
-        setBoardHeight(boardRef.current?.clientHeight as number);
-      });
-      resizeObserver.observe(boardRef.current);
-
-      return () => {
-        resizeObserver.disconnect();
-      };
-    }
-  }, [boardRef.current]);
 
   return (
     <>
       <div
         id={`${id}-board`}
-        ref={boardRef}
         style={{ ...defaultBoardStyle(chessboardColumns), ...boardStyle }}
       >
         {board.map((row) =>
@@ -73,7 +51,7 @@ export function Board() {
           }),
         )}
 
-        <Arrows boardWidth={boardWidth} boardHeight={boardHeight} />
+        <Arrows />
       </div>
 
       <DragOverlay
