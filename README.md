@@ -71,8 +71,6 @@ Keen to contribute? Here is the current list of things we want to get done / are
   - Add `dropAnimation` prop to allow override of DragOverlay dropAnimation prop that is currently set to null. This will be for animating drag overlays back to their position on failed drops for example, instead of snapping back.
 - **Accessibility Improvements**
   - Review and enhance sensor implementations and accessibility.
-- **UI Customization**
-  - Improve arrows so that for all Knight moves it is a right angled arrow instead of a straight one. Extending from and implementing the suggestions from an [existing PR](https://github.com/Clariity/react-chessboard/pull/128).
 
 ### Documentation
 
