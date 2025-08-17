@@ -25,5 +25,5 @@ export default {
       tsconfig: 'tsconfig.build.json',
     }),
   ],
-  external: ['react', 'react-dom'],
+  external: ['react', 'react-dom', 'react/jsx-runtime'],
 };
