@@ -3,12 +3,7 @@ import { Fragment } from 'react';
 import { useChessboardContext } from './ChessboardProvider';
 import { getRelativeCoords } from './utils';
 
-type Props = {
-  boardWidth: number | undefined;
-  boardHeight: number | undefined;
-};
-
-export function Arrows({ boardWidth, boardHeight }: Props) {
+export function Arrows() {
   const {
     id,
     arrows,
@@ -21,9 +16,8 @@ export function Arrows({ boardWidth, boardHeight }: Props) {
     newArrowOverSquare,
   } = useChessboardContext();
 
-  if (!boardWidth) {
-    return null;
-  }
+  const viewBoxWidth = 2048;
+  const viewBoxHeight = viewBoxWidth * (chessboardRows / chessboardColumns);
 
   const currentlyDrawingArrow =
     newArrowStartSquare &&
@@ -42,11 +36,12 @@ export function Arrows({ boardWidth, boardHeight }: Props) {
 
   return (
     <svg
-      width={boardWidth}
-      height={boardHeight}
+      viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`}
       style={{
         position: 'absolute',
         top: '0',
+        right: '0',
+        bottom: '0',
         left: '0',
         pointerEvents: 'none',
         zIndex: '20', // place above pieces
@@ -55,21 +50,21 @@ export function Arrows({ boardWidth, boardHeight }: Props) {
       {arrowsToDraw.map((arrow, i) => {
         const from = getRelativeCoords(
           boardOrientation,
-          boardWidth,
+          viewBoxWidth,
           chessboardColumns,
           chessboardRows,
           arrow.startSquare,
         );
         const to = getRelativeCoords(
           boardOrientation,
-          boardWidth,
+          viewBoxWidth,
           chessboardColumns,
           chessboardRows,
           arrow.endSquare,
         );
 
         // we want to shorten the arrow length so the tip of the arrow is more central to the target square instead of running over the center
-        const squareWidth = boardWidth / chessboardColumns;
+        const squareWidth = viewBoxWidth / chessboardColumns;
         let ARROW_LENGTH_REDUCER =
           squareWidth / arrowOptions.arrowLengthReducerDenominator;
 
