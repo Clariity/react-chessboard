@@ -48,6 +48,8 @@ export const Square = memo(function Square({
     onMouseOverSquare,
     onSquareClick,
     onSquareRightClick,
+    onSquareMouseDown,
+    onSquareMouseUp,
     squareRenderer,
     newArrowStartSquare,
     setNewArrowStartSquare,
@@ -103,6 +105,10 @@ export const Square = memo(function Square({
         if (e.button === 2 && allowDrawingArrows) {
           setNewArrowStartSquare(squareId);
         }
+        onSquareMouseDown?.({
+          piece: currentPosition[squareId] ?? null,
+          square: squareId,
+        });
       }}
       onMouseUp={(e) => {
         if (e.button === 2) {
@@ -113,6 +119,10 @@ export const Square = memo(function Square({
             });
           }
         }
+        onSquareMouseUp?.({
+          piece: currentPosition[squareId] ?? null,
+          square: squareId,
+        });
       }}
       onMouseOver={(e) => {
         // right mouse button is held down and we are drawing an arrow

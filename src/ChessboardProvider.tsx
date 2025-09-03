@@ -102,6 +102,8 @@ type ContextType = {
   onPieceClick: ChessboardOptions['onPieceClick'];
   onSquareClick: ChessboardOptions['onSquareClick'];
   onSquareRightClick: ChessboardOptions['onSquareRightClick'];
+  onSquareMouseDown: ChessboardOptions['onSquareMouseDown'];
+  onSquareMouseUp: ChessboardOptions['onSquareMouseUp'];
   squareRenderer: ChessboardOptions['squareRenderer'];
 
   // internal state
@@ -189,6 +191,8 @@ export type ChessboardOptions = {
   }: PieceDropHandlerArgs) => boolean;
   onSquareClick?: ({ piece, square }: SquareHandlerArgs) => void;
   onSquareRightClick?: ({ piece, square }: SquareHandlerArgs) => void;
+  onSquareMouseDown?: ({ piece, square }: SquareHandlerArgs) => void;
+  onSquareMouseUp?: ({ piece, square }: SquareHandlerArgs) => void;
   squareRenderer?: ({
     piece,
     square,
@@ -256,6 +260,8 @@ export function ChessboardProvider({
     onPieceDrop,
     onSquareClick,
     onSquareRightClick,
+    onSquareMouseDown,
+    onSquareMouseUp,
     squareRenderer,
   } = options || {};
 
@@ -643,6 +649,8 @@ export function ChessboardProvider({
         onPieceClick,
         onSquareClick,
         onSquareRightClick,
+        onSquareMouseDown,
+        onSquareMouseUp,
         squareRenderer,
 
         // internal state
