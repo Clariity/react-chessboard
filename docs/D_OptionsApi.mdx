@@ -726,7 +726,7 @@ Callback function triggered when a mouse button is pressed down on a square.
 ({
   piece: { pieceType: string } | null;
   square: string;
-}) => void;
+}, e: React.MouseEvent) => void;
 ```
 
 **Standard use case:** Implementing custom interactions or visual feedback on mouse down events.
@@ -745,7 +745,7 @@ Callback function triggered when a mouse button is released on a square.
 ({
   piece: { pieceType: string } | null;
   square: string;
-}) => void;
+}, e: React.MouseEvent) => void;
 ```
 
 **Standard use case:** Implementing custom interactions or visual feedback on mouse up events.

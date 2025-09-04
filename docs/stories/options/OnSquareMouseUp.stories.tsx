@@ -17,11 +17,24 @@ export const OnSquareMouseUp: Story = {
   render: () => {
     const [mouseUpSquare, setMouseUpSquare] = useState<string | null>(null);
     const [mouseUpPiece, setMouseUpPiece] = useState<string | null>(null);
+    const [buttonReleased, setButtonReleased] = useState<string | null>(null);
 
     // handle square click
-    const onSquareMouseUp = ({ square, piece }: SquareHandlerArgs) => {
+    const onSquareMouseUp = (
+      { square, piece }: SquareHandlerArgs,
+      e: React.MouseEvent,
+    ) => {
       setMouseUpSquare(square);
       setMouseUpPiece(piece?.pieceType || null);
+      setButtonReleased(
+        e.button === 0
+          ? 'Left'
+          : e.button === 1
+            ? 'Middle'
+            : e.button === 2
+              ? 'Right'
+              : `Button ${e.button}`,
+      );
     };
 
     // chessboard options
@@ -45,6 +58,7 @@ export const OnSquareMouseUp: Story = {
         >
           <div>Mouse released in square: {mouseUpSquare || 'None'}</div>
           <div>Piece in square: {mouseUpPiece || 'None'}</div>
+          <div>Button released: {buttonReleased || 'None'}</div>
         </div>
 
         <Chessboard options={chessboardOptions} />

@@ -191,8 +191,14 @@ export type ChessboardOptions = {
   }: PieceDropHandlerArgs) => boolean;
   onSquareClick?: ({ piece, square }: SquareHandlerArgs) => void;
   onSquareRightClick?: ({ piece, square }: SquareHandlerArgs) => void;
-  onSquareMouseDown?: ({ piece, square }: SquareHandlerArgs) => void;
-  onSquareMouseUp?: ({ piece, square }: SquareHandlerArgs) => void;
+  onSquareMouseDown?: (
+    { piece, square }: SquareHandlerArgs,
+    e: React.MouseEvent,
+  ) => void;
+  onSquareMouseUp?: (
+    { piece, square }: SquareHandlerArgs,
+    e: React.MouseEvent,
+  ) => void;
   squareRenderer?: ({
     piece,
     square,

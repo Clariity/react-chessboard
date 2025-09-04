@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 import defaultMeta from '../basic-examples/Default.stories';
 import { Chessboard } from '../../../src';
@@ -17,11 +17,24 @@ export const OnSquareMouseDown: Story = {
   render: () => {
     const [mouseDownSquare, setMouseDownSquare] = useState<string | null>(null);
     const [mouseDownPiece, setMouseDownPiece] = useState<string | null>(null);
+    const [buttonPressed, setButtonPressed] = useState<string | null>(null);
 
     // handle square click
-    const onSquareMouseDown = ({ square, piece }: SquareHandlerArgs) => {
+    const onSquareMouseDown = (
+      { square, piece }: SquareHandlerArgs,
+      e: React.MouseEvent,
+    ) => {
       setMouseDownSquare(square);
       setMouseDownPiece(piece?.pieceType || null);
+      setButtonPressed(
+        e.button === 0
+          ? 'Left'
+          : e.button === 1
+            ? 'Middle'
+            : e.button === 2
+              ? 'Right'
+              : `Button ${e.button}`,
+      );
     };
 
     // chessboard options
@@ -45,6 +58,7 @@ export const OnSquareMouseDown: Story = {
         >
           <div>Mouse last pressed in: {mouseDownSquare || 'None'}</div>
           <div>Piece in square: {mouseDownPiece || 'None'}</div>
+          <div>Button pressed: {buttonPressed || 'None'}</div>
         </div>
 
         <Chessboard options={chessboardOptions} />
