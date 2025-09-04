@@ -133,7 +133,7 @@ export const PiecePromotion: Story = {
         <button
           onClick={() => {
             chessGameRef.current = new Chess('8/P7/7K/8/8/8/8/k7 w - - 0 1');
-            setChessPosition(chessGame.fen());
+            setChessPosition(chessGameRef.current.fen());
             setPromotionMove(null);
           }}
         >
