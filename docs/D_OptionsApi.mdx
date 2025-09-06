@@ -32,6 +32,8 @@ import * as OnPieceClickStories from './stories/options/OnPieceClick.stories';
 import * as OnPieceDragStories from './stories/options/OnPieceDrag.stories';
 import * as OnPieceDropStories from './stories/options/OnPieceDrop.stories';
 import * as OnSquareClickStories from './stories/options/OnSquareClick.stories';
+import * as OnSquareMouseDownStories from './stories/options/OnSquareMouseDown.stories';
+import * as OnSquareMouseUpStories from './stories/options/OnSquareMouseUp.stories';
 import * as OnSquareRightClickStories from './stories/options/OnSquareRightClick.stories';
 import * as PiecesStories from './stories/options/Pieces.stories';
 import * as PositionStories from './stories/options/Position.stories';
@@ -84,6 +86,8 @@ The code for these examples can be viewed by clicking the "Show code" button in 
 | [onPieceDrag](#optionsonpiecedrag)                           | Handler for starting to drag a piece                                |
 | [onPieceDrop](#optionsonpiecedrop)                           | Handler for dropping a piece                                        |
 | [onSquareClick](#optionsonsquareclick)                       | Handler for clicking a square                                       |
+| [onSquareMouseDown](#optionsonsquaremousedown)               | Handler for mouse button down on a square                           |
+| [onSquareMouseUp](#optionsonsquaremouseup)                   | Handler for mouse button up on a square                             |
 | [onSquareRightClick](#optionsonsquarerightclick)             | Handler for right-clicking a square                                 |
 | [pieces](#optionspieces)                                     | Object mapping piece types to React components                      |
 | [position](#optionsposition)                                 | Current position on the board (FEN string or position object)       |
@@ -690,6 +694,44 @@ Callback function triggered when a square is clicked.
 **Standard use case:** Implementing custom square selection or movement logic.
 
 <Canvas of={OnSquareClickStories.OnSquareClick} />
+
+### `options.onSquareMouseDown`
+
+Callback function triggered when a mouse button is pressed down on a square.
+
+**Default value:** `undefined`
+
+**TypeScript type:**
+
+```typescript
+({
+  piece: { pieceType: string } | null;
+  square: string;
+}, e: React.MouseEvent) => void;
+```
+
+**Standard use case:** Implementing custom interactions or visual feedback on mouse down events.
+
+<Canvas of={OnSquareMouseDownStories.OnSquareMouseDown} />
+
+### `options.onSquareMouseUp`
+
+Callback function triggered when a mouse button is released on a square.
+
+**Default value:** `undefined`
+
+**TypeScript type:**
+
+```typescript
+({
+  piece: { pieceType: string } | null;
+  square: string;
+}, e: React.MouseEvent) => void;
+```
+
+**Standard use case:** Implementing custom interactions or visual feedback on mouse up events.
+
+<Canvas of={OnSquareMouseUpStories.OnSquareMouseUp} />
 
 ### `options.onSquareRightClick`
 
