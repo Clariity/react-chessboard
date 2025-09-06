@@ -101,9 +101,9 @@ type ContextType = {
   onMouseOverSquare: ChessboardOptions['onMouseOverSquare'];
   onPieceClick: ChessboardOptions['onPieceClick'];
   onSquareClick: ChessboardOptions['onSquareClick'];
-  onSquareRightClick: ChessboardOptions['onSquareRightClick'];
   onSquareMouseDown: ChessboardOptions['onSquareMouseDown'];
   onSquareMouseUp: ChessboardOptions['onSquareMouseUp'];
+  onSquareRightClick: ChessboardOptions['onSquareRightClick'];
   squareRenderer: ChessboardOptions['squareRenderer'];
 
   // internal state
@@ -190,7 +190,6 @@ export type ChessboardOptions = {
     targetSquare,
   }: PieceDropHandlerArgs) => boolean;
   onSquareClick?: ({ piece, square }: SquareHandlerArgs) => void;
-  onSquareRightClick?: ({ piece, square }: SquareHandlerArgs) => void;
   onSquareMouseDown?: (
     { piece, square }: SquareHandlerArgs,
     e: React.MouseEvent,
@@ -199,6 +198,7 @@ export type ChessboardOptions = {
     { piece, square }: SquareHandlerArgs,
     e: React.MouseEvent,
   ) => void;
+  onSquareRightClick?: ({ piece, square }: SquareHandlerArgs) => void;
   squareRenderer?: ({
     piece,
     square,
@@ -265,9 +265,9 @@ export function ChessboardProvider({
     onPieceDrag,
     onPieceDrop,
     onSquareClick,
-    onSquareRightClick,
     onSquareMouseDown,
     onSquareMouseUp,
+    onSquareRightClick,
     squareRenderer,
   } = options || {};
 
@@ -654,9 +654,9 @@ export function ChessboardProvider({
         onMouseOverSquare,
         onPieceClick,
         onSquareClick,
-        onSquareRightClick,
         onSquareMouseDown,
         onSquareMouseUp,
+        onSquareRightClick,
         squareRenderer,
 
         // internal state

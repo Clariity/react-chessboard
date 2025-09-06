@@ -28,11 +28,6 @@ export type SquareHandlerArgs = {
   square: string;
 };
 
-export type SquareDownHandlerArgs = {
-  piece: PieceDataType | null;
-  square: string;
-};
-
 export type PieceHandlerArgs = {
   isSparePiece: boolean;
   piece: PieceDataType;
