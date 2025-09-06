@@ -16,7 +16,6 @@ import {
   use,
   useCallback,
   useEffect,
-  useId,
   useMemo,
   useRef,
   useState,
@@ -302,7 +301,7 @@ export function ChessboardProvider({
   const animationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // unique id for dnd context, we need this to prevent hydration issues
-  const dndId = useId();
+  const dndId = `dnd-${id}`;
 
   // if the position changes, we need to recreate the pieces array
   useEffect(() => {
