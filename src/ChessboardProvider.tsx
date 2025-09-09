@@ -312,6 +312,9 @@ export function ChessboardProvider({
   // the animation timeout whilst waiting for animation to complete
   const animationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  // unique id for dnd context, we need this to prevent hydration issues
+  const dndId = `dnd-${id}`;
+
   // if the position changes, we need to recreate the pieces array
   useEffect(() => {
     const newPosition =
@@ -681,6 +684,7 @@ export function ChessboardProvider({
         onDragEnd={handleDragEnd}
         onDragCancel={handleDragCancel}
         sensors={sensors}
+        id={dndId}
       >
         {children}
       </DndContext>
