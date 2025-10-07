@@ -35,7 +35,7 @@ export const AnalysisBoard: Story = {
 
     // when the chess game position changes, find the best move
     useEffect(() => {
-      if (!chessGame.isGameOver() || chessGame.isDraw()) {
+      if (!(chessGame.isGameOver() || chessGame.isDraw())) {
         findBestMove();
       }
     }, [chessGame.fen()]);
