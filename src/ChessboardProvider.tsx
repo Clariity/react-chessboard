@@ -176,6 +176,7 @@ export type ChessboardOptions = {
   arrows?: Arrow[];
   arrowOptions?: typeof defaultArrowOptions;
   clearArrowsOnClick?: boolean;
+  clearArrowsOnPositionChange?: boolean;
 
   // handlers
   canDragPiece?: ({ isSparePiece, piece, square }: PieceHandlerArgs) => boolean;
@@ -255,6 +256,7 @@ export function ChessboardProvider({
     arrows = [],
     arrowOptions = defaultArrowOptions,
     clearArrowsOnClick = true,
+    clearArrowsOnPositionChange = true,
 
     // handlers
     canDragPiece,
@@ -321,6 +323,11 @@ export function ChessboardProvider({
       typeof position === 'string'
         ? fenStringToPositionObject(position, chessboardRows, chessboardColumns)
         : position;
+
+    // clear internal arrows on position change
+    if (clearArrowsOnPositionChange) {
+      clearArrows();
+    }
 
     // if no animation, just set the position
     if (!showAnimations) {
