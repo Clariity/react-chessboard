@@ -16,6 +16,7 @@ import * as CanDragPieceStories from './stories/options/CanDragPiece.stories';
 import * as ChessboardColumnsStories from './stories/options/ChessboardColumns.stories';
 import * as ChessboardRowsStories from './stories/options/ChessboardRows.stories';
 import * as ClearArrowsOnClickStories from './stories/options/ClearArrowsOnClick.stories';
+import * as ClearArrowsOnPositionChangeStories from './stories/options/ClearArrowsOnPositionChange.stories';
 import * as DarkSquareNotationStyleStories from './stories/options/DarkSquareNotationStyle.stories';
 import * as DarkSquareStyleStories from './stories/options/DarkSquareStyle.stories';
 import * as DragActivationDistanceStories from './stories/options/DragActivationDistance.stories';
@@ -53,49 +54,50 @@ The component has a number of options that you can use to customise the componen
 
 The code for these examples can be viewed by clicking the "Show code" button in the bottom right of the interactive examples. The code can also be viewed in the [GitHub repository](https://github.com/Clariity/react-chessboard/tree/main/docs/stories/options).
 
-| Option                                                       | Description                                                         |
-| ------------------------------------------------------------ | ------------------------------------------------------------------- |
-| [allowAutoScroll](#optionsallowautoscroll)                   | Controls auto-scrolling when dragging pieces near window edges      |
-| [allowDragging](#optionsallowdragging)                       | Controls whether pieces can be dragged on the board                 |
-| [allowDragOffBoard](#optionsallowdragoffboard)               | Controls whether pieces can be dragged off the board                |
-| [allowDrawingArrows](#optionsallowdrawingarrows)             | Controls whether arrows can be drawn by right-clicking and dragging |
-| [alphaNotationStyle](#optionsalphanotationstyle)             | Controls styling of the alpha notation (a-h)                        |
-| [animationDurationInMs](#optionsanimationdurationinms)       | Controls duration of piece movement animations                      |
-| [arrows](#optionsarrows)                                     | Array of arrows to display on the board                             |
-| [arrowOptions](#optionsarrowoptions)                         | Controls styling and behavior of arrows                             |
-| [boardOrientation](#optionsboardorientation)                 | Sets orientation of the board ('white' or 'black')                  |
-| [boardStyle](#optionsboardstyle)                             | Controls styling of the main board container                        |
-| [canDragPiece](#optionscandragpiece)                         | Function to determine if a piece can be dragged                     |
-| [chessboardColumns](#optionschessboardcolumns)               | Number of columns on the board                                      |
-| [chessboardRows](#optionschessboardrows)                     | Number of rows on the board                                         |
-| [clearArrowsOnClick](#optionscleararrowsonclick)             | Controls whether arrows are cleared on board click                  |
-| [darkSquareNotationStyle](#optionsdarksquarenotationstyle)   | Controls styling of notation on dark squares                        |
-| [darkSquareStyle](#optionsdarksquarestyle)                   | Controls styling of dark squares                                    |
-| [dragActivationDistance](#optionsdragactivationdistance)     | Distance in pixels before drag activation                           |
-| [draggingPieceGhostStyle](#optionsdraggingpieceghoststyle)   | Controls styling of ghost piece while dragging                      |
-| [draggingPieceStyle](#optionsdraggingpiecestyle)             | Controls styling of piece being dragged                             |
-| [dropSquareStyle](#optionsdropsquarestyle)                   | Controls styling of squares when dragging over them                 |
-| [id](#optionsid)                                             | Sets the id of the chessboard component                             |
-| [lightSquareNotationStyle](#optionslightsquarenotationstyle) | Controls styling of notation on light squares                       |
-| [lightSquareStyle](#optionslightsquarestyle)                 | Controls styling of light squares                                   |
-| [numericNotationStyle](#optionsnumericnotationstyle)         | Controls styling of numeric notation (1-8)                          |
-| [onArrowsChange](#optionsonarrowschange)                     | Handler for when internal arrows change                             |
-| [onMouseOutSquare](#optionsonmouseoutsquare)                 | Handler for mouse leaving a square                                  |
-| [onMouseOverSquare](#optionsonmouseoversquare)               | Handler for mouse entering a square                                 |
-| [onPieceClick](#optionsonpiececlick)                         | Handler for clicking a piece                                        |
-| [onPieceDrag](#optionsonpiecedrag)                           | Handler for starting to drag a piece                                |
-| [onPieceDrop](#optionsonpiecedrop)                           | Handler for dropping a piece                                        |
-| [onSquareClick](#optionsonsquareclick)                       | Handler for clicking a square                                       |
-| [onSquareMouseDown](#optionsonsquaremousedown)               | Handler for mouse button down on a square                           |
-| [onSquareMouseUp](#optionsonsquaremouseup)                   | Handler for mouse button up on a square                             |
-| [onSquareRightClick](#optionsonsquarerightclick)             | Handler for right-clicking a square                                 |
-| [pieces](#optionspieces)                                     | Object mapping piece types to React components                      |
-| [position](#optionsposition)                                 | Current position on the board (FEN string or position object)       |
-| [showAnimations](#optionsshowanimations)                     | Controls whether piece movements are animated                       |
-| [showNotation](#optionsshownotation)                         | Controls whether board notation is displayed                        |
-| [squareRenderer](#optionssquarerenderer)                     | Controls the rendering of squares on the board                      |
-| [squareStyle](#optionssquarestyle)                           | Base styling applied to all squares                                 |
-| [squareStyles](#optionssquarestyles)                         | Object mapping squares to custom styles                             |
+| Option                                                             | Description                                                         |
+| ------------------------------------------------------------------ | ------------------------------------------------------------------- |
+| [allowAutoScroll](#optionsallowautoscroll)                         | Controls auto-scrolling when dragging pieces near window edges      |
+| [allowDragging](#optionsallowdragging)                             | Controls whether pieces can be dragged on the board                 |
+| [allowDragOffBoard](#optionsallowdragoffboard)                     | Controls whether pieces can be dragged off the board                |
+| [allowDrawingArrows](#optionsallowdrawingarrows)                   | Controls whether arrows can be drawn by right-clicking and dragging |
+| [alphaNotationStyle](#optionsalphanotationstyle)                   | Controls styling of the alpha notation (a-h)                        |
+| [animationDurationInMs](#optionsanimationdurationinms)             | Controls duration of piece movement animations                      |
+| [arrows](#optionsarrows)                                           | Array of arrows to display on the board                             |
+| [arrowOptions](#optionsarrowoptions)                               | Controls styling and behavior of arrows                             |
+| [boardOrientation](#optionsboardorientation)                       | Sets orientation of the board ('white' or 'black')                  |
+| [boardStyle](#optionsboardstyle)                                   | Controls styling of the main board container                        |
+| [canDragPiece](#optionscandragpiece)                               | Function to determine if a piece can be dragged                     |
+| [chessboardColumns](#optionschessboardcolumns)                     | Number of columns on the board                                      |
+| [chessboardRows](#optionschessboardrows)                           | Number of rows on the board                                         |
+| [clearArrowsOnClick](#optionscleararrowsonclick)                   | Controls whether arrows are cleared on board click                  |
+| [clearArrowsOnPositionChange](#optionscleararrowsonpositionchange) | Controls whether arrows are cleared on position change              |
+| [darkSquareNotationStyle](#optionsdarksquarenotationstyle)         | Controls styling of notation on dark squares                        |
+| [darkSquareStyle](#optionsdarksquarestyle)                         | Controls styling of dark squares                                    |
+| [dragActivationDistance](#optionsdragactivationdistance)           | Distance in pixels before drag activation                           |
+| [draggingPieceGhostStyle](#optionsdraggingpieceghoststyle)         | Controls styling of ghost piece while dragging                      |
+| [draggingPieceStyle](#optionsdraggingpiecestyle)                   | Controls styling of piece being dragged                             |
+| [dropSquareStyle](#optionsdropsquarestyle)                         | Controls styling of squares when dragging over them                 |
+| [id](#optionsid)                                                   | Sets the id of the chessboard component                             |
+| [lightSquareNotationStyle](#optionslightsquarenotationstyle)       | Controls styling of notation on light squares                       |
+| [lightSquareStyle](#optionslightsquarestyle)                       | Controls styling of light squares                                   |
+| [numericNotationStyle](#optionsnumericnotationstyle)               | Controls styling of numeric notation (1-8)                          |
+| [onArrowsChange](#optionsonarrowschange)                           | Handler for when internal arrows change                             |
+| [onMouseOutSquare](#optionsonmouseoutsquare)                       | Handler for mouse leaving a square                                  |
+| [onMouseOverSquare](#optionsonmouseoversquare)                     | Handler for mouse entering a square                                 |
+| [onPieceClick](#optionsonpiececlick)                               | Handler for clicking a piece                                        |
+| [onPieceDrag](#optionsonpiecedrag)                                 | Handler for starting to drag a piece                                |
+| [onPieceDrop](#optionsonpiecedrop)                                 | Handler for dropping a piece                                        |
+| [onSquareClick](#optionsonsquareclick)                             | Handler for clicking a square                                       |
+| [onSquareMouseDown](#optionsonsquaremousedown)                     | Handler for mouse button down on a square                           |
+| [onSquareMouseUp](#optionsonsquaremouseup)                         | Handler for mouse button up on a square                             |
+| [onSquareRightClick](#optionsonsquarerightclick)                   | Handler for right-clicking a square                                 |
+| [pieces](#optionspieces)                                           | Object mapping piece types to React components                      |
+| [position](#optionsposition)                                       | Current position on the board (FEN string or position object)       |
+| [showAnimations](#optionsshowanimations)                           | Controls whether piece movements are animated                       |
+| [showNotation](#optionsshownotation)                               | Controls whether board notation is displayed                        |
+| [squareRenderer](#optionssquarerenderer)                           | Controls the rendering of squares on the board                      |
+| [squareStyle](#optionssquarestyle)                                 | Base styling applied to all squares                                 |
+| [squareStyles](#optionssquarestyles)                               | Object mapping squares to custom styles                             |
 
 ## Options
 
@@ -379,6 +381,18 @@ Controls whether **internal** arrows are cleared when a square is clicked. If yo
 **Standard use case:** Disabling the ability to clear internal arrows when a square is clicked.
 
 <Canvas of={ClearArrowsOnClickStories.ClearArrowsOnClick} />
+
+### `options.clearArrowsOnPositionChange`
+
+Controls whether **internal** arrows are cleared when the position changes. If you are passing in external arrows via the [`arrows`](#optionsarrows) prop, these will not be automatically cleared when the position changes. Instead, you will need to clear them manually when updating the position and pass in a new value for the [`arrows`](#optionsarrows) prop.
+
+**Default value:** `true`
+
+**TypeScript type:** `boolean`
+
+**Standard use case:** Disabling the ability to clear internal arrows when the position changes.
+
+<Canvas of={ClearArrowsOnPositionChangeStories.ClearArrowsOnPositionChange} />
 
 ### `options.darkSquareNotationStyle`
 
