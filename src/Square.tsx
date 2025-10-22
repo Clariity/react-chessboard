@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, useEffect, useRef } from 'react';
 
 import { useChessboardContext } from './ChessboardProvider';
 import {
@@ -34,6 +34,7 @@ export const Square = memo(function Square({
     chessboardColumns,
     chessboardRows,
     currentPosition,
+    draggingPiece,
     squareStyle,
     squareStyles,
     darkSquareStyle,
@@ -57,6 +58,26 @@ export const Square = memo(function Square({
     drawArrow,
     clearArrows,
   } = useChessboardContext();
+
+  // track previous isOver to only fire onMouseOutSquare on transition
+  const prevIsOverRef = useRef(isOver);
+
+  // handle firing onMouseOverSquare and onMouseOutSquare during drag operations
+  // as onMouseOver and onMouseLeave do not fire during dragging
+  useEffect(() => {
+    if (isOver && draggingPiece) {
+      onMouseOverSquare?.({
+        piece: currentPosition[squareId] ?? null,
+        square: squareId,
+      });
+    } else if (!isOver && draggingPiece && prevIsOverRef.current) {
+      onMouseOutSquare?.({
+        piece: currentPosition[squareId] ?? null,
+        square: squareId,
+      });
+    }
+    prevIsOverRef.current = isOver;
+  }, [currentPosition, draggingPiece, isOver, squareId]);
 
   const column = squareId.match(/^[a-z]+/)?.[0];
   const row = squareId.match(/\d+$/)?.[0];
@@ -138,17 +159,24 @@ export const Square = memo(function Square({
             ctrlKey: e.ctrlKey,
           });
         }
-        onMouseOverSquare?.({
-          piece: currentPosition[squareId] ?? null,
-          square: squareId,
-        });
+
+        // don't fire when dragging as that is handled by the useEffect
+        if (!draggingPiece) {
+          onMouseOverSquare?.({
+            piece: currentPosition[squareId] ?? null,
+            square: squareId,
+          });
+        }
       }}
-      onMouseLeave={() =>
-        onMouseOutSquare?.({
-          piece: currentPosition[squareId] ?? null,
-          square: squareId,
-        })
-      }
+      onMouseLeave={() => {
+        // don't fire when dragging as that is handled by the useEffect
+        if (!draggingPiece) {
+          onMouseOutSquare?.({
+            piece: currentPosition[squareId] ?? null,
+            square: squareId,
+          });
+        }
+      }}
     >
       {showNotation ? (
         <span
