@@ -114,9 +114,9 @@ type ContextType = {
   positionDifferences: ReturnType<typeof getPositionUpdates>;
   newArrowStartSquare: string | null;
   newArrowOverSquare: { square: string; color: string } | null;
-  setNewArrowStartSquare: (square: string) => void;
+  setNewArrowStartSquare: (square: string | null) => void;
   setNewArrowOverSquare: (
-    square: string,
+    square: string | null,
     modifiers?: { shiftKey: boolean; ctrlKey: boolean },
   ) => void;
   internalArrows: Arrow[];
@@ -176,6 +176,7 @@ export type ChessboardOptions = {
   arrows?: Arrow[];
   arrowOptions?: typeof defaultArrowOptions;
   clearArrowsOnClick?: boolean;
+  clearArrowsOnPositionChange?: boolean;
 
   // handlers
   canDragPiece?: ({ isSparePiece, piece, square }: PieceHandlerArgs) => boolean;
@@ -255,6 +256,7 @@ export function ChessboardProvider({
     arrows = [],
     arrowOptions = defaultArrowOptions,
     clearArrowsOnClick = true,
+    clearArrowsOnPositionChange = true,
 
     // handlers
     canDragPiece,
@@ -321,6 +323,11 @@ export function ChessboardProvider({
       typeof position === 'string'
         ? fenStringToPositionObject(position, chessboardRows, chessboardColumns)
         : position;
+
+    // clear internal arrows on position change
+    if (clearArrowsOnPositionChange) {
+      clearArrows();
+    }
 
     // if no animation, just set the position
     if (!showAnimations) {
@@ -498,13 +505,20 @@ export function ChessboardProvider({
   }, [clearArrowsOnClick]);
 
   const setNewArrowOverSquareWithModifiers = useCallback(
-    (square: string, modifiers?: { shiftKey: boolean; ctrlKey: boolean }) => {
+    (
+      square: string | null,
+      modifiers?: { shiftKey: boolean; ctrlKey: boolean },
+    ) => {
       const color = modifiers?.shiftKey
         ? arrowOptions.secondaryColor
         : modifiers?.ctrlKey
           ? arrowOptions.tertiaryColor
           : arrowOptions.color;
-      setNewArrowOverSquare({ square, color });
+      if (square) {
+        setNewArrowOverSquare({ square, color });
+      } else {
+        setNewArrowOverSquare(null);
+      }
     },
     [arrowOptions],
   );

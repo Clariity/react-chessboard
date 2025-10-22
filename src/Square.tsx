@@ -1,4 +1,4 @@
-import { memo, useEffect, useRef } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 
 import { useChessboardContext } from './ChessboardProvider';
 import {
@@ -27,6 +27,8 @@ export const Square = memo(function Square({
   isLightSquare,
   isOver,
 }: SquareProps) {
+  // track if we are drawing an arrow so that onSquareRightClick is not fired when we finish drawing an arrow
+  const [isDrawingArrow, setIsDrawingArrow] = useState(false);
   const {
     id,
     allowDrawingArrows,
@@ -114,10 +116,14 @@ export const Square = memo(function Square({
       }}
       onContextMenu={(e) => {
         e.preventDefault();
-        onSquareRightClick?.({
-          piece: currentPosition[squareId] ?? null,
-          square: squareId,
-        });
+
+        if (!isDrawingArrow) {
+          onSquareRightClick?.({
+            piece: currentPosition[squareId] ?? null,
+            square: squareId,
+          });
+        }
+        setIsDrawingArrow(false);
       }}
       onMouseDown={(e) => {
         if (e.button === 0) {
@@ -136,11 +142,20 @@ export const Square = memo(function Square({
       }}
       onMouseUp={(e) => {
         if (e.button === 2) {
-          if (newArrowStartSquare) {
+          if (
+            allowDrawingArrows &&
+            newArrowStartSquare &&
+            newArrowStartSquare !== squareId
+          ) {
+            setIsDrawingArrow(true);
             drawArrow(squareId, {
               shiftKey: e.shiftKey,
               ctrlKey: e.ctrlKey,
             });
+          } else if (newArrowStartSquare === squareId) {
+            // right clicked the same square - clear the arrow start square
+            setNewArrowStartSquare(null);
+            setNewArrowOverSquare(null);
           }
         }
         onSquareMouseUp?.(
@@ -153,11 +168,19 @@ export const Square = memo(function Square({
       }}
       onMouseOver={(e) => {
         // right mouse button is held down and we are drawing an arrow
-        if (e.buttons === 2 && newArrowStartSquare) {
+        if (
+          e.buttons === 2 &&
+          allowDrawingArrows &&
+          newArrowStartSquare &&
+          newArrowStartSquare !== squareId
+        ) {
           setNewArrowOverSquare(squareId, {
             shiftKey: e.shiftKey,
             ctrlKey: e.ctrlKey,
           });
+        } else if (newArrowStartSquare === squareId) {
+          // hovering back over the starting square - clear the over square
+          setNewArrowOverSquare(null);
         }
 
         // don't fire when dragging as that is handled by the useEffect
