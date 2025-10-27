@@ -18,12 +18,16 @@ export class RightClickCancelSensor extends PointerSensor {
 
   constructor(props: PointerSensorProps) {
     super(props);
-    window.addEventListener('contextmenu', this.handleContextMenu, {
-      passive: false,
-    });
+    if (typeof window !== 'undefined') {
+      window.addEventListener('contextmenu', this.handleContextMenu, {
+        passive: false,
+      });
+    }
   }
 
   teardown() {
-    window.removeEventListener('contextmenu', this.handleContextMenu);
+    if (typeof window !== 'undefined') {
+      window.removeEventListener('contextmenu', this.handleContextMenu);
+    }
   }
 }
