@@ -4,7 +4,6 @@ import {
   DragStartEvent,
   KeyboardSensor,
   MouseSensor,
-  PointerSensor,
   pointerWithin,
   TouchSensor,
   useSensor,
@@ -603,7 +602,7 @@ export function ChessboardProvider({
   );
 
   const sensors = useSensors(
-    useSensor(PointerSensor, {
+    useSensor(RightClickCancelSensor, {
       activationConstraint:
         dragActivationDistance > 0
           ? {
@@ -614,7 +613,6 @@ export function ChessboardProvider({
     useSensor(KeyboardSensor),
     useSensor(TouchSensor),
     useSensor(MouseSensor),
-    useSensor(RightClickCancelSensor),
   );
 
   // collision detection that first tries pointer-based detection and then falls back to rectangle intersection for keyboards
