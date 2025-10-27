@@ -51,6 +51,7 @@ import {
   defaultNumericNotationStyle,
   defaultSquareStyle,
 } from './defaults';
+import { RightClickCancelSensor } from './RightClickCancelSensor';
 
 type Defined<T> = T extends undefined ? never : T;
 
@@ -613,6 +614,7 @@ export function ChessboardProvider({
     useSensor(KeyboardSensor),
     useSensor(TouchSensor),
     useSensor(MouseSensor),
+    useSensor(RightClickCancelSensor),
   );
 
   // collision detection that first tries pointer-based detection and then falls back to rectangle intersection for keyboards
