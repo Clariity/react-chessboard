@@ -7,8 +7,7 @@ import { PointerSensor, PointerSensorProps } from '@dnd-kit/core';
  * Works by listening to the "contextmenu" event on window.
  */
 export class RightClickCancelSensor extends PointerSensor {
-  private handleContextMenu = (event: MouseEvent) => {
-    event.preventDefault();
+  private handleContextMenu = () => {
     // @ts-expect-error: Accessing private props to call onCancel
     if (this.props && typeof this.props.onCancel === 'function') {
       // @ts-expect-error: Accessing private props to call onCancel
