@@ -269,6 +269,119 @@ export function getPositionUpdates(
   return updates;
 }
 
+/*
+ * Returns all position changes that can be explained by a pawn promotion or pawn promotion reversal
+ */
+export function getPromotionUpdates(
+  oldPosition: PositionDataType,
+  newPosition: PositionDataType,
+  noOfRows: number,
+  noOfColumns: number,
+): { [square: string]: string } {
+  const promotionUpdates: { [square: string]: string } = {};
+  for (const newSquare in newPosition) {
+    // new piece hasn't moved
+    if (
+      oldPosition[newSquare]?.pieceType === newPosition[newSquare].pieceType
+    ) {
+      continue;
+    }
+    for (const oldSquare in oldPosition) {
+      // old piece hasn't moved
+      if (
+        newPosition[oldSquare]?.pieceType === oldPosition[oldSquare].pieceType
+      ) {
+        continue;
+      }
+      if (
+        pawnPromotesAtSquares(
+          oldPosition,
+          newPosition,
+          oldSquare,
+          newSquare,
+          noOfRows,
+          noOfColumns,
+        )
+      ) {
+        promotionUpdates[oldSquare] = newSquare;
+      }
+    }
+  }
+  return promotionUpdates;
+}
+
+/*
+ Helper method that determines if the changes at oldSquare and newSquare
+ can be explained by a pawn promotion or pawn promotion reversal
+
+ Criteria:
+ promotion can only happen in adjacent files or same file
+ white promotes from P to [Q, R, B, N] from rank n - 1 to n
+ black promotes from P to [Q, R, B, N] from rank 2 to 1
+*/
+function pawnPromotesAtSquares(
+  oldPosition: PositionDataType,
+  newPosition: PositionDataType,
+  oldSquare: string,
+  newSquare: string,
+  noOfRows: number,
+  noOfColumns: number,
+): boolean {
+  const oldPiece = oldPosition[oldSquare].pieceType;
+  const newPiece = newPosition[newSquare].pieceType;
+  const promotablePieces = new Set(['Q', 'R', 'B', 'N']);
+
+  let pawnSquare;
+  let promotionSquare;
+  if (oldPiece[1] === 'P' && promotablePieces.has(newPiece[1])) {
+    // promotion
+    pawnSquare = oldSquare;
+    promotionSquare = newSquare;
+  } else if (newPiece[1] === 'P' && promotablePieces.has(oldPiece[1])) {
+    // promotion reversal
+    pawnSquare = newSquare;
+    promotionSquare = oldSquare;
+  } else {
+    return false;
+  }
+
+  const columnDifference = Math.abs(
+    chessColumnToColumnIndex(pawnSquare[0], noOfColumns, 'black') -
+      chessColumnToColumnIndex(promotionSquare[0], noOfColumns, 'black'),
+  );
+  if (columnDifference > 1 || oldPiece[0] !== newPiece[0]) {
+    return false;
+  }
+
+  const pawnSquareRowIndex = chessRowToRowIndex(
+    pawnSquare[1],
+    noOfRows,
+    'black',
+  );
+  const promotionSquareRowIndex = chessRowToRowIndex(
+    promotionSquare[1],
+    noOfRows,
+    'black',
+  );
+  if (
+    oldPiece[0] === 'b' &&
+    pawnSquareRowIndex === 1 &&
+    promotionSquareRowIndex === 0
+  ) {
+    // bP promotion or promotion reversal
+    return true;
+  } else if (
+    oldPiece[0] === 'w' &&
+    pawnSquareRowIndex === noOfRows - 2 &&
+    promotionSquareRowIndex === noOfRows - 1
+  ) {
+    // wP promotion or promotion reversal
+    return true;
+  } else {
+    return false;
+  }
+}
+
 /**
  * Retrieves the coordinates at the centre of the requested square, relative to the top left of the board (0, 0).
  */
