@@ -617,12 +617,9 @@ export function ChessboardProvider({
 
   // collision detection that first tries pointer-based detection and then falls back to rectangle intersection for keyboards
   function collisionDetection(args: Parameters<typeof pointerWithin>[0]) {
-    // first try pointer-based collision detection
-    const pointerCollisions = pointerWithin(args);
-
-    // if we found collisions with the pointer, return those
-    if (pointerCollisions.length > 0) {
-      return pointerCollisions;
+    // if a pointer is found, return those
+    if (args.pointerCoordinates) {
+      return pointerWithin(args);
     }
 
     // otherwise fall back to rectangle intersection
