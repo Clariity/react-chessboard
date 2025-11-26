@@ -77,6 +77,7 @@
     "remark-gfm": "^4.0.1",
     "rimraf": "^6.0.1",
     "rollup": "^4.42.0",
+    "rollup-plugin-cleanup": "^3.2.1",
     "rollup-plugin-typescript2": "^0.36.0",
     "semantic-release": "^24.2.5",
     "storybook": "8.6.8",
