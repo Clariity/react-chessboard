@@ -391,6 +391,7 @@ export function ChessboardProvider({
       return;
     }
 
+    // this extra position check will only run if the position HAS changed, but we have been unable to identify the pieces that have moved, reducing the impact of the performance overhead
     if (Object.keys(positionUpdates).length === 0) {
       const promotionUpdates = getPromotionUpdates(
         currentWaitingForAnimationPosition ?? currentPosition,

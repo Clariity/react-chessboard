@@ -349,6 +349,8 @@ function pawnPromotesAtSquares(
     chessColumnToColumnIndex(pawnSquare[0], noOfColumns, 'black') -
       chessColumnToColumnIndex(promotionSquare[0], noOfColumns, 'black'),
   );
+
+  // ensure piece has moved at most 1 column away and is the same colour
   if (columnDifference > 1 || oldPiece[0] !== newPiece[0]) {
     return false;
   }
