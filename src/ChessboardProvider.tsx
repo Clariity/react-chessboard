@@ -23,6 +23,7 @@ import {
 import {
   fenStringToPositionObject,
   generateBoard,
+  getPromotionUpdates,
   getPositionUpdates,
 } from './utils';
 import {
@@ -388,6 +389,34 @@ export function ChessboardProvider({
       setCurrentPosition(newPosition);
       setManuallyDroppedPieceAndSquare(null);
       return;
+    }
+
+    // this extra position check will only run if the position HAS changed, but we have been unable to identify the pieces that have moved, reducing the impact of the performance overhead
+    if (Object.keys(positionUpdates).length === 0) {
+      const promotionUpdates = getPromotionUpdates(
+        currentWaitingForAnimationPosition ?? currentPosition,
+        newPosition,
+        chessboardRows,
+        chessboardColumns,
+      );
+      // Play the animation only if one promoting move was found and no updates were found
+      // This does not animate in cases like:
+      // - position changes where non promoting pieces moved
+      // - multiple pawn promotions or promotion reversals
+      // - removing one pawn from the board and promoting one nearby. would result in both pawns animating to the same promotion square
+      if (Object.keys(promotionUpdates).length === 1) {
+        setPositionDifferences(promotionUpdates);
+        setWaitingForAnimationPosition(newPosition);
+
+        const newTimeout = setTimeout(() => {
+          setCurrentPosition(newPosition);
+          setPositionDifferences({});
+          setWaitingForAnimationPosition(null);
+        }, animationDurationInMs);
+
+        animationTimeoutRef.current = newTimeout;
+        return;
+      }
     }
 
     // new position was a result of an external move
