@@ -1,7 +1,7 @@
 name: CI
 
 permissions:
-  id-token: write # Required for OIDC
+  contents: read
 
 on:
   push:
@@ -35,9 +35,11 @@ jobs:
     needs: static-test
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/beta')
     runs-on: ubuntu-latest
-    id_tokens:
-      NPM_ID_TOKEN:
-        aud: 'npm:registry.npmjs.org'
+    permissions:
+      contents: write # to be able to publish a GitHub release
+      issues: write # to be able to comment on released issues
+      pull-requests: write # to be able to comment on released pull requests
+      id-token: write # to enable use of OIDC for trusted publishing and npm provenance
     steps:
       - uses: actions/checkout@v4
         with:
@@ -47,6 +49,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
