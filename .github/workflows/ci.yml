@@ -38,8 +38,6 @@ jobs:
     id_tokens:
       NPM_ID_TOKEN:
         aud: 'npm:registry.npmjs.org'
-      SIGSTORE_ID_TOKEN:
-        aud: sigstore
     permissions:
       contents: write # to be able to publish a GitHub release
       issues: write # to be able to comment on released issues
