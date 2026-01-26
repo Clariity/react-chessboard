@@ -2,12 +2,12 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { Chess, Square } from 'chess.js';
 import { useState, useRef } from 'react';
 
-import defaultMeta from './Default.stories';
+import defaultMeta from './Default.stories.js';
 import {
   Chessboard,
   SquareHandlerArgs,
   PieceDropHandlerArgs,
-} from '../../../src';
+} from '../../../src/index.js';
 
 const meta: Meta<typeof Chessboard> = {
   ...defaultMeta,

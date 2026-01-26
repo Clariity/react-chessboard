@@ -1,7 +1,7 @@
 import { Fragment } from 'react';
 
-import { useChessboardContext } from './ChessboardProvider';
-import { getRelativeCoords } from './utils';
+import { useChessboardContext } from './ChessboardProvider.js';
+import { getRelativeCoords } from './utils.js';
 
 export function Arrows() {
   const {

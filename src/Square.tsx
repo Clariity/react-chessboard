@@ -1,6 +1,6 @@
 import { memo, useEffect, useRef, useState } from 'react';
 
-import { useChessboardContext } from './ChessboardProvider';
+import { useChessboardContext } from './ChessboardProvider.js';
 import {
   defaultAlphaNotationStyle,
   defaultDarkSquareNotationStyle,
@@ -10,9 +10,9 @@ import {
   defaultLightSquareStyle,
   defaultNumericNotationStyle,
   defaultSquareStyle,
-} from './defaults';
-import { SquareDataType } from './types';
-import { columnIndexToChessColumn } from './utils';
+} from './defaults.js';
+import { SquareDataType } from './types.js';
+import { columnIndexToChessColumn } from './utils.js';
 
 type SquareProps = {
   children?: React.ReactNode;

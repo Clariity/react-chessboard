@@ -25,7 +25,7 @@ import {
   generateBoard,
   getPromotionUpdates,
   getPositionUpdates,
-} from './utils';
+} from './utils.js';
 import {
   Arrow,
   SquareDataType,
@@ -35,8 +35,8 @@ import {
   PieceRenderObject,
   PositionDataType,
   SquareHandlerArgs,
-} from './types';
-import { defaultPieces } from './pieces';
+} from './types.js';
+import { defaultPieces } from './pieces.js';
 import {
   defaultAlphaNotationStyle,
   defaultArrowOptions,
@@ -50,8 +50,8 @@ import {
   defaultLightSquareStyle,
   defaultNumericNotationStyle,
   defaultSquareStyle,
-} from './defaults';
-import { RightClickCancelSensor } from './RightClickCancelSensor';
+} from './defaults.js';
+import { RightClickCancelSensor } from './RightClickCancelSensor.js';
 
 type Defined<T> = T extends undefined ? never : T;
 

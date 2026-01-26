@@ -1,5 +1,5 @@
-import { Draggable } from './Draggable';
-import { Piece } from './Piece';
+import { Draggable } from './Draggable.js';
+import { Piece } from './Piece.js';
 
 type SparePieceProps = {
   pieceType: string;
