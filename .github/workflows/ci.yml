@@ -1,5 +1,8 @@
 name: CI
 
+permissions:
+  id-token: write # Required for OIDC
+
 on:
   push:
     branches: [main, beta]
@@ -32,6 +35,9 @@ jobs:
     needs: static-test
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/beta')
     runs-on: ubuntu-latest
+    id_tokens:
+      NPM_ID_TOKEN:
+        aud: 'npm:registry.npmjs.org'
     steps:
       - uses: actions/checkout@v4
         with:
@@ -57,4 +63,3 @@ jobs:
         run: pnpm semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
