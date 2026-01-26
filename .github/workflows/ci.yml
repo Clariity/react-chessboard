@@ -1,6 +1,7 @@
 name: CI
 
 permissions:
+  id-token: write
   contents: read
 
 on:
@@ -35,9 +36,6 @@ jobs:
     needs: static-test
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/beta')
     runs-on: ubuntu-latest
-    id_tokens:
-      NPM_ID_TOKEN:
-        aud: 'npm:registry.npmjs.org'
     permissions:
       contents: write # to be able to publish a GitHub release
       issues: write # to be able to comment on released issues
