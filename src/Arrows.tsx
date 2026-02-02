@@ -92,6 +92,10 @@ export function Arrows() {
         // This gives us the length of the arrow if it went from center to center
         const r = Math.hypot(dy, dx);
 
+        // Offset the start point from center to the edge of the square
+        // so the arrow begins at the square boundary rather than the piece center
+        const halfSquare = squareWidth * arrowOptions.arrowStartOffset;
+
         let pathD: string;
 
         // Is Knight move
@@ -99,16 +103,22 @@ export function Arrows() {
           // The mid point is only used in Knight move drawing
           // and here we prioritise drawing along the long edge
           // by defining the midpoint depending on which is bigger X or Y
-          const mid =
-            Math.abs(dx) < Math.abs(dy)
-              ? {
-                  x: from.x,
-                  y: to.y,
-                }
-              : {
-                  x: to.x,
-                  y: from.y,
-                };
+          const isVerticalFirst = Math.abs(dx) < Math.abs(dy);
+
+          // Offset start point toward the first leg direction
+          const start = isVerticalFirst
+            ? { x: from.x, y: from.y + Math.sign(dy) * halfSquare }
+            : { x: from.x + Math.sign(dx) * halfSquare, y: from.y };
+
+          const mid = isVerticalFirst
+            ? {
+                x: from.x,
+                y: to.y,
+              }
+            : {
+                x: to.x,
+                y: from.y,
+              };
 
           // Calculate the difference in x and y coordinates between mid and end points
           const dxEnd = to.x - mid.x;
@@ -121,31 +131,27 @@ export function Arrows() {
           // We subtract ARROW_LENGTH_REDUCER from the end line distance to make the arrow
           // stop before reaching the center of the target square
           const end = {
-            // Calculate new end x coordinate by:
-            // 1. Taking the mid->end x direction (dxEnd)
-            // 2. Scaling it by (rEnd - ARROW_LENGTH_REDUCER) / rEnd to shorten it
-            // 3. Adding to the mid x coordinate
             x: mid.x + (dxEnd * (rEnd - ARROW_LENGTH_REDUCER)) / rEnd,
-            // Same calculation for y coordinate
             y: mid.y + (dyEnd * (rEnd - ARROW_LENGTH_REDUCER)) / rEnd,
           };
 
-          pathD = `M${from.x},${from.y} L${mid.x},${mid.y} L${end.x},${end.y}`;
+          pathD = `M${start.x},${start.y} L${mid.x},${mid.y} L${end.x},${end.y}`;
         } else {
+          // Offset start point toward the target by half a square width
+          const start = {
+            x: from.x + (dx * halfSquare) / r,
+            y: from.y + (dy * halfSquare) / r,
+          };
+
           // Calculate the new end point for the arrow
           // We subtract ARROW_LENGTH_REDUCER from the total distance to make the arrow
           // stop before reaching the center of the target square
           const end = {
-            // Calculate new end x coordinate by:
-            // 1. Taking the original x direction (dx)
-            // 2. Scaling it by (r - ARROW_LENGTH_REDUCER) / r to shorten it
-            // 3. Adding to the starting x coordinate
             x: from.x + (dx * (r - ARROW_LENGTH_REDUCER)) / r,
-            // Same calculation for y coordinate
             y: from.y + (dy * (r - ARROW_LENGTH_REDUCER)) / r,
           };
 
-          pathD = `M${from.x},${from.y} L${end.x},${end.y}`;
+          pathD = `M${start.x},${start.y} L${end.x},${end.y}`;
         }
 
         return (
