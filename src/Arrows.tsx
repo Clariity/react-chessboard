@@ -92,60 +92,47 @@ export function Arrows() {
         // This gives us the length of the arrow if it went from center to center
         const r = Math.hypot(dy, dx);
 
-        // Offset the start point from center to the edge of the square
-        // so the arrow begins at the square boundary rather than the piece center
-        const halfSquare = squareWidth * arrowOptions.arrowStartOffset;
+        // Distance to offset the arrow start from the square center
+        const startOffset = squareWidth * arrowOptions.arrowStartOffset;
 
         let pathD: string;
 
-        // Is Knight move
+        // Knight move - draw an L-shaped arrow
         if (r === Math.hypot(1, 2) * squareWidth) {
-          // The mid point is only used in Knight move drawing
-          // and here we prioritise drawing along the long edge
-          // by defining the midpoint depending on which is bigger X or Y
+          // Determine which direction to draw the long leg first
+          // We prioritize the longer axis for visual clarity
           const isVerticalFirst = Math.abs(dx) < Math.abs(dy);
 
-          // Offset start point toward the first leg direction
+          // Offset start point in the direction of the first leg
           const start = isVerticalFirst
-            ? { x: from.x, y: from.y + Math.sign(dy) * halfSquare }
-            : { x: from.x + Math.sign(dx) * halfSquare, y: from.y };
+            ? { x: from.x, y: from.y + Math.sign(dy) * startOffset }
+            : { x: from.x + Math.sign(dx) * startOffset, y: from.y };
 
-          const mid = isVerticalFirst
-            ? {
-                x: from.x,
-                y: to.y,
-              }
-            : {
-                x: to.x,
-                y: from.y,
-              };
+          // Corner where the L-shape turns
+          const corner = isVerticalFirst
+            ? { x: from.x, y: to.y }
+            : { x: to.x, y: from.y };
 
-          // Calculate the difference in x and y coordinates between mid and end points
-          const dxEnd = to.x - mid.x;
-          const dyEnd = to.y - mid.y;
+          // Calculate the final leg from corner to target
+          const dxFinalLeg = to.x - corner.x;
+          const dyFinalLeg = to.y - corner.y;
+          const finalLegLength = squareWidth; // Always one square for knight moves
 
-          // End arrow distance is always one squareWidth for Knight moves
-          const rEnd = squareWidth;
-
-          // Calculate the new end point for the arrow
-          // We subtract ARROW_LENGTH_REDUCER from the end line distance to make the arrow
-          // stop before reaching the center of the target square
+          // Shorten the final leg so the arrow stops before the target center
           const end = {
-            x: mid.x + (dxEnd * (rEnd - ARROW_LENGTH_REDUCER)) / rEnd,
-            y: mid.y + (dyEnd * (rEnd - ARROW_LENGTH_REDUCER)) / rEnd,
+            x: corner.x + (dxFinalLeg * (finalLegLength - ARROW_LENGTH_REDUCER)) / finalLegLength,
+            y: corner.y + (dyFinalLeg * (finalLegLength - ARROW_LENGTH_REDUCER)) / finalLegLength,
           };
 
-          pathD = `M${start.x},${start.y} L${mid.x},${mid.y} L${end.x},${end.y}`;
+          pathD = `M${start.x},${start.y} L${corner.x},${corner.y} L${end.x},${end.y}`;
         } else {
-          // Offset start point toward the target by half a square width
+          // Straight arrow - offset start point toward the target
           const start = {
-            x: from.x + (dx * halfSquare) / r,
-            y: from.y + (dy * halfSquare) / r,
+            x: from.x + (dx * startOffset) / r,
+            y: from.y + (dy * startOffset) / r,
           };
 
-          // Calculate the new end point for the arrow
-          // We subtract ARROW_LENGTH_REDUCER from the total distance to make the arrow
-          // stop before reaching the center of the target square
+          // Shorten the arrow so it stops before the target center
           const end = {
             x: from.x + (dx * (r - ARROW_LENGTH_REDUCER)) / r,
             y: from.y + (dy * (r - ARROW_LENGTH_REDUCER)) / r,
