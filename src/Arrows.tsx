@@ -120,8 +120,14 @@ export function Arrows() {
 
           // Shorten the final leg so the arrow stops before the target center
           const end = {
-            x: corner.x + (dxFinalLeg * (finalLegLength - ARROW_LENGTH_REDUCER)) / finalLegLength,
-            y: corner.y + (dyFinalLeg * (finalLegLength - ARROW_LENGTH_REDUCER)) / finalLegLength,
+            x:
+              corner.x +
+              (dxFinalLeg * (finalLegLength - ARROW_LENGTH_REDUCER)) /
+                finalLegLength,
+            y:
+              corner.y +
+              (dyFinalLeg * (finalLegLength - ARROW_LENGTH_REDUCER)) /
+                finalLegLength,
           };
 
           pathD = `M${start.x},${start.y} L${corner.x},${corner.y} L${end.x},${end.y}`;
