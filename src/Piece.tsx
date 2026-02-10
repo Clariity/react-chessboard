@@ -1,12 +1,12 @@
 import { memo } from 'react';
 
-import { useChessboardContext } from './ChessboardProvider';
-import type { DraggingPieceDataType, PieceDataType } from './types';
+import { useChessboardContext } from './ChessboardProvider.js';
+import type { DraggingPieceDataType, PieceDataType } from './types.js';
 import { useEffect, useState } from 'react';
 import {
   defaultDraggingPieceGhostStyle,
   defaultDraggingPieceStyle,
-} from './defaults';
+} from './defaults.js';
 
 type PieceProps = {
   clone?: boolean;

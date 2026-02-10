@@ -1,7 +1,7 @@
 import { useDraggable } from '@dnd-kit/core';
 
-import { useChessboardContext } from './ChessboardProvider';
-import type { DraggingPieceDataType, PieceDataType } from './types';
+import { useChessboardContext } from './ChessboardProvider.js';
+import type { DraggingPieceDataType, PieceDataType } from './types.js';
 
 type DraggableProps = {
   children: React.ReactNode;

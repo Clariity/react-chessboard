@@ -2,9 +2,9 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { Chess, Square } from 'chess.js';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import defaultMeta from '../basic-examples/Default.stories';
-import { Chessboard, PieceDropHandlerArgs } from '../../../src';
-import Engine from '../../stockfish/engine';
+import defaultMeta from '../basic-examples/Default.stories.js';
+import { Chessboard, PieceDropHandlerArgs } from '../../../src/index.js';
+import Engine from '../../stockfish/engine.js';
 
 const meta: Meta<typeof Chessboard> = {
   ...defaultMeta,

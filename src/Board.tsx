@@ -1,14 +1,14 @@
 import { DragOverlay } from '@dnd-kit/core';
 import { snapCenterToCursor } from '@dnd-kit/modifiers';
 
-import { Arrows } from './Arrows';
-import { Draggable } from './Draggable';
-import { Droppable } from './Droppable';
-import { Piece } from './Piece';
-import { Square } from './Square';
-import { useChessboardContext } from './ChessboardProvider';
-import { defaultBoardStyle } from './defaults';
-import { preventDragOffBoard } from './modifiers';
+import { Arrows } from './Arrows.js';
+import { Draggable } from './Draggable.js';
+import { Droppable } from './Droppable.js';
+import { Piece } from './Piece.js';
+import { Square } from './Square.js';
+import { useChessboardContext } from './ChessboardProvider.js';
+import { defaultBoardStyle } from './defaults.js';
+import { preventDragOffBoard } from './modifiers.js';
 
 export function Board() {
   const {

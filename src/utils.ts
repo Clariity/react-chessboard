@@ -1,4 +1,8 @@
-import type { SquareDataType, FenPieceString, PositionDataType } from './types';
+import type {
+  SquareDataType,
+  FenPieceString,
+  PositionDataType,
+} from './types.js';
 
 export function generateBoard(
   noOfRows: number,
