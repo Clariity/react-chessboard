@@ -101,7 +101,7 @@ export const Piece = memo(function Piece({
         onPieceClick?.({ isSparePiece, piece: { pieceType }, square: position })
       }
     >
-      <PieceSvg />
+      <PieceSvg square={position} />
     </div>
   );
 });

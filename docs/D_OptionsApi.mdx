@@ -775,7 +775,18 @@ Custom piece renderers for each piece type. You can use this to fully replace th
 
 **Default value:** Default chess piece SVGs
 
-**TypeScript type:** `Record<string, () => React.JSX.Element>`
+**TypeScript type:**
+
+```typescript
+Record<
+  string,
+  (props?: {
+    fill?: string;
+    square?: string;
+    svgStyle?: React.CSSProperties;
+  }) => React.JSX.Element
+>;
+```
 
 **Standard use case:** Using custom piece designs or implementing different piece sets.
 
