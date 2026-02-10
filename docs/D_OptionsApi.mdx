@@ -244,6 +244,7 @@ When drawing an arrow, you can hold down modifier keys to change the arrow color
 
 - `arrowLengthReducerDenominator`: Controls how much the arrow length is reduced. The lower the denominator, the greater the reduction (e.g. 8 = 1/8 of a square width removed, 4 = 1/4 of a square width removed)
 - `sameTargetArrowLengthReducerDenominator`: Works the same way but specifically for arrows targeting the same square, using a greater reduction to avoid overlaps
+- `arrowStartOffset`: Controls how far from the center of the start square the arrow begins, as a fraction of square width (0 = center, 0.5 = edge). Values between 0.3-0.4 give a chess.com-like look where the arrow starts near the base of the piece. Values above 0.5 will start outside the square.
 
 #### Arrow width
 
@@ -268,6 +269,7 @@ When drawing an arrow, you can hold down modifier keys to change the arrow color
   activeArrowWidthMultiplier: 0.9,
   opacity: 0.65,
   activeOpacity: 0.5,
+  arrowStartOffset: 0,
 }
 ```
 
@@ -284,6 +286,7 @@ When drawing an arrow, you can hold down modifier keys to change the arrow color
   activeArrowWidthMultiplier: number,
   opacity: number,
   activeOpacity: number
+  arrowStartOffset: number,
 }
 ```
 

@@ -32,6 +32,7 @@ React Chessboard exports several utility functions and types to help you work wi
   - [PieceDropHandlerArgs](#pieceDropHandlerArgs)
   - [PieceRenderObject](#pieceRenderObject)
   - [FenPieceString](#fenpiecestring)
+  - [SquareRenderer](#squarerenderer)
 
 ## Board Generation
 
@@ -513,6 +514,44 @@ type FenPieceString =
 
 ```typescript
 const piece: FenPieceString = 'N'; // represents a white knight
+```
+
+### `SquareRenderer`
+
+Type for custom square rendering functions.
+
+```typescript
+type SquareRenderer = ({
+  piece,
+  square,
+  children,
+}: SquareHandlerArgs & { children?: React.ReactNode }) => React.JSX.Element;
+```
+
+**Example:**
+
+```typescript
+const squareRenderer = ({ square, children }) => (
+  <div
+    style={{
+      width: '100%',
+      height: '100%',
+      position: 'relative',
+    }}
+  >
+    {children}
+
+    <span
+      style={{
+        position: 'absolute',
+        top: 0,
+        right: 0,
+      }}
+    >
+      {square}
+    </span>
+  </div>
+);
 ```
 
 ## Continue reading
