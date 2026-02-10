@@ -25,6 +25,7 @@ export const ArrowOptions: Story = {
       activeArrowWidthMultiplier: 0.9,
       opacity: 0.65,
       activeOpacity: 0.5,
+      arrowStartOffset: 0,
     };
 
     // arrows
@@ -152,6 +153,24 @@ export const ArrowOptions: Story = {
                 setarrowOptions({
                   ...arrowOptions,
                   arrowWidthDenominator: Number(e.target.value),
+                })
+              }
+            />
+          </div>
+
+          {/* Start Offset */}
+          <div>
+            <label>Start Offset ({arrowOptions.arrowStartOffset}):</label>
+            <input
+              type="range"
+              min="0"
+              max="0.5"
+              step="0.02"
+              value={arrowOptions.arrowStartOffset}
+              onChange={(e) =>
+                setarrowOptions({
+                  ...arrowOptions,
+                  arrowStartOffset: Number(e.target.value),
                 })
               }
             />

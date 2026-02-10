@@ -73,4 +73,5 @@ export const defaultArrowOptions = {
   activeArrowWidthMultiplier: 0.9, // the multiplier for the arrow width when it is being drawn
   opacity: 0.65, // opacity of arrow when not being drawn
   activeOpacity: 0.5, // opacity of arrow when it is being drawn
+  arrowStartOffset: 0, // how far from the center of the start square the arrow begins, as a fraction of square width (0 = center, 0.5 = edge). Values between 0.3-0.4 give a chess.com-like look where the arrow starts near the base of the piece. Values above 0.5 will start outside the square.
 };
