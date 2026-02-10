@@ -12,7 +12,7 @@ import {
   defaultSquareStyle,
 } from './defaults.js';
 import { SquareDataType } from './types.js';
-import { columnIndexToChessColumn } from './utils.js';
+import { columnIndexToChessColumn, isTouchEndWithinSquare } from './utils.js';
 
 type SquareProps = {
   children?: React.ReactNode;
@@ -29,6 +29,8 @@ export const Square = memo(function Square({
 }: SquareProps) {
   // track if we are drawing an arrow so that onSquareRightClick is not fired when we finish drawing an arrow
   const [isDrawingArrow, setIsDrawingArrow] = useState(false);
+  const [isClickingOnMobile, setIsClickingOnMobile] = useState(false);
+
   const {
     id,
     allowDrawingArrows,
@@ -81,6 +83,13 @@ export const Square = memo(function Square({
     prevIsOverRef.current = isOver;
   }, [currentPosition, draggingPiece, isOver, squareId]);
 
+  // if we are dragging a piece, we are no longer clicking on mobile as that is a drag operation, so reset the clicking on mobile state
+  useEffect(() => {
+    if (draggingPiece && isClickingOnMobile) {
+      setIsClickingOnMobile(false);
+    }
+  }, [draggingPiece, isClickingOnMobile]);
+
   const column = squareId.match(/^[a-z]+/)?.[0];
   const row = squareId.match(/\d+$/)?.[0];
 
@@ -106,13 +115,24 @@ export const Square = memo(function Square({
           });
         }
       }}
+      onTouchStart={() => {
+        // in order to prevent onTouchEnd from firing if we are dragging within the same square, we need to store if a touch has started so that we can reset it if we drag, and if it isn't reset by the time the touch ends, we know it was a tap and can fire the click event
+        setIsClickingOnMobile(true);
+      }}
       onTouchEnd={(e) => {
         // Prevent default to avoid double-firing with onClick on some devices
         e.preventDefault();
-        onSquareClick?.({
-          piece: currentPosition[squareId] ?? null,
-          square: squareId,
-        });
+
+        // we only want to fire onSquareClick if the touch event ended within the same square as it started
+        const within = isTouchEndWithinSquare(id, squareId, e);
+
+        if (within && isClickingOnMobile) {
+          onSquareClick?.({
+            piece: currentPosition[squareId] ?? null,
+            square: squareId,
+          });
+        }
+        setIsClickingOnMobile(false);
       }}
       onContextMenu={(e) => {
         e.preventDefault();

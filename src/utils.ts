@@ -418,3 +418,32 @@ export function getRelativeCoords(
     squareWidth / 2;
   return { x, y };
 }
+
+export function isTouchEndWithinSquare(
+  id: string,
+  squareId: string,
+  e: React.TouchEvent<HTMLDivElement>,
+) {
+  const rect = document
+    .getElementById(`${id}-square-${squareId}`)!
+    .getBoundingClientRect();
+  const touches = e.changedTouches;
+
+  let within = false;
+  for (let i = 0; i < touches.length; i++) {
+    const x = touches[i].clientX;
+    const y = touches[i].clientY;
+
+    if (
+      x >= rect.left &&
+      x <= rect.right &&
+      y >= rect.top &&
+      y <= rect.bottom
+    ) {
+      within = true;
+      break;
+    }
+  }
+
+  return within;
+}
