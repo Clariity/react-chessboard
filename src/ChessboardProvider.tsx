@@ -35,6 +35,7 @@ import {
   PieceRenderObject,
   PositionDataType,
   SquareHandlerArgs,
+  SquareRenderer,
 } from './types';
 import { defaultPieces } from './pieces';
 import {
@@ -201,11 +202,7 @@ export type ChessboardOptions = {
     e: React.MouseEvent,
   ) => void;
   onSquareRightClick?: ({ piece, square }: SquareHandlerArgs) => void;
-  squareRenderer?: ({
-    piece,
-    square,
-    children,
-  }: SquareHandlerArgs & { children?: React.ReactNode }) => React.JSX.Element;
+  squareRenderer?: SquareRenderer;
 };
 
 export function ChessboardProvider({

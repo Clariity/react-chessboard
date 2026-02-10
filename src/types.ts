@@ -40,6 +40,12 @@ export type PieceDropHandlerArgs = {
   targetSquare: string | null;
 };
 
+export type SquareRenderer = ({
+  piece,
+  square,
+  children,
+}: SquareHandlerArgs & { children?: React.ReactNode }) => React.JSX.Element;
+
 export type PieceRenderObject = Record<
   string,
   (props?: {
