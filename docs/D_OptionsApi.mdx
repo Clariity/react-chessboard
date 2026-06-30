@@ -31,6 +31,7 @@ import * as OnMouseOutSquareStories from './stories/options/OnMouseOutSquare.sto
 import * as OnMouseOverSquareStories from './stories/options/OnMouseOverSquare.stories';
 import * as OnPieceClickStories from './stories/options/OnPieceClick.stories';
 import * as OnPieceDragStories from './stories/options/OnPieceDrag.stories';
+import * as OnPieceDragCancelStories from './stories/options/OnPieceDragCancel.stories';
 import * as OnPieceDropStories from './stories/options/OnPieceDrop.stories';
 import * as OnSquareClickStories from './stories/options/OnSquareClick.stories';
 import * as OnSquareMouseDownStories from './stories/options/OnSquareMouseDown.stories';
@@ -86,6 +87,7 @@ The code for these examples can be viewed by clicking the "Show code" button in 
 | [onMouseOverSquare](#optionsonmouseoversquare)                     | Handler for mouse entering a square                                 |
 | [onPieceClick](#optionsonpiececlick)                               | Handler for clicking a piece                                        |
 | [onPieceDrag](#optionsonpiecedrag)                                 | Handler for starting to drag a piece                                |
+| [onPieceDragCancel](#optionsonpiecedragcancel)                     | Handler for when a piece drag is cancelled                          |
 | [onPieceDrop](#optionsonpiecedrop)                                 | Handler for dropping a piece                                        |
 | [onSquareClick](#optionsonsquareclick)                             | Handler for clicking a square                                       |
 | [onSquareMouseDown](#optionsonsquaremousedown)                     | Handler for mouse button down on a square                           |
@@ -672,6 +674,22 @@ Callback function triggered when a piece drag operation starts.
 **Standard use case:** Implementing custom drag and drop behavior or validation.
 
 <Canvas of={OnPieceDragStories.OnPieceDrag} />
+
+### `options.onPieceDragCancel`
+
+Callback function triggered when a piece drag operation is cancelled. A drag is cancelled by pressing Escape or right-clicking, but not by dropping a piece outside the board.
+
+**Default value:** `undefined`
+
+**TypeScript type:**
+
+```typescript
+() => void;
+```
+
+**Standard use case:** Resetting UI state when the user cancels a drag without making a move.
+
+<Canvas of={OnPieceDragCancelStories.OnPieceDragCancel} />
 
 ### `options.onPieceDrop`
 
