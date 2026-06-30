@@ -37,12 +37,15 @@ export const OnPieceDragCancel: Story = {
           alignItems: 'center',
         }}
       >
-        <div>Drag cancelled: {cancelCount} time{cancelCount !== 1 ? 's' : ''}</div>
+        <div>
+          Drag cancelled: {cancelCount} time{cancelCount !== 1 ? 's' : ''}
+        </div>
 
         <Chessboard options={chessboardOptions} />
 
         <p style={{ fontSize: '0.8rem', color: '#666' }}>
-          Start dragging a piece and click right click or press Escape to trigger a drag cancel 
+          Start dragging a piece and click right click or press Escape to
+          trigger a drag cancel
         </p>
       </div>
     );
