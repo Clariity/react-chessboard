@@ -569,7 +569,7 @@ export function ChessboardProvider({
         altKey?: boolean;
         metaKey?: boolean;
       },
-      ) => {
+    ) => {
       // TODO: remove support for legacy arrow color props in future breaking version
       let color = arrowOptions.color;
       if (arrowOptions.colors) {
