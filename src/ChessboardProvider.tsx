@@ -197,6 +197,7 @@ export type ChessboardOptions = {
   onMouseOverSquare?: ({ piece, square }: SquareHandlerArgs) => void;
   onPieceClick?: ({ isSparePiece, piece, square }: PieceHandlerArgs) => void;
   onPieceDrag?: ({ isSparePiece, piece, square }: PieceHandlerArgs) => void;
+  onPieceDragCancel?: () => void;
   onPieceDrop?: ({
     piece,
     sourceSquare,
@@ -273,6 +274,7 @@ export function ChessboardProvider({
     onMouseOverSquare,
     onPieceClick,
     onPieceDrag,
+    onPieceDragCancel,
     onPieceDrop,
     onSquareClick,
     onSquareMouseDown,
@@ -601,7 +603,8 @@ export function ChessboardProvider({
 
   const handleDragCancel = useCallback(() => {
     setDraggingPiece(null);
-  }, []);
+    onPieceDragCancel?.();
+  }, [onPieceDragCancel]);
 
   const handleDragEnd = useCallback(
     function handleDragEnd(event: DragEndEvent) {
