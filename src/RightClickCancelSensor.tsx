@@ -8,15 +8,32 @@ import { PointerSensor, PointerSensorProps } from '@dnd-kit/core';
  */
 export class RightClickCancelSensor extends PointerSensor {
   private handleContextMenu = () => {
-    // @ts-expect-error: Accessing private props to call onCancel
-    if (this.props && typeof this.props.onCancel === 'function') {
-      // @ts-expect-error: Accessing private props to call onCancel
-      this.props.onCancel();
-    }
+    this.teardown();
+    // handleCancel is private on AbstractPointerSensor. Calling it is what
+    // actually detach()es the inherited pointer/window listeners; calling
+    // props.onCancel alone would leave those attached and leak this
+    // contextmenu listener (teardown is never invoked by dnd-kit).
+    // @ts-expect-error private AbstractPointerSensor.handleCancel
+    this.handleCancel();
   };
 
   constructor(props: PointerSensorProps) {
-    super(props);
+    // dnd-kit instantiates a sensor per gesture and never calls instance
+    // teardown(). Wrap the settle callbacks so the contextmenu listener is
+    // removed on the normal pointer end/cancel path too.
+    let instance: RightClickCancelSensor | undefined;
+    super({
+      ...props,
+      onCancel: () => {
+        instance?.teardown();
+        props.onCancel();
+      },
+      onEnd: () => {
+        instance?.teardown();
+        props.onEnd();
+      },
+    });
+    instance = this;
     if (typeof window !== 'undefined') {
       window.addEventListener('contextmenu', this.handleContextMenu, {
         passive: false,
