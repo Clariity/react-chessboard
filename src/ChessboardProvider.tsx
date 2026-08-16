@@ -680,17 +680,20 @@ export function ChessboardProvider({
     [currentPosition],
   );
 
+  const pointerActivationConstraint =
+    dragActivationDistance > 0
+      ? {
+          distance: dragActivationDistance,
+        }
+      : undefined;
   const sensors = useSensors(
     useSensor(RightClickCancelSensor, {
-      activationConstraint:
-        dragActivationDistance > 0
-          ? {
-              distance: dragActivationDistance,
-            }
-          : undefined,
+      activationConstraint: pointerActivationConstraint,
     }),
     useSensor(KeyboardSensor),
-    useSensor(TouchSensor),
+    useSensor(TouchSensor, {
+      activationConstraint: pointerActivationConstraint,
+    }),
     useSensor(MouseSensor),
   );
 
