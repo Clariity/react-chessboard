@@ -21,19 +21,19 @@ export class RightClickCancelSensor extends PointerSensor {
     // dnd-kit instantiates a sensor per gesture and never calls instance
     // teardown(). Wrap the settle callbacks so the contextmenu listener is
     // removed on the normal pointer end/cancel path too.
-    let instance: RightClickCancelSensor | undefined;
+    const sensorRef: { current?: RightClickCancelSensor } = {};
     super({
       ...props,
       onCancel: () => {
-        instance?.teardown();
+        sensorRef.current?.teardown();
         props.onCancel();
       },
       onEnd: () => {
-        instance?.teardown();
+        sensorRef.current?.teardown();
         props.onEnd();
       },
     });
-    instance = this;
+    sensorRef.current = this;
     if (typeof window !== 'undefined') {
       window.addEventListener('contextmenu', this.handleContextMenu, {
         passive: false,
