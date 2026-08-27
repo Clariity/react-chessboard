@@ -96,7 +96,7 @@ type ContextType = {
 
   allowDrawingArrows: Defined<ChessboardOptions['allowDrawingArrows']>;
   arrows: Defined<ChessboardOptions['arrows']>;
-  arrowOptions: Defined<ChessboardOptions['arrowOptions']>;
+  arrowOptions: typeof defaultArrowOptions;
 
   canDragPiece: ChessboardOptions['canDragPiece'];
   onMouseOutSquare: ChessboardOptions['onMouseOutSquare'];
@@ -186,7 +186,7 @@ export type ChessboardOptions = {
   // arrows
   allowDrawingArrows?: boolean;
   arrows?: Arrow[];
-  arrowOptions?: typeof defaultArrowOptions;
+  arrowOptions?: Partial<typeof defaultArrowOptions>;
   clearArrowsOnClick?: boolean;
   clearArrowsOnPositionChange?: boolean;
 
@@ -263,7 +263,7 @@ export function ChessboardProvider({
     // arrows
     allowDrawingArrows = true,
     arrows = [],
-    arrowOptions = defaultArrowOptions,
+    arrowOptions: userArrowOptions = defaultArrowOptions,
     clearArrowsOnClick = true,
     clearArrowsOnPositionChange = true,
 
@@ -282,6 +282,11 @@ export function ChessboardProvider({
     onSquareRightClick,
     squareRenderer,
   } = options || {};
+
+  const arrowOptions = useMemo(
+    () => ({ ...defaultArrowOptions, ...userArrowOptions }),
+    [userArrowOptions],
+  );
 
   // the piece currently being dragged
   const [draggingPiece, setDraggingPiece] =

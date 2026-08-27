@@ -258,6 +258,11 @@ When drawing an arrow, you can hold down modifier keys to change the arrow color
 - `opacity`: Controls the opacity of arrows when not being drawn
 - `activeOpacity`: Controls the opacity of arrows when they are being drawn
 
+#### Arrow behavior
+
+- `liveDrawArrow`: Controls whether the arrow is drawn live while dragging (`true`) or drawn after the final target is set (`false`)
+- `knightArrow`: Controls whether knight moves are rendered as L-shaped knight arrows (`true`) or direct arrows (`false`)
+
 **Default value:**
 
 ```tsx
@@ -276,6 +281,8 @@ When drawing an arrow, you can hold down modifier keys to change the arrow color
   opacity: 0.65,
   activeOpacity: 0.5,
   arrowStartOffset: 0,
+  liveDrawArrow: true,
+  knightArrow: true,
 }
 ```
 
@@ -290,13 +297,15 @@ When drawing an arrow, you can hold down modifier keys to change the arrow color
     alt?: string;
     meta?: string;
   },
-  arrowLengthReducerDenominator: number,
-  sameTargetArrowLengthReducerDenominator: number,
-  arrowWidthDenominator: number,
-  activeArrowWidthMultiplier: number,
-  opacity: number,
-  activeOpacity: number
-  arrowStartOffset: number,
+  arrowLengthReducerDenominator?: number,
+  sameTargetArrowLengthReducerDenominator?: number,
+  arrowWidthDenominator?: number,
+  activeArrowWidthMultiplier?: number,
+  opacity?: number,
+  activeOpacity?: number,
+  arrowStartOffset?: number,
+  liveDrawArrow?: boolean,
+  knightArrow?: boolean,
 }
 ```
 

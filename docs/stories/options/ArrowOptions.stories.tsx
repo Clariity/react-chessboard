@@ -33,6 +33,8 @@ export const ArrowOptions: Story = {
       opacity: 0.65,
       activeOpacity: 0.5,
       arrowStartOffset: 0,
+      liveDrawArrow: true,
+      knightArrow: true,
     };
 
     // arrows
@@ -263,6 +265,42 @@ export const ArrowOptions: Story = {
                 })
               }
             />
+          </div>
+
+          {/* Toggles */}
+          <div>
+            <label
+              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+            >
+              <input
+                type="checkbox"
+                checked={arrowOptions.liveDrawArrow}
+                onChange={(e) =>
+                  setarrowOptions({
+                    ...arrowOptions,
+                    liveDrawArrow: e.target.checked,
+                  })
+                }
+              />
+              Live Draw Arrow
+            </label>
+          </div>
+          <div>
+            <label
+              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+            >
+              <input
+                type="checkbox"
+                checked={arrowOptions.knightArrow}
+                onChange={(e) =>
+                  setarrowOptions({
+                    ...arrowOptions,
+                    knightArrow: e.target.checked,
+                  })
+                }
+              />
+              Knight Arrow
+            </label>
           </div>
         </div>
 

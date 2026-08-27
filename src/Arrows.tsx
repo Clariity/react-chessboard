@@ -19,7 +19,11 @@ export function Arrows() {
   const viewBoxWidth = 2048;
   const viewBoxHeight = viewBoxWidth * (chessboardRows / chessboardColumns);
 
+  const liveDrawArrow = arrowOptions.liveDrawArrow ?? true;
+  const knightArrow = arrowOptions.knightArrow ?? true;
+
   const currentlyDrawingArrow =
+    liveDrawArrow &&
     newArrowStartSquare &&
     newArrowOverSquare &&
     newArrowStartSquare !== newArrowOverSquare.square
@@ -98,7 +102,10 @@ export function Arrows() {
         let pathD: string;
 
         // Knight move - draw an L-shaped arrow
-        if (r === Math.hypot(1, 2) * squareWidth) {
+        const isKnightMove =
+          Math.abs(r - Math.hypot(1, 2) * squareWidth) < 0.001 ||
+          r === Math.hypot(1, 2) * squareWidth;
+        if (knightArrow && isKnightMove) {
           // Determine which direction to draw the long leg first
           // We prioritize the longer axis for visual clarity
           const isVerticalFirst = Math.abs(dx) < Math.abs(dy);
