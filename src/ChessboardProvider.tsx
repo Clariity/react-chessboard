@@ -616,17 +616,20 @@ export function ChessboardProvider({
 
       // dropped outside of droppable area (e.g. off board)
       if (!dropSquare) {
-        onPieceDrop?.({
+        const isDropValid = onPieceDrop?.({
           piece: draggingPiece,
           sourceSquare: draggingPiece.position,
           targetSquare: null,
         });
+
         // set as manually dropped piece so that no animation is shown
-        setManuallyDroppedPieceAndSquare({
-          piece: draggingPiece.pieceType,
-          sourceSquare: draggingPiece.position,
-          targetSquare: '',
-        });
+        if (isDropValid) {
+          setManuallyDroppedPieceAndSquare({
+            piece: draggingPiece.pieceType,
+            sourceSquare: draggingPiece.position,
+            targetSquare: '',
+          });
+        }
         setDraggingPiece(null);
         return;
       }
