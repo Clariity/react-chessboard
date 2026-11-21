@@ -336,7 +336,11 @@ export function ChessboardProvider({
 
     // clear internal arrows on position change
     if (clearArrowsOnPositionChange) {
-      clearArrows();
+      setInternalArrows((prevArrows) =>
+        prevArrows.length > 0 ? [] : prevArrows,
+      );
+      setNewArrowStartSquare(null);
+      setNewArrowOverSquare(null);
     }
 
     // if no animation, just set the position
