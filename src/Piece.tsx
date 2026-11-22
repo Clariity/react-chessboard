@@ -52,7 +52,7 @@ export const Piece = memo(function Piece({
       const targetSquare = positionDifferences[position];
 
       const squareWidth = document
-        .querySelector(`#${id}-square-${sourceSquare}`)
+        .getElementById(`${id}-square-${sourceSquare}`)
         ?.getBoundingClientRect().width;
 
       if (!squareWidth) {
