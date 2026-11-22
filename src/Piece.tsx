@@ -56,7 +56,7 @@ export const Piece = memo(function Piece({
         ?.getBoundingClientRect().width;
 
       if (!squareWidth) {
-        throw new Error('Square width not found');
+        return;
       }
 
       setAnimationStyle({
